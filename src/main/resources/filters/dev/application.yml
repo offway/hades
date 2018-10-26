@@ -1,0 +1,19 @@
+#服务相关配置
+server: 
+#HTTP端口
+  port: 8088
+
+spring: 
+#数据源
+  datasource: 
+    url:  jdbc:mysql://rm-uf6bdv92a95017474oo.mysql.rds.aliyuncs.com:3306/phweb_dev?useUnicode=true&amp;characterEncoding=utf-8
+    username:  puhao
+    password:  Puhao2018
+    driverClassName:  com.mysql.jdbc.Driver
+    
+#jpa相关配置
+  jpa:  
+  #是否自动生成/修改数据库表
+    show-sql: true
+    generate-ddl: false
+    

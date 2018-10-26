@@ -18,7 +18,7 @@
            FILEDEBUG对应debug级别，文件名以log-debug-xxx.log形式命名
            stdout将日志信息输出到控制上，为方便开发测试使用
     -->
-    <contextName>zeus</contextName>
+    <contextName>hades</contextName>
     <property name="LOG_PATH" value="/opt/logs" />
     <!--设置系统日志目录-->
     <property name="APPDIR" value="hades" />
