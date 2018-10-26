@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title>支付</title>
+	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
+	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+</head>
+<body class="page-body">
+
+	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+			
+		<div th:replace="sidebar-menu"></div>
+		<div class="main-content">
+			<!-- User Info, Notifications and Menu Bar -->
+			<nav th:replace="navbar"></nav>
+			<div class="page-title">
+				
+				<div class="title-env">
+					<h1 class="title">支付</h1>
+					<p class="description">待支付列表</p>
+				</div>
+
+				<div class="breadcrumb-env">
+
+					<ol class="breadcrumb bc-1">
+						<li><a href="/"><i class="fa-home"></i>Home</a></li>
+						<li><a>收益结算</a></li>
+						<li class="active"><strong>支付</strong></li>
+					</ol>
+
+				</div>
+
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<form role="form" class="form-inline">
+						<div class="form-group ">
+								<div class="input-group">
+									<input type="text" name="miningDate" class="form-control datepicker" style="height:35px" data-format="yyyy-mm-dd" placeholder="挖矿日期"/>
+									<div class="input-group-addon">
+										<a href="#"><i class="linecons-calendar"></i></a>
+									</div>
+								</div>
+						</div>
+						<div class="form-group">
+							<select class="form-control select2-offscreen" id="s2example-2" name="payMode"
+								tabindex="-1" title="" style="height:32px">
+								<option ></option>
+								<option value="">全部</option>
+								<option value="FPPS">FPPS</option>
+								<option value="PPS+">PPS+</option>
+								<option value="PPS">PPS</option>
+							</select> 
+						</div>
+						<div class="form-group">
+							<select class="form-control select2-offscreen" id="s2example-3" name="coinType"
+								tabindex="-1" title="">
+									<option ></option>
+								<option value="">全部</option>
+								<option value="BTC">BTC</option>
+								<option value="BCH">BCH</option>
+							</select>
+
+						</div>
+						<div class="form-group">
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+						</div>
+						
+					</form>
+				</div>
+				<div class="panel-body">
+					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					</table>
+					
+				</div>
+				<button class="btn btn-info" onclick="jQuery('#modal-1').modal('show', {backdrop: 'fade'});">支付</button>
+			</div>
+			
+					
+			<footer th:replace="footer"></footer>
+		</div>
+	</div>
+	
+	<!-- Modal 1 (Basic)-->
+	<div class="modal fade" id="modal-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">温馨提示</h4>
+				</div>
+				
+				<div class="modal-body">
+					施工中...
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-info submitBtn">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
+	<script src="assets/js/select2/select2.min.js"></script>
+	<script type="text/javascript">
+		jQuery(document).ready(function($) {
+			$("#s2example-3").select2({
+					placeholder : '币种',
+					allowClear : false,
+					minimumResultsForSearch : -1, // Hide the search bar
+					formatResult : function(
+							state) {
+						return '<div style="background:url(assets/images/icon-'
+								+ state.id
+								+ '.png) no-repeat center center;background-size:100%;display:inline-block;position:relative;width:20px;height:20px;margin-right: 10px;top:3px;"></div>'
+								+ state.text;
+					}
+				})
+			.on('select2-open',function() {
+				// Adding Custom Scrollbar
+				$(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+			});
+			
+			$("#s2example-2").select2({
+				placeholder : '付款方式',
+				allowClear : false,
+				minimumResultsForSearch : -1 // Hide the search bar
+			})
+		.on('select2-open',function() {
+			// Adding Custom Scrollbar
+			$(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+		});
+		});
+	</script>
+	<script type="text/javascript">
+	jQuery(document).ready(function($)
+	{
+		var oTable = $("#example-1").dataTable({
+			language: {
+                url: "../assets/Chinese.txt"
+            },
+			aLengthMenu: [
+				[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]
+			],
+			bFilter : false,
+			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
+            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
+            sAjaxSource : "/clear-data?status=02",//通过ajax实现分页的url路径。
+            fnServerParams : function(aData){
+                var searchArray = $(".form-inline").serializeArray();
+                $.merge(aData, searchArray);
+            },
+            columnDefs: [
+                {
+                    targets: 0,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+                    targets: 1,
+                    data: "miningDate",
+                    title: "挖矿日期",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd");
+                    }
+                },
+                {
+                    targets: 2,
+                    data: "coinType",
+                    title: "币种"
+                },
+                {
+                    targets: 3,
+                    data: "payMode",
+                    title: "付款方式"
+                },
+                {
+                    targets: 4,
+                    data: "walletAddr",
+                    title: "收款地址"
+                },
+                {
+                    targets: 5,
+                    data: "amount",
+                    title: "实付金额"
+                },
+                {
+                    targets: 6,
+                    data: "feeAmount",
+                    title: "手续费"
+                },
+                {
+                    targets: 7,
+                    data: "dayChange",
+                    title: "日变动率",
+                    render: function (data, type, row, meta) {
+                    	return data+"%";
+                    }
+                },
+                {
+                    targets: 8,
+                    data: "status",
+                    title: "状态",
+                    render: function (data, type, row, meta) {
+                    	if(data=="01"){
+                    		return "初始";
+                    	}else if(data=="02"){
+                    		return "发放中";
+                    	}else if(data=="03"){
+                    		return "发放成功";
+                    	}else if(data=="04"){
+                    		return "发放失败";
+                    	}
+                    }
+                }
+               
+               ]
+		});
+		
+		$(".searchBtn").click(function(){
+			oTable.fnDraw(); //or fnReloadAjax()  
+			return false;
+		});
+		
+		$(".submitBtn").click(function(){
+			/* $.post("/clear-audit-submit",$(".form-inline").serialize(),function(data){
+				if(data){
+					jQuery('#modal-1').modal('hide');
+					toastr.success("您的操作已成功！", "温馨提示");
+					oTable.fnDraw(); 
+				}else{
+					toastr.error("操作失败,请稍后再试", "温馨提示");
+				}
+			}); */
+			 
+			jQuery('#modal-1').modal('hide');
+			return false;
+		});
+		
+		
+	});
+	</script>
+</body>
+
+</html>
