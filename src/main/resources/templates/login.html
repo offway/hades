@@ -174,8 +174,7 @@
 									}
 																				else
 									{
-										toastr.error("用户名或密码错误!试试：admin/123456吧. ^_^ ", "登录异常", opts);
-										$passwd.select();
+										toastr.error("用户名或密码错误!", "登录异常", opts);
 									}
 																			}
 							});
@@ -187,7 +186,7 @@
 			});
 			
 			// Set Form focus
-			$("form#login .form-group:has(.form-control):first .form-control").focus();
+			//$("form#login .form-group:has(.form-control):first .form-control").focus();
 		});
 	</script>
 
