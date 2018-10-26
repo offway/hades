@@ -1,7 +1,7 @@
 #服务相关配置
 server: 
 #HTTP端口
-  port: 8083
+  port: 8088
 
 spring: 
 #数据源

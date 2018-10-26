@@ -67,7 +67,7 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 				List<Predicate> params = new ArrayList<Predicate>();
 				
 				if(StringUtils.isNotBlank(code)){
-					params.add(criteriaBuilder.equal(root.get("code"), code));
+					params.add(criteriaBuilder.like(root.get("code"), "%"+code+"%"));
 				}
 				
                 Predicate[] predicates = new Predicate[params.size()];
