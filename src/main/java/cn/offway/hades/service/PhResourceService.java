@@ -3,6 +3,9 @@ package cn.offway.hades.service;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import cn.offway.hades.domain.PhResource;
 
 /**
@@ -20,4 +23,10 @@ public interface PhResourceService{
 	Set<String> findUrlsByAdminId(Long adminId);
 
 	List<PhResource> findByAdminId(Long adminId);
+
+	Page<PhResource> findByPage(String name, String link, Long parentId, Pageable page);
+
+	void deleteResource(String ids) throws Exception;
+
+	List<PhResource> findByParentId(Long parentId);
 }

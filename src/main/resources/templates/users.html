@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title>用户管理</title>
+	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
+	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+</head>
+<body class="page-body">
+
+	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+			
+		<div th:replace="sidebar-menu"></div>
+		<div class="main-content">
+			<!-- User Info, Notifications and Menu Bar -->
+			<nav th:replace="navbar"></nav>
+			<div class="page-title">
+				
+				<div class="title-env">
+					<h1 class="title">用户管理</h1>
+					<p class="description"></p>
+				</div>
+
+				<div class="breadcrumb-env">
+
+					<ol class="breadcrumb bc-1">
+						<li><a href="/"><i class="fa-home"></i>Home</a></li>
+						<li><a>系统管理</a></li>
+						<li class="active"><strong>用户管理</strong></li>
+					</ol>
+
+				</div>
+
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<form role="form" class="form-inline">
+						<div class="form-group ">
+								<div class="input-group">
+									<input type="text" name="username" class="form-control" style="height:35px" placeholder="用户名"/>
+								</div>
+						</div>
+						<div class="form-group">
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+						</div>
+						
+					</form>
+				</div>
+				<div class="panel-body">
+					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					</table>
+					
+				</div>
+				<button class="btn btn-info" onclick="jQuery('#modal-1').modal('show', {backdrop: 'fade'});">添加</button>
+				<button class="btn btn-info" onclick="jQuery('#modal-1').modal('show', {backdrop: 'fade'});">修改</button>
+				<button class="btn btn-info" onclick="jQuery('#modal-1').modal('show', {backdrop: 'fade'});">删除</button>
+			</div>
+			
+					
+			<footer th:replace="footer"></footer>
+		</div>
+	</div>
+	
+	<!-- Modal 1 (Basic)-->
+	<div class="modal fade" id="modal-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">温馨提示</h4>
+				</div>
+				
+				<div class="modal-body">
+					您确定要删除选中用户吗？
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-info deteleBtn">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
+	<script src="assets/js/select2/select2.min.js"></script>
+	<script type="text/javascript">
+	jQuery(document).ready(function($)
+	{
+		var oTable = $("#example-1").dataTable({
+			language: {
+                url: "../assets/Chinese.txt"
+            },
+			aLengthMenu: [
+				[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]
+			],
+			bFilter : false,
+			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
+            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
+            sAjaxSource : "/users-data",//通过ajax实现分页的url路径。
+            fnServerParams : function(aData){
+                var searchArray = $(".form-inline").serializeArray();
+                $.merge(aData, searchArray);
+            },
+            columnDefs: [
+				{	
+					targets: 0,
+				    data: "id",
+				    width:"5%",
+				    orderable: false,
+				    className: 'select-checkbox',
+				    title: '<input type="checkbox" id="checkbox-all"/>',
+				    render: function ( data, type, full, meta ) {
+				    	return '<input type="checkbox" name="userId" value="'+data+'" />';  
+				    }
+				},
+                {
+                    targets: 1,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+               		targets: 2,
+	                data: "username",
+	                title: "用户名"
+            	}, 
+                {
+                    targets: 3,
+                    data: "createdtime",
+                    title: "创建时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                }
+               ]
+		});
+		
+		$(".searchBtn").click(function(){
+			$("#checkbox-all").attr("checked", false);
+			oTable.fnDraw(); //or fnReloadAjax()  
+			return false;
+		});
+		
+		 $('#example-1').on('click',"#checkbox-all",function() {  
+			var obj = $(this);
+			$("input[name='userId']").each(function(i,e){
+				 this.checked = obj[0].checked;
+			});
+		})
+		
+		$(".deteleBtn").click(function(){
+			var ids='';
+			$("input[name='userId']:checked").each(function(i,e){
+				ids+=e.value+",";
+			});
+			$.post("/users-delete",{
+				ids:ids
+			},function(data){
+				if(data){
+					jQuery('#modal-1').modal('hide');
+					toastr.success("您的操作已成功！", "温馨提示");
+					oTable.fnDraw(); 
+				}else{
+					toastr.error("操作失败,请稍后再试", "温馨提示");
+				}
+			});
+			 
+			return false;
+		});
+		
+		
+	});
+	</script>
+</body>
+
+</html>

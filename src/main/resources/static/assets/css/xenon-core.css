@@ -6834,7 +6834,7 @@ pre {
   }
 }
 .dataTables_wrapper .table thead > tr .sorting_asc.select-checkbox{
-	text-align: center;
+	text-align: left;
 }
 .dataTables_wrapper .table thead > tr .sorting_asc.select-checkbox:before{
 	content:'';		

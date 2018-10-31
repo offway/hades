@@ -3,8 +3,11 @@ package cn.offway.hades.repository;
 import java.util.List;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import cn.offway.hades.domain.PhResource;
@@ -22,4 +25,11 @@ public interface PhResourceRepository extends JpaRepository<PhResource,Long>,Jpa
 	
 	@Query(nativeQuery = true,value="select DISTINCT(ru.link) from ph_resource ru ,ph_roleresource rr,ph_roleadmin ra where ru.id = rr.resource_id and rr.role_id = ra.role_id and ra.admin_id=?1")
 	Set<String> findUrlsByAdminId(Long adminId);
+	
+	@Transactional
+	@Modifying
+	@Query(nativeQuery=true,value="delete from ph_resource where id in(?1)")
+	int deleteByIds(List<Long> ids);
+	
+	List<PhResource> findByParentId(Long parentId);
 }

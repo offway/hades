@@ -35,4 +35,8 @@ vinann:
       singInSuccessUrl: /
       #rememberMeSeconds: 294000
       signOutUrl: /login.html
+      session:  
+        maximumSessions: 1
+        maxSessionsPreventsLogin: false
+        sessionInvalidUrl: /login.html
      

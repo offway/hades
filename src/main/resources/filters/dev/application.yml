@@ -45,9 +45,10 @@ vinann:
       #signUpUrl: /register.html
 
 #session管理相关配置，参见SessionProperties
-#vinann.security.browser.session.maximumSessions = 1
-#vinann.security.browser.session.maxSessionsPreventsLogin = false
-#vinann.security.browser.session.sessionInvalidUrl = /vinann-session-invalid.html
+      session:  
+        maximumSessions: 1
+        maxSessionsPreventsLogin: false
+        sessionInvalidUrl: /login.html
 
 #图片验证码配置项，参见ImageCodeProperties
 #vinann.security.code.image.length = 4

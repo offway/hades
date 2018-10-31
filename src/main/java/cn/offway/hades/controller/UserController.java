@@ -1,7 +1,6 @@
 package cn.offway.hades.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,63 +11,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.offway.hades.domain.PhAdmin;
 import cn.offway.hades.domain.PhLotteryTicket;
-import cn.offway.hades.domain.PhResource;
-import cn.offway.hades.service.PhLotteryTicketService;
+import cn.offway.hades.service.PhAdminService;
 
+/**
+ * 用户管理
+ * @author wn
+ *
+ */
 @Controller
-@RequestMapping
-public class IndexController {
+public class UserController {
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
-
+	
 	@Autowired
-	private PhLotteryTicketService phLotteryTicketService;
+	private PhAdminService phAdminService;
 
-	/**
-	 * 登录页面
-	 * @return
-	 */
-	@RequestMapping("/login.html")
-	public String login(){
-		return "login";
+	@RequestMapping("/users.html")
+	public String users(){
+		return "users";
 	}
-	
-	
-	
-	
-	@RequestMapping("/resoures")
-	@ResponseBody
-	public List<PhResource> resoures(@AuthenticationPrincipal PhAdmin admin){
-		return admin.getResources();
-	}
-	
-	
-	
-	/**
-	 * 首页
-	 * @return
-	 */
-	@RequestMapping("/")
-	public String index(){
-		return "home";
-	}
-	
-	/**
-	 * 活动-抽奖
-	 * @return
-	 */
-	@RequestMapping("/activity-lottery.html")
-	public String activityLottery(){
-		return "activity-lottery";
-	}
-	
 	
 	/**
 	 * 查询数据
@@ -77,8 +45,8 @@ public class IndexController {
 	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping("/activity-lottery-data")
-	public Map<String, Object> activityLotteryData(HttpServletRequest request,String code){
+	@RequestMapping("/users-data")
+	public Map<String, Object> usersData(HttpServletRequest request,String username){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -86,7 +54,7 @@ public class IndexController {
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
 		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		Page<PhLotteryTicket> pages = phLotteryTicketService.findByPage(code, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		Page<PhAdmin> pages = phAdminService.findByPage(username, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();
@@ -97,5 +65,21 @@ public class IndexController {
 		return map;
 	}
 	
-	
+	/**
+	 * 删除用户
+	 * @param ids
+	 * @return
+	 */
+	@ResponseBody
+	@PostMapping("/users-delete")
+	public boolean delete(String ids){
+		try {
+			phAdminService.deleteAdmin(ids);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("删除用户异常,用户id:{}",ids,e);
+			return false;
+		}
+	}
 }

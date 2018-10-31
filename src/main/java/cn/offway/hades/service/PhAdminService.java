@@ -1,5 +1,8 @@
 package cn.offway.hades.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import cn.offway.hades.domain.PhAdmin;
 
 /**
@@ -13,4 +16,8 @@ public interface PhAdminService{
 	PhAdmin save(PhAdmin phAdmin);
 	
 	PhAdmin findOne(Long id);
+
+	Page<PhAdmin> findByPage(String code, Pageable page);
+
+	void deleteAdmin(String ids) throws Exception;
 }
