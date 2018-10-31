@@ -26,4 +26,13 @@ spring:
   #是否自动生成/修改数据库表
     show-sql: true
     generate-ddl: false
-    
+#浏览器环境配置项，参见BrowserProperties
+vinann:
+  security: 
+    browser:
+      signInPage: /login.html
+      signInResponseType: JSON
+      singInSuccessUrl: /
+      #rememberMeSeconds: 294000
+      signOutUrl: /login.html
+     

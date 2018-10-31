@@ -5,14 +5,14 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * 抽奖券表
+ * 邀请记录表
  *
  * @author wn
  * @version $v: 1.0.0, $time:2018-10-15 16:49:00 Exp $
  */
 @Entity
-@Table(name = "ph_lottery_ticket")
-public class PhLotteryTicket implements Serializable {
+@Table(name = "ph_invite_record")
+public class PhInviteRecord implements Serializable {
 
     /** ID **/
     private Long id;
@@ -23,17 +23,14 @@ public class PhLotteryTicket implements Serializable {
     /** 微信用户ID **/
     private String unionid;
 
-    /** 微信用户头像 **/
-    private String headUrl;
+    /** 被邀请用户ID **/
+    private String inviteUnionid;
 
-    /** 微信用户昵称 **/
-    private String nickName;
+    /** 被邀请用户头像 **/
+    private String inviteHeadUrl;
 
-    /** 抽奖码 **/
-    private String code;
-
-    /** 来源[0-抽奖登记，1-邀请好友，2-分享] **/
-    private String source;
+    /** 被邀请用户昵称 **/
+    private String inviteNickName;
 
     /** 创建时间 **/
     private Date createTime;
@@ -62,7 +59,7 @@ public class PhLotteryTicket implements Serializable {
         this.productId = productId;
     }
 
-    @Column(name = "unionid", length = 200)
+    @Column(name = "unionid", length = 50)
     public String getUnionid() {
         return unionid;
     }
@@ -71,40 +68,31 @@ public class PhLotteryTicket implements Serializable {
         this.unionid = unionid;
     }
 
-    @Column(name = "head_url", length = 500)
-    public String getHeadUrl() {
-        return headUrl;
+    @Column(name = "invite_unionid", length = 50)
+    public String getInviteUnionid() {
+        return inviteUnionid;
     }
 
-    public void setHeadUrl(String headUrl) {
-        this.headUrl = headUrl;
+    public void setInviteUnionid(String inviteUnionid) {
+        this.inviteUnionid = inviteUnionid;
     }
 
-    @Column(name = "nick_name", length = 200)
-    public String getNickName() {
-        return nickName;
+    @Column(name = "invite_head_url", length = 500)
+    public String getInviteHeadUrl() {
+        return inviteHeadUrl;
     }
 
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
+    public void setInviteHeadUrl(String inviteHeadUrl) {
+        this.inviteHeadUrl = inviteHeadUrl;
     }
 
-    @Column(name = "code", length = 50)
-    public String getCode() {
-        return code;
+    @Column(name = "invite_nick_name", length = 200)
+    public String getInviteNickName() {
+        return inviteNickName;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    @Column(name = "source", length = 2)
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
+    public void setInviteNickName(String inviteNickName) {
+        this.inviteNickName = inviteNickName;
     }
 
     @Temporal(TemporalType.TIMESTAMP)

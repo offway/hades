@@ -31,10 +31,10 @@
 						
 				
 						
-				<ul id="main-menu" class="main-menu">
+				 <ul id="main-menu" class="main-menu">
 					<!-- add class "multiple-expanded" to allow multiple submenus to open -->
 					<!-- class "auto-inherit-active-class" will automatically add "active" class for parent elements who are marked already with class "active" -->
-					<li>
+					<!-- <li>
 						<a href="#">
 							<i class="linecons-cog"></i>
 							<span >活动数据</span>
@@ -46,8 +46,15 @@
 								</a>
 							</li>
 						</ul>
+						<ul>
+							<li>
+								<a href="/activity-lottery">
+									<span class="title">抽奖码明细1</span>
+								</a>
+							</li>
+						</ul>
 					</li>
-					<!-- <li>
+					<li>
 						<a href="#">
 							<i class="linecons-desktop"></i>
 							<span class="title">收益结算</span>
@@ -73,8 +80,28 @@
 							</li>
 						</ul>
 					</li> -->
-				</ul>
+				</ul> 
 						
 			</div>
 			
 		</div>
+		<script th:inline="javascript">
+			/*<![CDATA[*/	
+			
+	           (function ($) {
+					 $.post("/resoures",{},function(data){
+						
+						var html = "";
+						data.forEach(function(val,index,arr){
+							html+="<li><a href='#'><i class='"+val.icon+"'></i><span >"+val.name+"</span></a>";
+							val.childList.forEach(function(v,index,arr){
+								html+="<ul><li><a href='"+v.link+"'><span class='title'>"+v.name+"</span></a></li></ul>";
+							});
+							html= html+"</li>";
+						});
+						$("#main-menu").html(html);
+					})
+		
+	           })(jQuery);
+			/*]]>*/
+		</script>

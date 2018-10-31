@@ -5,14 +5,14 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * 抽奖券表
+ * 分享记录表
  *
  * @author wn
  * @version $v: 1.0.0, $time:2018-10-15 16:49:00 Exp $
  */
 @Entity
-@Table(name = "ph_lottery_ticket")
-public class PhLotteryTicket implements Serializable {
+@Table(name = "ph_share_record")
+public class PhShareRecord implements Serializable {
 
     /** ID **/
     private Long id;
@@ -23,17 +23,11 @@ public class PhLotteryTicket implements Serializable {
     /** 微信用户ID **/
     private String unionid;
 
-    /** 微信用户头像 **/
+    /** 用户头像 **/
     private String headUrl;
 
-    /** 微信用户昵称 **/
+    /** 用户昵称 **/
     private String nickName;
-
-    /** 抽奖码 **/
-    private String code;
-
-    /** 来源[0-抽奖登记，1-邀请好友，2-分享] **/
-    private String source;
 
     /** 创建时间 **/
     private Date createTime;
@@ -62,7 +56,7 @@ public class PhLotteryTicket implements Serializable {
         this.productId = productId;
     }
 
-    @Column(name = "unionid", length = 200)
+    @Column(name = "unionid", length = 50)
     public String getUnionid() {
         return unionid;
     }
@@ -87,24 +81,6 @@ public class PhLotteryTicket implements Serializable {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
-    }
-
-    @Column(name = "code", length = 50)
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    @Column(name = "source", length = 2)
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
