@@ -129,4 +129,16 @@ public class PhAdminServiceImpl implements PhAdminService {
 		phAdmin.setPassword(passwordEncoder.encode(DEFAULT_PWD));
 		save(phAdmin);
 	}
+	
+	@Override
+	public boolean editPwd(Long id,String password,String newpassword) throws Exception{
+		PhAdmin phAdmin = findOne(id);
+		if(passwordEncoder.matches(password, phAdmin.getPassword())){
+			phAdmin.setPassword(passwordEncoder.encode(newpassword));
+			save(phAdmin);
+			return true;
+		}else{
+			return false;
+		}
+	}
 }

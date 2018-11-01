@@ -1,0 +1,85 @@
+<div class="modal fade in" id="modal-editPwd">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">修改密码</h4>
+			</div>
+			
+			<div class="modal-body">
+				<form role="form" id="editPwdForm">
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="field-3" class="control-label">旧密码</label>
+							<input type="password" class="form-control" name="password" placeholder="旧密码" />
+						</div>	
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="field-3" class="control-label">新密码</label>
+							<input type="password" class="form-control" name="password1" placeholder="新密码"/>
+						</div>	
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<div class="form-group">
+							<label for="field-3" class="control-label">再次输入新密码</label>
+							<input type="password" class="form-control" name="password2" placeholder="再次输入新密码"/>
+						</div>	
+					</div>
+				</div>
+			
+				</form>
+			</div>
+			
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-info editPwd">保存</button>
+			</div>
+			
+		</div>
+	</div>
+</div>
+
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+           //保存
+	$(".btn.btn-info.editPwd").click(function(){
+		var form = $("#editPwdForm");
+		var password = form.find("input[name='password']").val();
+		var password1 = form.find("input[name='password1']").val();
+		var password2 = form.find("input[name='password2']").val();
+		if(password =='' || password1 =='' ||password2 ==''){
+			toastr.error("请输入完整信息后再保存", "温馨提示");
+			return ;
+		}
+		if(password1 !=password2 ){
+			toastr.error("两次新密码不一致", "温馨提示");
+			return ;
+		}
+		
+		
+		$.post("/users-editPwd",{
+			newpassword:password1,
+			password:password
+		},function(data){
+			if(data){
+				jQuery('#modal-editPwd').modal('hide');
+				toastr.success("操作已成功！", "温馨提示");
+				setTimeout(function(){
+					window.location.href="/signOut";
+				}, 1000);
+
+			}else{
+				toastr.error("操作失败,请检查老密码是否正确", "温馨提示");
+			}
+		});
+	});
+/*]]>*/
+</script>

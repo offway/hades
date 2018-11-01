@@ -24,4 +24,6 @@ public interface PhAdminService{
 	void save(PhAdmin phAdmin, Long[] roles);
 
 	void resetPwd(Long id) throws Exception;
+
+	boolean editPwd(Long id, String password, String newpassword) throws Exception;
 }

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -123,6 +124,18 @@ public class UserController {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("重置密码异常,id:{}",id,e);
+			return false;
+		}
+	}
+	
+	@ResponseBody
+	@PostMapping("/users-editPwd")
+	public boolean editPwd(@AuthenticationPrincipal PhAdmin admin,String password,String newpassword){
+		try {
+			return phAdminService.editPwd(admin.getId(), password, newpassword);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("修改密码异常,id:{}",admin.getId(),e);
 			return false;
 		}
 	}
