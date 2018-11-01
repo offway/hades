@@ -1,5 +1,7 @@
 package cn.offway.hades.service;
 
+import java.util.List;
+
 import cn.offway.hades.domain.PhRoleadmin;
 
 /**
@@ -13,4 +15,6 @@ public interface PhRoleadminService{
 	PhRoleadmin save(PhRoleadmin phRoleadmin);
 	
 	PhRoleadmin findOne(Long id);
+
+	List<Long> findRoleIdByAdminId(Long adminId);
 }

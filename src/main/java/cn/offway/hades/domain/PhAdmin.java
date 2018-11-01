@@ -30,7 +30,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(name = "ph_admin")
 public class PhAdmin implements UserDetails {
 
-    /**  **/
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -4912345585788310081L;
+
+	/**  **/
     private Long id;
 
     /**  **/
@@ -41,6 +46,9 @@ public class PhAdmin implements UserDetails {
 
     /**  **/
     private String username;
+    
+    /** 用户昵称 **/
+    private String nickname;
     
     private Set<String> urls = new HashSet<>();
     
@@ -84,6 +92,15 @@ public class PhAdmin implements UserDetails {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+    
+    @Column(name = "nickname", length = 255)
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     @Transient

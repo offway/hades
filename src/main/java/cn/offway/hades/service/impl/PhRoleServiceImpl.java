@@ -25,6 +25,7 @@ import org.thymeleaf.util.ListUtils;
 import cn.offway.hades.domain.PhResource;
 import cn.offway.hades.domain.PhRole;
 import cn.offway.hades.domain.PhRoleresource;
+import cn.offway.hades.repository.PhResourceRepository;
 import cn.offway.hades.repository.PhRoleRepository;
 import cn.offway.hades.repository.PhRoleadminRepository;
 import cn.offway.hades.repository.PhRoleresourceRepository;
@@ -51,6 +52,9 @@ public class PhRoleServiceImpl implements PhRoleService {
 	@Autowired
 	private PhRoleadminRepository phRoleadminRepository;
 	
+	@Autowired
+	private PhResourceRepository phResourceRepository;
+	
 	
 	@Override
 	public PhRole save(PhRole phRole){
@@ -60,6 +64,11 @@ public class PhRoleServiceImpl implements PhRoleService {
 	@Override
 	public PhRole findOne(Long id){
 		return phRoleRepository.findOne(id);
+	}
+	
+	@Override
+	public List<PhRole> findAll(){
+		return phRoleRepository.findAll();
 	}
 	
 	@Override
@@ -92,6 +101,7 @@ public class PhRoleServiceImpl implements PhRoleService {
 		phRoleRepository.deleteByRoleIds(idList);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, readOnly = false, rollbackFor = Exception.class)
 	public void save(PhRole phRole,Long[] resourceIds) throws Exception{
@@ -102,15 +112,32 @@ public class PhRoleServiceImpl implements PhRoleService {
 		
 		Long phRoleId = phRole.getId();
 		
+		List<Long> idList = (List<Long>)ListUtils.toList(resourceIds);
+		List<PhResource> phResources = phResourceRepository.findByIds(idList);
 		List<PhRoleresource> roleresources = new ArrayList<>();
-		for (Long resourceId : resourceIds) {
-			PhRoleresource phRoleresource = new PhRoleresource();
-			phRoleresource.setCreatedtime(now);
-			phRoleresource.setResourceId(resourceId);
-			phRoleresource.setRoleId(phRoleId);
-			roleresources.add(phRoleresource);
+		for (PhResource phResource : phResources) {
+			getResources(now, phRoleId, roleresources, phResource);
 		}
 		phRoleresourceRepository.deleteByRoleId(phRoleId);
 		phRoleresourceRepository.save(roleresources);
+	}
+
+	/**
+	 * 查询父菜单
+	 * @param now
+	 * @param phRoleId
+	 * @param roleresources
+	 * @param phResource
+	 */
+	private void getResources(Date now, Long phRoleId, List<PhRoleresource> roleresources, PhResource phResource) {
+		if(null != phResource.getParentId()){
+			PhResource phResource1 = phResourceRepository.findOne(phResource.getParentId());
+			getResources(now, phRoleId, roleresources, phResource1);
+		}
+		PhRoleresource phRoleresource = new PhRoleresource();
+		phRoleresource.setCreatedtime(now);
+		phRoleresource.setResourceId(phResource.getId());
+		phRoleresource.setRoleId(phRoleId);
+		roleresources.add(phRoleresource);
 	}
 }

@@ -29,4 +29,13 @@ public interface PhRoleadminRepository extends JpaRepository<PhRoleadmin,Long>,J
 	@Query(nativeQuery=true,value="delete from ph_roleadmin where role_id in(?1)")
 	int deleteByRoleIds(List<Long> ids);
 	
+	
+	@Transactional
+	@Modifying
+	@Query(nativeQuery=true,value="delete from ph_roleadmin where admin_id =?1")
+	int deleteByAdminId(Long id);
+	
+	@Query(nativeQuery=true,value="select role_id from ph_roleadmin where admin_id =?1")
+	List<Long> findRoleIdByAdminId(Long adminId);
+	
 }

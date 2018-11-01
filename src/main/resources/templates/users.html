@@ -5,6 +5,8 @@
 	<title>用户管理</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+	<link rel="stylesheet" href="assets/js/multiselect/css/multi-select.css"/>
+	
 </head>
 <body class="page-body">
 
@@ -37,9 +39,14 @@
 				<div class="panel-heading">
 					<form role="form" class="form-inline">
 						<div class="form-group ">
-								<div class="input-group">
-									<input type="text" name="username" class="form-control" style="height:35px" placeholder="用户名"/>
-								</div>
+							<div class="input-group">
+								<input type="text" name="username" class="form-control" style="height:35px" placeholder="用户名"/>
+							</div>
+						</div>
+						<div class="form-group ">
+							<div class="input-group">
+								<input type="text" name="nickname" class="form-control" style="height:35px" placeholder="昵称"/>
+							</div>
 						</div>
 						<div class="form-group">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
@@ -52,9 +59,10 @@
 					</table>
 					
 				</div>
-				<button class="btn btn-info" onclick="jQuery('#modal-1').modal('show', {backdrop: 'fade'});">添加</button>
-				<button class="btn btn-info" onclick="jQuery('#modal-1').modal('show', {backdrop: 'fade'});">修改</button>
-				<button class="btn btn-info" onclick="jQuery('#modal-1').modal('show', {backdrop: 'fade'});">删除</button>
+				<button class="btn btn-info add">添加</button>
+				<button class="btn btn-info edit">修改</button>
+				<button class="btn btn-info delete">删除</button>
+				<button class="btn btn-info resetPwd">重置密码</button>
 			</div>
 			
 					
@@ -84,10 +92,90 @@
 		</div>
 	</div>
 	
+	<div class="modal fade in" id="modal-6">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">添加用户</h4>
+				</div>
+				
+				<div class="modal-body">
+					<form role="form" id="saveForm">
+					<input type="hidden" name="id"/>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-3" class="control-label">用户名</label>
+								<input type="text" class="form-control" name="username" placeholder="用户名" onkeyup="this.value=this.value.replace(/[^\w_]/g,'');"/>
+							</div>	
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-3" class="control-label">昵称</label>
+								<input type="text" class="form-control" name="nickname" placeholder="昵称"/>
+							</div>	
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class=" control-label" for="tagsinput-1">选择角色</label>
+								
+								<div class="col-md-12">
+									
+									<select class="form-control" multiple="multiple" id="multi-select" name="roles">
+										<option value="1">Silky Door</option>
+										<option value="2">The Absent Twilight</option>
+										<option value="3">Tales of Flames</option>
+										<option value="4">The Princess's Dream</option>
+										<option value="5">The Fairy of the Wind</option>
+										<option value="6">Children in the Boy</option>
+										<option value="7">Frozen Savior</option>
+										<option value="8">The Missing Thorns</option>
+										<option value="9">Healing of Serpent</option>
+										<option value="10">The Voyagers's Girlfriend</option>
+										<option value="11">The Nothing of the Gate</option>
+										<option value="12">Healing in the Scent</option>
+										<option value="13">Final Twins</option>
+										<option value="14">The Willing Rose</option>
+										<option value="15">Thorn of Emperor</option>
+										<option value="16" selected="selected">The Predator's Pirates</option>
+										<option value="17">The Lord of the Girl</option>
+										<option value="18" selected="selected">Flowers in the Spirit</option>
+										<option value="19" selected="selected">Healing in the Silence</option>
+										<option value="20">Planet of Bridges</option>
+									</select>
+									
+								</div>
+							</div>
+								
+							
+						</div>
+					</div>
+				
+					</form>
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info save">保存</button>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
 	
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
-	<script type="text/javascript">
+	<script src="assets/js/multiselect/js/jquery.multi-select.js"></script>
+	
+	<script th:inline="javascript">
+	/*<![CDATA[*/
 	jQuery(document).ready(function($)
 	{
 		var oTable = $("#example-1").dataTable({
@@ -128,7 +216,12 @@
 	                title: "用户名"
             	}, 
                 {
-                    targets: 3,
+               		targets: 3,
+	                data: "nickname",
+	                title: "昵称"
+            	},
+                {
+                    targets: 4,
                     data: "createdtime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -151,6 +244,17 @@
 			});
 		})
 		
+		$(".btn.btn-info.delete").click(function(){
+			var userId = $("input[name='userId']:checked");
+			if(userId.length < 1){
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return ;
+			}
+			jQuery('#modal-1').modal('show', {backdrop: 'fade'});
+			
+		});
+		
+		
 		$(".deteleBtn").click(function(){
 			var ids='';
 			$("input[name='userId']:checked").each(function(i,e){
@@ -172,7 +276,138 @@
 		});
 		
 		
+		$(".btn.btn-info.add").click(function(){
+			$("#saveForm").find("input[name='id']").val("");
+			$.get("/roles-all",{},function(data){
+				$('#multi-select').empty();
+				 $.each(data,function(i,e){
+					$('#multi-select').append("<option value="+e.id+">"+e.name+"</option>");
+				});
+				 
+				$("#multi-select").multiSelect({
+					afterInit: function()
+					{
+						// Add alternative scrollbar to list
+						this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar();
+					},
+					afterSelect: function()
+					{
+						// Update scrollbar size
+						this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar('update');
+					}
+				});
+				
+				$('#multi-select').multiSelect('refresh');
+
+				
+				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+				
+			});
+			
+			
+		});
+		
+		//保存
+		$(".btn.btn-info.save").click(function(){
+			var form = $("#saveForm");
+			var username = form.find("input[name='username']").val();
+			if(username ==''){
+				toastr.error("用户名不能为空", "温馨提示");
+				return ;
+			}
+			
+			var nickname = form.find("input[name='nickname']").val();
+			if(nickname ==''){
+				toastr.error("昵称不能为空", "温馨提示");
+				return ;
+			}
+			
+			var id = form.find("input[name='id']").val();
+			
+			$.post("/users-save",{
+				id:id,
+				username:username,
+				nickname:nickname,
+				roles:$("#multi-select").val()
+			},function(data){
+				if(data){
+					jQuery('#modal-6').modal('hide');
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw(); 
+				}else{
+					toastr.error("操作失败,请检查用户名是否存在", "温馨提示");
+				}
+			});
+		});
+		
+		
+		
+		$(".btn.btn-info.resetPwd").click(function(){
+			var userId = $("input[name='userId']:checked");
+			if(userId.length!=1){
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return ;
+			}
+			
+			$.post("/users-resetPwd",{id:userId.val()},function(data){
+				if(data){
+					toastr.success("操作已成功！", "温馨提示");
+				}else{
+					toastr.error("操作失败", "温馨提示");
+				}
+			});
+		});
+		
+		$(".btn.btn-info.edit").click(function(){
+			
+			var userId = $("input[name='userId']:checked");
+			if(userId.length!=1){
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return ;
+			}
+			
+			
+			$.get("/users-one",{id:userId.val()},function(data){
+				var form = $("#saveForm");
+				form.find("input[name='id']").val(data.user.id);
+				form.find("input[name='username']").val(data.user.username);
+				form.find("input[name='nickname']").val(data.user.nickname);
+				var roleIds = data.roleIds;
+				$.get("/roles-all",{},function(data){
+					$('#multi-select').empty();
+					 $.each(data,function(i,e){
+						 if($.inArray(e.id, roleIds) == -1){
+							$('#multi-select').append("<option value="+e.id+">"+e.name+"</option>");
+						 }else{
+							$('#multi-select').append("<option value="+e.id+" selected='selected'>"+e.name+"</option>");
+						 }
+						 
+					});
+					 
+				 	$("#multi-select").multiSelect({
+						afterInit: function()
+						{
+							// Add alternative scrollbar to list
+							this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar();
+						},
+						afterSelect: function()
+						{
+							// Update scrollbar size
+							this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar('update');
+						}
+					});
+					
+					$('#multi-select').multiSelect('refresh');
+					jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+				});
+				
+			});
+			
+		});
+		
+		
 	});
+	/*]]>*/
 	</script>
 </body>
 

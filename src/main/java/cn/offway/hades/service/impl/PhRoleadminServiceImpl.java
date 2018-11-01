@@ -1,5 +1,7 @@
 package cn.offway.hades.service.impl;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +34,10 @@ public class PhRoleadminServiceImpl implements PhRoleadminService {
 	@Override
 	public PhRoleadmin findOne(Long id){
 		return phRoleadminRepository.findOne(id);
+	}
+	
+	@Override
+	public List<Long> findRoleIdByAdminId(Long adminId){
+		return phRoleadminRepository.findRoleIdByAdminId(adminId);
 	}
 }

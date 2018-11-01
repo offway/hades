@@ -1,5 +1,7 @@
 package cn.offway.hades.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -22,4 +24,6 @@ public interface PhRoleService{
 	void deleteRole(String ids) throws Exception;
 
 	void save(PhRole phRole, Long[] resourceIds) throws Exception;
+
+	List<PhRole> findAll();
 }

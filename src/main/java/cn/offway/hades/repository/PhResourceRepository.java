@@ -34,4 +34,7 @@ public interface PhResourceRepository extends JpaRepository<PhResource,Long>,Jpa
 	List<PhResource> findByParentId(Long parentId);
 	
 	List<PhResource> findByParentIdNotNull();
+	
+	@Query(nativeQuery=true,value="select * from ph_resource where id in(?1)")
+	List<PhResource> findByIds(List<Long> ids);
 }

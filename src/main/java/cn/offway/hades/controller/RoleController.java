@@ -1,6 +1,7 @@
 package cn.offway.hades.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -86,7 +87,7 @@ public class RoleController {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("删除用户异常,用户id:{}",ids,e);
+			logger.error("删除角色异常,用户id:{}",ids,e);
 			return false;
 		}
 	}
@@ -99,7 +100,7 @@ public class RoleController {
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("删除用户异常,phRole:{},resources:{}",JSON.toJSONString(phRole,SerializerFeature.WriteMapNullValue),resources,e);
+			logger.error("保存角色异常,phRole:{},resources:{}",JSON.toJSONString(phRole,SerializerFeature.WriteMapNullValue),resources,e);
 			return false;
 		}
 	}
@@ -112,5 +113,11 @@ public class RoleController {
 		resultMap.put("role", phRoleService.findOne(id));
 		resultMap.put("resourceIds", phRoleresourceService.findSourceIdByRoleId(id));
 		return resultMap;
+	}
+	
+	@ResponseBody
+	@GetMapping("/roles-all")
+	public List<PhRole> findAll(){
+		return phRoleService.findAll();
 	}
 }

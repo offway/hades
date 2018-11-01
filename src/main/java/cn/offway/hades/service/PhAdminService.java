@@ -17,7 +17,11 @@ public interface PhAdminService{
 	
 	PhAdmin findOne(Long id);
 
-	Page<PhAdmin> findByPage(String code, Pageable page);
-
 	void deleteAdmin(String ids) throws Exception;
+
+	Page<PhAdmin> findByPage(String username, String nickname, Pageable page);
+
+	void save(PhAdmin phAdmin, Long[] roles);
+
+	void resetPwd(Long id) throws Exception;
 }
