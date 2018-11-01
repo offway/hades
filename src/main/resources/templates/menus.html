@@ -369,6 +369,7 @@
 			
 			
 			$(".btn.btn-info.add").click(function(){
+				$("#saveForm").find("input[name='id']").val("");
 				$.post("/menus-parent",{},function(data){
 					
 					$('#s2example-2').empty();

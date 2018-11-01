@@ -1,6 +1,7 @@
 package cn.offway.hades.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -23,6 +24,7 @@ import org.thymeleaf.util.ListUtils;
 
 import cn.offway.hades.domain.PhResource;
 import cn.offway.hades.domain.PhRole;
+import cn.offway.hades.domain.PhRoleresource;
 import cn.offway.hades.repository.PhRoleRepository;
 import cn.offway.hades.repository.PhRoleadminRepository;
 import cn.offway.hades.repository.PhRoleresourceRepository;
@@ -88,5 +90,27 @@ public class PhRoleServiceImpl implements PhRoleService {
 		phRoleadminRepository.deleteByRoleIds(idList);
 		phRoleresourceRepository.deleteByRoleIds(idList);
 		phRoleRepository.deleteByRoleIds(idList);
+	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, readOnly = false, rollbackFor = Exception.class)
+	public void save(PhRole phRole,Long[] resourceIds) throws Exception{
+		
+		Date now = new Date();
+		phRole.setCreatedtime(now);
+		phRole = save(phRole);
+		
+		Long phRoleId = phRole.getId();
+		
+		List<PhRoleresource> roleresources = new ArrayList<>();
+		for (Long resourceId : resourceIds) {
+			PhRoleresource phRoleresource = new PhRoleresource();
+			phRoleresource.setCreatedtime(now);
+			phRoleresource.setResourceId(resourceId);
+			phRoleresource.setRoleId(phRoleId);
+			roleresources.add(phRoleresource);
+		}
+		phRoleresourceRepository.deleteByRoleId(phRoleId);
+		phRoleresourceRepository.save(roleresources);
 	}
 }

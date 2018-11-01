@@ -20,4 +20,6 @@ public interface PhRoleService{
 	Page<PhRole> findByPage(String name, Pageable page);
 
 	void deleteRole(String ids) throws Exception;
+
+	void save(PhRole phRole, Long[] resourceIds) throws Exception;
 }

@@ -32,4 +32,6 @@ public interface PhResourceRepository extends JpaRepository<PhResource,Long>,Jpa
 	int deleteByIds(List<Long> ids);
 	
 	List<PhResource> findByParentId(Long parentId);
+	
+	List<PhResource> findByParentIdNotNull();
 }

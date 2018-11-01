@@ -29,4 +29,6 @@ public interface PhResourceService{
 	void deleteResource(String ids) throws Exception;
 
 	List<PhResource> findByParentId(Long parentId);
+
+	List<PhResource> findByParentIdNotNull();
 }

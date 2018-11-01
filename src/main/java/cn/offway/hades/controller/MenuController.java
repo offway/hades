@@ -93,6 +93,13 @@ public class MenuController {
 	}
 	
 	@ResponseBody
+	@PostMapping("/menus-parent-notnull")
+	public List<PhResource> findByParentIdNotNull(){
+		return phResourceService.findByParentIdNotNull();
+	}
+	
+	
+	@ResponseBody
 	@PostMapping("/menus-save")
 	public boolean save(PhResource phResource){
 		try {

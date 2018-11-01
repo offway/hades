@@ -28,4 +28,12 @@ public interface PhRoleresourceRepository extends JpaRepository<PhRoleresource,L
 	@Modifying
 	@Query(nativeQuery=true,value="delete from ph_roleresource where role_id in(?1)")
 	int deleteByRoleIds(List<Long> ids);
+	
+	@Transactional
+	@Modifying
+	@Query(nativeQuery=true,value="delete from ph_roleresource where role_id = ?1")
+	int deleteByRoleId(Long id);
+	
+	@Query(nativeQuery=true,value="select resource_id from ph_roleresource where role_id = ?1")
+	List<Long> findSourceIdByRoleId(Long roleId);
 }

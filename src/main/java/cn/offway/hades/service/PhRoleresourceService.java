@@ -1,5 +1,7 @@
 package cn.offway.hades.service;
 
+import java.util.List;
+
 import cn.offway.hades.domain.PhRoleresource;
 
 /**
@@ -13,4 +15,6 @@ public interface PhRoleresourceService{
 	PhRoleresource save(PhRoleresource phRoleresource);
 	
 	PhRoleresource findOne(Long id);
+
+	List<Long> findSourceIdByRoleId(Long roleId);
 }

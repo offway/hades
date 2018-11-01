@@ -107,4 +107,9 @@ public class PhResourceServiceImpl implements PhResourceService {
 	public List<PhResource> findByParentId(Long parentId){
 		return phResourceRepository.findByParentId(parentId);
 	}
+	
+	@Override
+	public List<PhResource> findByParentIdNotNull(){
+		return phResourceRepository.findByParentIdNotNull();
+	}
 }

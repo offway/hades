@@ -12,14 +12,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import cn.offway.hades.domain.PhResource;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+
 import cn.offway.hades.domain.PhRole;
-import cn.offway.hades.service.PhResourceService;
 import cn.offway.hades.service.PhRoleService;
+import cn.offway.hades.service.PhRoleresourceService;
 
 /**
  * 角色管理
@@ -33,6 +37,9 @@ public class RoleController {
 	
 	@Autowired
 	private PhRoleService phRoleService;
+	
+	@Autowired
+	private PhRoleresourceService phRoleresourceService;
 
 	@RequestMapping("/roles.html")
 	public String roles(){
@@ -82,5 +89,28 @@ public class RoleController {
 			logger.error("删除用户异常,用户id:{}",ids,e);
 			return false;
 		}
+	}
+	
+	@ResponseBody
+	@PostMapping("/roles-save")
+	public boolean save(PhRole phRole,@RequestParam(required = false, value="resources[]") Long[] resources){
+		try {
+			phRoleService.save(phRole, resources);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("删除用户异常,phRole:{},resources:{}",JSON.toJSONString(phRole,SerializerFeature.WriteMapNullValue),resources,e);
+			return false;
+		}
+	}
+	
+	@ResponseBody
+	@GetMapping("/roles-one")
+	public Map<String, Object> rolesOne(Long id){
+		
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("role", phRoleService.findOne(id));
+		resultMap.put("resourceIds", phRoleresourceService.findSourceIdByRoleId(id));
+		return resultMap;
 	}
 }

@@ -5,6 +5,8 @@
 	<title>角色管理</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+	<link rel="stylesheet" href="assets/js/multiselect/css/multi-select.css"/>
+	
 </head>
 <body class="page-body">
 
@@ -52,9 +54,9 @@
 					</table>
 					
 				</div>
-				<button class="btn btn-info" onclick="jQuery('#modal-1').modal('show', {backdrop: 'fade'});">添加</button>
-				<button class="btn btn-info" onclick="jQuery('#modal-1').modal('show', {backdrop: 'fade'});">修改</button>
-				<button class="btn btn-info" onclick="jQuery('#modal-1').modal('show', {backdrop: 'fade'});">删除</button>
+				<button class="btn btn-info add">添加</button>
+				<button class="btn btn-info edit">修改</button>
+				<button class="btn btn-info delete">删除</button>
 			</div>
 			
 					
@@ -83,11 +85,85 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade in" id="modal-6">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">添加角色</h4>
+				</div>
+				
+				<div class="modal-body">
+					<form role="form" id="saveForm">
+					<input type="hidden" name="id"/>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-3" class="control-label">角色名称</label>
+								
+								<input type="text" class="form-control" name="name" placeholder="角色名称"/>
+							</div>	
+							
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class=" control-label" for="tagsinput-1">选择菜单</label>
+								
+								<div class="col-md-12">
+									
+									<select class="form-control" multiple="multiple" id="multi-select" name="resources">
+										<option value="1">Silky Door</option>
+										<option value="2">The Absent Twilight</option>
+										<option value="3">Tales of Flames</option>
+										<option value="4">The Princess's Dream</option>
+										<option value="5">The Fairy of the Wind</option>
+										<option value="6">Children in the Boy</option>
+										<option value="7">Frozen Savior</option>
+										<option value="8">The Missing Thorns</option>
+										<option value="9">Healing of Serpent</option>
+										<option value="10">The Voyagers's Girlfriend</option>
+										<option value="11">The Nothing of the Gate</option>
+										<option value="12">Healing in the Scent</option>
+										<option value="13">Final Twins</option>
+										<option value="14">The Willing Rose</option>
+										<option value="15">Thorn of Emperor</option>
+										<option value="16" selected="selected">The Predator's Pirates</option>
+										<option value="17">The Lord of the Girl</option>
+										<option value="18" selected="selected">Flowers in the Spirit</option>
+										<option value="19" selected="selected">Healing in the Silence</option>
+										<option value="20">Planet of Bridges</option>
+									</select>
+									
+								</div>
+							</div>
+								
+							
+						</div>
+					</div>
+				
+					</form>
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info save">保存</button>
+				</div>
+				
+			</div>
+		</div>
+	</div>
 	
 	
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
-	<script type="text/javascript">
+	<script src="assets/js/multiselect/js/jquery.multi-select.js"></script>
+	
+	<script th:inline="javascript">
+	/*<![CDATA[*/
 	jQuery(document).ready(function($)
 	{
 		var oTable = $("#example-1").dataTable({
@@ -149,7 +225,18 @@
 			$("input[name='roleId']").each(function(i,e){
 				 this.checked = obj[0].checked;
 			});
-		})
+		});
+		
+		 $(".btn.btn-info.delete").click(function(){
+			var roleId = $("input[name='roleId']:checked");
+			if(roleId.length < 1){
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return ;
+			}
+			jQuery('#modal-1').modal('show', {backdrop: 'fade'});
+			
+		});
+		
 		
 		$(".deteleBtn").click(function(){
 			var ids='';
@@ -172,7 +259,109 @@
 		});
 		
 		
+		$(".btn.btn-info.add").click(function(){
+			$("#saveForm").find("input[name='id']").val("");
+			$.post("/menus-parent-notnull",{},function(data){
+				$('#multi-select').empty();
+				 $.each(data,function(i,e){
+					$('#multi-select').append("<option value="+e.id+">"+e.name+"</option>");
+				});
+				 
+				$("#multi-select").multiSelect({
+					afterInit: function()
+					{
+						// Add alternative scrollbar to list
+						this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar();
+					},
+					afterSelect: function()
+					{
+						// Update scrollbar size
+						this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar('update');
+					}
+				});
+				
+				$('#multi-select').multiSelect('refresh');
+
+				
+				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+				
+			});
+			
+			
+		});
+		
+		//保存
+		$(".btn.btn-info.save").click(function(){
+			var form = $("#saveForm");
+			var name = form.find("input[name='name']").val();
+			if(name ==''){
+				toastr.error("角色名不能为空", "温馨提示");
+				return ;
+			}
+			
+			var id = form.find("input[name='id']").val();
+			
+			$.post("/roles-save",{id:id,name:name,resources:$("#multi-select").val()},function(data){
+				if(data){
+					jQuery('#modal-6').modal('hide');
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw(); 
+				}else{
+					toastr.error("操作失败", "温馨提示");
+				}
+			});
+		});
+		
+		$(".btn.btn-info.edit").click(function(){
+			
+			var roleId = $("input[name='roleId']:checked");
+			if(roleId.length!=1){
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return ;
+			}
+			
+			
+			$.get("/roles-one",{id:roleId.val()},function(data){
+				var form = $("#saveForm");
+				form.find("input[name='id']").val(data.role.id);
+				form.find("input[name='name']").val(data.role.name);
+				var resourceIds = data.resourceIds;
+				$.post("/menus-parent-notnull",{},function(data){
+					$('#multi-select').empty();
+					 $.each(data,function(i,e){
+						 if($.inArray(e.id, resourceIds) == -1){
+							$('#multi-select').append("<option value="+e.id+">"+e.name+"</option>");
+						 }else{
+							$('#multi-select').append("<option value="+e.id+" selected='selected'>"+e.name+"</option>");
+						 }
+						 
+					});
+					 
+				 	$("#multi-select").multiSelect({
+						afterInit: function()
+						{
+							// Add alternative scrollbar to list
+							this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar();
+						},
+						afterSelect: function()
+						{
+							// Update scrollbar size
+							this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar('update');
+						}
+					});
+					
+					$('#multi-select').multiSelect('refresh');
+					jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+				});
+				
+			});
+			
+			
+		});
+		
+		
 	});
+	/*]]>*/
 	</script>
 </body>
 
