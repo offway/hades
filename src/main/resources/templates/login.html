@@ -142,7 +142,8 @@
 		        			window.location.href="/";
 		        		},
 		        		error:function(data){
-		        			toastr.error(JSON.parse(data.responseText).content, "登录异常", opts);
+		        			//toastr.error(JSON.parse(data.responseText).content, "登录异常", opts);
+		        			toastr.error("请检查用户名密码是否错误", "登录异常", opts);
 		        		}
 		        		
 		        	})
