@@ -2,9 +2,15 @@
 server: 
 #HTTP端口
   port: 8088
-
-spring: 
-#数据源
+  session:  
+    #session超时时间，单位秒
+    timeout:  600
+    
+spring:
+  #集群session存储方式
+  session:  
+    store-type: none  
+  #数据源
   datasource: 
     url:  jdbc:mysql://rm-uf6bdv92a95017474oo.mysql.rds.aliyuncs.com:3306/phweb?useUnicode=true&amp;characterEncoding=utf-8
     username:  puhao
