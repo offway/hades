@@ -17,9 +17,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import cn.offway.hades.domain.PhLotteryTicket;
+import cn.offway.hades.domain.PhProductInfo;
+import cn.offway.hades.dto.Template;
+import cn.offway.hades.dto.TemplateParam;
 import cn.offway.hades.repository.PhLotteryTicketRepository;
 import cn.offway.hades.service.PhLotteryTicketService;
+import cn.offway.hades.service.PhProductInfoService;
+import cn.offway.hades.utils.HttpClientUtil;
 
 
 
@@ -37,6 +45,9 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 
 	@Autowired
 	private PhLotteryTicketRepository phLotteryTicketRepository;
+	
+	@Autowired
+	private PhProductInfoService phProductInfoService;
 	
 	@Override
 	public PhLotteryTicket save(PhLotteryTicket phLotteryTicket){
@@ -77,6 +88,81 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 			}
 		}, page);
 	}
+	
+	@Override
+	public void notice(Long productId) {
+
+		
+		String token = getToken();
+		
+		PhProductInfo phProductInfo = phProductInfoService.findOne(productId);
+		
+		List<Object> datas = phLotteryTicketRepository.findNoticeData(productId);
+		for (Object obj : datas) {
+			Object[] data = (Object[])obj;
+			String openid = String.valueOf(data[0]);
+			String formid = String.valueOf(data[1]);
+			
+			// 模块消息配置
+			Template tem = new Template();
+			tem.setTemplateId("WTNwoOQEHWerZGTi9W-yLOjx4aavpxsArHtZoWBeLSQ");
+			tem.setFormId(formid);
+			tem.setTopColor("#00DD00");
+			tem.setToUser(openid);
+			tem.setPage("/pages/promo_reg/promo_reg.js?&id="+phProductInfo.getId());
+			
+			List<TemplateParam> paras = new ArrayList<TemplateParam>();
+			paras.add(new TemplateParam("keyword1", "开奖通知", "#0044BB"));
+			paras.add(new TemplateParam("keyword2", phProductInfo.getName(), "#0044BB"));
+			paras.add(new TemplateParam("keyword3", "活动已开奖，幸运儿是你吗？点击查看！", "#0044BB"));
+			
+			tem.setEmphasis_keyword("keyword1.DATA");
+			
+			tem.setTemplateParamList(paras);
+			
+			// 推送模版消息
+			sendTemplateMsg(tem, token);
+			
+		}
+
+	}
+
+	/**
+	 * 获取 access_token
+	 */
+	public String getToken() {
+		String requestUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx12d022a9493f1b26&secret=52ba3a89ae58aa6a2294806d516d6107";
+		String result = HttpClientUtil.post(requestUrl, "");
+		JSONObject jsonObject = JSON.parseObject(result);
+		if (jsonObject != null) {
+			String access_token = jsonObject.getString("access_token");
+			return access_token;
+		} else {
+			return "";
+		}
+	}
+
+	public void sendTemplateMsg(Template template, String token) {
+		String requestUrl = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token=ACCESS_TOKEN";
+		requestUrl = requestUrl.replace("ACCESS_TOKEN", token);
+		String jsonString = template.toJSON();
+
+		String result = HttpClientUtil.post(requestUrl, jsonString);
+		JSONObject jsonResult = JSON.parseObject(result);
+		if (jsonResult != null) {
+			int errorCode = jsonResult.getIntValue("errcode");
+			String errorMessage = jsonResult.getString("errmsg");
+			if (errorCode == 0) {
+				logger.info("模板消息发送成功:" + jsonResult);
+			} else {
+				logger.info("模板消息发送失败:" + errorCode + "," + errorMessage);
+			}
+		} else {
+			logger.info("模板消息发送失败:" + jsonResult);
+		}
+	}
+	
+	
 
 	
 }

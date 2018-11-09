@@ -32,7 +32,7 @@ public class PhLotteryTicket implements Serializable {
     /** 抽奖码 **/
     private String code;
 
-    /** 来源[0-抽奖登记，1-邀请好友，2-分享] **/
+    /** 来源[0-抽奖登记，1-邀请好友] **/
     private String source;
 
     /** 创建时间 **/

@@ -1,8 +1,16 @@
 package cn.offway.hades.domain;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  * 活动产品表
@@ -22,6 +30,27 @@ public class PhProductInfo implements Serializable {
 
     /** 活动描述 **/
     private String desc;
+
+    /** 活动列表图 **/
+    private String image;
+
+    /** 活动banner **/
+    private String banner;
+
+    /** 奖品价值[单位RMB] **/
+    private Double price;
+
+    /** 缩略图 **/
+    private String thumbnail;
+
+    /** 分享图片 **/
+    private String shareImage;
+
+    /** 分享标题 **/
+    private String shareTitle;
+
+    /** 分享描述 **/
+    private String shareDesc;
 
     /** 活动开始时间 **/
     private Date beginTime;
@@ -56,13 +85,76 @@ public class PhProductInfo implements Serializable {
         this.name = name;
     }
 
-    @Column(name = "desc", length = 50)
+    @Column(name = "desc", length = 200)
     public String getDesc() {
         return desc;
     }
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    @Column(name = "image", length = 100)
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    @Column(name = "banner", length = 100)
+    public String getBanner() {
+        return banner;
+    }
+
+    public void setBanner(String banner) {
+        this.banner = banner;
+    }
+
+    @Column(name = "price", precision = 15, scale = 2)
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    @Column(name = "thumbnail", length = 100)
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
+
+    @Column(name = "share_image", length = 100)
+    public String getShareImage() {
+        return shareImage;
+    }
+
+    public void setShareImage(String shareImage) {
+        this.shareImage = shareImage;
+    }
+
+    @Column(name = "share_title", length = 100)
+    public String getShareTitle() {
+        return shareTitle;
+    }
+
+    public void setShareTitle(String shareTitle) {
+        this.shareTitle = shareTitle;
+    }
+
+    @Column(name = "share_desc", length = 200)
+    public String getShareDesc() {
+        return shareDesc;
+    }
+
+    public void setShareDesc(String shareDesc) {
+        this.shareDesc = shareDesc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)

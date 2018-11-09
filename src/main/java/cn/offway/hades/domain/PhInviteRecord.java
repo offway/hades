@@ -70,19 +70,19 @@ public class PhInviteRecord implements Serializable {
 
     @Column(name = "invite_unionid", length = 50)
     public String getInviteUnionid() {
-        return inviteUnionid;
-    }
+		return inviteUnionid;
+	}
 
-    public void setInviteUnionid(String inviteUnionid) {
-        this.inviteUnionid = inviteUnionid;
-    }
+	public void setInviteUnionid(String inviteUnionid) {
+		this.inviteUnionid = inviteUnionid;
+	}
 
     @Column(name = "invite_head_url", length = 500)
     public String getInviteHeadUrl() {
         return inviteHeadUrl;
     }
 
-    public void setInviteHeadUrl(String inviteHeadUrl) {
+	public void setInviteHeadUrl(String inviteHeadUrl) {
         this.inviteHeadUrl = inviteHeadUrl;
     }
 

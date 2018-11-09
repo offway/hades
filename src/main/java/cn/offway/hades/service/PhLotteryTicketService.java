@@ -26,4 +26,6 @@ public interface PhLotteryTicketService{
 
 	Page<PhLotteryTicket> findByPage(String code, Pageable page);
 
+	void notice(Long productId);
+
 }
