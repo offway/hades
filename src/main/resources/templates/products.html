@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title>活动管理</title>
+	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
+	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+</head>
+<body class="page-body">
+
+	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+			
+		<div th:replace="sidebar-menu"></div>
+		<div class="main-content">
+			<!-- User Info, Notifications and product Bar -->
+			<nav th:replace="navbar"></nav>
+			<div class="page-title">
+				
+				<div class="title-env">
+					<h1 class="title">活动管理</h1>
+					<p class="description"></p>
+				</div>
+
+				<div class="breadcrumb-env">
+
+					<ol class="breadcrumb bc-1">
+						<li><a href="/"><i class="fa-home"></i>Home</a></li>
+						<li><a>系统管理</a></li>
+						<li class="active"><strong>活动管理</strong></li>
+					</ol>
+
+				</div>
+
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<form role="form" class="form-inline">
+						<div class="form-group ">
+							<div class="input-group">
+								<input type="text" name="name" class="form-control" style="height:35px" placeholder="活动名"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+						</div>
+						
+					</form>
+				</div>
+				<div class="panel-body">
+					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					</table>
+					
+				</div>
+				<button class="btn btn-info add" >添加</button>
+				<button class="btn btn-info edit">修改</button>
+			</div>
+			
+					
+			<footer th:replace="footer"></footer>
+		</div>
+	</div>
+	
+	<div th:replace="body-under"></div>
+	
+	<div class="modal fade in" id="modal-6">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">添加活动</h4>
+				</div>
+				
+				<div class="modal-body">
+					<form role="form" id="saveForm">
+					<input type="hidden" name="id"/>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-3" class="control-label">活动名称</label>
+								
+								<input type="text" class="form-control" name="name" placeholder="活动名称"/>
+							</div>	
+							
+						</div>
+					</div>
+				
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">活动描述</label>
+								
+								<input type="text" class="form-control" name="desc" placeholder="活动描述"/>
+							</div>	
+						</div>
+						
+					</div>
+					
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">排序</label>
+								
+								<input type="text" class="form-control" name="sort" placeholder="排序"/>
+							</div>	
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">父活动</label>
+								<select class="form-control select2-offscreen" id="s2example-2" name="parentId"
+									tabindex="-1" title="" style="height:32px">
+								</select> 
+								
+							</div>	
+						</div>
+					</div>
+				
+					</form>
+				</div>
+				
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info save">保存</button>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+	
+	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
+	<script src="assets/js/select2/select2.min.js"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/	
+	jQuery(document).ready(function($)
+	{
+		var oTable = $("#example-1").dataTable({
+			language: {
+                url: "../assets/Chinese.txt"
+            },
+			aLengthproduct: [
+				[10, 25, 50, 100], [10, 25, 50, 100]
+			],
+			bFilter : false,
+			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
+            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
+            sAjaxSource : "/products-data",//通过ajax实现分页的url路径。
+            fnServerParams : function(aData){
+                var searchArray = $(".form-inline").serializeArray();
+                $.merge(aData, searchArray);
+            },
+            columnDefs: [
+				{	
+					targets: 0,
+				    data: "id",
+				    width:"5%",
+				    orderable: false,
+				    className: 'select-checkbox',
+				    title: '<input type="checkbox" id="checkbox-all"/>',
+				    render: function ( data, type, full, meta ) {
+				    	return '<input type="checkbox" name="productId" value="'+data+'" />';  
+				    }
+				},
+                {
+                    targets: 1,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+               		targets: 2,
+	                data: "name",
+	                title: "活动名"
+            	}, 
+            	{
+               		targets: 3,
+	                data: "desc",
+	                title: "活动描述"
+            	}, 
+            	{
+               		targets: 4,
+	                data: "image",
+	                title: "活动列表图",
+                    render: function (data, type, row, meta) {
+                    	return "<img src="+data+"></img>";
+                    }
+            	},
+            	{
+               		targets: 5,
+	                data: "banner",
+	                title: "活动banner",
+                    render: function (data, type, row, meta) {
+                    	return "<img src="+data+"></img>";
+                    }
+            	},
+            	{
+               		targets: 6,
+	                data: "price",
+	                title: "奖品价值",
+                    render: function (data, type, row, meta) {
+                    	return fmoney(data,2);
+                    }
+            	},
+            	{
+               		targets: 7,
+	                data: "thumbnail",
+	                title: "缩略图",
+                    render: function (data, type, row, meta) {
+                    	return "<img src="+data+"></img>";
+                    }
+            	},
+            	{
+               		targets: 8,
+	                data: "shareImage",
+	                title: "分享图片",
+                    render: function (data, type, row, meta) {
+                    	return "<img src="+data+"></img>";
+                    }
+            	},
+            	{
+               		targets: 9,
+	                data: "shareTitle",
+	                title: "分享标题"
+            	},
+            	{
+               		targets: 10,
+	                data: "shareDesc",
+	                title: "分享描述"
+            	},
+            	{
+               		targets: 11,
+	                data: "beginTime",
+	                title: "开始时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+            	},
+            	{
+               		targets: 12,
+	                data: "endTime",
+	                title: "截止时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+            	},
+                {
+                    targets: 13,
+                    data: "createTime",
+                    title: "创建时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                }
+               ]
+		});
+		
+		$(".searchBtn").click(function(){
+			$("#checkbox-all").attr("checked", false);
+			oTable.fnDraw(); //or fnReloadAjax()  
+			return false;
+		});
+		
+		 $('#example-1').on('click',"#checkbox-all",function() {  
+			var obj = $(this);
+			$("input[name='productId']").each(function(i,e){
+				 this.checked = obj[0].checked;
+			});
+		})
+			 
+			
+			
+			$(".btn.btn-info.add").click(function(){
+				$("#saveForm").find("input[name='id']").val("");
+				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			});
+			
+			//保存
+			$(".btn.btn-info.save").click(function(){
+				var form = $("#saveForm");
+				var name = form.find("input[name='name']").val();
+				var sort = form.find("input[name='sort']").val();
+				if(name =='' ||sort==''){
+					toastr.error("活动名/排序不能为空", "温馨提示");
+					return ;
+				}
+				
+				$.post("/products-save",$("#saveForm").serialize(),function(data){
+					if(data){
+						jQuery('#modal-6').modal('hide');
+						toastr.success("操作已成功！", "温馨提示");
+						oTable.fnDraw(); 
+					}else{
+						toastr.error("操作失败", "温馨提示");
+					}
+				});
+			});
+			
+			$(".btn.btn-info.edit").click(function(){
+				
+				var productId = $("input[name='productId']:checked");
+				if(productId.length!=1){
+					toastr.error("请选择一条数据操作", "温馨提示");
+					return ;
+				}
+				
+				
+				$.post("/products-one",{id:productId.val()},function(data){
+					var form = $("#saveForm");
+					form.find("input[name='id']").val(data.id);
+					form.find("input[name='name']").val(data.name);
+					form.find("input[name='sort']").val(data.sort);
+					form.find("input[name='link']").val(data.link);
+					jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+					
+				});
+				
+				
+			});
+		
+	});
+	/*]]>*/
+	</script>
+</body>
+
+</html>

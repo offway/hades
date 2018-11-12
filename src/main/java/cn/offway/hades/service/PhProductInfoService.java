@@ -1,5 +1,8 @@
 package cn.offway.hades.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import cn.offway.hades.domain.PhProductInfo;
 
 /**
@@ -13,4 +16,6 @@ public interface PhProductInfoService{
 	PhProductInfo save(PhProductInfo phProductInfo);
 	
 	PhProductInfo findOne(Long id);
+
+	Page<PhProductInfo> findByPage(String name, Pageable page);
 }

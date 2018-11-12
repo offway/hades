@@ -2,6 +2,8 @@ package cn.offway.hades.domain;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -12,7 +14,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "ph_roleresource")
-public class PhRoleresource implements Serializable {
+public class PhRoleresource implements Serializable{
 
     /**  **/
     private Long id;
@@ -65,5 +67,16 @@ public class PhRoleresource implements Serializable {
     public void setRoleId(Long roleId) {
         this.roleId = roleId;
     }
+
+	@Override
+	public String toString() {
+		return "PhRoleresource [id=" + id + ", createdtime=" + createdtime + ", resourceId=" + resourceId + ", roleId="
+				+ roleId + "]";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return this.toString().equals(obj.toString());
+	}
 
 }

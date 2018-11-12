@@ -3,6 +3,7 @@ package cn.offway.hades.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -138,6 +139,10 @@ public class PhRoleServiceImpl implements PhRoleService {
 		phRoleresource.setCreatedtime(now);
 		phRoleresource.setResourceId(phResource.getId());
 		phRoleresource.setRoleId(phRoleId);
-		roleresources.add(phRoleresource);
+		if(!roleresources.contains(phRoleresource)){
+			roleresources.add(phRoleresource);
+		}
+		
 	}
+	
 }
