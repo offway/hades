@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import cn.offway.hades.domain.PhLotteryTicket;
+import cn.offway.hades.domain.PhProductInfo;
 
 
 /**
@@ -26,6 +27,10 @@ public interface PhLotteryTicketService{
 
 	Page<PhLotteryTicket> findByPage(String code, Pageable page);
 
-	void notice(Long productId);
+	void notice() throws Exception;
+
+	void notice(String token, PhProductInfo phProductInfo) throws Exception;
+
+	String getToken();
 
 }

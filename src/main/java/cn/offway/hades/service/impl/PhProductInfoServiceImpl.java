@@ -1,6 +1,7 @@
 package cn.offway.hades.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -45,6 +46,11 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 	@Override
 	public PhProductInfo findOne(Long id){
 		return phProductInfoRepository.findOne(id);
+	}
+	
+	@Override
+	public List<PhProductInfo> findByEndTime(Date endTime){
+		return phProductInfoRepository.findByEndTime(endTime);
 	}
 	
 	@Override

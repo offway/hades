@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 
 import cn.offway.hades.domain.PhProductInfo;
+import cn.offway.hades.service.PhLotteryTicketService;
 import cn.offway.hades.service.PhProductInfoService;
 
 /**
@@ -34,6 +37,9 @@ public class ProductController {
 	
 	@Autowired
 	private PhProductInfoService phProductInfoService;
+	
+	@Autowired
+	private PhLotteryTicketService phLotteryTicketService;
 
 	@RequestMapping("/products.html")
 	public String products(){
@@ -86,6 +92,19 @@ public class ProductController {
 	@PostMapping("/products-one")
 	public PhProductInfo findOne(Long id){
 		return phProductInfoService.findOne(id);
+	}
+	
+	/**
+	 * 手动开奖通知
+	 * @param productId
+	 * @throws Exception
+	 */
+	@GetMapping("/products-notice/{productId}")
+	public void notice(@PathVariable Long productId) throws Exception {
+		String token = phLotteryTicketService.getToken();
+		PhProductInfo phProductInfo = phProductInfoService.findOne(productId);
+		phLotteryTicketService.notice(token,phProductInfo);
+		
 	}
 	
 }

@@ -1,5 +1,8 @@
 package cn.offway.hades.service;
 
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,4 +21,6 @@ public interface PhProductInfoService{
 	PhProductInfo findOne(Long id);
 
 	Page<PhProductInfo> findByPage(String name, Pageable page);
+
+	List<PhProductInfo> findByEndTime(Date endTime);
 }

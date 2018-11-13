@@ -19,10 +19,15 @@ public class ScheduledService {
 	/**
 	 * 开奖通知
 	 */
-	@Scheduled(cron = "0 0 19 15 11 ?")
+	@Scheduled(cron = "0 0 19 2,15,25 11,12 ?")
 	public void scheduled() {
 		logger.info("开奖通知定时任务开始");
-		phLotteryTicketService.notice(1L);
+		try {
+			phLotteryTicketService.notice();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("开奖通知定时任务异常",e);
+		}
 		logger.info("开奖通知定时任务结束");
 	}
 }

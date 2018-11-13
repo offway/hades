@@ -1,5 +1,8 @@
 package cn.offway.hades.repository;
 
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -13,5 +16,5 @@ import cn.offway.hades.domain.PhProductInfo;
  */
 public interface PhProductInfoRepository extends JpaRepository<PhProductInfo,Long>,JpaSpecificationExecutor<PhProductInfo> {
 
-	/** 此处写一些自定义的方法 **/
+	List<PhProductInfo> findByEndTime(Date endTime);
 }

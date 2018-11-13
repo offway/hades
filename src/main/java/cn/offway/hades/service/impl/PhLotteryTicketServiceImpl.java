@@ -1,6 +1,9 @@
 package cn.offway.hades.service.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -90,14 +93,22 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 	}
 	
 	@Override
-	public void notice(Long productId) {
+	public void notice() throws Exception {
 
-		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		Date endTime = sdf.parse(sdf.format(new Date()));
 		String token = getToken();
-		
-		PhProductInfo phProductInfo = phProductInfoService.findOne(productId);
-		
-		List<Object> datas = phLotteryTicketRepository.findNoticeData(productId);
+		//查询当前时间是截至时间的活动
+		List<PhProductInfo> phProductInfos = phProductInfoService.findByEndTime(endTime);
+		for (PhProductInfo phProductInfo : phProductInfos) {
+			notice(token, phProductInfo);
+		}
+
+	}
+
+	@Override
+	public void notice(String token, PhProductInfo phProductInfo) throws Exception {
+		List<Object> datas = phLotteryTicketRepository.findNoticeData(phProductInfo.getId());
 		for (Object obj : datas) {
 			Object[] data = (Object[])obj;
 			String openid = String.valueOf(data[0]);
@@ -124,12 +135,12 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 			sendTemplateMsg(tem, token);
 			
 		}
-
 	}
 
 	/**
 	 * 获取 access_token
 	 */
+	@Override
 	public String getToken() {
 		String requestUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx12d022a9493f1b26&secret=52ba3a89ae58aa6a2294806d516d6107";
 		String result = HttpClientUtil.post(requestUrl, "");
