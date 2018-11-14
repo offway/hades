@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 /**
  * 活动产品表
  *
@@ -29,7 +31,7 @@ public class PhProductInfo implements Serializable {
     private String name;
 
     /** 活动描述 **/
-    private String desc;
+    private String productDesc;
 
     /** 活动列表图 **/
     private String image;
@@ -53,9 +55,11 @@ public class PhProductInfo implements Serializable {
     private String shareDesc;
 
     /** 活动开始时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date beginTime;
 
     /** 活动截止时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
     /** 创建时间 **/
@@ -85,21 +89,21 @@ public class PhProductInfo implements Serializable {
         this.name = name;
     }
 
-    @Column(name = "desc", length = 200)
-    public String getDesc() {
-        return desc;
-    }
+    @Column(name = "product_desc", length = 200)
+    public String getProductDesc() {
+		return productDesc;
+	}
 
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
+	public void setProductDesc(String productDesc) {
+		this.productDesc = productDesc;
+	}
 
     @Column(name = "image", length = 100)
     public String getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+	public void setImage(String image) {
         this.image = image;
     }
 

@@ -5,6 +5,8 @@
 	<title>活动管理</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 </head>
 <body class="page-body">
 
@@ -18,7 +20,7 @@
 				
 				<div class="title-env">
 					<h1 class="title">活动管理</h1>
-					<p class="description"></p>
+					<p class="productDescription"></p>
 				</div>
 
 				<div class="breadcrumb-env">
@@ -52,8 +54,8 @@
 					</table>
 					
 				</div>
-				<!-- <button class="btn btn-info add" >添加</button>
-				<button class="btn btn-info edit">修改</button> -->
+				 <button class="btn btn-info add" >添加</button>
+				<!-- <button class="btn btn-info edit">修改</button>  -->
 			</div>
 			
 					
@@ -65,7 +67,7 @@
 	
 	<div class="modal fade in" id="modal-6">
 		<div class="modal-dialog">
-			<div class="modal-content">
+			<div class="modal-content" style="width: 800px;">
 				
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -93,35 +95,89 @@
 							<div class="form-group">
 								<label for="field-4" class="control-label">活动描述</label>
 								
-								<input type="text" class="form-control" name="desc" placeholder="活动描述"/>
+								<input type="text" class="form-control" name="productDesc" placeholder="活动描述"/>
 							</div>	
 						</div>
-						
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">开始时间-截止时间</label>
+								<input type="text" id="daterange" class="form-control daterange" placeholder="开始时间-截止时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
+								<input type="hidden" class="form-control" name="beginTime" />
+								<input type="hidden" class="form-control" name="endTime" />
+							</div>
+						</div>
 					</div>
 					
 					<div class="row">
 						<div class="col-md-12">
 							
 							<div class="form-group">
-								<label for="field-4" class="control-label">排序</label>
-								
-								<input type="text" class="form-control" name="sort" placeholder="排序"/>
-							</div>	
+								<label for="field-4" class="control-label">活动列表图</label>
+								<input type="file" class="form-control" name="imageFile" placeholder="活动列表图"/>
+								<input type="hidden" class="form-control" name="image" />
+							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
 							
 							<div class="form-group">
-								<label for="field-4" class="control-label">父活动</label>
-								<select class="form-control select2-offscreen" id="s2example-2" name="parentId"
-									tabindex="-1" title="" style="height:32px">
-								</select> 
-								
-							</div>	
+								<label for="field-4" class="control-label">活动banner</label>
+								<input type="file" class="form-control" name="bannerFile" placeholder="活动banner"/>
+								<input type="hidden" class="form-control" name="banner" />
+							</div>
 						</div>
 					</div>
-				
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">奖品价值</label>
+								<input type="number" class="form-control" name="price" placeholder="奖品价值"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">活动详情页缩略图</label>
+								<input type="file" class="form-control" name="thumbnailFile" placeholder="缩略图"/>
+								<input type="hidden" class="form-control" name="thumbnail" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">分享图片</label>
+								<input type="file" class="form-control" name="shareImageFile" placeholder="分享图片"/>
+								<input type="hidden" class="form-control" name="shareImage" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">分享标题</label>
+								<input type="text" class="form-control" name="shareTitle" placeholder="分享标题"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">分享描述</label>
+								<input type="text" class="form-control" name="shareDesc" placeholder="分享描述"/>
+							</div>
+						</div>
+					</div>
 					</form>
 				</div>
 				
@@ -134,8 +190,10 @@
 		</div>
 	</div>
 	
-	
+	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
+	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
+	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/	
@@ -180,7 +238,7 @@
             	}, 
             	{
                		targets: 3,
-	                data: "desc",
+	                data: "productDesc",
 	                title: "活动描述"
             	}, 
             	{
@@ -278,25 +336,113 @@
 			$(".btn.btn-info.add").click(function(){
 				$("#saveForm").find("input[name='id']").val("");
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+				
 			});
+		 
+		 
+			 function upload(param,token,file,next, error, complete){
+			    var filename = file.name;
+			    var postf = filename.substring(filename.lastIndexOf("."));
+			    
+			    var config = {
+			    		  useCdnDomain: true,
+			    		  region: qiniu.region.z0
+			    		};
+			    var putExtra = {
+			    		  fname: "",
+			    		  params: {"x:param":param},
+			    		  mimeType: ["image/png", "image/jpeg", "image/gif"] || null
+			    		};
+			    var observable = qiniu.upload(file, "image/wx/"+UUID.randomUUID()+postf, token,
+			    		putExtra, config);
+				var subscription = observable.subscribe(next, error, complete);
+				
+			 };
 			
+			 var qiniuUrl = [[${qiniuUrl}]];
 			//保存
 			$(".btn.btn-info.save").click(function(){
 				var form = $("#saveForm");
+				
 				var name = form.find("input[name='name']").val();
-				var sort = form.find("input[name='sort']").val();
-				if(name =='' ||sort==''){
-					toastr.error("活动名/排序不能为空", "温馨提示");
+				var productDesc = form.find("input[name='productDesc']").val();
+				var price = form.find("input[name='price']").val();
+				var shareTitle = form.find("input[name='shareTitle']").val();
+				var shareDesc = form.find("input[name='shareDesc']").val();
+				var daterange = $("#daterange").val();
+				var thumbnailVal = form.find("input[name='thumbnailFile']").val();
+				var imageVal = form.find("input[name='imageFile']").val();
+				var bannerVal = form.find("input[name='bannerFile']").val();
+				var shareImageVal = form.find("input[name='shareImageFile']").val();
+				
+				
+				if(name =='' ||productDesc==''||price==''||shareDesc==''||shareTitle==''||daterange==''||thumbnailVal==''
+					||imageVal==''||bannerVal==''||shareImageVal==''){
+					toastr.error("请填写完整数据后提交", "温馨提示");
 					return ;
 				}
+				if(daterange.indexOf(' - ')!=19 || daterange.length!=41){
+					toastr.error("请输入正确的起止时间", "温馨提示");
+				}
 				
-				$.post("/products-save",$("#saveForm").serialize(),function(data){
-					if(data){
-						jQuery('#modal-6').modal('hide');
-						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw(); 
+				var dates = daterange.split(' - ');
+				form.find("input[name='beginTime']").val(dates[0]);
+				form.find("input[name='endTime']").val(dates[1]);
+				
+				
+				//上传文件获得文件地址
+				var imageFile = form.find("input[name='imageFile']")[0].files[0];
+				var bannerFile = form.find("input[name='bannerFile']")[0].files[0];
+				var thumbnailFile = form.find("input[name='thumbnailFile']")[0].files[0];
+				var shareImageFile = form.find("input[name='shareImageFile']")[0].files[0];
+				
+				//获取token
+				$.get("/qiniu/token",{},function(token){
+					if(token !=''){
+						upload("image",token,imageFile,function(res){},function(err){
+							console.log("上传imageFile异常:"+err);
+						},function(res){
+							//上传成功
+							console.log(res);
+							form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+							
+							upload("banner",token,bannerFile,function(res){},function(err){
+								console.log("上传bannerFile异常:"+err);
+							},function(res){
+								//上传成功
+								console.log(res);
+								form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+								
+								upload("thumbnail",token,thumbnailFile,function(res){},function(err){
+									console.log("上传thumbnailFile异常:"+err);
+								},function(res){
+									//上传成功
+									console.log(res);
+									form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+									
+									upload("shareImage",token,shareImageFile,function(res){},function(err){
+										console.log("上传shareImageFile异常:"+err);
+									},function(res){
+										//上传成功
+										console.log(res);
+										form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+										//提交保存
+										$.post("/products-save",$("#saveForm").serialize(),function(data){
+											if(data){
+												jQuery('#modal-6').modal('hide');
+												toastr.success("操作已成功！", "温馨提示");
+												oTable.fnDraw(); 
+											}else{
+												toastr.error("操作失败", "温馨提示");
+											}
+										});
+									});
+								});
+							});
+						});
+						
 					}else{
-						toastr.error("操作失败", "温馨提示");
+						toastr.error("上传文件错误，请联系管理员", "温馨提示");
 					}
 				});
 			});

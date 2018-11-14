@@ -54,3 +54,13 @@ function fmoney(s, n)
    }
    return t.split("").reverse().join("") + "." + r;
 }
+
+//用于生成uuid
+var UUID = {
+	S4:function () {
+        return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+    },
+    randomUUID: function() {
+        return (UUID.S4()+UUID.S4()+"-"+UUID.S4()+"-"+UUID.S4()+"-"+UUID.S4()+"-"+UUID.S4()+UUID.S4()+UUID.S4());
+    }
+}

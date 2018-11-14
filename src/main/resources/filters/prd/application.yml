@@ -37,6 +37,11 @@ ph:
   default:  
     #默认密码
     pwd: 123456
+qiniu:
+  url: http://qiniu.offway.cn
+  access-key: WU33Cpp1WJZAf4oIIHknc2ga3ZhQpgJo3UL-JUdB
+  secret-key: ALb95JFSVi3mvSScoQa564HzDby_y2EasUhhmniV
+  bucket: offwaypro
 #浏览器环境配置项，参见BrowserProperties
 vinann:
   security: 

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 
 import cn.offway.hades.domain.PhProductInfo;
+import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhLotteryTicketService;
 import cn.offway.hades.service.PhProductInfoService;
 
@@ -40,9 +42,13 @@ public class ProductController {
 	
 	@Autowired
 	private PhLotteryTicketService phLotteryTicketService;
+	
+	@Autowired
+	private QiniuProperties qiniuProperties;
 
 	@RequestMapping("/products.html")
-	public String products(){
+	public String products(ModelMap map){
+		map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
 		return "products";
 	}
 	
@@ -77,6 +83,10 @@ public class ProductController {
 	@PostMapping("/products-save")
 	public boolean save(PhProductInfo phProductInfo){
 		try {
+			phProductInfo.setImage(phProductInfo.getImage());
+			phProductInfo.setBanner(phProductInfo.getBanner());
+			phProductInfo.setShareImage(phProductInfo.getShareImage());
+			phProductInfo.setThumbnail(phProductInfo.getThumbnail());
 			phProductInfo.setCreateTime(new Date());
 			phProductInfoService.save(phProductInfo);
 			return true;
