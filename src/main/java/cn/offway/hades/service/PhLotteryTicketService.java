@@ -25,12 +25,12 @@ public interface PhLotteryTicketService{
 
 	List<PhLotteryTicket> findByProductIdAndUnionid(Long productId, String unionid);
 
-	Page<PhLotteryTicket> findByPage(String code, Pageable page);
-
 	void notice() throws Exception;
 
 	void notice(String token, PhProductInfo phProductInfo) throws Exception;
 
 	String getToken();
+
+	Page<PhLotteryTicket> findByPage(String code, Long productId, Pageable page);
 
 }

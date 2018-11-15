@@ -78,7 +78,7 @@ public class IndexController {
 	 */
 	@ResponseBody
 	@RequestMapping("/activity-lottery-data")
-	public Map<String, Object> activityLotteryData(HttpServletRequest request,String code){
+	public Map<String, Object> activityLotteryData(HttpServletRequest request,String code,Long productId){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -86,7 +86,7 @@ public class IndexController {
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
 		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		Page<PhLotteryTicket> pages = phLotteryTicketService.findByPage(code, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		Page<PhLotteryTicket> pages = phLotteryTicketService.findByPage(code,productId, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();

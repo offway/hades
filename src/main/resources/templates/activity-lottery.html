@@ -41,6 +41,11 @@
 									<input type="text" name="code" class="form-control" style="height:35px" placeholder="抽奖码"/>
 								</div>
 						</div>
+						<div class="form-group ">
+								<div class="input-group">
+									<input type="number" name="productId" class="form-control" style="height:35px" placeholder="活动ID"/>
+								</div>
+						</div>
 						<div class="form-group">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
 						</div>
@@ -87,12 +92,17 @@
                     title: "序号"
                 },
                 {
-               		targets: 1,
+                    targets: 1,
+                    data: "productId",
+                    title: "活动ID"
+                },
+                {
+               		targets: 2,
 	                data: "nickName",
 	                title: "昵称"
             	}, 
                 {
-                    targets: 2,
+                    targets: 3,
                     data: "headUrl",
                     title: "头像",
                     render: function (data, type, row, meta) {
@@ -100,12 +110,12 @@
                     }
                 },
                 {
-                    targets: 3,
+                    targets: 4,
                     data: "code",
                     title: "抽奖码"
                 },
                 {
-                    targets: 4,
+                    targets: 5,
                     data: "createTime",
                     title: "时间",
                     render: function (data, type, row, meta) {

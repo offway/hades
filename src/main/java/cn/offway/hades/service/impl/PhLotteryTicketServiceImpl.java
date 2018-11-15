@@ -73,7 +73,7 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 	}
 	
 	@Override
-	public Page<PhLotteryTicket> findByPage(final String code, Pageable page){
+	public Page<PhLotteryTicket> findByPage(final String code,final Long productId, Pageable page){
 		return phLotteryTicketRepository.findAll(new Specification<PhLotteryTicket>() {
 			
 			@Override
@@ -84,7 +84,9 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 					params.add(criteriaBuilder.like(root.get("code"), "%"+code+"%"));
 				}
 				
-				params.add(criteriaBuilder.equal(root.get("productId"), 1L));
+				if(null != productId){
+					params.add(criteriaBuilder.equal(root.get("productId"), productId));
+				}
 				
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
