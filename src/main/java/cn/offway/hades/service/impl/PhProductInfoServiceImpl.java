@@ -19,9 +19,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import cn.offway.hades.domain.PhProductInfo;
-import cn.offway.hades.domain.PhResource;
+import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.repository.PhProductInfoRepository;
 import cn.offway.hades.service.PhProductInfoService;
+import cn.offway.hades.service.QiniuService;
 
 
 /**
@@ -38,9 +39,52 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 	@Autowired
 	private PhProductInfoRepository phProductInfoRepository;
 	
+	@Autowired
+	private QiniuService qiniuService;
+	
+	@Autowired
+	private QiniuProperties qiniuProperties;
+	
 	@Override
 	public PhProductInfo save(PhProductInfo phProductInfo){
 		return phProductInfoRepository.save(phProductInfo);
+	}
+	
+	@Override
+	public PhProductInfo saveProduct(PhProductInfo phProductInfo){
+		Long productId = phProductInfo.getId();
+		if(null!=productId){
+			PhProductInfo productInfo = findOne(productId);
+			String image = productInfo.getImage();
+			if(!image.equals(phProductInfo.getImage())){
+				//如果资源变动则删除七牛资源
+				qiniuService.qiniuDelete(image.replace(qiniuProperties.getUrl(), ""));
+			}
+			String banner = productInfo.getBanner();
+			if(!banner.equals(phProductInfo.getBanner())){
+				//如果资源变动则删除七牛资源
+				qiniuService.qiniuDelete(banner.replace(qiniuProperties.getUrl(), ""));
+			}
+			String shareImage = productInfo.getShareImage();
+			if(!shareImage.equals(phProductInfo.getShareImage())){
+				//如果资源变动则删除七牛资源
+				qiniuService.qiniuDelete(shareImage.replace(qiniuProperties.getUrl(), ""));
+			}
+			String thumbnail = productInfo.getThumbnail();
+			if(!thumbnail.equals(phProductInfo.getThumbnail())){
+				//如果资源变动则删除七牛资源
+				qiniuService.qiniuDelete(thumbnail.replace(qiniuProperties.getUrl(), ""));
+			}
+			phProductInfo.setCreateTime(productInfo.getCreateTime());
+		}
+		phProductInfo.setImage(phProductInfo.getImage());
+		phProductInfo.setBanner(phProductInfo.getBanner());
+		phProductInfo.setShareImage(phProductInfo.getShareImage());
+		phProductInfo.setThumbnail(phProductInfo.getThumbnail());
+		if(null == phProductInfo.getId()){
+			phProductInfo.setCreateTime(new Date());
+		}
+		return save(phProductInfo);
 	}
 	
 	@Override

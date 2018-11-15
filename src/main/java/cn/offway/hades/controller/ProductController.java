@@ -83,12 +83,7 @@ public class ProductController {
 	@PostMapping("/products-save")
 	public boolean save(PhProductInfo phProductInfo){
 		try {
-			phProductInfo.setImage(phProductInfo.getImage());
-			phProductInfo.setBanner(phProductInfo.getBanner());
-			phProductInfo.setShareImage(phProductInfo.getShareImage());
-			phProductInfo.setThumbnail(phProductInfo.getThumbnail());
-			phProductInfo.setCreateTime(new Date());
-			phProductInfoService.save(phProductInfo);
+			phProductInfoService.saveProduct(phProductInfo);
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();

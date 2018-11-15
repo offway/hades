@@ -7,6 +7,12 @@
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<style type="text/css">
+	.form-group img{
+		max-width:400px;
+		max-height:300px;
+	}
+	</style>
 </head>
 <body class="page-body">
 
@@ -55,7 +61,7 @@
 					
 				</div>
 				 <button class="btn btn-info add" >添加</button>
-				<!-- <button class="btn btn-info edit">修改</button>  -->
+				<button class="btn btn-info edit">修改</button>
 			</div>
 			
 					
@@ -118,6 +124,8 @@
 								<label for="field-4" class="control-label">活动列表图</label>
 								<input type="file" class="form-control" name="imageFile" placeholder="活动列表图"/>
 								<input type="hidden" class="form-control" name="image" />
+								<img alt="" src="" name="imageImage" style="display:none;"/>
+								<button class="btn btn-info modify image" style="display:none;">更换</button>
 							</div>
 						</div>
 					</div>
@@ -128,6 +136,8 @@
 								<label for="field-4" class="control-label">活动banner</label>
 								<input type="file" class="form-control" name="bannerFile" placeholder="活动banner"/>
 								<input type="hidden" class="form-control" name="banner" />
+								<img alt="" src="" name="bannerImage" style="display:none;"/>
+								<button class="btn btn-info modify banner" style="display:none;">更换</button>
 							</div>
 						</div>
 					</div>
@@ -147,6 +157,8 @@
 								<label for="field-4" class="control-label">活动详情页缩略图</label>
 								<input type="file" class="form-control" name="thumbnailFile" placeholder="缩略图"/>
 								<input type="hidden" class="form-control" name="thumbnail" />
+								<img alt="" src="" name="thumbnailImage" style="display:none;"/>
+								<button class="btn btn-info modify thumbnailFile" style="display:none;">更换</button>
 							</div>
 						</div>
 					</div>
@@ -157,6 +169,8 @@
 								<label for="field-4" class="control-label">分享图片</label>
 								<input type="file" class="form-control" name="shareImageFile" placeholder="分享图片"/>
 								<input type="hidden" class="form-control" name="shareImage" />
+								<img alt="" src="" name="shareImageImage" style="display:none;"/>
+								<button class="btn btn-info modify shareImage" style="display:none;">更换</button>
 							</div>
 						</div>
 					</div>
@@ -182,8 +196,9 @@
 				</div>
 				
 				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 					<button type="button" class="btn btn-info save">保存</button>
+					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 				</div>
 				
 			</div>
@@ -334,67 +349,106 @@
 			
 			
 			$(".btn.btn-info.add").click(function(){
-				$("#saveForm").find("input[name='id']").val("");
+				var form = $("#saveForm");
+				form.find("input").val("");
+				form.find("img").attr("src","");
+				form.find("img").hide();
+				form.find("input[type='file']").show();
+				form.find(".btn.btn-info.modify").text("更换");
+				form.find(".btn.btn-info.modify").hide();
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 				
 			});
 		 
 		 
 			 function upload(param,token,file,next, error, complete){
-			    var filename = file.name;
-			    var postf = filename.substring(filename.lastIndexOf("."));
-			    
-			    var config = {
-			    		  useCdnDomain: true,
-			    		  region: qiniu.region.z0
-			    		};
-			    var putExtra = {
-			    		  fname: "",
-			    		  params: {"x:param":param},
-			    		  mimeType: ["image/png", "image/jpeg", "image/gif"] || null
-			    		};
-			    var observable = qiniu.upload(file, "image/wx/"+UUID.randomUUID()+postf, token,
-			    		putExtra, config);
-				var subscription = observable.subscribe(next, error, complete);
+			    if(file==''){
+			    	complete('');
+			    	
+			    }else{
+					var filename = file.name;
+				    var postf = filename.substring(filename.lastIndexOf("."));
+				    
+				    var config = {
+				    		  useCdnDomain: true,
+				    		  region: qiniu.region.z0
+				    		};
+				    var putExtra = {
+				    		  fname: "",
+				    		  params: {"x:param":param},
+				    		  mimeType: ["image/png", "image/jpeg", "image/gif"] || null
+				    		};
+				    var observable = qiniu.upload(file, "image/wx/"+UUID.randomUUID()+postf, token,
+				    		putExtra, config);
+					var subscription = observable.subscribe(next, error, complete);
+			    }
 				
 			 };
 			
 			 var qiniuUrl = [[${qiniuUrl}]];
 			//保存
 			$(".btn.btn-info.save").click(function(){
+				var footer = $(this).parent(".modal-footer")
+				footer.find("button").hide();
+				footer.find(".bg-lg").show();
 				var form = $("#saveForm");
-				
 				var name = form.find("input[name='name']").val();
 				var productDesc = form.find("input[name='productDesc']").val();
 				var price = form.find("input[name='price']").val();
 				var shareTitle = form.find("input[name='shareTitle']").val();
 				var shareDesc = form.find("input[name='shareDesc']").val();
 				var daterange = $("#daterange").val();
+				//文件
 				var thumbnailVal = form.find("input[name='thumbnailFile']").val();
 				var imageVal = form.find("input[name='imageFile']").val();
 				var bannerVal = form.find("input[name='bannerFile']").val();
 				var shareImageVal = form.find("input[name='shareImageFile']").val();
 				
+				//已上传的图片地址
+				var thumbnailVals = form.find("input[name='thumbnail']").val();
+				var imageVals = form.find("input[name='image']").val();
+				var bannerVals = form.find("input[name='banner']").val();
+				var shareImageVals = form.find("input[name='shareImage']").val();
 				
-				if(name =='' ||productDesc==''||price==''||shareDesc==''||shareTitle==''||daterange==''||thumbnailVal==''
-					||imageVal==''||bannerVal==''||shareImageVal==''){
+				
+				if(name =='' ||productDesc==''||price==''||shareDesc==''||shareTitle==''||daterange==''||
+					(thumbnailVal=='' && thumbnailVals=='')||(imageVal=='' && imageVals=='')
+					||(bannerVal=='' &&bannerVals=='' )||(shareImageVal=='' &&shareImageVals=='')){
 					toastr.error("请填写完整数据后提交", "温馨提示");
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
 					return ;
 				}
+				
 				if(daterange.indexOf(' - ')!=19 || daterange.length!=41){
 					toastr.error("请输入正确的起止时间", "温馨提示");
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
 				}
+				
+				
 				
 				var dates = daterange.split(' - ');
 				form.find("input[name='beginTime']").val(dates[0]);
 				form.find("input[name='endTime']").val(dates[1]);
 				
-				
+				var imageFile = '';
+				var bannerFile ='';
+				var thumbnailFile ='';
+				var shareImageFile ='';
 				//上传文件获得文件地址
-				var imageFile = form.find("input[name='imageFile']")[0].files[0];
-				var bannerFile = form.find("input[name='bannerFile']")[0].files[0];
-				var thumbnailFile = form.find("input[name='thumbnailFile']")[0].files[0];
-				var shareImageFile = form.find("input[name='shareImageFile']")[0].files[0];
+				if(imageVal!=''){
+					imageFile = form.find("input[name='imageFile']")[0].files[0];
+				}
+				if(bannerVal!=''){
+					bannerFile = form.find("input[name='bannerFile']")[0].files[0];
+				}
+				if(thumbnailVal!=''){
+					thumbnailFile = form.find("input[name='thumbnailFile']")[0].files[0];		
+				}
+				if(shareImageVal!=''){
+					shareImageFile = form.find("input[name='shareImageFile']")[0].files[0];
+				}
 				
 				//获取token
 				$.get("/qiniu/token",{},function(token){
@@ -404,35 +458,47 @@
 						},function(res){
 							//上传成功
 							console.log(res);
-							form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+							if(res!=''){
+								form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+							}
 							
 							upload("banner",token,bannerFile,function(res){},function(err){
 								console.log("上传bannerFile异常:"+err);
 							},function(res){
 								//上传成功
 								console.log(res);
-								form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+								if(res!=''){
+									form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+								}
 								
 								upload("thumbnail",token,thumbnailFile,function(res){},function(err){
 									console.log("上传thumbnailFile异常:"+err);
 								},function(res){
 									//上传成功
 									console.log(res);
-									form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+									if(res!=''){
+										form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+									}
 									
 									upload("shareImage",token,shareImageFile,function(res){},function(err){
 										console.log("上传shareImageFile异常:"+err);
 									},function(res){
 										//上传成功
 										console.log(res);
-										form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+										if(res!=''){
+											form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+										}
 										//提交保存
 										$.post("/products-save",$("#saveForm").serialize(),function(data){
 											if(data){
+												footer.find("button").show();
+												footer.find(".bg-lg").hide();
 												jQuery('#modal-6').modal('hide');
 												toastr.success("操作已成功！", "温馨提示");
 												oTable.fnDraw(); 
 											}else{
+												footer.find("button").show();
+												footer.find(".bg-lg").hide();
 												toastr.error("操作失败", "温馨提示");
 											}
 										});
@@ -442,9 +508,14 @@
 						});
 						
 					}else{
+						footer.find("button").show();
+						footer.find(".bg-lg").hide();
 						toastr.error("上传文件错误，请联系管理员", "温馨提示");
 					}
 				});
+				
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
 			});
 			
 			$(".btn.btn-info.edit").click(function(){
@@ -458,15 +529,69 @@
 				
 				$.post("/products-one",{id:productId.val()},function(data){
 					var form = $("#saveForm");
+					
 					form.find("input[name='id']").val(data.id);
 					form.find("input[name='name']").val(data.name);
-					form.find("input[name='sort']").val(data.sort);
-					form.find("input[name='link']").val(data.link);
+					form.find("input[name='productDesc']").val(data.productDesc);
+					form.find("input[name='price']").val(data.price);
+					form.find("input[name='shareTitle']").val(data.shareTitle);
+					form.find("input[name='shareDesc']").val(data.shareDesc);
+					
+					var beginTimeStr = new Date(data.beginTime).Format('yyyy-MM-dd hh:mm:ss');
+					var endTimeStr = new Date(data.endTime).Format('yyyy-MM-dd hh:mm:ss');
+					$("#daterange").val(beginTimeStr+' - '+endTimeStr);
+					form.find("input[name='beginTime']").val(beginTimeStr);
+					form.find("input[name='endTime']").val(endTimeStr);
+					
+					form.find("input[name='thumbnail']").val(data.thumbnail);
+					form.find("input[name='image']").val(data.image);
+					form.find("input[name='banner']").val(data.banner);
+					form.find("input[name='shareImage']").val(data.shareImage);
+					
+					if(''!=data.thumbnail){
+						form.find("input[name='thumbnailFile']").hide();
+						form.find("img[name='thumbnailImage']").attr("src",data.thumbnail);
+						form.find("img[name='thumbnailImage']").show();
+						form.find(".btn.thumbnailFile").show();
+						
+					}
+					if(''!=data.image){
+						form.find("input[name='imageFile']").hide();
+						form.find("img[name='imageImage']").attr("src",data.image);
+						form.find("img[name='imageImage']").show();
+						form.find(".btn.image").show();
+						
+					}
+					if(''!=data.banner){
+						form.find("input[name='bannerFile']").hide();
+						form.find("img[name='bannerImage']").attr("src",data.banner);
+						form.find("img[name='bannerImage']").show();
+						form.find(".btn.banner").show();
+						
+					}
+					if(''!=data.shareImage){
+						form.find("input[name='shareImageFile']").hide();
+						form.find("img[name='shareImageImage']").attr("src",data.shareImage);
+						form.find("img[name='shareImageImage']").show();
+						form.find(".btn.shareImage").show();
+					}
+					
+					
 					jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 					
 				});
 				
 				
+			});
+			
+			$(".btn.btn-info.modify").click(function(){
+				var that = $(this);
+				var text = that.text();
+				var formGroup = that.parent(".form-group");
+				formGroup.find("img").hide();
+				formGroup.find("input[type='file']").show();
+				that.hide();
+				return false;
 			});
 		
 	});

@@ -23,4 +23,6 @@ public interface PhProductInfoService{
 	Page<PhProductInfo> findByPage(String name, Pageable page);
 
 	List<PhProductInfo> findByEndTime(Date endTime);
+
+	PhProductInfo saveProduct(PhProductInfo phProductInfo);
 }

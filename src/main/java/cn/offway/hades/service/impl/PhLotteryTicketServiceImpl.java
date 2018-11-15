@@ -84,6 +84,8 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 					params.add(criteriaBuilder.like(root.get("code"), "%"+code+"%"));
 				}
 				
+				params.add(criteriaBuilder.equal(root.get("productId"), 1L));
+				
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
 				

@@ -28,6 +28,6 @@ public interface PhLotteryTicketRepository extends JpaRepository<PhLotteryTicket
 	
 	List<PhLotteryTicket> findByProductIdAndUnionid(Long productId,String unionid);
 	
-	@Query(nativeQuery=true,value="select i.miniopenid,MIN(t.form_id) from ph_lottery_ticket t,ph_wxuser_info i where  t.id=115 and t.unionid = i.unionid and t.product_id =?1 and form_id is not null and source='0' group by i.miniopenid")
+	@Query(nativeQuery=true,value="select i.miniopenid,MIN(t.form_id) from ph_lottery_ticket t,ph_wxuser_info i where  t.unionid = i.unionid and t.product_id =?1 and form_id is not null and  form_id !='the formId is a mock one' and source='0' group by i.miniopenid")
 	List<Object> findNoticeData(Long productId);
 }
