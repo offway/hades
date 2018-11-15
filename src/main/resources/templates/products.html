@@ -62,6 +62,7 @@
 				</div>
 				 <button class="btn btn-info add" >添加</button>
 				<button class="btn btn-info edit">修改</button>
+				<button class="btn btn-info rule">添加活动规则</button>
 			</div>
 			
 					
@@ -199,6 +200,41 @@
 					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 					<button type="button" class="btn btn-info save">保存</button>
 					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade in" id="modal-rule">
+		<div class="modal-dialog">
+			<div class="modal-content" style="width: 800px;">
+				
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">添加活动规则</h4>
+				</div>
+				
+				<div class="modal-body">
+					<form role="form" id="productRuleForm">
+					<input type="hidden" name="id"/>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								
+								<textarea class="form-control autogrow" id="rule-content" cols="5" placeholder="请在此处添加活动规则..."></textarea>
+								
+							</div>	
+							
+						</div>
+					</div>
+					</form>
+				</div>
+				
+				<div class="modal-footer">
+					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info saveRule">保存</button>
 				</div>
 				
 			</div>
@@ -592,6 +628,46 @@
 				formGroup.find("input[type='file']").show();
 				that.hide();
 				return false;
+			});
+			
+			//活动规则
+			$(".btn.btn-info.rule").click(function(){
+				var productId = $("input[name='productId']:checked");
+				if(productId.length!=1){
+					toastr.error("请选择一条数据操作", "温馨提示");
+					return ;
+				}
+				
+				productId = productId[0].value;
+				
+				var form = $("#productRuleForm");
+				form.find("input[name='id']").val(productId);
+				
+				$.post("/products-one",{id:productId},function(data){
+					$("#rule-content").val(data.ruleContent);
+				}); 
+				
+				jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
+			});
+			
+			$(".btn.btn-info.saveRule").click(function(){
+				
+				var form = $("#productRuleForm");
+				var productId = form.find("input[name='id']").val();
+				
+				var content = $("#rule-content").val();
+				if(content==''){
+					toastr.error("请输入活动规则后操作", "温馨提示");
+					return ;
+				}
+				
+				$.post("/products-rule",{id:productId,ruleContent:content},function(data){
+					if(data){
+						jQuery('#modal-rule').modal('hide');
+						toastr.success("操作已成功！", "温馨提示");
+					}
+				})
+				
 			});
 		
 	});

@@ -1,11 +1,11 @@
 package cn.offway.hades.controller;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +46,11 @@ public class ProductController {
 	@Autowired
 	private QiniuProperties qiniuProperties;
 
+	/**
+	 * 活动
+	 * @param map
+	 * @return
+	 */
 	@RequestMapping("/products.html")
 	public String products(ModelMap map){
 		map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
@@ -105,11 +110,21 @@ public class ProductController {
 	 * @throws Exception
 	 */
 	@GetMapping("/products-notice/{productId}")
+	@ResponseBody
 	public void notice(@PathVariable Long productId) throws Exception {
 		String token = phLotteryTicketService.getToken();
 		PhProductInfo phProductInfo = phProductInfoService.findOne(productId);
 		phLotteryTicketService.notice(token,phProductInfo);
 		
+	}
+	
+	@PostMapping("/products-rule")
+	@ResponseBody
+	public boolean productsRule(Long id,String ruleContent){
+		PhProductInfo phProductInfo = phProductInfoService.findOne(id);
+		phProductInfo.setRuleContent(ruleContent);
+		phProductInfoService.save(phProductInfo);
+		return true;
 	}
 	
 }

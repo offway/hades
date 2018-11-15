@@ -64,6 +64,9 @@ public class PhProductInfo implements Serializable {
 
     /** 创建时间 **/
     private Date createTime;
+    
+    /** 活动规则 **/
+    private String ruleContent;
 
     /** 备注 **/
     private String remark;
@@ -199,5 +202,16 @@ public class PhProductInfo implements Serializable {
     public void setRemark(String remark) {
         this.remark = remark;
     }
+
+    @Column(name = "rule_content")
+	public String getRuleContent() {
+		return ruleContent;
+	}
+
+	public void setRuleContent(String ruleContent) {
+		this.ruleContent = ruleContent;
+	}
+    
+    
 
 }
