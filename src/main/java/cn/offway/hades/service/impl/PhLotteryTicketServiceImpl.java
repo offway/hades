@@ -124,7 +124,7 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 			tem.setFormId(formid);
 			tem.setTopColor("#00DD00");
 			tem.setToUser(openid);
-			tem.setPage("/pages/promo_reg/promo_reg.js?sharePath=true&id="+phProductInfo.getId());
+			tem.setPage("pages/promo_reg/promo_reg.js?sharePath=true&id="+phProductInfo.getId());
 			
 			List<TemplateParam> paras = new ArrayList<TemplateParam>();
 			paras.add(new TemplateParam("keyword1", "开奖通知", "#0044BB"));
