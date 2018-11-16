@@ -58,22 +58,22 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 			String image = productInfo.getImage();
 			if(!image.equals(phProductInfo.getImage())){
 				//如果资源变动则删除七牛资源
-				qiniuService.qiniuDelete(image.replace(qiniuProperties.getUrl(), ""));
+				qiniuService.qiniuDelete(image.replace(qiniuProperties.getUrl()+"/", ""));
 			}
 			String banner = productInfo.getBanner();
 			if(!banner.equals(phProductInfo.getBanner())){
 				//如果资源变动则删除七牛资源
-				qiniuService.qiniuDelete(banner.replace(qiniuProperties.getUrl(), ""));
+				qiniuService.qiniuDelete(banner.replace(qiniuProperties.getUrl()+"/", ""));
 			}
 			String shareImage = productInfo.getShareImage();
 			if(!shareImage.equals(phProductInfo.getShareImage())){
 				//如果资源变动则删除七牛资源
-				qiniuService.qiniuDelete(shareImage.replace(qiniuProperties.getUrl(), ""));
+				qiniuService.qiniuDelete(shareImage.replace(qiniuProperties.getUrl()+"/", ""));
 			}
 			String thumbnail = productInfo.getThumbnail();
 			if(!thumbnail.equals(phProductInfo.getThumbnail())){
 				//如果资源变动则删除七牛资源
-				qiniuService.qiniuDelete(thumbnail.replace(qiniuProperties.getUrl(), ""));
+				qiniuService.qiniuDelete(thumbnail.replace(qiniuProperties.getUrl()+"/", ""));
 			}
 			phProductInfo.setCreateTime(productInfo.getCreateTime());
 		}
