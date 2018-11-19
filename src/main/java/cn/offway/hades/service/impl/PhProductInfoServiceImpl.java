@@ -76,6 +76,7 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 				qiniuService.qiniuDelete(thumbnail.replace(qiniuProperties.getUrl()+"/", ""));
 			}
 			phProductInfo.setCreateTime(productInfo.getCreateTime());
+			phProductInfo.setRuleContent(productInfo.getRuleContent());
 		}
 		phProductInfo.setImage(phProductInfo.getImage());
 		phProductInfo.setBanner(phProductInfo.getBanner());
