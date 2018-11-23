@@ -193,6 +193,30 @@
 							</div>
 						</div>
 					</div>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">保存图片</label>
+								<input type="file" class="form-control" name="saveImageFile" placeholder="保存图片"/>
+								<input type="hidden" class="form-control" name="saveImage" />
+								<img alt="" src="" name="saveImageImage" style="display:none;"/>
+								<button class="btn btn-info modify saveImage" style="display:none;">更换</button>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">背景图片</label>
+								<input type="file" class="form-control" name="backgroundFile" placeholder="背景图片"/>
+								<input type="hidden" class="form-control" name="background" />
+								<img alt="" src="" name="backgroundImage" style="display:none;"/>
+								<button class="btn btn-info modify background" style="display:none;">更换</button>
+							</div>
+						</div>
+					</div>
 					</form>
 				</div>
 				
@@ -439,17 +463,23 @@
 				var imageVal = form.find("input[name='imageFile']").val();
 				var bannerVal = form.find("input[name='bannerFile']").val();
 				var shareImageVal = form.find("input[name='shareImageFile']").val();
+				var saveImageVal = form.find("input[name='saveImageFile']").val();
+				var backgroundVal = form.find("input[name='backgroundFile']").val();
 				
 				//已上传的图片地址
 				var thumbnailVals = form.find("input[name='thumbnail']").val();
 				var imageVals = form.find("input[name='image']").val();
 				var bannerVals = form.find("input[name='banner']").val();
 				var shareImageVals = form.find("input[name='shareImage']").val();
+				var backgroundVals = form.find("input[name='background']").val();
+				var saveImageVals = form.find("input[name='saveImage']").val();
+				
 				
 				
 				if(name =='' ||productDesc==''||price==''||shareDesc==''||shareTitle==''||daterange==''||
 					(thumbnailVal=='' && thumbnailVals=='')||(imageVal=='' && imageVals=='')
-					||(bannerVal=='' &&bannerVals=='' )||(shareImageVal=='' &&shareImageVals=='')){
+					||(bannerVal=='' &&bannerVals=='' )||(shareImageVal=='' &&shareImageVals=='')
+					||(saveImageVal=='' &&saveImageVals=='')||(backgroundVal=='' &&backgroundVals=='')){
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
@@ -484,6 +514,12 @@
 				}
 				if(shareImageVal!=''){
 					shareImageFile = form.find("input[name='shareImageFile']")[0].files[0];
+				}
+				if(saveImageVal!=''){
+					saveImageFile = form.find("input[name='saveImageFile']")[0].files[0];
+				}
+				if(backgroundVal!=''){
+					backgroundFile = form.find("input[name='backgroundFile']")[0].files[0];
 				}
 				
 				//获取token
@@ -524,19 +560,37 @@
 										if(res!=''){
 											form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
 										}
-										//提交保存
-										$.post("/products-save",$("#saveForm").serialize(),function(data){
-											if(data){
-												footer.find("button").show();
-												footer.find(".bg-lg").hide();
-												jQuery('#modal-6').modal('hide');
-												toastr.success("操作已成功！", "温馨提示");
-												oTable.fnDraw(); 
-											}else{
-												footer.find("button").show();
-												footer.find(".bg-lg").hide();
-												toastr.error("操作失败", "温馨提示");
+										upload("saveImage",token,saveImageFile,function(res){},function(err){
+											console.log("上传saveImageFile异常:"+err);
+										},function(res){
+											//上传成功
+											console.log(res);
+											if(res!=''){
+												form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
 											}
+											upload("background",token,backgroundFile,function(res){},function(err){
+												console.log("上传backgroundFile异常:"+err);
+											},function(res){
+												//上传成功
+												console.log(res);
+												if(res!=''){
+													form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+												}
+												//提交保存
+												$.post("/products-save",$("#saveForm").serialize(),function(data){
+													if(data){
+														footer.find("button").show();
+														footer.find(".bg-lg").hide();
+														jQuery('#modal-6').modal('hide');
+														toastr.success("操作已成功！", "温馨提示");
+														oTable.fnDraw(); 
+													}else{
+														footer.find("button").show();
+														footer.find(".bg-lg").hide();
+														toastr.error("操作失败", "温馨提示");
+													}
+												});
+											});
 										});
 									});
 								});
@@ -583,6 +637,8 @@
 					form.find("input[name='image']").val(data.image);
 					form.find("input[name='banner']").val(data.banner);
 					form.find("input[name='shareImage']").val(data.shareImage);
+					form.find("input[name='saveImage']").val(data.saveImage);
+					form.find("input[name='background']").val(data.background);
 					
 					if(''!=data.thumbnail){
 						form.find("input[name='thumbnailFile']").hide();
@@ -610,6 +666,18 @@
 						form.find("img[name='shareImageImage']").attr("src",data.shareImage);
 						form.find("img[name='shareImageImage']").show();
 						form.find(".btn.shareImage").show();
+					}
+					if(''!=data.saveImage){
+						form.find("input[name='saveImageFile']").hide();
+						form.find("img[name='saveImageImage']").attr("src",data.saveImage);
+						form.find("img[name='saveImageImage']").show();
+						form.find(".btn.saveImage").show();
+					}
+					if(''!=data.background){
+						form.find("input[name='backgroundFile']").hide();
+						form.find("img[name='backgroundImage']").attr("src",data.background);
+						form.find("img[name='backgroundImage']").show();
+						form.find(".btn.background").show();
 					}
 					
 					
