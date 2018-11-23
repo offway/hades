@@ -502,6 +502,8 @@
 				var bannerFile ='';
 				var thumbnailFile ='';
 				var shareImageFile ='';
+				var saveImageFile ='';
+				var backgroundFile ='';
 				//上传文件获得文件地址
 				if(imageVal!=''){
 					imageFile = form.find("input[name='imageFile']")[0].files[0];
@@ -603,9 +605,6 @@
 						toastr.error("上传文件错误，请联系管理员", "温馨提示");
 					}
 				});
-				
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
 			});
 			
 			$(".btn.btn-info.edit").click(function(){
