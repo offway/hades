@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.offway.hades.domain.PhProductInfo;
 
@@ -17,4 +20,9 @@ import cn.offway.hades.domain.PhProductInfo;
 public interface PhProductInfoRepository extends JpaRepository<PhProductInfo,Long>,JpaSpecificationExecutor<PhProductInfo> {
 
 	List<PhProductInfo> findByEndTime(Date endTime);
+	
+	@Transactional
+	@Modifying
+	@Query(nativeQuery = true,value="insert into sequence VALUES(?1,0,1)")
+	int sequence(Long productId);
 }

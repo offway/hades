@@ -103,6 +103,8 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 		phProductInfo.setThumbnail(phProductInfo.getThumbnail());
 		if(null == phProductInfo.getId()){
 			phProductInfo.setCreateTime(new Date());
+			//设置抽奖码自增1
+			phProductInfoRepository.sequence(productId);
 		}
 		return save(phProductInfo);
 	}
