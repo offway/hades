@@ -444,6 +444,34 @@
 			    }
 				
 			 };
+			 
+			 //图片上传
+	        var xhr;
+	        //上传文件方法
+	        function UpladFile(param,fileObj,uploadComplete) {
+	            var url =  "/file/upload"; // 接收上传文件的后台地址
+
+	            var form = new FormData(); // FormData 对象
+	            form.append("file", fileObj);// 文件对象
+	            form.append("param", param);
+	            
+	            xhr = new XMLHttpRequest();  // XMLHttpRequest 对象
+	            xhr.open("post", url, true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
+	            xhr.onload = uploadComplete; //请求完成
+	            xhr.onerror =  function(evt) {
+	                console.log("上传失败！");
+	            }; //请求失败
+
+	            xhr.upload.onprogress = function(evt){
+	            	
+	            };//【上传进度调用方法实现】
+	            xhr.upload.onloadstart = function(){//上传开始执行方法
+	                ot = new Date().getTime();   //设置上传开始时间
+	                oloaded = 0;//设置上传开始时，以上传的文件大小为0
+	            };
+
+	            xhr.send(form); //开始上传，发送form数据
+	        }
 			
 			 var qiniuUrl = [[${qiniuUrl}]];
 			//保存
@@ -570,13 +598,12 @@
 											if(res!=''){
 												form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
 											}
-											upload("background",token,backgroundFile,function(res){},function(err){
-												console.log("上传backgroundFile异常:"+err);
-											},function(res){
+											UpladFile("background",backgroundFile,function(res){
 												//上传成功
 												console.log(res);
+												var res = JSON.parse(res.target.responseText);
 												if(res!=''){
-													form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+													form.find("input[name='"+res.param+"']").val(res.key);
 												}
 												//提交保存
 												$.post("/products-save",$("#saveForm").serialize(),function(data){

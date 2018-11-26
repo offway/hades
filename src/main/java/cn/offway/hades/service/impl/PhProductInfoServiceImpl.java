@@ -1,5 +1,6 @@
 package cn.offway.hades.service.impl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -45,6 +47,9 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 	@Autowired
 	private QiniuProperties qiniuProperties;
 	
+	@Value("${ph.file.path}")
+	private String FILE_PATH;
+	
 	@Override
 	public PhProductInfo save(PhProductInfo phProductInfo){
 		return phProductInfoRepository.save(phProductInfo);
@@ -74,6 +79,20 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 			if(!thumbnail.equals(phProductInfo.getThumbnail())){
 				//如果资源变动则删除七牛资源
 				qiniuService.qiniuDelete(thumbnail.replace(qiniuProperties.getUrl()+"/", ""));
+			}
+			String saveImage = productInfo.getSaveImage();
+			if(!saveImage.equals(phProductInfo.getSaveImage())){
+				//如果资源变动则删除七牛资源
+				qiniuService.qiniuDelete(saveImage.replace(qiniuProperties.getUrl()+"/", ""));
+			}
+			
+			String background = productInfo.getBackground();
+			if(!background.equals(phProductInfo.getBackground())){
+				//如果资源变动则删除本地资源
+				File file=new File(FILE_PATH+"/"+StringUtils.substringAfterLast(background, "/"));
+		        if(file.exists()&&file.isFile()){
+		        	file.delete();
+		        }
 			}
 			phProductInfo.setCreateTime(productInfo.getCreateTime());
 			phProductInfo.setRuleContent(productInfo.getRuleContent());
