@@ -19,7 +19,7 @@ public class ScheduledService {
 	/**
 	 * 开奖通知
 	 */
-	@Scheduled(cron = "0 0 17 * * ?")
+//	@Scheduled(cron = "0 0 17 * * ?")
 	public void scheduled() {
 		logger.info("开奖通知定时任务开始");
 		try {
