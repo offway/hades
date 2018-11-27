@@ -84,4 +84,9 @@ public class PhActivityJoinServiceImpl implements PhActivityJoinService {
 	public List<Object> findNoticeData(Long activityId){
 		return phActivityJoinRepository.findNoticeData(activityId);
 	}
+	
+	@Override
+	public List<PhActivityJoin> findWinBefore(Long activityId){
+		return phActivityJoinRepository.findWinBefore(activityId);
+	}
 }

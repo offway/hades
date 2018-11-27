@@ -29,4 +29,6 @@ public interface PhActivityJoinService{
 	int updateLuckly(List<Long> ids);
 
 	List<Object> findNoticeData(Long activityId);
+
+	List<PhActivityJoin> findWinBefore(Long activityId);
 }

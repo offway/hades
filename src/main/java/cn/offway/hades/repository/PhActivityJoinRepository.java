@@ -34,5 +34,13 @@ public interface PhActivityJoinRepository extends JpaRepository<PhActivityJoin,L
 	 @Query(nativeQuery=true,value="select i.miniopenid,MIN(t.form_id) from ph_activity_join t,ph_wxuser_info i where  t.unionid = i.unionid and t.activity_id =?1 and form_id is not null and  form_id !='the formId is a mock one' group by i.miniopenid")
 	 List<Object> findNoticeData(Long activityId);
 	 
+	 /**
+	  * 查询参加本活动，中奖时间最早的用户
+	  * @param activityId
+	  * @return
+	  */
+	 @Query(nativeQuery = true,value="select aj.*  from ph_activity_join aj  where aj.activity_id=?1 and  not EXISTS (select 1 from ph_activity_blacklist ab where ab.unionid = aj.unionid) order by (select MAX(create_time) from ph_activity_prize  ap where aj.unionid = ap.unionid) ")
+	 List<PhActivityJoin> findWinBefore(Long activityId);
+	 
 	 
 }

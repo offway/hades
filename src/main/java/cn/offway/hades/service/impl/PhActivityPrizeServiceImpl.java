@@ -84,8 +84,34 @@ public class PhActivityPrizeServiceImpl implements PhActivityPrizeService {
 		String token = getToken();
 		
 		for (PhActivityInfo phActivityInfo : phActivityInfos) {
+			
+			Long windNum = phActivityInfo.getWinNum();
 			//获得中奖用户
-			List<PhActivityJoin> activityJoins = phActivityJoinService.luckly(phActivityInfo.getId(),phActivityInfo.getWinNum());
+			List<PhActivityJoin> activityJoins = phActivityJoinService.luckly(phActivityInfo.getId(),windNum);
+			
+			//如果中奖用户不足，查询本活动参与人员中奖最早的
+			int lessCount = windNum.intValue()-activityJoins.size();
+			if(lessCount>0){
+				List<PhActivityJoin> list = phActivityJoinService.findWinBefore(phActivityInfo.getId());
+				int i=0;
+				for (PhActivityJoin phActivityJoin : list) {
+					if(i==lessCount){
+						break;
+					}
+					boolean exists = false;
+					for (PhActivityJoin aj : activityJoins) {
+						if(aj.getActivityId().longValue() == phActivityJoin.getActivityId().longValue()){
+							exists = true;
+							break;
+						}
+					}
+					if(!exists){
+						activityJoins.add(phActivityJoin);
+						i++;
+					}
+				}
+			}
+			
 			
 			Date now = new Date();
 			List<PhActivityPrize> phActivityPrizes = new ArrayList<>();
