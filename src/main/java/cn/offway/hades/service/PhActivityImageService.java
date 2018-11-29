@@ -17,4 +17,8 @@ public interface PhActivityImageService{
 	PhActivityImage findOne(Long id);
 
 	List<PhActivityImage> findByActivityId(Long activityId);
+
+	void delete(List<PhActivityImage> phActivityImages);
+
+	List<PhActivityImage> save(List<PhActivityImage> phActivityImages);
 }

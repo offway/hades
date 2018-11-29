@@ -38,7 +38,7 @@ public class ScheduledService {
 	/**
 	 * 开奖通知-每日福利
 	 */
-	@Scheduled(cron = "0 0 11 * * ?")
+//	@Scheduled(cron = "0 0 11 * * ?")
 	public void dailyOpen() {
 		logger.info("开奖通知-每日福利定时任务开始");
 		try {

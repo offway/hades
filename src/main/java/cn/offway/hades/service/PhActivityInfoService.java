@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import cn.offway.hades.domain.PhActivityInfo;
 
 /**
@@ -23,4 +26,10 @@ public interface PhActivityInfoService{
 	Map<String, Object> detail(Long activityId, String unionid);
 
 	List<PhActivityInfo> findByEndTime(Date endtime);
+
+	Page<PhActivityInfo> findByPage(String name, Pageable page);
+
+	void save(PhActivityInfo phActivityInfo, String banner, String detail);
+
+	boolean imagesDelete(Long activityImageId);
 }

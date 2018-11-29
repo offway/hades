@@ -4,9 +4,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -88,5 +97,32 @@ public class PhActivityJoinServiceImpl implements PhActivityJoinService {
 	@Override
 	public List<PhActivityJoin> findWinBefore(Long activityId){
 		return phActivityJoinRepository.findWinBefore(activityId);
+	}
+	
+	@Override
+	public Page<PhActivityJoin> findByPage(final String activityName,final String nickName,final String unionid,Pageable page){
+		return phActivityJoinRepository.findAll(new Specification<PhActivityJoin>() {
+			
+			@Override
+			public Predicate toPredicate(Root<PhActivityJoin> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+				List<Predicate> params = new ArrayList<Predicate>();
+				
+				if(StringUtils.isNotBlank(activityName)){
+					params.add(criteriaBuilder.like(root.get("activityName"), "%"+activityName+"%"));
+				}
+				
+				if(StringUtils.isNotBlank(nickName)){
+					params.add(criteriaBuilder.like(root.get("nickName"), "%"+nickName+"%"));
+				}
+				
+				if(StringUtils.isNotBlank(unionid)){
+					params.add(criteriaBuilder.equal(root.get("unionid"), unionid));
+				}
+				
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+				return null;
+			}
+		}, page);
 	}
 }

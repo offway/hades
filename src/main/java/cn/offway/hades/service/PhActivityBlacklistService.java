@@ -13,4 +13,6 @@ public interface PhActivityBlacklistService{
 	PhActivityBlacklist save(PhActivityBlacklist phActivityBlacklist);
 	
 	PhActivityBlacklist findOne(Long id);
+
+	int countByUnionid(String unionid);
 }

@@ -2,6 +2,9 @@ package cn.offway.hades.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import cn.offway.hades.domain.PhActivityInfo;
 import cn.offway.hades.domain.PhActivityJoin;
 import cn.offway.hades.domain.PhWxuserInfo;
@@ -31,4 +34,6 @@ public interface PhActivityJoinService{
 	List<Object> findNoticeData(Long activityId);
 
 	List<PhActivityJoin> findWinBefore(Long activityId);
+
+	Page<PhActivityJoin> findByPage(String activityName, String nickName, String unionid, Pageable page);
 }

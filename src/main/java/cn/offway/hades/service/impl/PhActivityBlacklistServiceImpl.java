@@ -33,4 +33,9 @@ public class PhActivityBlacklistServiceImpl implements PhActivityBlacklistServic
 	public PhActivityBlacklist findOne(Long id){
 		return phActivityBlacklistRepository.findOne(id);
 	}
+	
+	@Override
+	public int countByUnionid(String unionid){
+		return phActivityBlacklistRepository.countByUnionid(unionid);
+	}
 }

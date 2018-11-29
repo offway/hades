@@ -2,6 +2,9 @@ package cn.offway.hades.domain;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
 /**
@@ -42,9 +45,11 @@ public class PhActivityInfo implements Serializable {
     private String shareDesc;
 
     /** 活动开始时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date beginTime;
 
     /** 活动截止时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
     /** 状态[0-未上架,1-已上架] **/

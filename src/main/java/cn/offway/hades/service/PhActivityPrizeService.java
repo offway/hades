@@ -1,5 +1,8 @@
 package cn.offway.hades.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import cn.offway.hades.domain.PhActivityPrize;
 
 /**
@@ -21,4 +24,6 @@ public interface PhActivityPrizeService{
 	 * @param activityId
 	 */
 	void open() throws Exception;
+
+	Page<PhActivityPrize> findByPage(String activityName, String nickName, String unionid, Pageable page);
 }

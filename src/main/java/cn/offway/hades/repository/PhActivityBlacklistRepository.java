@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import cn.offway.hades.domain.PhActivityBlacklist;
+import java.lang.String;
+import java.util.List;
 
 /**
  * 活动黑名单表-每日福利Repository接口
@@ -13,5 +15,5 @@ import cn.offway.hades.domain.PhActivityBlacklist;
  */
 public interface PhActivityBlacklistRepository extends JpaRepository<PhActivityBlacklist,Long>,JpaSpecificationExecutor<PhActivityBlacklist> {
 
-	/** 此处写一些自定义的方法 **/
+	int countByUnionid(String unionid);
 }

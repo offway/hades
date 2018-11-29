@@ -32,6 +32,11 @@ public class PhActivityImageServiceImpl implements PhActivityImageService {
 	}
 	
 	@Override
+	public List<PhActivityImage> save(List<PhActivityImage> phActivityImages){
+		 return phActivityImageRepository.save(phActivityImages);
+	}
+	
+	@Override
 	public PhActivityImage findOne(Long id){
 		return phActivityImageRepository.findOne(id);
 	}
@@ -39,5 +44,10 @@ public class PhActivityImageServiceImpl implements PhActivityImageService {
 	@Override
 	public List<PhActivityImage> findByActivityId(Long activityId){
 		return phActivityImageRepository.findByActivityId(activityId);
+	}
+	
+	@Override
+	public void delete(List<PhActivityImage> phActivityImages){
+		 phActivityImageRepository.delete(phActivityImages);
 	}
 }
