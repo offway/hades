@@ -50,4 +50,9 @@ public class PhActivityImageServiceImpl implements PhActivityImageService {
 	public void delete(List<PhActivityImage> phActivityImages){
 		 phActivityImageRepository.delete(phActivityImages);
 	}
+	
+	@Override
+	public void delete(PhActivityImage phActivityImage){
+		 phActivityImageRepository.delete(phActivityImage);
+	}
 }

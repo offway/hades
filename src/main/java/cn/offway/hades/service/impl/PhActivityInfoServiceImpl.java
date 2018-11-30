@@ -146,20 +146,20 @@ public class PhActivityInfoServiceImpl implements PhActivityInfoService {
 		
 		List<String> banners = Arrays.asList(banner.split("#"));
 		List<String> details = Arrays.asList(detail.split("#"));
-		List<PhActivityImage> activityImages = phActivityImageService.findByActivityId(productId);
-		for (PhActivityImage phActivityImage : activityImages) {
-			String image = phActivityImage.getImageUrl();
-			if(phActivityImage.getType().equals("0") && (!banners.contains(image))){
-				//如果资源变动则删除七牛资源
-				qiniuService.qiniuDelete(image.replace(qiniuProperties.getUrl()+"/", ""));
-			}
-			if(phActivityImage.getType().equals("1") && (!details.contains(image))){
-				//如果资源变动则删除七牛资源
-				qiniuService.qiniuDelete(image.replace(qiniuProperties.getUrl()+"/", ""));
-			}
-		}
-		
-		phActivityImageService.delete(activityImages);
+//		List<PhActivityImage> activityImages = phActivityImageService.findByActivityId(productId);
+//		for (PhActivityImage phActivityImage : activityImages) {
+//			String image = phActivityImage.getImageUrl();
+//			if(phActivityImage.getType().equals("0") && (!banners.contains(image))){
+//				//如果资源变动则删除七牛资源
+//				qiniuService.qiniuDelete(image.replace(qiniuProperties.getUrl()+"/", ""));
+//			}
+//			if(phActivityImage.getType().equals("1") && (!details.contains(image))){
+//				//如果资源变动则删除七牛资源
+//				qiniuService.qiniuDelete(image.replace(qiniuProperties.getUrl()+"/", ""));
+//			}
+//		}
+//		
+//		phActivityImageService.delete(activityImages);
 		List<PhActivityImage> images = new ArrayList<>();
 		Date now = new Date();
 		for (String b : banners) {
@@ -194,9 +194,10 @@ public class PhActivityInfoServiceImpl implements PhActivityInfoService {
 	
 	@Override
 	public boolean imagesDelete(Long activityImageId){
-		//TODO imagesDelete
 		PhActivityImage activityImage = phActivityImageService.findOne(activityImageId);
-		activityImage.getImageUrl();
+		String image = activityImage.getImageUrl();
+		qiniuService.qiniuDelete(image.replace(qiniuProperties.getUrl()+"/", ""));
+		phActivityImageService.delete(activityImage);
 		return true;
 	}
 	

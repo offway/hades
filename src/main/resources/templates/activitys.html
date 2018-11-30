@@ -186,7 +186,7 @@
 							<div class="form-group">
 								<label for="field-4" class="control-label">轮播图片</label>
 								<button class="btn btn-info appendBanner">添加</button>
-								<input type="file" class="form-control" name="bannerFile" placeholder="轮播图片"/>
+								<!-- <input type="file" class="form-control" name="bannerFile" placeholder="轮播图片"/> -->
 								<input type="hidden" class="form-control" name="banner" />
 							</div>
 						</div>
@@ -196,7 +196,7 @@
 							<div class="form-group">
 								<label for="field-4" class="control-label">详情图片</label>
 								<button class="btn btn-info appendDetail">添加</button>
-								<input type="file" class="form-control" name="detailFile" placeholder="详情图片"/>
+								<!-- <input type="file" class="form-control" name="detailFile" placeholder="详情图片"/> -->
 								<input type="hidden" class="form-control" name="detail" />
 							</div>
 						</div>
@@ -390,6 +390,7 @@
 				form.find("input[type='file']").show();
 				form.find(".btn.btn-info.modify").text("更换");
 				form.find(".btn.btn-info.modify").hide();
+				$(".imageShow").remove();
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 				
 			});
@@ -436,7 +437,7 @@
 				var shareDesc = form.find("input[name='shareDesc']").val();
 				var daterange = $("#daterange").val();
 				//文件
-				var imageVal = form.find("input[name='imageFile']").val();
+				var imageVal = form.find("input[name='imageFile']")[0].value;
 				
 				//已上传的图片地址
 				var imageVals = form.find("input[name='image']").val();
@@ -477,7 +478,7 @@
 					}
 				});
 				
-				if(bannerFiles.length==0){
+				if(bannerFiles.length==0 && form.find(".appendBanner").parent(".form-group").find(".imageShow").length==0){
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
@@ -491,7 +492,7 @@
 					}
 				});
 				
-				if(detailFiles.length==0){
+				if(detailFiles.length==0 && form.find(".appendDetail").parent(".form-group").find(".imageShow").length==0){
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
@@ -513,52 +514,131 @@
 							
 							var  bannerUrls = new Array();
 							var  detailUrls = new Array();
-							$.each(bannerFiles,function(i,e){
-								upload("banner",token,e,function(res){},function(err){
-									console.log("上传bannerFile异常:"+err);
-								},function(res){
-									//上传成功
-									console.log(res);
-									if(res!=''){
-										bannerUrls.push(qiniuUrl+"/"+res.key);
-										form.find("input[name='"+res.param+"']").val(form.find("input[name='"+res.param+"']").val()+"#"+qiniuUrl+"/"+res.key);
-									}
-									if(bannerUrls.length == bannerFiles.length){
-										
-										$.each(detailFiles,function(i,e){
-											upload("detail",token,e,function(res){},function(err){
-												console.log("上传detailFile异常:"+err);
-											},function(res){
-												//上传成功
-												console.log(res);
-												if(res!=''){
-													detailUrls.push(qiniuUrl+"/"+res.key);
-													form.find("input[name='"+res.param+"']").val(form.find("input[name='"+res.param+"']").val()+"#"+qiniuUrl+"/"+res.key);
-												}
-												if(detailUrls.length == detailFiles.length){
-													//提交保存
-													$.post("/activitys-save",$("#saveForm").serialize(),function(data){
-														if(data){
-															footer.find("button").show();
-															footer.find(".bg-lg").hide();
-															jQuery('#modal-6').modal('hide');
-															toastr.success("操作已成功！", "温馨提示");
-															oTable.fnDraw(); 
-														}else{
-															footer.find("button").show();
-															footer.find(".bg-lg").hide();
-															toastr.error("操作失败", "温馨提示");
-														}
-													});
-												}
-											});
-											
-										});
-										
+							
+							if(bannerFiles.length==0 && detailFiles.length==0){
+								//提交保存
+								$.post("/activitys-save",$("#saveForm").serialize(),function(data){
+									if(data){
+										footer.find("button").show();
+										footer.find(".bg-lg").hide();
+										jQuery('#modal-6').modal('hide');
+										toastr.success("操作已成功！", "温馨提示");
+										oTable.fnDraw(); 
+									}else{
+										footer.find("button").show();
+										footer.find(".bg-lg").hide();
+										toastr.error("操作失败", "温馨提示");
 									}
 								});
+							}else if(bannerFiles.length==0){
+								$.each(detailFiles,function(i,e){
+									upload("detail",token,e,function(res){},function(err){
+										console.log("上传detailFile异常:"+err);
+									},function(res){
+										//上传成功
+										console.log(res);
+										if(res!=''){
+											detailUrls.push(qiniuUrl+"/"+res.key);
+											form.find("input[name='"+res.param+"']").val(form.find("input[name='"+res.param+"']").val()+"#"+qiniuUrl+"/"+res.key);
+										}
+										if(detailUrls.length == detailFiles.length){
+											//提交保存
+											$.post("/activitys-save",$("#saveForm").serialize(),function(data){
+												if(data){
+													footer.find("button").show();
+													footer.find(".bg-lg").hide();
+													jQuery('#modal-6').modal('hide');
+													toastr.success("操作已成功！", "温馨提示");
+													oTable.fnDraw(); 
+												}else{
+													footer.find("button").show();
+													footer.find(".bg-lg").hide();
+													toastr.error("操作失败", "温馨提示");
+												}
+											});
+										}
+									});
+									
+								});
 								
-							});
+							}else if(detailFiles.length==0){
+								$.each(bannerFiles,function(i,e){
+									upload("banner",token,e,function(res){},function(err){
+										console.log("上传bannerFile异常:"+err);
+									},function(res){
+										//上传成功
+										console.log(res);
+										if(res!=''){
+											bannerUrls.push(qiniuUrl+"/"+res.key);
+											form.find("input[name='"+res.param+"']").val(form.find("input[name='"+res.param+"']").val()+"#"+qiniuUrl+"/"+res.key);
+										}
+										if(bannerUrls.length == bannerFiles.length){
+											//提交保存
+											$.post("/activitys-save",$("#saveForm").serialize(),function(data){
+												if(data){
+													footer.find("button").show();
+													footer.find(".bg-lg").hide();
+													jQuery('#modal-6').modal('hide');
+													toastr.success("操作已成功！", "温馨提示");
+													oTable.fnDraw(); 
+												}else{
+													footer.find("button").show();
+													footer.find(".bg-lg").hide();
+													toastr.error("操作失败", "温馨提示");
+												}
+											});
+										}
+									});
+									
+								});
+							}else{
+								$.each(bannerFiles,function(i,e){
+									upload("banner",token,e,function(res){},function(err){
+										console.log("上传bannerFile异常:"+err);
+									},function(res){
+										//上传成功
+										console.log(res);
+										if(res!=''){
+											bannerUrls.push(qiniuUrl+"/"+res.key);
+											form.find("input[name='"+res.param+"']").val(form.find("input[name='"+res.param+"']").val()+"#"+qiniuUrl+"/"+res.key);
+										}
+										if(bannerUrls.length == bannerFiles.length){
+											
+											$.each(detailFiles,function(i,e){
+												upload("detail",token,e,function(res){},function(err){
+													console.log("上传detailFile异常:"+err);
+												},function(res){
+													//上传成功
+													console.log(res);
+													if(res!=''){
+														detailUrls.push(qiniuUrl+"/"+res.key);
+														form.find("input[name='"+res.param+"']").val(form.find("input[name='"+res.param+"']").val()+"#"+qiniuUrl+"/"+res.key);
+													}
+													if(detailUrls.length == detailFiles.length){
+														//提交保存
+														$.post("/activitys-save",$("#saveForm").serialize(),function(data){
+															if(data){
+																footer.find("button").show();
+																footer.find(".bg-lg").hide();
+																jQuery('#modal-6').modal('hide');
+																toastr.success("操作已成功！", "温馨提示");
+																oTable.fnDraw(); 
+															}else{
+																footer.find("button").show();
+																footer.find(".bg-lg").hide();
+																toastr.error("操作失败", "温馨提示");
+															}
+														});
+													}
+												});
+												
+											});
+											
+										}
+									});
+									
+								});
+							}
 							
 						});
 						
@@ -573,6 +653,8 @@
 			$(".btn.btn-info.edit").click(function(){
 				
 				$(".imageShow").remove();
+				$("#saveForm").find("input").val("");
+				
 				var activityId = $("input[name='activityId']:checked");
 				if(activityId.length!=1){
 					toastr.error("请选择一条数据操作", "温馨提示");
@@ -614,10 +696,12 @@
 							var url = e.imageUrl;
 							if(type=='0'){
 								//展示banner图
-								form.find("input[name='bannerFile']").after("<div class='imageShow'><img src='"+url+"'></img><button class='btn btn-info' id="+e.id+">删除</button></div>")
+								form.find("input[name='bannerFile']").remove();
+								form.find(".btn.btn-info.appendBanner").after("<div class='imageShow'><img src='"+url+"'></img><button class='btn btn-info' activityImageId="+e.id+">删除</button></div>")
 							}else if(type=='1'){
 								//展示详情图
-								form.find("input[name='detailFile']").after("<div class='imageShow'><img src='"+url+"'></img><button class='btn btn-info' id="+e.id+">删除</button></div>")
+								form.find("input[name='detailFile']").remove();
+								form.find(".btn.btn-info.appendDetail").after("<div class='imageShow'><img src='"+url+"'></img><button class='btn btn-info' activityImageId="+e.id+">删除</button></div>")
 							}
 							
 						});
@@ -634,7 +718,7 @@
 			
 			$("body").on("click",".imageShow button",function(){
 				var imageShow = $(this).parent(".imageShow");
-				var  activityImageId = $(this).attr("id");
+				var  activityImageId = $(this).attr("activityImageId");
 				$.post("/activitys-images-delete",{activityImageId:activityImageId},function(data){
 					if(data){
 						imageShow.remove();

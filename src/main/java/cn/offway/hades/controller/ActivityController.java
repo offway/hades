@@ -125,11 +125,10 @@ public class ActivityController {
 		return phActivityImageService.findByActivityId(id);
 	}
 	
-	@GetMapping("/activitys-images-delete")
+	@PostMapping("/activitys-images-delete")
 	@ResponseBody
 	public boolean imagesDelete(Long activityImageId){
-		//TODO imagesDelete
-		return true;
+		return phActivityInfoService.imagesDelete(activityImageId);
 		
 	}
 	

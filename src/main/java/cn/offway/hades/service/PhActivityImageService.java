@@ -21,4 +21,6 @@ public interface PhActivityImageService{
 	void delete(List<PhActivityImage> phActivityImages);
 
 	List<PhActivityImage> save(List<PhActivityImage> phActivityImages);
+
+	void delete(PhActivityImage phActivityImage);
 }
