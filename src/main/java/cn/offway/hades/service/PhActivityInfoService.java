@@ -32,4 +32,8 @@ public interface PhActivityInfoService{
 	void save(PhActivityInfo phActivityInfo, String banner, String detail);
 
 	boolean imagesDelete(Long activityImageId);
+
+	List<PhActivityInfo> findAll(List<Long> ids);
+
+	List<PhActivityInfo> save(List<PhActivityInfo> phActivityInfo);
 }

@@ -1,5 +1,6 @@
 package cn.offway.hades.controller;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
@@ -107,15 +109,18 @@ public class ActivityController {
 	
 	@PostMapping("/activitys-update")
 	@ResponseBody
-	public boolean activitysUpdate(Long id,Long joinNum,String status){
-		PhActivityInfo phActivityInfo = phActivityInfoService.findOne(id);
-		if(null!=joinNum){
-			phActivityInfo.setJoinNum(joinNum);
+	public boolean activitysUpdate(@RequestParam("ids[]") Long[] ids,Long joinNum,String status){
+		List<PhActivityInfo> phActivityInfos = phActivityInfoService.findAll(Arrays.asList(ids));
+		for (PhActivityInfo phActivityInfo : phActivityInfos) {
+			if(null!=joinNum){
+				phActivityInfo.setJoinNum(joinNum);
+			}
+			if(StringUtils.isNotBlank(status)){
+				phActivityInfo.setStatus(status);
+			}
 		}
-		if(StringUtils.isNotBlank(status)){
-			phActivityInfo.setStatus(status);
-		}
-		phActivityInfoService.save(phActivityInfo);
+		
+		phActivityInfoService.save(phActivityInfos);
 		return true;
 	}
 	

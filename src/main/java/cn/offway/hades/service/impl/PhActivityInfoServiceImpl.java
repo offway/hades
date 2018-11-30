@@ -67,8 +67,18 @@ public class PhActivityInfoServiceImpl implements PhActivityInfoService {
 	}
 	
 	@Override
+	public List<PhActivityInfo> save(List<PhActivityInfo> phActivityInfo){
+		return phActivityInfoRepository.save(phActivityInfo);
+	}
+	
+	@Override
 	public PhActivityInfo findOne(Long id){
 		return phActivityInfoRepository.findOne(id);
+	}
+	
+	@Override
+	public List<PhActivityInfo> findAll(List<Long> ids){
+		return phActivityInfoRepository.findAll(ids);
 	}
 	
 	@Override

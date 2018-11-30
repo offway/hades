@@ -768,8 +768,10 @@
 					toastr.error("参与人数不能为空或0", "温馨提示");
 					return ;
 				}
+				var ids = new Array();
+				ids.push(activityId);
 				
-				$.post("/activitys-update",{id:activityId,joinNum:content},function(data){
+				$.post("/activitys-update",{ids:ids,joinNum:content},function(data){
 					if(data){
 						jQuery('#modal-joinNum').modal('hide');
 						toastr.success("操作已成功！", "温馨提示");
@@ -781,16 +783,20 @@
 			
 			$(".btn.btn-info.updateStatus").click(function(){
 				var activityId = $("input[name='activityId']:checked");
-				if(activityId.length!=1){
-					toastr.error("请选择一条数据操作", "温馨提示");
+				if(activityId.length < 1){
+					toastr.error("请至少选择一条数据操作", "温馨提示");
 					return ;
 				}
 				
-				activityId = activityId[0].value;
+				var ids = new Array();
+				activityId.each(function(i,e){
+					ids.push(e.value);
+				});
+				
 				
 				var value = $(this).text()=='上架'?'1':'0';
 				
-				$.post("/activitys-update",{id:activityId,status:value},function(data){
+				$.post("/activitys-update",{ids:ids,status:value},function(data){
 					if(data){
 						toastr.success("操作已成功！", "温馨提示");
 						oTable.fnDraw();
