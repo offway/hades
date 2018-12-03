@@ -58,7 +58,9 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 	@Override
 	public PhProductInfo saveProduct(PhProductInfo phProductInfo){
 		Long productId = phProductInfo.getId();
+		boolean isAdd = true;
 		if(null!=productId){
+			isAdd = false;
 			PhProductInfo productInfo = findOne(productId);
 			String image = productInfo.getImage();
 			if(!image.equals(phProductInfo.getImage())){
@@ -101,12 +103,18 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 		phProductInfo.setBanner(phProductInfo.getBanner());
 		phProductInfo.setShareImage(phProductInfo.getShareImage());
 		phProductInfo.setThumbnail(phProductInfo.getThumbnail());
-		if(null == phProductInfo.getId()){
+		if(isAdd){
 			phProductInfo.setCreateTime(new Date());
-			//设置抽奖码自增1
-			phProductInfoRepository.sequence(productId);
 		}
-		return save(phProductInfo);
+		
+		phProductInfo = save(phProductInfo);
+		
+		if(isAdd){
+			//设置抽奖码自增1
+			phProductInfoRepository.sequence(phProductInfo.getId());
+		}
+		
+		return phProductInfo;
 	}
 	
 	@Override
