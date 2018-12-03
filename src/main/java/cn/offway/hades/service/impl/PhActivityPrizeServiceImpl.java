@@ -136,7 +136,7 @@ public class PhActivityPrizeServiceImpl implements PhActivityPrizeService {
 					}
 					boolean exists = false;
 					for (PhActivityJoin aj : activityJoins) {
-						if(aj.getActivityId().longValue() == phActivityJoin.getActivityId().longValue()){
+						if(aj.getUnionid().equals(phActivityJoin.getUnionid())){
 							exists = true;
 							break;
 						}
