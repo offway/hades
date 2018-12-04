@@ -100,7 +100,7 @@ public class PhActivityJoinServiceImpl implements PhActivityJoinService {
 	}
 	
 	@Override
-	public Page<PhActivityJoin> findByPage(final String activityName,final String nickName,final String unionid,Pageable page){
+	public Page<PhActivityJoin> findByPage(final String activityName,final String nickName,final String unionid,final Long activityId,Pageable page){
 		return phActivityJoinRepository.findAll(new Specification<PhActivityJoin>() {
 			
 			@Override
@@ -109,6 +109,10 @@ public class PhActivityJoinServiceImpl implements PhActivityJoinService {
 				
 				if(StringUtils.isNotBlank(activityName)){
 					params.add(criteriaBuilder.like(root.get("activityName"), "%"+activityName+"%"));
+				}
+				
+				if(null != activityId){
+					params.add(criteriaBuilder.equal(root.get("activityId"), activityId));
 				}
 				
 				if(StringUtils.isNotBlank(nickName)){

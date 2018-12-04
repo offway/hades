@@ -64,7 +64,7 @@ public class ActivityJoinController {
 	 */
 	@ResponseBody
 	@RequestMapping("/activityJoins-data")
-	public Map<String, Object> activityJoinsData(HttpServletRequest request,String activityName,String nickName,String unionid){
+	public Map<String, Object> activityJoinsData(HttpServletRequest request,String activityName,String nickName,String unionid,Long activityId){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -72,7 +72,7 @@ public class ActivityJoinController {
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
 		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		Page<PhActivityJoin> pages = phActivityJoinService.findByPage(activityName,nickName,unionid, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		Page<PhActivityJoin> pages = phActivityJoinService.findByPage(activityName.trim(),nickName.trim(),unionid.trim(),activityId, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();

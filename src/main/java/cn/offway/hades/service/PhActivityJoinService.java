@@ -35,5 +35,6 @@ public interface PhActivityJoinService{
 
 	List<PhActivityJoin> findWinBefore(Long activityId);
 
-	Page<PhActivityJoin> findByPage(String activityName, String nickName, String unionid, Pageable page);
+	Page<PhActivityJoin> findByPage(String activityName, String nickName, String unionid, Long activityId,
+			Pageable page);
 }

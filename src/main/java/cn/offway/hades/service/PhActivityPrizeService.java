@@ -25,5 +25,6 @@ public interface PhActivityPrizeService{
 	 */
 	void open() throws Exception;
 
-	Page<PhActivityPrize> findByPage(String activityName, String nickName, String unionid, Pageable page);
+	Page<PhActivityPrize> findByPage(String activityName, String nickName, String unionid, Long activityId,
+			Pageable page);
 }

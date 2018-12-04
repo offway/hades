@@ -34,6 +34,9 @@ public class PhActivityPrize implements Serializable {
 
     /** 微信用户昵称 **/
     private String nickName;
+    
+    /** 微信号 **/
+    private String wxid;
 
     /** 状态[0-未发货,1-已发货] **/
     private String status;
@@ -103,8 +106,17 @@ public class PhActivityPrize implements Serializable {
     public void setUnionid(String unionid) {
         this.unionid = unionid;
     }
+    
+    @Column(name = "wxid", length = 100)
+    public String getWxid() {
+		return wxid;
+	}
 
-    @Column(name = "head_url", length = 500)
+	public void setWxid(String wxid) {
+		this.wxid = wxid;
+	}
+
+	@Column(name = "head_url", length = 500)
     public String getHeadUrl() {
         return headUrl;
     }

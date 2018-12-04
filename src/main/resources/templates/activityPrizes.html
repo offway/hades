@@ -51,6 +51,11 @@
 						</div>
 						<div class="form-group ">
 							<div class="input-group">
+								<input type="number" name="activityId" class="form-control" style="height:35px" placeholder="活动ID"/>
+							</div>
+						</div>
+						<div class="form-group ">
+							<div class="input-group">
 								<input type="text" name="nickName" class="form-control" style="height:35px" placeholder="用户名称"/>
 							</div>
 						</div>
@@ -205,16 +210,21 @@
             	},
             	{
                		targets: 9,
+	                data: "wxid",
+	                title: "微信号"
+            	},
+            	{
+               		targets: 10,
 	                data: "addr",
 	                title: "地址"
             	},
             	{
-               		targets: 10,
+               		targets: 11,
 	                data: "expressNumber",
 	                title: "快递单号"
             	},
                 {
-                    targets: 11,
+                    targets: 12,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {

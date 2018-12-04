@@ -74,7 +74,7 @@ public class PhActivityPrizeServiceImpl implements PhActivityPrizeService {
 	}
 	
 	@Override
-	public Page<PhActivityPrize> findByPage(final String activityName,final String nickName,final String unionid,Pageable page){
+	public Page<PhActivityPrize> findByPage(final String activityName,final String nickName,final String unionid,final Long activityId,Pageable page){
 		return phActivityPrizeRepository.findAll(new Specification<PhActivityPrize>() {
 			
 			@Override
@@ -83,6 +83,10 @@ public class PhActivityPrizeServiceImpl implements PhActivityPrizeService {
 				
 				if(StringUtils.isNotBlank(activityName)){
 					params.add(criteriaBuilder.like(root.get("activityName"), "%"+activityName+"%"));
+				}
+				
+				if(null !=activityId){
+					params.add(criteriaBuilder.equal(root.get("activityId"), activityId));
 				}
 				
 				if(StringUtils.isNotBlank(nickName)){
