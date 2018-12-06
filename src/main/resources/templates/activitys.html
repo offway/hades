@@ -391,6 +391,8 @@
 				form.find(".btn.btn-info.modify").text("更换");
 				form.find(".btn.btn-info.modify").hide();
 				$(".imageShow").remove();
+				//添加默认值
+				form.find("input[name='winNum']").val("2");
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 				
 			});
@@ -434,7 +436,7 @@
 				var shareDesc = form.find("input[name='shareDesc']").val();
 				var joinNum = form.find("input[name='joinNum']").val();
 				var winNum = form.find("input[name='winNum']").val();
-				var shareDesc = form.find("input[name='shareDesc']").val();
+				//var shareDesc = form.find("input[name='shareDesc']").val();
 				var daterange = $("#daterange").val();
 				//文件
 				var imageVal = form.find("input[name='imageFile']")[0].value;
@@ -445,7 +447,7 @@
 				
 				
 				if(joinNum=='' ||winNum=='' ||specification=='' ||name =='' ||productDesc==''||
-						specification==''||shareDesc==''||shareTitle==''||daterange==''||
+						specification==''||shareTitle==''||daterange==''||
 					(imageVal=='' && imageVals=='')){
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
