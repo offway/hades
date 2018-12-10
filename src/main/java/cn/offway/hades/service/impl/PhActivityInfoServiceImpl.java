@@ -141,6 +141,7 @@ public class PhActivityInfoServiceImpl implements PhActivityInfoService {
 	
 	@Override
 	public void save(PhActivityInfo phActivityInfo,String banner,String detail){
+		phActivityInfo.setCreateTime(new Date());
 		Long productId = phActivityInfo.getId();
 		if(null!=productId){
 			PhActivityInfo productInfo = findOne(productId);
