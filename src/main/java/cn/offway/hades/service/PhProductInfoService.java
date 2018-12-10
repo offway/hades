@@ -25,4 +25,8 @@ public interface PhProductInfoService{
 	List<PhProductInfo> findByEndTime(Date endTime);
 
 	PhProductInfo saveProduct(PhProductInfo phProductInfo);
+
+	Page<PhProductInfo> findByType(String type, Pageable page);
+
+	int updateSort(Long productId);
 }

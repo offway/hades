@@ -25,4 +25,11 @@ public interface PhProductInfoRepository extends JpaRepository<PhProductInfo,Lon
 	@Modifying
 	@Query(nativeQuery = true,value="insert into sequence VALUES(?1,0,1)")
 	int sequence(Long productId);
+	
+	
+	@Transactional
+	@Modifying
+	@Query(nativeQuery = true,value="update ph_product_info set sort = (select  t.sort+1 from (select MAX(sort)as sort from ph_product_info ) t ) where id=?1")
+	int updateSort(Long productId);
+	
 }

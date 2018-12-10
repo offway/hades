@@ -33,7 +33,7 @@
 
 					<ol class="breadcrumb bc-1">
 						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
+						<li><a>限时豪礼</a></li>
 						<li class="active"><strong>活动管理</strong></li>
 					</ol>
 
@@ -100,9 +100,9 @@
 						<div class="col-md-12">
 							
 							<div class="form-group">
-								<label for="field-4" class="control-label">活动描述</label>
+								<label for="field-4" class="control-label">规格</label>
 								
-								<input type="text" class="form-control" name="productDesc" placeholder="活动描述"/>
+								<input type="text" class="form-control" name="productDesc" placeholder="规格"/>
 							</div>	
 						</div>
 					</div>
@@ -147,7 +147,7 @@
 							
 							<div class="form-group">
 								<label for="field-4" class="control-label">奖品价值</label>
-								<input type="number" class="form-control" name="price" placeholder="奖品价值"/>
+								<input type="text" class="form-control" name="price" placeholder="奖品价值"/>
 							</div>
 						</div>
 					</div>
@@ -155,11 +155,11 @@
 						<div class="col-md-12">
 							
 							<div class="form-group">
-								<label for="field-4" class="control-label">活动详情页缩略图</label>
-								<input type="file" class="form-control" name="thumbnailFile" placeholder="缩略图"/>
-								<input type="hidden" class="form-control" name="thumbnail" />
-								<img alt="" src="" name="thumbnailImage" style="display:none;"/>
-								<button class="btn btn-info modify thumbnailFile" style="display:none;">更换</button>
+								<label for="field-4" class="control-label">其他活动展示图</label>
+								<input type="file" class="form-control" name="showImageFile" placeholder="其他活动展示图"/>
+								<input type="hidden" class="form-control" name="showImage" />
+								<img alt="" src="" name="showImageImage" style="display:none;"/>
+								<button class="btn btn-info modify showImageFile" style="display:none;">更换</button>
 							</div>
 						</div>
 					</div>
@@ -217,6 +217,38 @@
 							</div>
 						</div>
 					</div>
+					
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">发布渠道</label>
+								<input type='hidden' name="channel"/>
+								 <div class="form-block">
+									<label>
+										<input type="checkbox" name ="channelCheckBox" class="cbr" value="1"/>
+										H5
+									</label>
+									<br />
+									<label>
+										<input type="checkbox" name ="channelCheckBox" class="cbr" value="2"/>
+										小程序
+									</label>
+									<br />
+									<label>
+										<input type="checkbox" name ="channelCheckBox" class="cbr" value="4"/>
+										APP
+									</label>
+									<br />
+									<label>
+										<input type="checkbox" name ="channelCheckBox" class="cbr" value="8"/>
+										其他活动
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					
 					</form>
 				</div>
 				
@@ -315,7 +347,7 @@
             	{
                		targets: 3,
 	                data: "productDesc",
-	                title: "活动描述"
+	                title: "规格"
             	}, 
             	{
                		targets: 4,
@@ -327,48 +359,36 @@
             	},
             	{
                		targets: 5,
-	                data: "banner",
-	                title: "活动banner",
-                    render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
-                    }
+	                data: "price",
+	                title: "奖品价值"
             	},
             	{
                		targets: 6,
-	                data: "price",
-	                title: "奖品价值",
+	                data: "channel",
+	                title: "发布渠道",
                     render: function (data, type, row, meta) {
-                    	return fmoney(data,2);
+                        var text = "";
+                    	if((data & 1) == 1){
+                    		text+="H5,";
+                        }
+                    	if((data & 2) == 2){
+                    		text+="小程序,";
+                        }
+                    	if((data & 4) == 4){
+                    		text+="APP,";
+                        }
+                    	if((data & 8) == 8){
+                    		text+="其他活动,";
+                        }
+                    	if(text.length>1){
+	                    	return text.substring(0,text.length-1);
+                    	}else{
+                    		return text;
+                    	}
                     }
             	},
             	{
                		targets: 7,
-	                data: "thumbnail",
-	                title: "缩略图",
-                    render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
-                    }
-            	},
-            	{
-               		targets: 8,
-	                data: "shareImage",
-	                title: "分享图片",
-                    render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
-                    }
-            	},
-            	{
-               		targets: 9,
-	                data: "shareTitle",
-	                title: "分享标题"
-            	},
-            	{
-               		targets: 10,
-	                data: "shareDesc",
-	                title: "分享描述"
-            	},
-            	{
-               		targets: 11,
 	                data: "beginTime",
 	                title: "开始时间",
                     render: function (data, type, row, meta) {
@@ -376,7 +396,7 @@
                     }
             	},
             	{
-               		targets: 12,
+               		targets: 8,
 	                data: "endTime",
 	                title: "截止时间",
                     render: function (data, type, row, meta) {
@@ -384,7 +404,7 @@
                     }
             	},
                 {
-                    targets: 13,
+                    targets: 9,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -411,12 +431,16 @@
 			
 			$(".btn.btn-info.add").click(function(){
 				var form = $("#saveForm");
-				form.find("input").val("");
+				form.find("input:not(input[type='checkbox'])").val("");
+				form.find("input[type='checkbox']").removeAttr("checked");
+				$(".cbr-replaced.cbr-checked").removeClass("cbr-checked");
 				form.find("img").attr("src","");
 				form.find("img").hide();
 				form.find("input[type='file']").show();
 				form.find(".btn.btn-info.modify").text("更换");
 				form.find(".btn.btn-info.modify").hide();
+				
+				
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 				
 			});
@@ -494,7 +518,7 @@
 				var shareDesc = form.find("input[name='shareDesc']").val();
 				var daterange = $("#daterange").val();
 				//文件
-				var thumbnailVal = form.find("input[name='thumbnailFile']").val();
+				var showImageVal = form.find("input[name='showImageFile']").val();
 				var imageVal = form.find("input[name='imageFile']").val();
 				var bannerVal = form.find("input[name='bannerFile']").val();
 				var shareImageVal = form.find("input[name='shareImageFile']").val();
@@ -502,19 +526,27 @@
 				var backgroundVal = form.find("input[name='backgroundFile']").val();
 				
 				//已上传的图片地址
-				var thumbnailVals = form.find("input[name='thumbnail']").val();
+				var showImageVals = form.find("input[name='showImage']").val();
 				var imageVals = form.find("input[name='image']").val();
 				var bannerVals = form.find("input[name='banner']").val();
 				var shareImageVals = form.find("input[name='shareImage']").val();
 				var backgroundVals = form.find("input[name='background']").val();
 				var saveImageVals = form.find("input[name='saveImage']").val();
 				
+				var channel= 0; //渠道
+			    $('.cbr-replaced.cbr-checked').each(function(){ 
+			    	channel = channel|$(this).find('input[name="channelCheckBox"]').val();
+			    });
+				
+				
+			    
 				
 				
 				if(name =='' ||productDesc==''||price==''||shareDesc==''||shareTitle==''||daterange==''||
-					(thumbnailVal=='' && thumbnailVals=='')||(imageVal=='' && imageVals=='')
+					(showImageVal=='' && showImageVals=='')||(imageVal=='' && imageVals=='')
 					||(bannerVal=='' &&bannerVals=='' )||(shareImageVal=='' &&shareImageVals=='')
-					||(saveImageVal=='' &&saveImageVals=='')||(backgroundVal=='' &&backgroundVals=='')){
+					||(saveImageVal=='' &&saveImageVals=='')||(backgroundVal=='' &&backgroundVals=='')
+					|| channel==0){
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
@@ -527,7 +559,8 @@
 					footer.find(".bg-lg").hide();
 				}
 				
-				
+				//渠道
+				form.find("input[name='channel']").val(channel);
 				
 				var dates = daterange.split(' - ');
 				form.find("input[name='beginTime']").val(dates[0]);
@@ -535,7 +568,7 @@
 				
 				var imageFile = '';
 				var bannerFile ='';
-				var thumbnailFile ='';
+				var showImageFile ='';
 				var shareImageFile ='';
 				var saveImageFile ='';
 				var backgroundFile ='';
@@ -546,8 +579,8 @@
 				if(bannerVal!=''){
 					bannerFile = form.find("input[name='bannerFile']")[0].files[0];
 				}
-				if(thumbnailVal!=''){
-					thumbnailFile = form.find("input[name='thumbnailFile']")[0].files[0];		
+				if(showImageVal!=''){
+					showImageFile = form.find("input[name='showImageFile']")[0].files[0];		
 				}
 				if(shareImageVal!=''){
 					shareImageFile = form.find("input[name='shareImageFile']")[0].files[0];
@@ -580,8 +613,8 @@
 									form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
 								}
 								
-								upload("thumbnail",token,thumbnailFile,function(res){},function(err){
-									console.log("上传thumbnailFile异常:"+err);
+								upload("showImage",token,showImageFile,function(res){},function(err){
+									console.log("上传showImageFile异常:"+err);
 								},function(res){
 									//上传成功
 									console.log(res);
@@ -653,8 +686,12 @@
 				}
 				
 				
+				
+				
 				$.post("/products-one",{id:productId.val()},function(data){
 					var form = $("#saveForm");
+					
+					$(".cbr-replaced.cbr-checked").removeClass("cbr-checked");
 					
 					form.find("input[name='id']").val(data.id);
 					form.find("input[name='name']").val(data.name);
@@ -669,18 +706,18 @@
 					form.find("input[name='beginTime']").val(beginTimeStr);
 					form.find("input[name='endTime']").val(endTimeStr);
 					
-					form.find("input[name='thumbnail']").val(data.thumbnail);
+					form.find("input[name='showImage']").val(data.showImage);
 					form.find("input[name='image']").val(data.image);
 					form.find("input[name='banner']").val(data.banner);
 					form.find("input[name='shareImage']").val(data.shareImage);
 					form.find("input[name='saveImage']").val(data.saveImage);
 					form.find("input[name='background']").val(data.background);
 					
-					if(''!=data.thumbnail){
-						form.find("input[name='thumbnailFile']").hide();
-						form.find("img[name='thumbnailImage']").attr("src",data.thumbnail);
-						form.find("img[name='thumbnailImage']").show();
-						form.find(".btn.thumbnailFile").show();
+					if(''!=data.showImage){
+						form.find("input[name='showImageFile']").hide();
+						form.find("img[name='showImageImage']").attr("src",data.showImage);
+						form.find("img[name='showImageImage']").show();
+						form.find(".btn.showImageFile").show();
 						
 					}
 					if(''!=data.image){
@@ -715,6 +752,16 @@
 						form.find("img[name='backgroundImage']").show();
 						form.find(".btn.background").show();
 					}
+					//渠道
+					var channel = data.channel;
+					$('input[name="channelCheckBox"]').each(function(){ 
+				    	var that = $(this);
+				    	var value =that.val();
+				    	if((channel & value) == value){
+				    		that.parents(".cbr-replaced").addClass("cbr-checked");
+				    	}
+				    	
+				    });
 					
 					
 					jQuery('#modal-6').modal('show', {backdrop: 'fade'});

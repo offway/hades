@@ -63,33 +63,33 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 			isAdd = false;
 			PhProductInfo productInfo = findOne(productId);
 			String image = productInfo.getImage();
-			if(!image.equals(phProductInfo.getImage())){
+			if(null!= image &&!image.equals(phProductInfo.getImage())){
 				//如果资源变动则删除七牛资源
 				qiniuService.qiniuDelete(image.replace(qiniuProperties.getUrl()+"/", ""));
 			}
 			String banner = productInfo.getBanner();
-			if(!banner.equals(phProductInfo.getBanner())){
+			if(null!= banner &&!banner.equals(phProductInfo.getBanner())){
 				//如果资源变动则删除七牛资源
 				qiniuService.qiniuDelete(banner.replace(qiniuProperties.getUrl()+"/", ""));
 			}
 			String shareImage = productInfo.getShareImage();
-			if(!shareImage.equals(phProductInfo.getShareImage())){
+			if(null!= shareImage &&!shareImage.equals(phProductInfo.getShareImage())){
 				//如果资源变动则删除七牛资源
 				qiniuService.qiniuDelete(shareImage.replace(qiniuProperties.getUrl()+"/", ""));
 			}
-			String thumbnail = productInfo.getThumbnail();
-			if(!thumbnail.equals(phProductInfo.getThumbnail())){
+			String showImage = productInfo.getShowImage();
+			if(null!= showImage &&!showImage.equals(phProductInfo.getShowImage())){
 				//如果资源变动则删除七牛资源
-				qiniuService.qiniuDelete(thumbnail.replace(qiniuProperties.getUrl()+"/", ""));
+				qiniuService.qiniuDelete(showImage.replace(qiniuProperties.getUrl()+"/", ""));
 			}
 			String saveImage = productInfo.getSaveImage();
-			if(!saveImage.equals(phProductInfo.getSaveImage())){
+			if(null!= saveImage &&!saveImage.equals(phProductInfo.getSaveImage())){
 				//如果资源变动则删除七牛资源
 				qiniuService.qiniuDelete(saveImage.replace(qiniuProperties.getUrl()+"/", ""));
 			}
 			
 			String background = productInfo.getBackground();
-			if(!background.equals(phProductInfo.getBackground())){
+			if(null!= background &&!background.equals(phProductInfo.getBackground())){
 				//如果资源变动则删除本地资源
 				File file=new File(FILE_PATH+"/"+StringUtils.substringAfterLast(background, "/"));
 		        if(file.exists()&&file.isFile()){
@@ -99,10 +99,8 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 			phProductInfo.setCreateTime(productInfo.getCreateTime());
 			phProductInfo.setRuleContent(productInfo.getRuleContent());
 		}
-		phProductInfo.setImage(phProductInfo.getImage());
-		phProductInfo.setBanner(phProductInfo.getBanner());
-		phProductInfo.setShareImage(phProductInfo.getShareImage());
-		phProductInfo.setThumbnail(phProductInfo.getThumbnail());
+		//设置缩略图为活动列表图
+		phProductInfo.setThumbnail(phProductInfo.getImage());
 		if(isAdd){
 			phProductInfo.setCreateTime(new Date());
 		}
@@ -128,6 +126,11 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 	}
 	
 	@Override
+	public int updateSort(Long productId){
+		return phProductInfoRepository.updateSort(productId);
+	}
+	
+	@Override
 	public Page<PhProductInfo> findByPage(final String name,Pageable page){
 		return phProductInfoRepository.findAll(new Specification<PhProductInfo>() {
 			
@@ -137,6 +140,49 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 				
 				if(StringUtils.isNotBlank(name)){
 					params.add(criteriaBuilder.like(root.get("name"), "%"+name+"%"));
+				}
+				
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+				
+				return null;
+			}
+		}, page);
+	}
+	
+	@Override
+	public Page<PhProductInfo> findByType(final String type,Pageable page){
+		return phProductInfoRepository.findAll(new Specification<PhProductInfo>() {
+			
+			@Override
+			public Predicate toPredicate(Root<PhProductInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+				List<Predicate> params = new ArrayList<Predicate>();
+				
+				Date now = new Date();
+				if(StringUtils.isNotBlank(type)){
+					if("0".equals(type)){
+						//进行中
+						params.add(criteriaBuilder.lessThan(root.get("beginTime"), now));
+						params.add(criteriaBuilder.isNull(root.get("video")));
+						Predicate[] predicates = new Predicate[params.size()];
+		                criteriaQuery.where(params.toArray(predicates));
+		                criteriaQuery.orderBy(criteriaBuilder.desc(root.get("sort")),criteriaBuilder.desc(root.get("beginTime")));
+					}else if("1".equals(type)){
+						//未开始
+						params.add(criteriaBuilder.greaterThanOrEqualTo(root.get("beginTime"), now));
+						Predicate[] predicates = new Predicate[params.size()];
+		                criteriaQuery.where(params.toArray(predicates));
+		                criteriaQuery.orderBy(criteriaBuilder.desc(root.get("sort")),criteriaBuilder.asc(root.get("beginTime")));
+					
+					}else if("2".equals(type)){
+						//已结束
+						params.add(criteriaBuilder.lessThan(root.get("endTime"), now));
+						params.add(criteriaBuilder.isNotNull(root.get("video")));
+						Predicate[] predicates = new Predicate[params.size()];
+		                criteriaQuery.where(params.toArray(predicates));
+		                criteriaQuery.orderBy(criteriaBuilder.desc(root.get("sort")),criteriaBuilder.desc(root.get("endTime")));
+					}
+					
 				}
 				
                 Predicate[] predicates = new Predicate[params.size()];

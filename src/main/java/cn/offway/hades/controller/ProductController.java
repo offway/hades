@@ -58,6 +58,41 @@ public class ProductController {
 	}
 	
 	/**
+	 * 活动排序
+	 * @param map
+	 * @return
+	 */
+	@RequestMapping("/products-sort.html")
+	public String productsSort(ModelMap map){
+		return "products-sort";
+	}
+	
+	/**
+	 * 查询数据
+	 * @param request
+	 * @param code
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("/products-sort-data")
+	public Map<String, Object> productsSortData(HttpServletRequest request,String type){
+		
+		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
+		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
+		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
+		Page<PhProductInfo> pages = phProductInfoService.findByType(type,new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength));
+		 // 为操作次数加1，必须这样做  
+        int initEcho = sEcho + 1;  
+        Map<String, Object> map = new HashMap<>();
+		map.put("sEcho", initEcho);  
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数  
+        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数  
+        map.put("aData", pages.getContent());//数据集合 
+		return map;
+	}
+	
+	
+	/**
 	 * 查询数据
 	 * @param request
 	 * @param code
@@ -124,6 +159,13 @@ public class ProductController {
 		PhProductInfo phProductInfo = phProductInfoService.findOne(id);
 		phProductInfo.setRuleContent(ruleContent);
 		phProductInfoService.save(phProductInfo);
+		return true;
+	}
+	
+	@PostMapping("/products-sort")
+	@ResponseBody
+	public boolean productsSort(Long id){
+		phProductInfoService.updateSort(id);
 		return true;
 	}
 	
