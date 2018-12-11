@@ -4,7 +4,7 @@ server:
   port: 8088
   session:  
     #session超时时间，单位秒
-    timeout:  600
+    timeout:  1800
       
 spring:
   #集群session存储方式
