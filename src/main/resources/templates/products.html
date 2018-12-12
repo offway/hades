@@ -55,7 +55,7 @@
 									<option value="">状态</option>
 									<option value="0">进行中</option>
 									<option value="1">未开始</option>
-									<option value="2">已开奖</option>
+									<option value="2">已结束</option>
 								</select>
 							</div>
 						</div>
@@ -483,12 +483,12 @@
 	                orderable: false,
                     render: function (data, type, row, meta) {
                     	var now = new Date().getTime();
-                        if(row.beginTime < now && row.video == null){
+                        if(row.beginTime <= now && now < data){
                         	return "<font color='green'>进行中</font>";
-                        }else if(row.beginTime >= now){
+                        }else if(row.beginTime > now){
                         	return "<font color='blue'>未开始</font>";
-                        }else if(data < now && row.video != null){
-                        	return "已开奖";
+                        }else if(data <= now ){
+                        	return "已结束";
                         }
                     }
             	},

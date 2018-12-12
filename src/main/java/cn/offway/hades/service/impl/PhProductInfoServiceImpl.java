@@ -178,16 +178,15 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 				if(StringUtils.isNotBlank(type)){
 					if("0".equals(type)){
 						//进行中
-						params.add(criteriaBuilder.lessThan(root.get("beginTime"), now));
-						params.add(criteriaBuilder.isNull(root.get("video")));
+						params.add(criteriaBuilder.lessThanOrEqualTo(root.get("beginTime"),now));
+						params.add(criteriaBuilder.greaterThan(root.get("endTime"), now));
 					}else if("1".equals(type)){
 						//未开始
-						params.add(criteriaBuilder.greaterThanOrEqualTo(root.get("beginTime"), now));
+						params.add(criteriaBuilder.greaterThan(root.get("beginTime"), now));
 					
 					}else if("2".equals(type)){
 						//已结束
-						params.add(criteriaBuilder.lessThan(root.get("endTime"), now));
-						params.add(criteriaBuilder.isNotNull(root.get("video")));
+						params.add(criteriaBuilder.lessThanOrEqualTo(root.get("endTime"), now));
 					}
 				}
 				
@@ -230,22 +229,21 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 				if(StringUtils.isNotBlank(type)){
 					if("0".equals(type)){
 						//进行中
-						params.add(criteriaBuilder.lessThan(root.get("beginTime"), now));
-						params.add(criteriaBuilder.isNull(root.get("video")));
+						params.add(criteriaBuilder.lessThanOrEqualTo(root.get("beginTime"),now));
+						params.add(criteriaBuilder.greaterThan(root.get("endTime"), now));
 						Predicate[] predicates = new Predicate[params.size()];
 		                criteriaQuery.where(params.toArray(predicates));
 		                criteriaQuery.orderBy(criteriaBuilder.desc(root.get("sort")),criteriaBuilder.desc(root.get("beginTime")));
 					}else if("1".equals(type)){
 						//未开始
-						params.add(criteriaBuilder.greaterThanOrEqualTo(root.get("beginTime"), now));
+						params.add(criteriaBuilder.greaterThan(root.get("beginTime"), now));
 						Predicate[] predicates = new Predicate[params.size()];
 		                criteriaQuery.where(params.toArray(predicates));
 		                criteriaQuery.orderBy(criteriaBuilder.desc(root.get("sort")),criteriaBuilder.asc(root.get("beginTime")));
 					
 					}else if("2".equals(type)){
 						//已结束
-						params.add(criteriaBuilder.lessThan(root.get("endTime"), now));
-						params.add(criteriaBuilder.isNotNull(root.get("video")));
+						params.add(criteriaBuilder.lessThanOrEqualTo(root.get("endTime"), now));
 						Predicate[] predicates = new Predicate[params.size()];
 		                criteriaQuery.where(params.toArray(predicates));
 		                criteriaQuery.orderBy(criteriaBuilder.desc(root.get("sort")),criteriaBuilder.desc(root.get("endTime")));
