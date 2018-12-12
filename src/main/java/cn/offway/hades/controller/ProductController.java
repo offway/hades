@@ -1,6 +1,8 @@
 package cn.offway.hades.controller;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,10 +20,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 
+import cn.offway.hades.domain.PhActivityInfo;
 import cn.offway.hades.domain.PhProductInfo;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhLotteryTicketService;
@@ -75,12 +79,12 @@ public class ProductController {
 	 */
 	@ResponseBody
 	@RequestMapping("/products-sort-data")
-	public Map<String, Object> productsSortData(HttpServletRequest request,String type){
+	public Map<String, Object> productsSortData(HttpServletRequest request,String type,Long channel){
 		
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
 		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		Page<PhProductInfo> pages = phProductInfoService.findByType(type,new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength));
+		Page<PhProductInfo> pages = phProductInfoService.findByType(type,channel,new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();
@@ -100,7 +104,7 @@ public class ProductController {
 	 */
 	@ResponseBody
 	@RequestMapping("/products-data")
-	public Map<String, Object> productsData(HttpServletRequest request,String name){
+	public Map<String, Object> productsData(HttpServletRequest request,String name,String type,String status,Long channel){
 		
 		String sortCol = request.getParameter("iSortCol_0");
 		String sortName = request.getParameter("mDataProp_"+sortCol);
@@ -108,7 +112,7 @@ public class ProductController {
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
 		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		Page<PhProductInfo> pages = phProductInfoService.findByPage(name, new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
+		Page<PhProductInfo> pages = phProductInfoService.findByPage(name, type, status,channel,new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength,Direction.fromString(sortDir),sortName));
 		 // 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();
@@ -166,6 +170,20 @@ public class ProductController {
 	@ResponseBody
 	public boolean productsSort(Long id){
 		phProductInfoService.updateSort(id);
+		return true;
+	}
+	
+	@PostMapping("/products-update")
+	@ResponseBody
+	public boolean productsUpdate(@RequestParam("ids[]") Long[] ids,String status){
+		List<PhProductInfo> phProductInfos = phProductInfoService.findAll(Arrays.asList(ids));
+		for (PhProductInfo phProductInfo : phProductInfos) {
+			if(StringUtils.isNotBlank(status)){
+				phProductInfo.setStatus(status);
+			}
+		}
+		
+		phProductInfoService.save(phProductInfos);
 		return true;
 	}
 	

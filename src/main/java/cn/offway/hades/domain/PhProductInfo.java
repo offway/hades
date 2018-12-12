@@ -91,6 +91,9 @@ public class PhProductInfo implements Serializable {
     
     /** 其他活动展示图 **/
     private String showImage;
+    
+    /** 状态[0-未上架,1-已上架] **/
+    private String status;
 
 
     @Id
@@ -296,6 +299,14 @@ public class PhProductInfo implements Serializable {
 		this.showImage = showImage;
 	}
 	
+	@Column(name = "status", length = 2)
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 	
 
 }

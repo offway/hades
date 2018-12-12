@@ -20,13 +20,17 @@ public interface PhProductInfoService{
 	
 	PhProductInfo findOne(Long id);
 
-	Page<PhProductInfo> findByPage(String name, Pageable page);
-
 	List<PhProductInfo> findByEndTime(Date endTime);
 
 	PhProductInfo saveProduct(PhProductInfo phProductInfo);
 
-	Page<PhProductInfo> findByType(String type, Pageable page);
-
 	int updateSort(Long productId);
+
+	List<PhProductInfo> findAll(List<Long> ids);
+
+	List<PhProductInfo> save(List<PhProductInfo> phProductInfos);
+
+	Page<PhProductInfo> findByPage(String name, String type, String status, Long channel, Pageable page);
+
+	Page<PhProductInfo> findByType(String type, Long channel, Pageable page);
 }

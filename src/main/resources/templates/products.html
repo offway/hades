@@ -49,6 +49,37 @@
 								<input type="text" name="name" class="form-control" style="height:35px" placeholder="活动名"/>
 							</div>
 						</div>
+						<div class="form-group ">
+							<div class="input-group">
+								<select name="type" class="form-control" style="height:35px" placeholder="状态">
+									<option value="">状态</option>
+									<option value="0">进行中</option>
+									<option value="1">未开始</option>
+									<option value="2">已开奖</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group ">
+							<div class="input-group">
+								<select name="status" class="form-control" style="height:35px">
+									<option value="">是否上架</option>
+									<option value="1">已上架</option>
+									<option value="0">未上架</option>
+								</select>
+							</div>
+						</div>
+						
+						<div class="form-group ">
+							<div class="input-group">
+								<select name="channel" class="form-control" style="height:35px" placeholder="渠道">
+									<option value="">渠道</option>
+									<option value="1">H5</option>
+									<option value="2">小程序</option>
+									<option value="4">APP</option>
+									<option value="8">其他活动</option>
+								</select>
+							</div>
+						</div>
 						<div class="form-group">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
 						</div>
@@ -64,6 +95,8 @@
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info rule">添加活动规则</button>
 				<button class="btn btn-info open">开奖通知</button>
+				<button class="btn btn-info updateStatus">上架</button>
+				<button class="btn btn-info updateStatus">下架</button>
 			</div>
 			
 					
@@ -161,6 +194,19 @@
 								<input type="hidden" class="form-control" name="showImage" />
 								<img alt="" src="" name="showImageImage" style="display:none;"/>
 								<button class="btn btn-info modify showImageFile" style="display:none;">更换</button>
+							</div>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">缩略图</label>
+								<input type="file" class="form-control" name="thumbnailFile" placeholder="缩略图"/>
+								<input type="hidden" class="form-control" name="thumbnail" />
+								<img alt="" src="" name="thumbnailImage" style="display:none;"/>
+								<button class="btn btn-info modify thumbnailFile" style="display:none;">更换</button>
 							</div>
 						</div>
 					</div>
@@ -378,11 +424,6 @@
             	}, 
             	{
                		targets: 3,
-	                data: "productDesc",
-	                title: "规格"
-            	}, 
-            	{
-               		targets: 4,
 	                data: "image",
 	                title: "活动列表图",
                     render: function (data, type, row, meta) {
@@ -390,12 +431,12 @@
                     }
             	},
             	{
-               		targets: 5,
+               		targets: 4,
 	                data: "price",
 	                title: "奖品价值"
             	},
             	{
-               		targets: 6,
+               		targets: 5,
 	                data: "channel",
 	                title: "发布渠道",
                     render: function (data, type, row, meta) {
@@ -420,7 +461,7 @@
                     }
             	},
             	{
-               		targets: 7,
+               		targets: 6,
 	                data: "beginTime",
 	                title: "开始时间",
                     render: function (data, type, row, meta) {
@@ -428,15 +469,39 @@
                     }
             	},
             	{
-               		targets: 8,
+               		targets: 7,
 	                data: "endTime",
 	                title: "截止时间",
                     render: function (data, type, row, meta) {
                         return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
                     }
             	},
+            	{
+               		targets: 8,
+	                data: "endTime",
+	                title: "状态",
+	                orderable: false,
+                    render: function (data, type, row, meta) {
+                    	var now = new Date().getTime();
+                        if(row.beginTime < now && row.video == null){
+                        	return "<font color='green'>进行中</font>";
+                        }else if(row.beginTime >= now){
+                        	return "<font color='blue'>未开始</font>";
+                        }else if(data < now && row.video != null){
+                        	return "已开奖";
+                        }
+                    }
+            	},
+            	{
+               		targets: 9,
+	                data: "status",
+	                title: "是否上架",
+                    render: function (data, type, row, meta) {
+                    	return "1"==data?"已上架":"<font color='blue'>未上架</font>";
+                    }
+            	},
                 {
-                    targets: 9,
+                    targets: 10,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -551,6 +616,7 @@
 				var daterange = $("#daterange").val();
 				//文件
 				var showImageVal = form.find("input[name='showImageFile']").val();
+				var thumbnailVal = form.find("input[name='thumbnailFile']").val();
 				var imageVal = form.find("input[name='imageFile']").val();
 				var bannerVal = form.find("input[name='bannerFile']").val();
 				var shareImageVal = form.find("input[name='shareImageFile']").val();
@@ -564,6 +630,7 @@
 				var shareImageVals = form.find("input[name='shareImage']").val();
 				var backgroundVals = form.find("input[name='background']").val();
 				var saveImageVals = form.find("input[name='saveImage']").val();
+				var thumbnailVals = form.find("input[name='thumbnail']").val();
 				
 				var channel= 0; //渠道
 			    $('.cbr-replaced.cbr-checked').each(function(){ 
@@ -575,9 +642,10 @@
 				
 				
 				if(name =='' ||productDesc==''||price==''||shareDesc==''||shareTitle==''||daterange==''||
-					(showImageVal=='' && showImageVals=='')||(imageVal=='' && imageVals=='')
+					(imageVal=='' && imageVals=='')
 					||(bannerVal=='' &&bannerVals=='' )||(shareImageVal=='' &&shareImageVals=='')
-					||(saveImageVal=='' &&saveImageVals=='')||(backgroundVal=='' &&backgroundVals=='')
+					||(saveImageVal=='' &&saveImageVals=='')|(thumbnailVal=='' &&thumbnailVals=='')
+					||(backgroundVal=='' &&backgroundVals=='')
 					|| channel==0){
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
@@ -604,6 +672,8 @@
 				var shareImageFile ='';
 				var saveImageFile ='';
 				var backgroundFile ='';
+				var thumbnailFile ='';
+				
 				//上传文件获得文件地址
 				if(imageVal!=''){
 					imageFile = form.find("input[name='imageFile']")[0].files[0];
@@ -623,6 +693,10 @@
 				if(backgroundVal!=''){
 					backgroundFile = form.find("input[name='backgroundFile']")[0].files[0];
 				}
+				if(thumbnailVal!=''){
+					thumbnailFile = form.find("input[name='thumbnailFile']")[0].files[0];
+				}
+				
 				
 				//获取token
 				$.get("/qiniu/token",{},function(token){
@@ -645,14 +719,23 @@
 									form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
 								}
 								
-								upload("showImage",token,showImageFile,function(res){},function(err){
-									console.log("上传showImageFile异常:"+err);
+								upload("thumbnail",token,thumbnailFile,function(res){},function(err){
+									console.log("上传thumbnailFile异常:"+err);
 								},function(res){
 									//上传成功
 									console.log(res);
 									if(res!=''){
 										form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
 									}
+									
+									upload("shareImage",token,shareImageFile,function(res){},function(err){
+										console.log("上传shareImageFile异常:"+err);
+									},function(res){
+										//上传成功
+										console.log(res);
+										if(res!=''){
+											form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+										}
 									
 									upload("shareImage",token,shareImageFile,function(res){},function(err){
 										console.log("上传shareImageFile异常:"+err);
@@ -700,6 +783,7 @@
 								});
 							});
 						});
+					});
 						
 					}else{
 						footer.find("button").show();
@@ -745,6 +829,8 @@
 					form.find("input[name='shareImage']").val(data.shareImage);
 					form.find("input[name='saveImage']").val(data.saveImage);
 					form.find("input[name='background']").val(data.background);
+					form.find("input[name='thumbnail']").val(data.thumbnail);
+					
 					
 					if(''!=data.showImage){
 						form.find("input[name='showImageFile']").hide();
@@ -753,6 +839,15 @@
 						form.find(".btn.showImageFile").show();
 						
 					}
+					
+					if(''!=data.thumbnail){
+						form.find("input[name='thumbnailFile']").hide();
+						form.find("img[name='thumbnailImage']").attr("src",data.thumbnail);
+						form.find("img[name='thumbnailImage']").show();
+						form.find(".btn.thumbnailFile").show();
+						
+					}
+					
 					if(''!=data.image){
 						form.find("input[name='imageFile']").hide();
 						form.find("img[name='imageImage']").attr("src",data.image);
@@ -880,6 +975,29 @@
 					}
 				}); 
 				
+			});
+			
+			$(".btn.btn-info.updateStatus").click(function(){
+				var activityId = $("input[name='productId']:checked");
+				if(activityId.length < 1){
+					toastr.error("请至少选择一条数据操作", "温馨提示");
+					return ;
+				}
+				
+				var ids = new Array();
+				activityId.each(function(i,e){
+					ids.push(e.value);
+				});
+				
+				
+				var value = $(this).text()=='上架'?'1':'0';
+				
+				$.post("/products-update",{ids:ids,status:value},function(data){
+					if(data){
+						toastr.success("操作已成功！", "温馨提示");
+						oTable.fnDraw();
+					}
+				})
 			});
 			
 			

@@ -7,10 +7,12 @@ import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.jpa.criteria.CriteriaBuilderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import cn.offway.hades.config.BitPredicate;
 import cn.offway.hades.domain.PhProductInfo;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.repository.PhProductInfoRepository;
@@ -49,11 +52,17 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 	
 	@Value("${ph.file.path}")
 	private String FILE_PATH;
-	
+
 	@Override
 	public PhProductInfo save(PhProductInfo phProductInfo){
 		return phProductInfoRepository.save(phProductInfo);
 	}
+	
+	@Override
+	public List<PhProductInfo> save(List<PhProductInfo> phProductInfos){
+		return phProductInfoRepository.save(phProductInfos);
+	}
+	
 	
 	@Override
 	public PhProductInfo saveProduct(PhProductInfo phProductInfo){
@@ -88,6 +97,12 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 				qiniuService.qiniuDelete(saveImage.replace(qiniuProperties.getUrl()+"/", ""));
 			}
 			
+			String thumbnail = productInfo.getThumbnail();
+			if(null!= thumbnail &&!thumbnail.equals(phProductInfo.getThumbnail())){
+				//如果资源变动则删除七牛资源
+				qiniuService.qiniuDelete(thumbnail.replace(qiniuProperties.getUrl()+"/", ""));
+			}
+			
 			String background = productInfo.getBackground();
 			if(null!= background &&!background.equals(phProductInfo.getBackground())){
 				//如果资源变动则删除本地资源
@@ -98,13 +113,19 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 			}
 			phProductInfo.setCreateTime(productInfo.getCreateTime());
 			phProductInfo.setRuleContent(productInfo.getRuleContent());
+			phProductInfo.setStatus(productInfo.getStatus());
+			phProductInfo.setAppRuleContent(productInfo.getAppRuleContent());
+			phProductInfo.setSort(productInfo.getSort());
 		}
-		//设置缩略图为活动列表图
-		phProductInfo.setThumbnail(phProductInfo.getImage());
+		
 		if(isAdd){
 			phProductInfo.setCreateTime(new Date());
 		}
 		
+		String video = phProductInfo.getVideo();
+		if(StringUtils.isBlank(video)){
+			phProductInfo.setVideo(null);
+		}
 		phProductInfo = save(phProductInfo);
 		
 		if(isAdd){
@@ -121,6 +142,13 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 	}
 	
 	@Override
+	public List<PhProductInfo> findAll(List<Long> ids){
+		return phProductInfoRepository.findAll(ids);
+	}
+	
+	
+	
+	@Override
 	public List<PhProductInfo> findByEndTime(Date endTime){
 		return phProductInfoRepository.findByEndTime(endTime);
 	}
@@ -131,7 +159,7 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 	}
 	
 	@Override
-	public Page<PhProductInfo> findByPage(final String name,Pageable page){
+	public Page<PhProductInfo> findByPage(final String name,final String type,final String status,final Long channel, Pageable page){
 		return phProductInfoRepository.findAll(new Specification<PhProductInfo>() {
 			
 			@Override
@@ -142,6 +170,34 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 					params.add(criteriaBuilder.like(root.get("name"), "%"+name+"%"));
 				}
 				
+				if(StringUtils.isNotBlank(status)){
+					params.add(criteriaBuilder.equal(root.get("status"), status));
+				}
+				
+				Date now = new Date();
+				if(StringUtils.isNotBlank(type)){
+					if("0".equals(type)){
+						//进行中
+						params.add(criteriaBuilder.lessThan(root.get("beginTime"), now));
+						params.add(criteriaBuilder.isNull(root.get("video")));
+					}else if("1".equals(type)){
+						//未开始
+						params.add(criteriaBuilder.greaterThanOrEqualTo(root.get("beginTime"), now));
+					
+					}else if("2".equals(type)){
+						//已结束
+						params.add(criteriaBuilder.lessThan(root.get("endTime"), now));
+						params.add(criteriaBuilder.isNotNull(root.get("video")));
+					}
+				}
+				
+				
+				if(null!=channel){
+					params.add(bitand((CriteriaBuilderImpl)criteriaBuilder,root.get("channel"), channel)) ;
+				}
+				
+				
+				
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
 				
@@ -150,13 +206,25 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 		}, page);
 	}
 	
+	public <Y extends Comparable<? super Y>> Predicate bitand(CriteriaBuilderImpl criteriaBuilder,
+			Expression<? extends Y> expression,Y object) {
+		return new BitPredicate<Y>( criteriaBuilder, expression, object);
+	}
+	
 	@Override
-	public Page<PhProductInfo> findByType(final String type,Pageable page){
+	public Page<PhProductInfo> findByType(final String type,final Long channel,Pageable page){
 		return phProductInfoRepository.findAll(new Specification<PhProductInfo>() {
 			
 			@Override
 			public Predicate toPredicate(Root<PhProductInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
 				List<Predicate> params = new ArrayList<Predicate>();
+				
+				//已上架
+				params.add(criteriaBuilder.equal(root.get("status"), "1"));
+
+				if(null!=channel){
+					params.add(bitand((CriteriaBuilderImpl)criteriaBuilder,root.get("channel"), channel)) ;
+				}
 				
 				Date now = new Date();
 				if(StringUtils.isNotBlank(type)){
@@ -184,7 +252,7 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 					}
 					
 				}
-				
+
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
 				
