@@ -151,9 +151,9 @@ public class ProductController {
 	@GetMapping("/products-notice/{productId}")
 	@ResponseBody
 	public boolean notice(@PathVariable Long productId) throws Exception {
-//		String token = phLotteryTicketService.getToken();
-//		PhProductInfo phProductInfo = phProductInfoService.findOne(productId);
-//		phLotteryTicketService.notice(token,phProductInfo);
+		String token = phLotteryTicketService.getToken();
+		PhProductInfo phProductInfo = phProductInfoService.findOne(productId);
+		phLotteryTicketService.notice(token,phProductInfo);
 		return true;
 	}
 	
