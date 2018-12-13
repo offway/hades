@@ -523,20 +523,24 @@
 				 this.checked = obj[0].checked;
 			});
 		})
+		
+		function clear(){
+		 	var form = $("#saveForm");
+			form.find("input:not(input[type='checkbox'])").val("");
+			form.find("input[type='checkbox']").removeAttr("checked");
+			$(".cbr-replaced.cbr-checked").removeClass("cbr-checked");
+			form.find("img").attr("src","");
+			form.find("img").hide();
+			form.find("input[type='file']").show();
+			form.find(".btn.btn-info.modify").text("更换");
+			form.find(".btn.btn-info.modify").hide();
+		}
 			 
 			
 			
 			$(".btn.btn-info.add").click(function(){
-				var form = $("#saveForm");
-				form.find("input:not(input[type='checkbox'])").val("");
-				form.find("input[type='checkbox']").removeAttr("checked");
-				$(".cbr-replaced.cbr-checked").removeClass("cbr-checked");
-				form.find("img").attr("src","");
-				form.find("img").hide();
-				form.find("input[type='file']").show();
-				form.find(".btn.btn-info.modify").text("更换");
-				form.find(".btn.btn-info.modify").hide();
 				
+				clear();
 				
 				jQuery('#modal-6').modal('show');
 				
@@ -707,6 +711,9 @@
 					if(token !=''){
 						upload("image",token,imageFile,function(res){},function(err){
 							console.log("上传imageFile异常:"+err);
+							footer.find("button").show();
+							footer.find(".bg-lg").hide();
+							toastr.error("操作失败", "温馨提示");
 						},function(res){
 							//上传成功
 							console.log(res);
@@ -716,6 +723,9 @@
 							
 							upload("banner",token,bannerFile,function(res){},function(err){
 								console.log("上传bannerFile异常:"+err);
+								footer.find("button").show();
+								footer.find(".bg-lg").hide();
+								toastr.error("操作失败", "温馨提示");
 							},function(res){
 								//上传成功
 								console.log(res);
@@ -725,6 +735,9 @@
 								
 								upload("thumbnail",token,thumbnailFile,function(res){},function(err){
 									console.log("上传thumbnailFile异常:"+err);
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									toastr.error("操作失败", "温馨提示");
 								},function(res){
 									//上传成功
 									console.log(res);
@@ -734,6 +747,9 @@
 									
 									upload("shareImage",token,shareImageFile,function(res){},function(err){
 										console.log("上传shareImageFile异常:"+err);
+										footer.find("button").show();
+										footer.find(".bg-lg").hide();
+										toastr.error("操作失败", "温馨提示");
 									},function(res){
 										//上传成功
 										console.log(res);
@@ -743,6 +759,9 @@
 									
 									upload("shareImage",token,shareImageFile,function(res){},function(err){
 										console.log("上传shareImageFile异常:"+err);
+										footer.find("button").show();
+										footer.find(".bg-lg").hide();
+										toastr.error("操作失败", "温馨提示");
 									},function(res){
 										//上传成功
 										console.log(res);
@@ -751,6 +770,9 @@
 										}
 										upload("saveImage",token,saveImageFile,function(res){},function(err){
 											console.log("上传saveImageFile异常:"+err);
+											footer.find("button").show();
+											footer.find(".bg-lg").hide();
+											toastr.error("操作失败", "温馨提示");
 										},function(res){
 											//上传成功
 											console.log(res);
@@ -760,6 +782,9 @@
 											//UpladFile("background",backgroundFile,function(res){
 											upload("background",token,backgroundFile,function(res){},function(err){
 												console.log("上传backgroundFile异常:"+err);
+												footer.find("button").show();
+												footer.find(".bg-lg").hide();
+												toastr.error("操作失败", "温馨提示");
 											},function(res){
 												//上传成功
 												console.log(res);
@@ -811,9 +836,8 @@
 					toastr.error("请选择一条数据操作", "温馨提示");
 					return ;
 				}
-				
-				
-				
+				//清理数据
+				clear();
 				
 				$.post("/products-one",{id:productId.val()},function(data){
 					var form = $("#saveForm");
