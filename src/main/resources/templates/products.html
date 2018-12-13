@@ -753,15 +753,22 @@
 											if(res!=''){
 												form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
 											}
-											UpladFile("background",backgroundFile,function(res){
+											//UpladFile("background",backgroundFile,function(res){
+											upload("background",token,backgroundFile,function(res){},function(err){
+												console.log("上传backgroundFile异常:"+err);
+											},function(res){
 												//上传成功
 												console.log(res);
-												if(res!=''){
+												/* if(res!=''){
 													var res = JSON.parse(res.target.responseText);
 													if(res!=''){
 														form.find("input[name='"+res.param+"']").val(res.key);
 													}
+												} */
+												if(res!=''){
+													form.find("input[name='"+res.param+"']").val("https://qn.offway.cn/"+res.key);
 												}
+												
 												
 												//提交保存
 												$.post("/products-save",$("#saveForm").serialize(),function(data){
