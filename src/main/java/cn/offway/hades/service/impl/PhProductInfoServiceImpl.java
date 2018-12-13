@@ -105,12 +105,18 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 			
 			String background = productInfo.getBackground();
 			if(null!= background &&!background.equals(phProductInfo.getBackground())){
-				//如果资源变动则删除本地资源
-				File file=new File(FILE_PATH+"/"+StringUtils.substringAfterLast(background, "/"));
-		        if(file.exists()&&file.isFile()){
-		        	file.delete();
-		        }
+				//如果资源变动则删除七牛资源
+				qiniuService.qiniuDelete(background.replace(qiniuProperties.getUrl()+"/", ""));
 			}
+			
+//			String background = productInfo.getBackground();
+//			if(null!= background &&!background.equals(phProductInfo.getBackground())){
+//				//如果资源变动则删除本地资源
+//				File file=new File(FILE_PATH+"/"+StringUtils.substringAfterLast(background, "/"));
+//		        if(file.exists()&&file.isFile()){
+//		        	file.delete();
+//		        }
+//			}
 			phProductInfo.setCreateTime(productInfo.getCreateTime());
 			phProductInfo.setRuleContent(productInfo.getRuleContent());
 			phProductInfo.setStatus(productInfo.getStatus());
