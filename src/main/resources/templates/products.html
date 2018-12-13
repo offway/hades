@@ -106,7 +106,7 @@
 	
 	<div th:replace="body-under"></div>
 	
-	<div class="modal fade in" id="modal-6">
+	<div class="modal fade in" id="modal-6" data-backdrop="static">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 800px;">
 				
@@ -168,8 +168,8 @@
 						<div class="col-md-12">
 							
 							<div class="form-group">
-								<label for="field-4" class="control-label">活动banner</label>
-								<input type="file" class="form-control" name="bannerFile" placeholder="活动banner"/>
+								<label for="field-4" class="control-label">活动详情GIF</label>
+								<input type="file" class="form-control" name="bannerFile" placeholder="活动详情GIF"/>
 								<input type="hidden" class="form-control" name="banner" />
 								<img alt="" src="" name="bannerImage" style="display:none;"/>
 								<button class="btn btn-info modify banner" style="display:none;">更换</button>
@@ -244,8 +244,8 @@
 						<div class="col-md-12">
 							
 							<div class="form-group">
-								<label for="field-4" class="control-label">保存图片</label>
-								<input type="file" class="form-control" name="saveImageFile" placeholder="保存图片"/>
+								<label for="field-4" class="control-label">有码图片</label>
+								<input type="file" class="form-control" name="saveImageFile" placeholder="有码图片"/>
 								<input type="hidden" class="form-control" name="saveImage" />
 								<img alt="" src="" name="saveImageImage" style="display:none;"/>
 								<button class="btn btn-info modify saveImage" style="display:none;">更换</button>
@@ -256,8 +256,8 @@
 						<div class="col-md-12">
 							
 							<div class="form-group">
-								<label for="field-4" class="control-label">背景图片</label>
-								<input type="file" class="form-control" name="backgroundFile" placeholder="背景图片"/>
+								<label for="field-4" class="control-label">无码图片</label>
+								<input type="file" class="form-control" name="backgroundFile" placeholder="无码图片"/>
 								<input type="hidden" class="form-control" name="background" />
 								<img alt="" src="" name="backgroundImage" style="display:none;"/>
 								<button class="btn btn-info modify background" style="display:none;">更换</button>
@@ -538,7 +538,7 @@
 				form.find(".btn.btn-info.modify").hide();
 				
 				
-				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+				jQuery('#modal-6').modal('show');
 				
 			});
 		 
