@@ -34,10 +34,10 @@ public class DruidConfig {
         Map<String, String> initParams = new HashMap<>();
         // 监控页面登录用户名  
  
-        initParams.put("loginUsername", "admin");
+        initParams.put("loginUsername", "weinan");
  
         // 监控页面登录用户密码
-        initParams.put("loginPassword", "123456");
+        initParams.put("loginPassword", "puhao@2018.");
  
         // ip白名单（没有配置或者为空，则允许所有访问）
         initParams.put("allow", "");
