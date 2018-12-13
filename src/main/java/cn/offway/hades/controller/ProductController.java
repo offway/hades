@@ -162,6 +162,7 @@ public class ProductController {
 	public boolean productsRule(Long id,String ruleContent){
 		PhProductInfo phProductInfo = phProductInfoService.findOne(id);
 		phProductInfo.setRuleContent(ruleContent);
+		phProductInfo.setAppRuleContent(ruleContent);
 		phProductInfoService.save(phProductInfo);
 		return true;
 	}
