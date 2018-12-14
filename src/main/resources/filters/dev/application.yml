@@ -59,6 +59,11 @@ qiniu:
   access-key: WU33Cpp1WJZAf4oIIHknc2ga3ZhQpgJo3UL-JUdB
   secret-key: ALb95JFSVi3mvSScoQa564HzDby_y2EasUhhmniV
   bucket: offwaypro
+#极光推送
+jpush:
+  apns-production: false
+  app-key: 23f3d1476579eda19a0da872
+  master-secret: 90f4a69575d4a51c877f5dad
 #浏览器环境配置项，参见BrowserProperties
 vinann:
   security: 

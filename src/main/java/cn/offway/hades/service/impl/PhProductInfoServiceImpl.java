@@ -3,7 +3,9 @@ package cn.offway.hades.service.impl;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -26,6 +28,7 @@ import cn.offway.hades.config.BitPredicate;
 import cn.offway.hades.domain.PhProductInfo;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.repository.PhProductInfoRepository;
+import cn.offway.hades.service.JPushService;
 import cn.offway.hades.service.PhProductInfoService;
 import cn.offway.hades.service.QiniuService;
 
@@ -50,6 +53,9 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 	@Autowired
 	private QiniuProperties qiniuProperties;
 	
+	@Autowired
+	private JPushService jPushService;
+	
 	@Value("${ph.file.path}")
 	private String FILE_PATH;
 
@@ -68,6 +74,7 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 	public PhProductInfo saveProduct(PhProductInfo phProductInfo){
 		Long productId = phProductInfo.getId();
 		boolean isAdd = true;
+		phProductInfo.setCreateTime(new Date());
 		if(null!=productId){
 			isAdd = false;
 			PhProductInfo productInfo = findOne(productId);
@@ -122,10 +129,11 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 			phProductInfo.setStatus(productInfo.getStatus());
 			phProductInfo.setAppRuleContent(productInfo.getAppRuleContent());
 			phProductInfo.setSort(productInfo.getSort());
-		}
-		
-		if(isAdd){
-			phProductInfo.setCreateTime(new Date());
+			
+			if(productInfo.getBeginTime().getTime() != phProductInfo.getBeginTime().getTime()){
+				//修改开始时间后更新定时推送
+				jPushService.updateScheduleTrigger(String.valueOf(productInfo.getId()), "0", phProductInfo.getBeginTime());
+			}
 		}
 		
 		String video = phProductInfo.getVideo();

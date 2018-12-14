@@ -1,6 +1,7 @@
 package cn.offway.hades.controller;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bouncycastle.pqc.math.linearalgebra.BigIntUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +30,10 @@ import com.alibaba.fastjson.JSON;
 import cn.offway.hades.domain.PhActivityInfo;
 import cn.offway.hades.domain.PhProductInfo;
 import cn.offway.hades.properties.QiniuProperties;
+import cn.offway.hades.service.JPushService;
 import cn.offway.hades.service.PhLotteryTicketService;
 import cn.offway.hades.service.PhProductInfoService;
+import cn.offway.hades.utils.BitUtil;
 
 /**
  * 活动管理
@@ -49,6 +53,9 @@ public class ProductController {
 	
 	@Autowired
 	private QiniuProperties qiniuProperties;
+	
+	@Autowired
+	private JPushService jPushService;
 
 	/**
 	 * 活动
@@ -151,9 +158,28 @@ public class ProductController {
 	@GetMapping("/products-notice/{productId}")
 	@ResponseBody
 	public boolean notice(@PathVariable Long productId) throws Exception {
-		String token = phLotteryTicketService.getToken();
 		PhProductInfo phProductInfo = phProductInfoService.findOne(productId);
-		phLotteryTicketService.notice(token,phProductInfo);
+		Long channel = phProductInfo.getChannel();
+		if(BitUtil.has(channel.intValue(), BitUtil.APP)){
+			//开奖推送
+			jPushService.sendPush("开奖通知", "【免费抽"+phProductInfo.getName()+"】活动已开奖，幸运儿是你吗？点击查看>>", "2","");
+		}
+				
+		if(BitUtil.has(channel.intValue(), BitUtil.MINI)){
+			
+			Thread thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						String token = phLotteryTicketService.getToken();
+						phLotteryTicketService.notice(token,phProductInfo);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			thread.run();
+		}
 		return true;
 	}
 	
@@ -180,6 +206,13 @@ public class ProductController {
 		List<PhProductInfo> phProductInfos = phProductInfoService.findAll(Arrays.asList(ids));
 		for (PhProductInfo phProductInfo : phProductInfos) {
 			if(StringUtils.isNotBlank(status)){
+				if(!phProductInfo.getStatus().equals(status)&& phProductInfo.getBeginTime().after(new Date())){
+					if(status.equals("1")){
+						jPushService.createSingleSchedule(String.valueOf(phProductInfo.getId()), "0", "抽奖通知", phProductInfo.getBeginTime(), "抽奖通知", "【免费送】"+phProductInfo.getShareDesc(), "2", "");
+					}else if(status.equals("0")){
+						jPushService.deleteSchedule(String.valueOf(phProductInfo.getId()), "0");
+					}
+				}
 				phProductInfo.setStatus(status);
 			}
 		}
