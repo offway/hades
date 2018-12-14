@@ -471,12 +471,25 @@
 				//上传文件获得文件地址
 				if(imageVal!=''){
 					imageFile = form.find("input[name='imageFile']")[0].files[0];
+					if(imageFile!='' && imageFile.size/1024>500){
+						toastr.error("封面图片大小超过500K,请压缩处理后上传", "温馨提示");
+						footer.find("button").show();
+						footer.find(".bg-lg").hide();
+						return ;
+					}
 				}
 				
 				var bannerFiles = new Array();
 				form.find("input[name='bannerFile']").each(function(i,d){
-					if(undefined != d.files[0]){
-						bannerFiles.push(d.files[0]);
+					var bannerFile = d.files[0];
+					if(undefined != bannerFile){
+						if(bannerFile!='' && bannerFile.size/1024>500){
+							toastr.error("轮播图片["+bannerFile.name+"]大小超过500K,请压缩处理后上传", "温馨提示");
+							footer.find("button").show();
+							footer.find(".bg-lg").hide();
+							return ;
+						}
+						bannerFiles.push(bannerFile);
 					}
 				});
 				
@@ -489,8 +502,15 @@
 				
 				var detailFiles  = new Array();
 				form.find("input[name='detailFile']").each(function(i,d){
-					if(undefined != d.files[0]){
-						detailFiles.push(d.files[0]);
+					var detailFile = d.files[0];
+					if(undefined != detailFile){
+						if(detailFile!='' && detailFile.size/1024>500){
+							toastr.error("详情图片["+detailFile.name+"]大小超过500K,请压缩处理后上传", "温馨提示");
+							footer.find("button").show();
+							footer.find(".bg-lg").hide();
+							return ;
+						}
+						detailFiles.push(detailFile);
 					}
 				});
 				

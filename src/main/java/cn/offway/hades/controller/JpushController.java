@@ -1,6 +1,8 @@
 package cn.offway.hades.controller;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -18,6 +20,9 @@ import cn.jpush.api.push.model.Platform;
 import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.notification.Notification;
+import cn.jpush.api.push.model.notification.Notification.Builder;
+import cn.jpush.api.schedule.ScheduleResult;
+import cn.jpush.api.schedule.model.TriggerPayload;
 
 public class JpushController {
 
@@ -31,20 +36,27 @@ public class JpushController {
 		
 		
 		
-//		PushPayload payload = buildPushObject_all_alias_alert("给你又点赞了.","161a3797c850fb49098");
-
-		
+		PushPayload payload = buildPushObject_all_alias_alert("给你又点赞了.","2a322c540b9642e98ce025e019bc1790");
 		try {
 			
-			jpushClient.deleteTag("LOTTERY_2", DeviceType.IOS.value());
+			
+			ScheduleResult scheduleResult = jpushClient.createSingleSchedule("定时推送", "2018-12-13 18:00:00", payload);
+			LOG.info(scheduleResult.isResultOK()+"");
+			
+			TriggerPayload trigger = TriggerPayload.newBuilder()
+	                .setSingleTime("2018-12-13 18:00:00")
+	                .buildSingle();
+			
+			jpushClient.updateScheduleTrigger(scheduleResult.getSchedule_id(), trigger);
+//			jpushClient.deleteTag("LOTTERY_2", DeviceType.IOS.value());
 //			Set<String> tagsToAdd = new HashSet<>();
 //			tagsToAdd.add("LOTTERY_1");
 //			DefaultResult defaultResult = jpushClient.updateDeviceTagAlias("161a3797c850fb49098", null, tagsToAdd, null);
 //			LOG.info(""+defaultResult.isResultOK());
-	        TagAliasResult result = jpushClient.getDeviceTagAlias("161a3797c850fb49098");
-
-	        LOG.info(result.alias);
-	        LOG.info(result.tags.toString());
+//	        TagAliasResult result = jpushClient.getDeviceTagAlias("161a3797c850fb49098");
+//
+//	        LOG.info(result.alias);
+//	        LOG.info(result.tags.toString());
 	    } catch (APIConnectionException e) {
 	        LOG.error("Connection error. Should retry later. ", e);
 	    } catch (APIRequestException e) {
@@ -73,8 +85,14 @@ public class JpushController {
 	}
 
 	public static PushPayload buildPushObject_all_alias_alert(String content,String...registrationId) {
-		return PushPayload.newBuilder().setPlatform(Platform.all()).setAudience(Audience.registrationId(registrationId))
-				.setNotification(Notification.alert(content)).build();
+		Map<String, String> extras = new HashMap<>();
+		extras.put("type", "测试");
+		extras.put("seq", "002");
+//		Notification.android(content, "title", extras);
+		return PushPayload.newBuilder().setPlatform(Platform.all()).setAudience(Audience.alias(registrationId))
+				.setNotification(Notification.ios(content, extras)
+//						.setNotification(Notification.android(content, "title", extras)
+	                    ).build();
 	}
 	
 	public static void main(String[] args) {

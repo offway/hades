@@ -665,6 +665,7 @@
 					toastr.error("请输入正确的起止时间", "温馨提示");
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
+					return ;
 				}
 				
 				//渠道
@@ -685,24 +686,66 @@
 				//上传文件获得文件地址
 				if(imageVal!=''){
 					imageFile = form.find("input[name='imageFile']")[0].files[0];
+					if(imageFile!='' && imageFile.size/1024>500){
+						toastr.error("活动列表图大小超过500K,请压缩处理后上传", "温馨提示");
+						footer.find("button").show();
+						footer.find(".bg-lg").hide();
+						return ;
+					}
 				}
 				if(bannerVal!=''){
 					bannerFile = form.find("input[name='bannerFile']")[0].files[0];
+					if(bannerFile!='' && bannerFile.size/1024>500){
+						toastr.error("活动详情GIF大小超过500K,请压缩处理后上传", "温馨提示");
+						footer.find("button").show();
+						footer.find(".bg-lg").hide();
+						return ;
+					}
 				}
 				if(showImageVal!=''){
-					showImageFile = form.find("input[name='showImageFile']")[0].files[0];		
+					showImageFile = form.find("input[name='showImageFile']")[0].files[0];	
+					if(showImageFile!='' && showImageFile.size/1024>500){
+						toastr.error("其他活动展示图大小超过500K,请压缩处理后上传", "温馨提示");
+						footer.find("button").show();
+						footer.find(".bg-lg").hide();
+						return ;
+					}
 				}
 				if(shareImageVal!=''){
 					shareImageFile = form.find("input[name='shareImageFile']")[0].files[0];
+					if(shareImageFile!='' && shareImageFile.size/1024>500){
+						toastr.error("分享图片大小超过500K,请压缩处理后上传", "温馨提示");
+						footer.find("button").show();
+						footer.find(".bg-lg").hide();
+						return ;
+					}
 				}
 				if(saveImageVal!=''){
 					saveImageFile = form.find("input[name='saveImageFile']")[0].files[0];
+					if(saveImageFile!='' && saveImageFile.size/1024>500){
+						toastr.error("有码图片大小超过500K,请压缩处理后上传", "温馨提示");
+						footer.find("button").show();
+						footer.find(".bg-lg").hide();
+						return ;
+					}
 				}
 				if(backgroundVal!=''){
 					backgroundFile = form.find("input[name='backgroundFile']")[0].files[0];
+					if(backgroundFile!='' && backgroundFile.size/1024>500){
+						toastr.error("无码图片大小超过500K,请压缩处理后上传", "温馨提示");
+						footer.find("button").show();
+						footer.find(".bg-lg").hide();
+						return ;
+					}
 				}
 				if(thumbnailVal!=''){
 					thumbnailFile = form.find("input[name='thumbnailFile']")[0].files[0];
+					if(thumbnailFile!='' && thumbnailFile.size/1024>500){
+						toastr.error("缩略图大小超过500K,请压缩处理后上传", "温馨提示");
+						footer.find("button").show();
+						footer.find(".bg-lg").hide();
+						return ;
+					}
 				}
 				
 				
