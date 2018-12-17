@@ -124,59 +124,63 @@ public class PhActivityPrizeServiceImpl implements PhActivityPrizeService {
 		String token = getToken();
 		
 		for (PhActivityInfo phActivityInfo : phActivityInfos) {
-			
-			Long windNum = phActivityInfo.getWinNum();
-			//获得中奖用户
-			List<PhActivityJoin> activityJoins = phActivityJoinService.luckly(phActivityInfo.getId(),windNum);
-			
-			//如果中奖用户不足，查询本活动参与人员中奖最早的
-			int lessCount = windNum.intValue()-activityJoins.size();
-			if(lessCount>0){
-				List<PhActivityJoin> list = phActivityJoinService.findWinBefore(phActivityInfo.getId());
-				int i=0;
-				for (PhActivityJoin phActivityJoin : list) {
-					if(i==lessCount){
-						break;
-					}
-					boolean exists = false;
-					for (PhActivityJoin aj : activityJoins) {
-						if(aj.getUnionid().equals(phActivityJoin.getUnionid())){
-							exists = true;
-							break;
-						}
-					}
-					if(!exists){
-						activityJoins.add(phActivityJoin);
-						i++;
-					}
-				}
-			}
-			
-			
-			Date now = new Date();
-			List<PhActivityPrize> phActivityPrizes = new ArrayList<>();
-			List<Long> ids = new ArrayList<>();
-			for (PhActivityJoin phActivityJoin : activityJoins) {
-				PhActivityPrize phActivityPrize = new PhActivityPrize();
-				phActivityPrize.setActivityId(phActivityInfo.getId());
-				phActivityPrize.setActivityImage(phActivityInfo.getImage());
-				phActivityPrize.setActivityName(phActivityInfo.getName());
-				phActivityPrize.setCreateTime(now);
-				phActivityPrize.setHeadUrl(phActivityJoin.getHeadUrl());
-				phActivityPrize.setNickName(phActivityJoin.getNickName());
-				phActivityPrize.setStatus("0");
-				phActivityPrize.setUnionid(phActivityJoin.getUnionid());
-				
-				ids.add(phActivityJoin.getId());
-				phActivityPrizes.add(phActivityPrize);
-			}
-			
-			phActivityJoinService.updateLuckly(ids);
-			phActivityPrizeRepository.save(phActivityPrizes);
-			//通知
-			notice(token, phActivityInfo);
+			activityOpen(token, phActivityInfo);
 		}
 		
+	}
+
+	@Override
+	public void activityOpen(String token, PhActivityInfo phActivityInfo) {
+		Long windNum = phActivityInfo.getWinNum();
+		//获得中奖用户
+		List<PhActivityJoin> activityJoins = phActivityJoinService.luckly(phActivityInfo.getId(),windNum);
+		
+		//如果中奖用户不足，查询本活动参与人员中奖最早的
+		int lessCount = windNum.intValue()-activityJoins.size();
+		if(lessCount>0){
+			List<PhActivityJoin> list = phActivityJoinService.findWinBefore(phActivityInfo.getId());
+			int i=0;
+			for (PhActivityJoin phActivityJoin : list) {
+				if(i==lessCount){
+					break;
+				}
+				boolean exists = false;
+				for (PhActivityJoin aj : activityJoins) {
+					if(aj.getUnionid().equals(phActivityJoin.getUnionid())){
+						exists = true;
+						break;
+					}
+				}
+				if(!exists){
+					activityJoins.add(phActivityJoin);
+					i++;
+				}
+			}
+		}
+		
+		
+		Date now = new Date();
+		List<PhActivityPrize> phActivityPrizes = new ArrayList<>();
+		List<Long> ids = new ArrayList<>();
+		for (PhActivityJoin phActivityJoin : activityJoins) {
+			PhActivityPrize phActivityPrize = new PhActivityPrize();
+			phActivityPrize.setActivityId(phActivityInfo.getId());
+			phActivityPrize.setActivityImage(phActivityInfo.getImage());
+			phActivityPrize.setActivityName(phActivityInfo.getName());
+			phActivityPrize.setCreateTime(now);
+			phActivityPrize.setHeadUrl(phActivityJoin.getHeadUrl());
+			phActivityPrize.setNickName(phActivityJoin.getNickName());
+			phActivityPrize.setStatus("0");
+			phActivityPrize.setUnionid(phActivityJoin.getUnionid());
+			
+			ids.add(phActivityJoin.getId());
+			phActivityPrizes.add(phActivityPrize);
+		}
+		
+		phActivityJoinService.updateLuckly(ids);
+		phActivityPrizeRepository.save(phActivityPrizes);
+		//通知
+		notice(token, phActivityInfo);
 	}
 	
 	public void notice(String token, PhActivityInfo phActivityInfo){
@@ -217,6 +221,7 @@ public class PhActivityPrizeServiceImpl implements PhActivityPrizeService {
 	/**
 	 * 获取 access_token
 	 */
+	@Override
 	public String getToken() {
 		String requestUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx12d022a9493f1b26&secret=52ba3a89ae58aa6a2294806d516d6107";
 		String result = HttpClientUtil.post(requestUrl, "");

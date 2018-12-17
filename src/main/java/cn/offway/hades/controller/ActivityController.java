@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +30,7 @@ import cn.offway.hades.domain.PhActivityInfo;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhActivityImageService;
 import cn.offway.hades.service.PhActivityInfoService;
+import cn.offway.hades.service.PhActivityPrizeService;
 
 /**
  * 每日福利管理
@@ -48,6 +50,9 @@ public class ActivityController {
 	
 	@Autowired
 	private PhActivityImageService phActivityImageService;
+	
+	@Autowired
+	private PhActivityPrizeService phActivityPrizeService; 
 
 	/**
 	 * 每日福利
@@ -134,6 +139,24 @@ public class ActivityController {
 	@ResponseBody
 	public boolean imagesDelete(Long activityImageId){
 		return phActivityInfoService.imagesDelete(activityImageId);
+		
+	}
+	
+	@GetMapping("/activitys-notice/{activityId}")
+	@ResponseBody
+	public boolean activitysNotice(@PathVariable Long activityId){
+		try {
+			PhActivityInfo phActivityInfo = phActivityInfoService.findOne(activityId);
+			if(null != phActivityInfo){
+				String token = phActivityPrizeService.getToken();
+				phActivityPrizeService.activityOpen(token, phActivityInfo);
+			}
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("每日福利手动开奖异常,活动ID:{}",activityId,e);
+			return false;
+		}
 		
 	}
 	

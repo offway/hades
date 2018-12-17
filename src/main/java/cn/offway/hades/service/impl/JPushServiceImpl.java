@@ -42,7 +42,8 @@ public class JPushServiceImpl implements JPushService{
 	 * 极光推送-带参数
 	 * @param tilte
 	 * @param alert
-	 * @param extras
+	 * @param type 0-H5,1-精选文章,2-活动
+	 * @param content 
 	 * @return
 	 */
 	@Override
@@ -68,7 +69,7 @@ public class JPushServiceImpl implements JPushService{
 	 * @param time
 	 * @param tilte
 	 * @param alert
-	 * @param extras
+	 * @param type 0-H5,1-精选文章,2-活动
 	 * @return
 	 */
 	@Override
@@ -175,7 +176,7 @@ public class JPushServiceImpl implements JPushService{
 	public static PushPayload buildPushAll(String tilte, String alert, String type,String content) {
 
 		Map<String, String> extras = new HashMap<>();
-		extras.put("type", type);
+		extras.put("type", type);//0-H5,1-精选文章,2-活动
 		extras.put("content", content);
 		
 		Notification notification = Notification.newBuilder()
