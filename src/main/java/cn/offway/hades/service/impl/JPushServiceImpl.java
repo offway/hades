@@ -23,6 +23,7 @@ import cn.jpush.api.push.model.notification.Notification;
 import cn.jpush.api.schedule.ScheduleResult;
 import cn.jpush.api.schedule.model.TriggerPayload;
 import cn.offway.hades.domain.PhJpushSchedule;
+import cn.offway.hades.properties.JPushProperties;
 import cn.offway.hades.service.JPushService;
 import cn.offway.hades.service.PhJpushScheduleService;
 
@@ -33,6 +34,9 @@ public class JPushServiceImpl implements JPushService{
 
 	@Autowired
 	private JPushClient jPushClient;
+	
+	@Autowired
+	private JPushProperties jPushProperties;
 	
 	@Autowired
 	private PhJpushScheduleService phJpushScheduleService;
@@ -172,7 +176,7 @@ public class JPushServiceImpl implements JPushService{
 	 * @param extras
 	 * @return
 	 */
-	public static PushPayload buildPushAll(String tilte, String alert, Map<String, String> extras) {
+	public  PushPayload buildPushAll(String tilte, String alert, Map<String, String> extras) {
 
 		Notification notification = Notification.newBuilder()
 				.addPlatformNotification(
@@ -182,7 +186,12 @@ public class JPushServiceImpl implements JPushService{
 						.build())
 				.build();
 
-		return PushPayload.newBuilder().setPlatform(Platform.all()).setAudience(Audience.alias("2a322c540b9642e98ce025e019bc1790","9016fa43d9f443e8bab1b00085d545ba","ff8b026042724ec792ff8a6bffa0ea9e"))
+		Audience audience = Audience.alias("2a322c540b9642e98ce025e019bc1790","9016fa43d9f443e8bab1b00085d545ba","ff8b026042724ec792ff8a6bffa0ea9e");
+		
+		if(jPushProperties.getApnsProduction()){
+			audience = Audience.all();
+		}
+		return PushPayload.newBuilder().setPlatform(Platform.all()).setAudience(audience)
 				.setNotification(notification).build();
 	}
 
