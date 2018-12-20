@@ -162,12 +162,16 @@ public class ProductController {
 		Long channel = phProductInfo.getChannel();
 		if(BitUtil.has(channel.intValue(), BitUtil.APP)){
 			//开奖推送
-			jPushService.sendPush("开奖通知", "【免费抽"+phProductInfo.getName()+"】活动已开奖，幸运儿是你吗？点击查看>>", "2","");
+			Map<String, String> extras = new HashMap<>();
+			extras.put("type", "2");//0-H5,1-精选文章,2-活动
+			extras.put("id", null);
+			extras.put("url", null);
+			jPushService.sendPush("开奖通知", "【免费抽"+phProductInfo.getName()+"】活动已开奖，幸运儿是你吗？点击查看>>", extras);
 		}
 				
 		if(BitUtil.has(channel.intValue(), BitUtil.MINI)){
 			
-			Thread thread = new Thread(new Runnable() {
+			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try {
@@ -177,8 +181,7 @@ public class ProductController {
 						e.printStackTrace();
 					}
 				}
-			});
-			thread.run();
+			}).start();
 		}
 		return true;
 	}
@@ -208,7 +211,11 @@ public class ProductController {
 			if(StringUtils.isNotBlank(status)){
 				if(!phProductInfo.getStatus().equals(status)&& phProductInfo.getBeginTime().after(new Date())){
 					if(status.equals("1")){
-						jPushService.createSingleSchedule(String.valueOf(phProductInfo.getId()), "0", "抽奖通知", phProductInfo.getBeginTime(), "抽奖通知", "【免费送】"+phProductInfo.getShareDesc(), "2", "");
+						Map<String, String> extras = new HashMap<>();
+						extras.put("type", "2");//0-H5,1-精选文章,2-活动
+						extras.put("id", null);
+						extras.put("url", null);
+						jPushService.createSingleSchedule(String.valueOf(phProductInfo.getId()), "0", "抽奖通知", phProductInfo.getBeginTime(), "抽奖通知", "【免费送】"+phProductInfo.getShareDesc(), extras);
 					}else if(status.equals("0")){
 						jPushService.deleteSchedule(String.valueOf(phProductInfo.getId()), "0");
 					}

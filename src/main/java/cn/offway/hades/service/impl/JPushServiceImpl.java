@@ -1,7 +1,6 @@
 package cn.offway.hades.service.impl;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -47,9 +46,9 @@ public class JPushServiceImpl implements JPushService{
 	 * @return
 	 */
 	@Override
-	public boolean sendPush(String tilte, String alert, String type,String content){
+	public boolean sendPush(String tilte, String alert, Map<String, String> extras){
 		try {
-			PushResult pushResult = jPushClient.sendPush(buildPushAll(tilte, alert, type, content));
+			PushResult pushResult = jPushClient.sendPush(buildPushAll(tilte, alert, extras));
 			String resultJson = JSON.toJSONString(pushResult);
 			logger.info("极光推送响应:{}",resultJson);
 			boolean result = pushResult.isResultOK();
@@ -73,7 +72,7 @@ public class JPushServiceImpl implements JPushService{
 	 * @return
 	 */
 	@Override
-	public boolean createSingleSchedule(String businessId, String businessType, String name, Date time, String tilte, String alert, String type,String content) {
+	public boolean createSingleSchedule(String businessId, String businessType, String name, Date time, String tilte, String alert, Map<String, String> extras) {
 
 		try {
 			
@@ -83,7 +82,7 @@ public class JPushServiceImpl implements JPushService{
 			}
 			
 			ScheduleResult scheduleResult = jPushClient.createSingleSchedule(name, DateFormatUtils.format(time, "yyyy-MM-dd HH:mm:ss"),
-					buildPushAll(tilte, alert, type,content));
+					buildPushAll(tilte, alert, extras));
 			String resultJson = JSON.toJSONString(scheduleResult);
 			logger.info("创建极光定时推送相应:{}",resultJson);
 			boolean result = scheduleResult.isResultOK();
@@ -173,12 +172,8 @@ public class JPushServiceImpl implements JPushService{
 	 * @param extras
 	 * @return
 	 */
-	public static PushPayload buildPushAll(String tilte, String alert, String type,String content) {
+	public static PushPayload buildPushAll(String tilte, String alert, Map<String, String> extras) {
 
-		Map<String, String> extras = new HashMap<>();
-		extras.put("type", type);//0-H5,1-精选文章,2-活动
-		extras.put("content", content);
-		
 		Notification notification = Notification.newBuilder()
 				.addPlatformNotification(
 						AndroidNotification.newBuilder().setAlert(alert).setTitle(tilte).addExtras(extras).build())
@@ -187,7 +182,7 @@ public class JPushServiceImpl implements JPushService{
 						.build())
 				.build();
 
-		return PushPayload.newBuilder().setPlatform(Platform.all()).setAudience(Audience.alias("2a322c540b9642e98ce025e019bc1790","ff8b026042724ec792ff8a6bffa0ea9e"))
+		return PushPayload.newBuilder().setPlatform(Platform.all()).setAudience(Audience.alias("2a322c540b9642e98ce025e019bc1790","9016fa43d9f443e8bab1b00085d545ba","ff8b026042724ec792ff8a6bffa0ea9e"))
 				.setNotification(notification).build();
 	}
 

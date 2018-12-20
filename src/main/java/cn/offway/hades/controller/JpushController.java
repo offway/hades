@@ -1,36 +1,26 @@
 package cn.offway.hades.controller;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.JsonObject;
-
 import cn.jiguang.common.ClientConfig;
-import cn.jiguang.common.DeviceType;
 import cn.jiguang.common.resp.APIConnectionException;
 import cn.jiguang.common.resp.APIRequestException;
-import cn.jiguang.common.resp.DefaultResult;
 import cn.jpush.api.JPushClient;
-import cn.jpush.api.device.TagAliasResult;
-import cn.jpush.api.push.PushResult;
 import cn.jpush.api.push.model.Platform;
 import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.notification.IosAlert;
 import cn.jpush.api.push.model.notification.Notification;
-import cn.jpush.api.push.model.notification.Notification.Builder;
 import cn.jpush.api.schedule.ScheduleResult;
-import cn.jpush.api.schedule.model.TriggerPayload;
 
 public class JpushController {
 
 	private Logger LOG = LoggerFactory.getLogger(this.getClass());
-
+	
 	public void push() {
 		
 		ClientConfig config = ClientConfig.getInstance();
@@ -104,7 +94,7 @@ public class JpushController {
 	                    ).build();
 	}
 	
-	public static void main(String[] args) {
-		new JpushController().push();
-	}
+//	public static void main(String[] args) {
+//		new JpushController().push();
+//	}
 }
