@@ -46,7 +46,10 @@ spring:
   #是否自动生成/修改数据库表
     show-sql: true
     generate-ddl: false
-    
+  http:
+    multipart:
+      max-file-size: 10MB
+      
 ph: 
   default:  
     #默认密码

@@ -695,8 +695,8 @@
 				}
 				if(bannerVal!=''){
 					bannerFile = form.find("input[name='bannerFile']")[0].files[0];
-					if(bannerFile!='' && bannerFile.size/1024>500){
-						toastr.error("活动详情GIF大小超过500K,请压缩处理后上传", "温馨提示");
+					if(bannerFile!='' && bannerFile.size/1024>5000){
+						toastr.error("活动详情GIF大小超过5000K,请压缩处理后上传", "温馨提示");
 						footer.find("button").show();
 						footer.find(".bg-lg").hide();
 						return ;
