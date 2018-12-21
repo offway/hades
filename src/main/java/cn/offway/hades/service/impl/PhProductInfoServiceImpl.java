@@ -31,6 +31,7 @@ import cn.offway.hades.repository.PhProductInfoRepository;
 import cn.offway.hades.service.JPushService;
 import cn.offway.hades.service.PhProductInfoService;
 import cn.offway.hades.service.QiniuService;
+import cn.offway.hades.utils.BitUtil;
 
 
 /**
@@ -75,6 +76,7 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 		Long productId = phProductInfo.getId();
 		boolean isAdd = true;
 		phProductInfo.setCreateTime(new Date());
+		phProductInfo.setStatus("0");
 		if(null!=productId){
 			isAdd = false;
 			PhProductInfo productInfo = findOne(productId);
@@ -129,10 +131,11 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 			phProductInfo.setStatus(productInfo.getStatus());
 			phProductInfo.setAppRuleContent(productInfo.getAppRuleContent());
 			phProductInfo.setSort(productInfo.getSort());
-			
-			if(productInfo.getBeginTime().getTime() != phProductInfo.getBeginTime().getTime()){
-				//修改开始时间后更新定时推送
-				jPushService.updateScheduleTrigger(String.valueOf(productInfo.getId()), "0", phProductInfo.getBeginTime());
+			if(BitUtil.has(phProductInfo.getChannel().intValue(), BitUtil.APP)){
+				if(productInfo.getBeginTime().getTime() != phProductInfo.getBeginTime().getTime()){
+					//修改开始时间后更新定时推送
+					jPushService.updateScheduleTrigger(String.valueOf(productInfo.getId()), "0", phProductInfo.getBeginTime());
+				}
 			}
 		}
 		
