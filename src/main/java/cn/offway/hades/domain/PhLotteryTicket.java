@@ -40,7 +40,7 @@ public class PhLotteryTicket implements Serializable {
 
     /** 备注 **/
     private String remark;
-
+    
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

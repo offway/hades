@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title>抽奖码排名</title>
+	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
+	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+</head>
+<body class="page-body">
+
+	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+			
+		<div th:replace="sidebar-menu"></div>
+		<div class="main-content">
+			<!-- User Info, Notifications and Menu Bar -->
+			<nav th:replace="navbar"></nav>
+			<div class="page-title">
+				
+				<div class="title-env">
+					<h1 class="title">抽奖码排名</h1>
+					<p class="description"></p>
+				</div>
+
+				<div class="breadcrumb-env">
+
+					<ol class="breadcrumb bc-1">
+						<li><a href="/"><i class="fa-home"></i>Home</a></li>
+						<li><a>活动数据</a></li>
+						<li class="active"><strong>抽奖码排名</strong></li>
+					</ol>
+
+				</div>
+
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<form role="form" class="form-inline">
+						<div class="form-group ">
+							<div class="input-group">
+								<input type="number" name="productId" class="form-control" style="height:35px" placeholder="活动ID"/>
+							</div>
+						</div>
+						<div class="form-group ">
+							<div class="input-group">
+								<input type="text" name="unionid" class="form-control" style="height:35px" placeholder="用户ID"/>
+							</div>
+						</div>
+						
+						<div class="form-group ">
+							<div class="input-group">
+								<input type="text" name="nickName" class="form-control" style="height:35px" placeholder="昵称"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+						</div>
+						
+					</form>
+				</div>
+				<div class="panel-body">
+					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					</table>
+					
+				</div>
+			</div>
+			<button class="btn btn-info edit">更换头像昵称</button>
+					
+			<footer th:replace="footer"></footer>
+		</div>
+	</div>
+	
+	<div th:replace="body-under"></div>
+	
+	<div class="modal fade in" id="modal-edit">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">更换头像昵称</h4>
+				</div>
+				
+				<div class="modal-body">
+					<form role="form" id="editForm">
+					<input type="hidden" name="productId"/>
+					<input type="hidden" name="unionid"/>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<input type="text" class="form-control" name="nickName" placeholder="昵称"/>
+							</div>	
+							
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							
+							<div class="form-group">
+								<label for="field-4" class="control-label">头像</label>
+								<input type="file" class="form-control" name="headUrlFile" placeholder="头像"/>
+								<input type="hidden" class="form-control" name="headUrl" />
+							</div>
+						</div>
+					</div>
+					</form>
+				</div>
+				
+				<div class="modal-footer">
+					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info save">保存</button>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
+	<script src="assets/js/select2/select2.min.js"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/	
+	jQuery(document).ready(function($)
+	{
+		var oTable = $("#example-1").dataTable({
+			language: {
+                url: "../assets/Chinese.txt"
+            },
+			aLengthMenu: [
+				[10, 25, 50, 100,500], [10, 25, 50, 100,500]
+			],
+			bFilter : false,
+			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
+            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
+            sAjaxSource : "/ticket-sort-data",//通过ajax实现分页的url路径。
+            fnServerParams : function(aData){
+                var searchArray = $(".form-inline").serializeArray();
+                $.merge(aData, searchArray);
+            },
+            columnDefs: [
+				{	
+					targets: 0,
+				    data: "productId",
+				    width:"5%",
+				    orderable: false,
+				    className: 'select-checkbox',
+				    title: '序号',
+				    render: function ( data, type, row, meta ) {
+				    	return '<input type="checkbox" name="ticketId" value="'+data+','+row.unionid+'" />';  
+				    }
+				},
+                {
+                    targets: 1,
+                    orderable: false,
+                    data: "productId",
+                    title: "活动ID"
+                },
+                {
+               		targets: 2,
+               		orderable: false,
+	                data: "unionid",
+	                title: "用户ID"
+            	}, 
+                {
+               		targets: 3,
+               		orderable: false,
+	                data: "minNickName",
+	                title: "昵称"
+            	}, 
+                {
+                    targets: 4,
+                    orderable: false,
+                    data: "minHeadUrl",
+                    title: "头像",
+                    render: function (data, type, row, meta) {
+                        return "<img src="+data+"></img>";
+                    }
+                },
+                {
+                    targets: 5,
+                    orderable: false,
+                    data: "countCode",
+                    title: "抽奖码数量"
+                }
+               ]
+		});
+		
+		$(".searchBtn").click(function(){
+			$("#checkbox-all").attr("checked", false);
+			oTable.fnDraw(); //or fnReloadAjax()  
+			return false;
+		});
+		
+		$(".btn.btn-info.edit").click(function(){
+			
+			var ticketId = $("input[name='ticketId']:checked");
+			if(ticketId.length!=1){
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return ;
+			}
+			
+			ticketId = ticketId[0].value;
+			
+			var form = $("#editForm");
+			var a = ticketId.split(",");
+			form.find("input[name='productId']").val(a[0]);
+			form.find("input[name='unionid']").val(a[1]);
+			
+			jQuery('#modal-edit').modal('show', {backdrop: 'fade'});
+			
+			
+		});
+		
+		//图片上传
+        var xhr;
+        //上传文件方法
+        function UpladFile(param,fileObj,uploadComplete) {
+        	if(fileObj==''){
+        		uploadComplete('');
+		    	
+		    }else{
+	            var url =  "/file/upload"; // 接收上传文件的后台地址
+
+	            var form = new FormData(); // FormData 对象
+	            form.append("file", fileObj);// 文件对象
+	            form.append("param", param);
+	            
+	            xhr = new XMLHttpRequest();  // XMLHttpRequest 对象
+	            xhr.open("post", url, true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
+	            xhr.onload = uploadComplete; //请求完成
+	            xhr.onerror =  function(evt) {
+	                console.log("上传失败！");
+	            }; //请求失败
+
+	            xhr.upload.onprogress = function(evt){
+	            	
+	            };//【上传进度调用方法实现】
+	            xhr.upload.onloadstart = function(){//上传开始执行方法
+	                ot = new Date().getTime();   //设置上传开始时间
+	                oloaded = 0;//设置上传开始时，以上传的文件大小为0
+	            };
+
+	            xhr.send(form); //开始上传，发送form数据
+		    }
+        	
+        }
+        
+		
+		$(".btn.btn-info.save").click(function(){
+			var form = $("#editForm");
+			var nickName = form.find("input[name='nickName']").val();
+			if(nickName==''){
+				toastr.error("昵称不能为空", "温馨提示");
+				return ;
+			}
+			
+			var headUrlFileVal = form.find("input[name='headUrlFile']")[0].value;
+
+			if(headUrlFileVal==''){
+				toastr.error("头像不能为空", "温馨提示");
+				return ;
+			}
+			
+			var imageFile = '';
+			//上传文件获得文件地址
+			if(headUrlFileVal!=''){
+				imageFile = form.find("input[name='headUrlFile']")[0].files[0];
+				if(imageFile!='' && imageFile.size/1024>500){
+					toastr.error("头像大小超过500K,请压缩处理后上传", "温馨提示");
+					return ;
+				}
+			}
+			
+			UpladFile("headUrl",imageFile,function(res){
+				if(res!=''){
+					var res = JSON.parse(res.target.responseText);
+					if(res!=''){
+						form.find("input[name='"+res.param+"']").val(res.key);
+					}
+				}
+				
+				//提交保存
+				$.post("/ticket-save",$("#editForm").serialize(),function(data){
+					if(data){
+						jQuery('#modal-edit').modal('hide');
+						toastr.success("操作已成功！", "温馨提示");
+						oTable.fnDraw(); 
+					}else{
+						toastr.error("操作失败", "温馨提示");
+					}
+				});
+			
+			});
+			
+			
+			
+		});
+			
+			
+			
+		
+		
+	});
+	/*]]>*/
+	</script>
+</body>
+
+</html>

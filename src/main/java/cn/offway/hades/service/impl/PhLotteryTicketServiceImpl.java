@@ -1,11 +1,12 @@
 package cn.offway.hades.service.impl;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -16,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,7 @@ import cn.offway.hades.domain.PhLotteryTicket;
 import cn.offway.hades.domain.PhProductInfo;
 import cn.offway.hades.dto.Template;
 import cn.offway.hades.dto.TemplateParam;
+import cn.offway.hades.dto.VTicketCount;
 import cn.offway.hades.repository.PhLotteryTicketRepository;
 import cn.offway.hades.service.PhLotteryTicketService;
 import cn.offway.hades.service.PhProductInfoService;
@@ -52,6 +56,9 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 	@Autowired
 	private PhProductInfoService phProductInfoService;
 	
+	@Autowired
+	private EntityManager entityManager;
+	
 	@Override
 	public PhLotteryTicket save(PhLotteryTicket phLotteryTicket){
 		return phLotteryTicketRepository.save(phLotteryTicket);
@@ -73,7 +80,7 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 	}
 	
 	@Override
-	public Page<PhLotteryTicket> findByPage(final String code,final Long productId, Pageable page){
+	public Page<PhLotteryTicket> findByPage(final String code,final Long productId,final String nickName,final String unionid, Pageable page){
 		return phLotteryTicketRepository.findAll(new Specification<PhLotteryTicket>() {
 			
 			@Override
@@ -87,13 +94,62 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 				if(null != productId){
 					params.add(criteriaBuilder.equal(root.get("productId"), productId));
 				}
+				if(StringUtils.isNotBlank(nickName)){
+					params.add(criteriaBuilder.like(root.get("nickName"), "%"+nickName+"%"));
+				}
+				
+				if(StringUtils.isNotBlank(unionid)){
+					params.add(criteriaBuilder.equal(root.get("unionid"), unionid));
+				}
 				
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
-				
 				return null;
 			}
 		}, page);
+	}
+	
+	
+	@Override
+	public Page<VTicketCount> findVTicketCount(Long productId,String nickName,String unionid,int index, int pageSize) {
+		// 新建一个页面，存放页面信息
+		Pageable page = new PageRequest(index, pageSize);
+		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<VTicketCount> criteriaQuery = criteriaBuilder.createQuery(VTicketCount.class);
+		Root<PhLotteryTicket> root = criteriaQuery.from(PhLotteryTicket.class);
+		criteriaQuery.multiselect(root.get("productId"),criteriaBuilder.min(root.get("nickName")),root.get("unionid"),criteriaBuilder.min(root.get("headUrl")), criteriaBuilder.count(root.get("code")));
+		
+		List<Predicate> params = new ArrayList<Predicate>();
+		if(null != productId){
+			params.add(criteriaBuilder.equal(root.get("productId"), productId));
+		}
+		if(StringUtils.isNotBlank(nickName)){
+			params.add(criteriaBuilder.like(root.get("nickName"), "%"+nickName+"%"));
+		}
+		
+		if(StringUtils.isNotBlank(unionid)){
+			params.add(criteriaBuilder.equal(root.get("unionid"), unionid));
+		}
+        Predicate[] predicates = new Predicate[params.size()];
+        criteriaQuery.where(params.toArray(predicates));
+		criteriaQuery.groupBy(root.get("productId"),root.get("unionid"));
+        criteriaQuery.orderBy(criteriaBuilder.desc(root.get("productId")),criteriaBuilder.desc(criteriaBuilder.count(root.get("code"))));
+		
+		TypedQuery<VTicketCount> createQuery = entityManager.createQuery(criteriaQuery);
+		createQuery.setFirstResult(index * pageSize);
+		createQuery.setMaxResults(pageSize);
+		List<VTicketCount> resultList = createQuery.getResultList();
+		return new PageImpl<VTicketCount>(resultList, page, resultList.size());
+	}
+	
+	@Override
+	public boolean ticketSave(Long productId,String unionid,String nickName,String headUrl){
+		
+		int count = phLotteryTicketRepository.editHead(productId, unionid, nickName, headUrl);
+		if(count>0){
+			return true;
+		}
+		return false;
 	}
 	
 	@Override

@@ -1,7 +1,12 @@
 package cn.offway.hades.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import cn.offway.hades.domain.PhWinningRecord;
 
@@ -13,5 +18,8 @@ import cn.offway.hades.domain.PhWinningRecord;
  */
 public interface PhWinningRecordRepository extends JpaRepository<PhWinningRecord,Long>,JpaSpecificationExecutor<PhWinningRecord> {
 
-	/** 此处写一些自定义的方法 **/
+	@Transactional
+	@Modifying
+	@Query(nativeQuery=true,value="insert into ph_winning_record select null,product_id,unionid,head_url,nick_name,`code`,NOW(),NULL from ph_lottery_ticket where product_id=?1 and code in (?2)")
+	int saveWin(Long productId,List<String> codes);
 }

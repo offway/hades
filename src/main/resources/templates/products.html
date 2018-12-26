@@ -334,9 +334,7 @@
 						<div class="col-md-12">
 							
 							<div class="form-group">
-								
 								<textarea class="form-control autogrow" id="rule-content" cols="5" placeholder="请在此处添加活动规则..."></textarea>
-								
 							</div>	
 							
 						</div>
@@ -364,12 +362,29 @@
 				</div>
 				
 				<div class="modal-body">
-					你确定要推送开奖通知吗？
+					<form role="form" id="openForm">
+					<div class="row">
+						<div class="col-md-12">
+						
+							<div class="form-group">
+								<label for="field-4" class="control-label">开奖视频</label>
+								<input type="file" class="form-control" name="openVideoFile" placeholder="开奖视频"/>
+							</div>
+							
+							<div class="form-group">
+								<textarea class="form-control autogrow" id="codes" cols="5" placeholder="中奖号码（注意大小写，多个请换行）"></textarea>
+							</div>	
+							
+						</div>
+					</div>
+					</form>
 				</div>
 				
 				<div class="modal-footer">
 					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
 					<button type="button" class="btn btn-info notice">确定</button>
+					<button type="button" class="btn btn-white bg-lg" style="display:none">文件上传中，请稍等....</button>
+					
 				</div>
 			</div>
 		</div>
@@ -570,6 +585,29 @@
 			    }
 				
 			 };
+			 
+			 function uploadVideo(param,token,file,next, error, complete){
+				    if(file==''){
+				    	complete('');
+				    	
+				    }else{
+						var filename = file.name;
+					    var postf = filename.substring(filename.lastIndexOf("."));
+					    
+					    var config = {
+					    		  useCdnDomain: true,
+					    		  region: qiniu.region.z0
+					    		};
+					    var putExtra = {
+					    		  fname: "",
+					    		  params: {"x:param":param}
+					    		};
+					    var observable = qiniu.upload(file, "video/wx/"+UUID.randomUUID()+postf, token,
+					    		putExtra, config);
+						var subscription = observable.subscribe(next, error, complete);
+				    }
+					
+				 };
 			 
 			 //图片上传
 	        var xhr;
@@ -1040,18 +1078,81 @@
 				productId = productId[0].value;
 				
 				$(".btn.btn-info.notice").attr("productId",productId);
+				$("#codes").val("");
+				var form = $("#openForm");
+				form.find("input[name='openVideoFile']").val("");
+				
 				
 			});
 			
 			
 			$(".btn.btn-info.notice").click(function(){
+				
+				var footer = $(this).parent(".modal-footer")
+				footer.find("button").hide();
+				footer.find(".bg-lg").show();
+				
 				var productId = $(".btn.btn-info.notice").attr("productId");
-				$.get("/products-notice/"+productId,{},function(data){
-					if(data){
-						jQuery('#modal-1').modal('hide');
-						toastr.success("操作已成功！", "温馨提示");
+				var form = $("#openForm");
+				var openVideoFile = form.find("input[name='openVideoFile']")[0].value;
+				
+				var codes = $("#codes").val();
+				if(codes==''){
+					toastr.error("请输入中奖号码", "温馨提示");
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					return ;
+				}
+				
+				$.post("/products-one",{id:productId},function(data){
+					var imageFile = '';
+					var channel = data.channel;
+					if((channel & 4) == 4){
+						if(openVideoFile==''){
+							toastr.error("开奖视频不能为空", "温馨提示");
+							footer.find("button").show();
+							footer.find(".bg-lg").hide();
+							return ;
+						}
+						//上传文件获得文件地址
+						if(openVideoFile!=''){
+							imageFile = form.find("input[name='openVideoFile']")[0].files[0];
+							if(imageFile!='' && imageFile.size/1024>20000){
+								toastr.error("开奖视频超过20M,请压缩处理后上传", "温馨提示");
+								footer.find("button").show();
+								footer.find(".bg-lg").hide();
+								return ;
+							}
+						}
 					}
-				}); 
+					
+					$.get("/qiniu/token",{},function(token){
+						if(token !=''){
+							uploadVideo("video",token,imageFile,function(res){},function(err){
+								console.log("上传video异常:"+err);
+								toastr.error("操作失败"+err, "温馨提示");
+								footer.find("button").show();
+								footer.find(".bg-lg").hide();
+							},function(res){
+								//上传成功
+								console.log(res);
+								$.post("/products-notice/"+productId,{video:qiniuUrl+"/"+res.key,codes:codes},function(data){
+									if(data){
+										jQuery('#modal-1').modal('hide');
+										footer.find("button").show();
+										footer.find(".bg-lg").hide();
+										toastr.success("操作已成功！", "温馨提示");
+									}else{
+										toastr.error("操作失败，请检查抽奖码", "温馨提示");
+										footer.find("button").show();
+										footer.find(".bg-lg").hide();
+									}
+								}); 
+							});
+						}
+					});
+					
+				});
 				
 			});
 			

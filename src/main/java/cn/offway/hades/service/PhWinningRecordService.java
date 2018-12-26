@@ -1,5 +1,7 @@
 package cn.offway.hades.service;
 
+import java.util.List;
+
 import cn.offway.hades.domain.PhWinningRecord;
 
 /**
@@ -13,4 +15,6 @@ public interface PhWinningRecordService{
 	PhWinningRecord save(PhWinningRecord phWinningRecord);
 	
 	PhWinningRecord findOne(Long id);
+
+	int saveWin(Long productId, List<String> codes);
 }

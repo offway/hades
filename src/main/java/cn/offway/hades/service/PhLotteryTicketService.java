@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import cn.offway.hades.domain.PhLotteryTicket;
 import cn.offway.hades.domain.PhProductInfo;
+import cn.offway.hades.dto.VTicketCount;
 
 
 /**
@@ -31,6 +32,10 @@ public interface PhLotteryTicketService{
 
 	String getToken();
 
-	Page<PhLotteryTicket> findByPage(String code, Long productId, Pageable page);
+	boolean ticketSave(Long productId, String unionid, String nickName, String headUrl);
+
+	Page<VTicketCount> findVTicketCount(Long productId, String nickName, String unionid, int index, int pageSize);
+
+	Page<PhLotteryTicket> findByPage(String code, Long productId, String nickName, String unionid, Pageable page);
 
 }

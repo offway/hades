@@ -153,5 +153,38 @@ public class HttpClientUtil {
         } 
 		return result;
 	}
+	public static byte[] postByteArray(String url,String param){
+		logger.info("HTTP GET请求URL{}",url);
+		byte[] result = null;
+		CloseableHttpClient httpClient =  HttpClients.createDefault();
+		HttpPost httppost = new HttpPost(url); 
+		StringEntity entity = new StringEntity(param, "UTF-8");
+		httppost.setEntity(entity);
+		try {
+			CloseableHttpResponse response = httpClient.execute(httppost);
+			try {  
+				int statusCode = response.getStatusLine().getStatusCode();
+				logger.info("HTTP POST请求状态:{}",statusCode);
+				HttpEntity responseEntity = response.getEntity();  
+				if (responseEntity != null) {  
+					result = EntityUtils.toByteArray(responseEntity);
+//					logger.info("HTTP GET请求结果:{}",result);
+				}  
+            } finally {  
+                response.close();  
+            }  
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("http请求错误",e);
+		}finally {  
+            // 关闭连接,释放资源    
+            try {  
+            	httpClient.close();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            }  
+        } 
+		return result;
+	}
 	
 }
