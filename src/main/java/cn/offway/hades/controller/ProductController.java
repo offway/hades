@@ -184,30 +184,30 @@ public class ProductController {
 		
 		phProductInfoService.save(phProductInfo);
 		
-//		Long channel = phProductInfo.getChannel();
-//		if(BitUtil.has(channel.intValue(), BitUtil.APP)){
-//			//开奖推送
-//			Map<String, String> extras = new HashMap<>();
-//			extras.put("type", "2");//0-H5,1-精选文章,2-活动
-//			extras.put("id", null);
-//			extras.put("url", null);
-//			jPushService.sendPush("开奖通知", "【免费抽"+phProductInfo.getName()+"】活动已开奖，幸运儿是你吗？点击查看>>", extras);
-//		}
-//				
-//		if(BitUtil.has(channel.intValue(), BitUtil.MINI)){
-//			
-//			new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					try {
-//						String token = phLotteryTicketService.getToken();
-//						phLotteryTicketService.notice(token,phProductInfo);
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
-//				}
-//			}).start();
-//		}
+		Long channel = phProductInfo.getChannel();
+		if(BitUtil.has(channel.intValue(), BitUtil.APP)){
+			//开奖推送
+			Map<String, String> extras = new HashMap<>();
+			extras.put("type", "2");//0-H5,1-精选文章,2-活动
+			extras.put("id", null);
+			extras.put("url", null);
+			jPushService.sendPush("开奖通知", "【免费抽"+phProductInfo.getName()+"】活动已开奖，幸运儿是你吗？点击查看>>", extras);
+		}
+				
+		if(BitUtil.has(channel.intValue(), BitUtil.MINI)){
+			
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						String token = phLotteryTicketService.getToken();
+						phLotteryTicketService.notice(token,phProductInfo);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}).start();
+		}
 		return true;
 	}
 	
