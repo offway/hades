@@ -33,4 +33,6 @@ public interface PhProductInfoService{
 	Page<PhProductInfo> findByPage(String name, String type, String status, Long channel, Pageable page);
 
 	Page<PhProductInfo> findByType(String type, Long channel, Pageable page);
+
+	boolean notice(Long productId, String video, String codes) throws Exception;
 }

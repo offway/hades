@@ -1126,29 +1126,37 @@
 						}
 					}
 					
-					$.get("/qiniu/token",{},function(token){
-						if(token !=''){
-							uploadVideo("video",token,imageFile,function(res){},function(err){
-								console.log("上传video异常:"+err);
-								toastr.error("操作失败"+err, "温馨提示");
-								footer.find("button").show();
-								footer.find(".bg-lg").hide();
-							},function(res){
-								//上传成功
-								console.log(res);
-								$.post("/products-notice/"+productId,{video:qiniuUrl+"/"+res.key,codes:codes},function(data){
-									if(data){
-										jQuery('#modal-1').modal('hide');
+					$.post("/ticket-check",{productId:productId,codes:codes},function(d){
+						if(d){
+							$.get("/qiniu/token",{},function(token){
+								if(token !=''){
+									uploadVideo("video",token,imageFile,function(res){},function(err){
+										console.log("上传video异常:"+err);
+										toastr.error("操作失败"+err, "温馨提示");
 										footer.find("button").show();
 										footer.find(".bg-lg").hide();
-										toastr.success("操作已成功！", "温馨提示");
-									}else{
-										toastr.error("操作失败，请检查抽奖码", "温馨提示");
-										footer.find("button").show();
-										footer.find(".bg-lg").hide();
-									}
-								}); 
+									},function(res){
+										//上传成功
+										console.log(res);
+										$.post("/products-notice/"+productId,{video:qiniuUrl+"/"+res.key,codes:codes},function(data){
+											if(data){
+												jQuery('#modal-1').modal('hide');
+												footer.find("button").show();
+												footer.find(".bg-lg").hide();
+												toastr.success("操作已成功！", "温馨提示");
+											}else{
+												toastr.error("操作失败，请检查抽奖码", "温馨提示");
+												footer.find("button").show();
+												footer.find(".bg-lg").hide();
+											}
+										}); 
+									});
+								}
 							});
+						}else{
+							toastr.error("操作失败，抽奖码错误", "温馨提示");
+							footer.find("button").show();
+							footer.find(".bg-lg").hide();
 						}
 					});
 					

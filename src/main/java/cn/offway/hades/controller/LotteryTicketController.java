@@ -1,6 +1,8 @@
 package cn.offway.hades.controller;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,11 +14,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.offway.hades.domain.PhLotteryTicket;
 import cn.offway.hades.dto.VTicketCount;
+import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhLotteryTicketService;
 
 @Controller
@@ -27,8 +31,12 @@ public class LotteryTicketController {
 	@Autowired
 	private PhLotteryTicketService phLotteryTicketService;
 	
+	@Autowired
+	private QiniuProperties qiniuProperties;
+	
 	@RequestMapping("/ticket-sort.html")
-	public String ticketSort(){
+	public String ticketSort(ModelMap map){
+		map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
 		return "ticket-sort";
 	}
 	
@@ -60,6 +68,12 @@ public class LotteryTicketController {
 	@RequestMapping("/ticket-save")
 	public boolean ticketSave(Long productId,String unionid,String nickName,String headUrl){
 		return phLotteryTicketService.ticketSave(productId, unionid, nickName, headUrl);
+	}
+	
+	@ResponseBody
+	@RequestMapping("/ticket-check")
+	public boolean checkCodes(Long productId, String codes){
+		return phLotteryTicketService.checkCodes(productId, Arrays.asList(codes.split("\n")));
 	}
 	
 }

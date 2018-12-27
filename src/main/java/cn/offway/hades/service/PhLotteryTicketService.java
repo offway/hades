@@ -38,4 +38,6 @@ public interface PhLotteryTicketService{
 
 	Page<PhLotteryTicket> findByPage(String code, Long productId, String nickName, String unionid, Pageable page);
 
+	boolean checkCodes(Long productId, List<String> codes);
+
 }

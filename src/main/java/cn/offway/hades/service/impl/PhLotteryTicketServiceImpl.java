@@ -80,6 +80,15 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 	}
 	
 	@Override
+	public boolean checkCodes(Long productId,List<String> codes){
+		int count = phLotteryTicketRepository.countByProductIdAndCodeIn(productId, codes);
+		if(count == codes.size()){
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
 	public Page<PhLotteryTicket> findByPage(final String code,final Long productId,final String nickName,final String unionid, Pageable page){
 		return phLotteryTicketRepository.findAll(new Specification<PhLotteryTicket>() {
 			

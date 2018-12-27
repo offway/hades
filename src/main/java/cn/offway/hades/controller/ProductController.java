@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.pqc.math.linearalgebra.BigIntUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,11 +25,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 
-import cn.offway.hades.domain.PhActivityInfo;
 import cn.offway.hades.domain.PhProductInfo;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.JPushService;
-import cn.offway.hades.service.PhLotteryTicketService;
 import cn.offway.hades.service.PhProductInfoService;
 import cn.offway.hades.service.PhWinningRecordService;
 import cn.offway.hades.utils.BitUtil;
@@ -48,9 +44,6 @@ public class ProductController {
 	
 	@Autowired
 	private PhProductInfoService phProductInfoService;
-	
-	@Autowired
-	private PhLotteryTicketService phLotteryTicketService;
 	
 	@Autowired
 	private QiniuProperties qiniuProperties;
@@ -175,40 +168,7 @@ public class ProductController {
 	@RequestMapping("/products-notice/{productId}")
 	@ResponseBody
 	public boolean notice(@PathVariable Long productId,String video,String codes) throws Exception {
-		int count = phWinningRecordService.saveWin(productId, Arrays.asList(codes.split("\n")));
-		if(count==0){
-			return false;
-		}
-		PhProductInfo phProductInfo = phProductInfoService.findOne(productId);
-		phProductInfo.setVideo(video);
-		
-		phProductInfoService.save(phProductInfo);
-		
-		Long channel = phProductInfo.getChannel();
-		if(BitUtil.has(channel.intValue(), BitUtil.APP)){
-			//开奖推送
-			Map<String, String> extras = new HashMap<>();
-			extras.put("type", "2");//0-H5,1-精选文章,2-活动
-			extras.put("id", null);
-			extras.put("url", null);
-			jPushService.sendPush("开奖通知", "【免费抽"+phProductInfo.getName()+"】活动已开奖，幸运儿是你吗？点击查看>>", extras);
-		}
-				
-		if(BitUtil.has(channel.intValue(), BitUtil.MINI)){
-			
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						String token = phLotteryTicketService.getToken();
-						phLotteryTicketService.notice(token,phProductInfo);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}).start();
-		}
-		return true;
+		return phProductInfoService.notice(productId, video, codes);
 	}
 	
 	@PostMapping("/products-rule")

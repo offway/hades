@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cn.offway.hades.domain.PhLotteryTicket;
 import cn.offway.hades.dto.VTicketCount;
+import java.lang.String;
 
 
 /**
@@ -39,4 +40,6 @@ public interface PhLotteryTicketRepository extends JpaRepository<PhLotteryTicket
 	@Transactional
 	@Query(nativeQuery=true,value="update ph_lottery_ticket set head_url=?4,nick_name=?3 where product_id=?1 and unionid=?2")
 	int editHead(Long productId,String unionid,String nickName,String headUrl);
+	
+	int countByProductIdAndCodeIn(Long productId,List<String> codes);
 }
