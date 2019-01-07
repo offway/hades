@@ -292,16 +292,15 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 			return false;
 		}
 		PhProductInfo phProductInfo = findOne(productId);
-		
-		String videoOld = phProductInfo.getVideo();
-		if(null!= videoOld &&!videoOld.equals(video)){
-			//如果资源变动则删除七牛资源
-			qiniuService.qiniuDelete(videoOld.replace(qiniuProperties.getUrl()+"/", ""));
+		if(StringUtils.isNotBlank(video)){
+			String videoOld = phProductInfo.getVideo();
+			if(null!= videoOld &&!videoOld.equals(video)){
+				//如果资源变动则删除七牛资源
+				qiniuService.qiniuDelete(videoOld.replace(qiniuProperties.getUrl()+"/", ""));
+			}
+			phProductInfo.setVideo(video);
+			save(phProductInfo);
 		}
-		
-		phProductInfo.setVideo(video);
-		
-		save(phProductInfo);
 		
 		Long channel = phProductInfo.getChannel();
 		if(BitUtil.has(channel.intValue(), BitUtil.APP)){

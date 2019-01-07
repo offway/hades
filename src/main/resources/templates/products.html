@@ -1138,7 +1138,12 @@
 									},function(res){
 										//上传成功
 										console.log(res);
-										$.post("/products-notice/"+productId,{video:qiniuUrl+"/"+res.key,codes:codes},function(data){
+										var videoUrl = '';
+										if(res!=''){
+										 	videoUrl = qiniuUrl+"/"+res.key;
+										}
+										
+										$.post("/products-notice/"+productId,{video:videoUrl,codes:codes},function(data){
 											if(data){
 												jQuery('#modal-1').modal('hide');
 												footer.find("button").show();
