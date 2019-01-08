@@ -34,10 +34,11 @@ public interface PhLotteryTicketService{
 
 	boolean ticketSave(Long productId, String unionid, String nickName, String headUrl);
 
-	Page<VTicketCount> findVTicketCount(Long productId, String nickName, String unionid, int index, int pageSize);
-
 	Page<PhLotteryTicket> findByPage(String code, Long productId, String nickName, String unionid, Pageable page);
 
 	boolean checkCodes(Long productId, List<String> codes);
+
+	Page<VTicketCount> findVTicketCount(Long productId, String nickName, String unionid, String isPersonnel, int index,
+			int pageSize);
 
 }

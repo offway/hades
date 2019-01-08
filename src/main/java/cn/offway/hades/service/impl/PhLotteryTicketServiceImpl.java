@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -120,7 +121,7 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 	
 	
 	@Override
-	public Page<VTicketCount> findVTicketCount(Long productId,String nickName,String unionid,int index, int pageSize) {
+	public Page<VTicketCount> findVTicketCount(Long productId,String nickName,String unionid,String isPersonnel,int index, int pageSize) {
 		// 新建一个页面，存放页面信息
 		Pageable page = new PageRequest(index, pageSize);
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -134,6 +135,31 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 		}
 		if(StringUtils.isNotBlank(nickName)){
 			params.add(criteriaBuilder.like(root.get("nickName"), "%"+nickName+"%"));
+		}
+		
+		if(StringUtils.isNotBlank(isPersonnel)){
+			
+			In<String> in = criteriaBuilder.in(root.get("unionid"));
+			String[] personnels = {
+					"o9I8Z0nQyLMVjocrJMjZWAcCuhyA",
+					"o9I8Z0vf3u6PzUzTrrE1cIm3a0Zs",
+					"o9I8Z0n3_33kX2uOrm5N3_C1rkPU",
+					"o9I8Z0kCzZNHoANAuNgUwHWjKwDM",
+					"o9I8Z0phVei2hUpyRp5gmp9z12ag",
+					"o9I8Z0n5tu6ivLHr_6gkSdNf8aZU",
+					"o9I8Z0qLeYEGRVK-1A0ESvtSk2go",
+					"o9I8Z0ioHMeRuYyb8k7sIB9SHndo",
+					"o9I8Z0tLd1ZtvYujM6wL2irNAxVw"
+			};
+			for (String at : personnels) {
+				in.value(at);
+			}
+			
+			if("1".equals(isPersonnel)){
+				params.add(in);
+			}else if("0".equals(isPersonnel)){
+				params.add(criteriaBuilder.not(in));
+			}
 		}
 		
 		if(StringUtils.isNotBlank(unionid)){

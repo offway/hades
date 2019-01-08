@@ -48,12 +48,12 @@ public class LotteryTicketController {
 	 */
 	@ResponseBody
 	@RequestMapping("/ticket-sort-data")
-	public Map<String, Object> ticketSortData(HttpServletRequest request,Long productId,String nickName,String unionid){
+	public Map<String, Object> ticketSortData(HttpServletRequest request,Long productId,String nickName,String unionid,String isPersonnel){
 		
 		int sEcho = Integer.parseInt(request.getParameter("sEcho"));
 		int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
 		int iDisplayLength  = Integer.parseInt(request.getParameter("iDisplayLength"));
-		Page<VTicketCount> pages =  phLotteryTicketService.findVTicketCount(productId,nickName.trim(),unionid.trim(), iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength);
+		Page<VTicketCount> pages =  phLotteryTicketService.findVTicketCount(productId,nickName.trim(),unionid.trim(),isPersonnel, iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength);
 		// 为操作次数加1，必须这样做  
         int initEcho = sEcho + 1;  
         Map<String, Object> map = new HashMap<>();
