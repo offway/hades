@@ -838,8 +838,8 @@
 											form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
 										}
 									
-									upload("shareImage",token,shareImageFile,function(res){},function(err){
-										console.log("上传shareImageFile异常:"+err);
+									upload("showImage",token,showImageFile,function(res){},function(err){
+										console.log("上传showImageFile异常:"+err);
 										footer.find("button").show();
 										footer.find(".bg-lg").hide();
 										toastr.error("操作失败", "温馨提示");
