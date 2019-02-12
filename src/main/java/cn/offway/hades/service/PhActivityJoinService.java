@@ -37,4 +37,6 @@ public interface PhActivityJoinService{
 
 	Page<PhActivityJoin> findByPage(String activityName, String nickName, String unionid, Long activityId,
 			Pageable page);
+
+	List<PhActivityJoin> findByActivityIdAndIsLucky(Long activityId, String isLucky);
 }

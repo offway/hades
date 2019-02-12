@@ -23,6 +23,8 @@ public interface PhActivityJoinRepository extends JpaRepository<PhActivityJoin,L
 	 
 	 List<PhActivityJoin> findByActivityId(Long activityId);
 	 
+	 List<PhActivityJoin> findByActivityIdAndIsLucky(Long activityId,String isLucky);
+	 
 	 @Query(nativeQuery=true,value="select aj.* from ph_activity_join aj where aj.activity_id=?1 and  not EXISTS (select 1 from ph_activity_blacklist ab where ab.unionid = aj.unionid) and not exists (select 1 from ph_activity_prize ap where ap.unionid = aj.unionid) order by RAND() limit ?2")
 	 List<PhActivityJoin> luckly(Long activityId,Long num);
 	 

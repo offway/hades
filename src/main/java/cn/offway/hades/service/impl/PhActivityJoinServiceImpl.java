@@ -80,8 +80,18 @@ public class PhActivityJoinServiceImpl implements PhActivityJoinService {
 	}
 	
 	@Override
+	public List<PhActivityJoin> findByActivityIdAndIsLucky(Long activityId,String isLucky){
+		return phActivityJoinRepository.findByActivityIdAndIsLucky(activityId, isLucky);
+	}
+	
+	@Override
 	public List<PhActivityJoin> luckly(Long activityId,Long num){
-		return phActivityJoinRepository.luckly(activityId, num);
+		
+		List<PhActivityJoin> joins = findByActivityIdAndIsLucky(activityId, "1");
+		if(num>joins.size()){
+			joins.addAll(phActivityJoinRepository.luckly(activityId, num-joins.size()));
+		}
+		return joins;
 	}
 	
 	@Override
