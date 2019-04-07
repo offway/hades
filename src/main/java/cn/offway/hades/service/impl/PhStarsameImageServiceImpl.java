@@ -19,18 +19,23 @@ import cn.offway.hades.repository.PhStarsameImageRepository;
 @Service
 public class PhStarsameImageServiceImpl implements PhStarsameImageService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private PhStarsameImageRepository phStarsameImageRepository;
-	
-	@Override
-	public PhStarsameImage save(PhStarsameImage phStarsameImage){
-		return phStarsameImageRepository.save(phStarsameImage);
-	}
-	
-	@Override
-	public PhStarsameImage findOne(Long id){
-		return phStarsameImageRepository.findOne(id);
-	}
+    @Autowired
+    private PhStarsameImageRepository phStarsameImageRepository;
+
+    @Override
+    public PhStarsameImage save(PhStarsameImage phStarsameImage) {
+        return phStarsameImageRepository.save(phStarsameImage);
+    }
+
+    @Override
+    public Boolean deleteByPid(Long pid) {
+        return phStarsameImageRepository.deleteByPid(pid);
+    }
+
+    @Override
+    public PhStarsameImage findOne(Long id) {
+        return phStarsameImageRepository.findOne(id);
+    }
 }

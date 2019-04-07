@@ -19,18 +19,23 @@ import cn.offway.hades.repository.PhStarsameGoodsRepository;
 @Service
 public class PhStarsameGoodsServiceImpl implements PhStarsameGoodsService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private PhStarsameGoodsRepository phStarsameGoodsRepository;
-	
-	@Override
-	public PhStarsameGoods save(PhStarsameGoods phStarsameGoods){
-		return phStarsameGoodsRepository.save(phStarsameGoods);
-	}
-	
-	@Override
-	public PhStarsameGoods findOne(Long id){
-		return phStarsameGoodsRepository.findOne(id);
-	}
+    @Autowired
+    private PhStarsameGoodsRepository phStarsameGoodsRepository;
+
+    @Override
+    public PhStarsameGoods save(PhStarsameGoods phStarsameGoods) {
+        return phStarsameGoodsRepository.save(phStarsameGoods);
+    }
+
+    @Override
+    public Boolean deleteByPid(Long pid) {
+        return phStarsameGoodsRepository.deleteByPid(pid);
+    }
+
+    @Override
+    public PhStarsameGoods findOne(Long id) {
+        return phStarsameGoodsRepository.findOne(id);
+    }
 }

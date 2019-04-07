@@ -8,9 +8,11 @@ import cn.offway.hades.domain.PhStarsameGoods;
  * @author wn
  * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $
  */
-public interface PhStarsameGoodsService{
+public interface PhStarsameGoodsService {
 
-	PhStarsameGoods save(PhStarsameGoods phStarsameGoods);
-	
-	PhStarsameGoods findOne(Long id);
+    PhStarsameGoods save(PhStarsameGoods phStarsameGoods);
+
+    PhStarsameGoods findOne(Long id);
+
+    Boolean deleteByPid(Long pid);
 }

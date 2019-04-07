@@ -68,7 +68,6 @@ public class ActivityController {
 	/**
 	 * 查询数据
 	 * @param request
-	 * @param code
 	 * @return
 	 */
 	@ResponseBody
