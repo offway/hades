@@ -54,7 +54,7 @@ public class BannerController {
     @RequestMapping("/banner_save")
     @ResponseBody
     public void save(PhBanner banner) {
-        banner.setCreate_time(new Date());
+        banner.setCreateTime(new Date());
         bannerService.save(banner);
     }
 }

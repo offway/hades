@@ -5,11 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface PhBannerService {
-    PhBanner save(PhBanner banner);
+    PhBanner save(PhBanner phBanner);
 
-    PhBanner findOne(long id);
+    PhBanner findOne(Long id);
 
     Page<PhBanner> findAll(Pageable pageable);
 
-    void delete(long id);
+    void delete(Long id);
 }

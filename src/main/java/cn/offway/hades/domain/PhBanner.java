@@ -1,40 +1,55 @@
 package cn.offway.hades.domain;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * Banner管理
+ *
+ * @author wn
+ * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $
+ */
 @Entity
 @Table(name = "ph_banner")
 public class PhBanner implements Serializable {
+
+    /** ID **/
     private Long id;
 
+    /** banner **/
     private String banner;
 
-    private Integer type;
+    /** 类别[0-跳转URL,1-品牌,2-商品] **/
+    private String type;
 
-    private Integer brand_id;
+    /** 品牌ID **/
+    private Long brandId;
 
-    private Integer goods_id;
+    /** 商品ID **/
+    private Long goodsId;
 
+    /** 跳转链接 **/
     private String url;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date begin_time;
+    /** 开始时间 **/
+    private Date beginTime;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date end_time;
+    /** 截止时间 **/
+    private Date endTime;
 
-    private Integer status;
+    /** 状态[0-未上架,1-已上架] **/
+    private String status;
 
-    private Integer sort;
+    /** 排序 **/
+    private Long sort;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date create_time;
+    /** 创建时间 **/
+    private Date createTime;
 
+    /** 备注 **/
     private String remark;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,7 +62,7 @@ public class PhBanner implements Serializable {
         this.id = id;
     }
 
-    @Column(name = "banner")
+    @Column(name = "banner", length = 100)
     public String getBanner() {
         return banner;
     }
@@ -56,34 +71,34 @@ public class PhBanner implements Serializable {
         this.banner = banner;
     }
 
-    @Column(name = "type")
-    public Integer getType() {
+    @Column(name = "type", length = 2)
+    public String getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    @Column(name = "brand_id")
-    public Integer getBrand_id() {
-        return brand_id;
+    @Column(name = "brand_id", length = 11)
+    public Long getBrandId() {
+        return brandId;
     }
 
-    public void setBrand_id(Integer brand_id) {
-        this.brand_id = brand_id;
+    public void setBrandId(Long brandId) {
+        this.brandId = brandId;
     }
 
-    @Column(name = "goods_id")
-    public Integer getGoods_id() {
-        return goods_id;
+    @Column(name = "goods_id", length = 11)
+    public Long getGoodsId() {
+        return goodsId;
     }
 
-    public void setGoods_id(Integer goods_id) {
-        this.goods_id = goods_id;
+    public void setGoodsId(Long goodsId) {
+        this.goodsId = goodsId;
     }
 
-    @Column(name = "url")
+    @Column(name = "url", length = 50)
     public String getUrl() {
         return url;
     }
@@ -94,53 +109,53 @@ public class PhBanner implements Serializable {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "begin_time")
-    public Date getBegin_time() {
-        return begin_time;
+    public Date getBeginTime() {
+        return beginTime;
     }
 
-    public void setBegin_time(Date begin_time) {
-        this.begin_time = begin_time;
+    public void setBeginTime(Date beginTime) {
+        this.beginTime = beginTime;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_time")
-    public Date getEnd_time() {
-        return end_time;
+    public Date getEndTime() {
+        return endTime;
     }
 
-    public void setEnd_time(Date end_time) {
-        this.end_time = end_time;
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
-    @Column(name = "status")
-    public Integer getStatus() {
+    @Column(name = "status", length = 2)
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    @Column(name = "sort")
-    public Integer getSort() {
+    @Column(name = "sort", length = 11)
+    public Long getSort() {
         return sort;
     }
 
-    public void setSort(Integer sort) {
+    public void setSort(Long sort) {
         this.sort = sort;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_time")
-    public Date getCreate_time() {
-        return create_time;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setCreate_time(Date create_time) {
-        this.create_time = create_time;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
-    @Column(name = "remark")
+    @Column(name = "remark", length = 200)
     public String getRemark() {
         return remark;
     }

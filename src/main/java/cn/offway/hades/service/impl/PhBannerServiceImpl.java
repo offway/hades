@@ -14,6 +14,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+/*
+Banner管理Service接口实现
+ */
 @Service
 public class PhBannerServiceImpl implements PhBannerService {
 
@@ -26,7 +29,7 @@ public class PhBannerServiceImpl implements PhBannerService {
     }
 
     @Override
-    public PhBanner findOne(long id) {
+    public PhBanner findOne(Long id) {
         return bannerRepository.findOne(id);
     }
 
@@ -41,7 +44,7 @@ public class PhBannerServiceImpl implements PhBannerService {
     }
 
     @Override
-    public void delete(long id) {
+    public void delete(Long id) {
         bannerRepository.delete(id);
     }
 }
