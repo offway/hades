@@ -1,7 +1,9 @@
 package cn.offway.hades.domain;
 
-import java.io.Serializable;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -33,9 +35,11 @@ public class PhBanner implements Serializable {
     private String url;
 
     /** 开始时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date beginTime;
 
     /** 截止时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
     /** 状态[0-未上架,1-已上架] **/
@@ -45,6 +49,7 @@ public class PhBanner implements Serializable {
     private Long sort;
 
     /** 创建时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /** 备注 **/

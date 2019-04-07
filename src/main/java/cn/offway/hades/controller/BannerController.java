@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,8 +54,46 @@ public class BannerController {
 
     @RequestMapping("/banner_save")
     @ResponseBody
-    public void save(PhBanner banner) {
+    public boolean save(PhBanner banner) {
         banner.setCreateTime(new Date());
         bannerService.save(banner);
+        return true;
+    }
+
+    @RequestMapping("/banner_get")
+    @ResponseBody
+    public PhBanner get(@RequestParam("id") Long id) {
+        return bannerService.findOne(id);
+    }
+
+    @RequestMapping("/banner_del")
+    @ResponseBody
+    public boolean delete(@RequestParam("ids[]") Long[] ids) {
+        for (long id : ids) {
+            bannerService.delete(id);
+        }
+        return true;
+    }
+
+    @RequestMapping("/banner_up")
+    @ResponseBody
+    public boolean up(@RequestParam("ids[]") Long[] ids) {
+        for (long id : ids) {
+            PhBanner banner = bannerService.findOne(id);
+            banner.setStatus("1");
+            bannerService.save(banner);
+        }
+        return true;
+    }
+
+    @RequestMapping("/banner_down")
+    @ResponseBody
+    public boolean down(@RequestParam("ids[]") Long[] ids) {
+        for (long id : ids) {
+            PhBanner banner = bannerService.findOne(id);
+            banner.setStatus("0");
+            bannerService.save(banner);
+        }
+        return true;
     }
 }
