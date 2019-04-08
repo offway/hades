@@ -2,6 +2,8 @@ package cn.offway.hades.service;
 
 import cn.offway.hades.domain.PhStarsameGoods;
 
+import java.util.List;
+
 /**
  * 明星同款商品Service接口
  *
@@ -15,4 +17,6 @@ public interface PhStarsameGoodsService {
     PhStarsameGoods findOne(Long id);
 
     void deleteByPid(Long pid);
+
+    List<PhStarsameGoods> findAllByPid(Long pid);
 }

@@ -2,6 +2,8 @@ package cn.offway.hades.service;
 
 import cn.offway.hades.domain.PhStarsameImage;
 
+import java.util.List;
+
 /**
  * 明星同款banner图片Service接口
  *
@@ -15,4 +17,7 @@ public interface PhStarsameImageService {
     PhStarsameImage findOne(Long id);
 
     void deleteByPid(Long pid);
+
+    List<PhStarsameImage> findAllByPid(Long pid);
+
 }

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -76,6 +77,21 @@ public class StarSameController {
             starsameImageService.deleteByPid(id);
         }
         return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/starSame_find")
+    public Map<String, Object> find(Long id) {
+        PhStarsame starsame = starsameService.findOne(id);
+        Map<String, Object> map = new HashMap<>();
+        if (starsame != null) {
+            List<PhStarsameGoods> goodsList = starsameGoodsService.findAllByPid(starsame.getId());
+            List<PhStarsameImage> imageList = starsameImageService.findAllByPid(starsame.getId());
+            map.put("main", starsame);
+            map.put("goodsList", goodsList);
+            map.put("imageList", imageList);
+        }
+        return map;
     }
 
     @ResponseBody

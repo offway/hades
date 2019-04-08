@@ -194,6 +194,16 @@
         var that = $(self);
         that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
     }
+
+    function checkIt(id) {
+        $.post("/starSame_find", {"id": id}, function (data) {
+            if (data) {
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
     jQuery(document).ready(function($)
 	{
 		var oTable = $("#example-1").dataTable({
@@ -269,7 +279,16 @@
 					targets: 8,
 					data: "remark",
 					title: "备注"
-				}
+				},
+                {
+                    targets: 9,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+                    }
+                }
                ]
 		});
 		
