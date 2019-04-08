@@ -163,6 +163,14 @@
 							</div>
 						</div>
 					</div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-4" class="control-label">排序</label>
+                                <input type="number" class="form-control" name="sort" placeholder="排序(数值越小越靠前)"/>
+                            </div>
+                        </div>
+                    </div>
 					</form>
 				</div>
 				
@@ -269,6 +277,11 @@
             	},
                 {
                     targets: 7,
+                    data: "sort",
+                    title: "排序"
+                },
+                {
+                    targets: 8,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -276,12 +289,12 @@
                     }
                 },
 				{
-					targets: 8,
+					targets: 9,
 					data: "remark",
 					title: "备注"
 				},
                 {
-                    targets: 9,
+                    targets: 10,
                     data: "id",
                     orderable: false,
                     title: "操作",
