@@ -20,6 +20,12 @@ public class PhStarsame implements Serializable {
     /** 标题 **/
     private String title;
 
+    /** 图片URL **/
+    private String imageUrl;
+
+    /** 明星姓名 **/
+    private String starName;
+
     /** 浏览数 **/
     private Long viewCount;
 
@@ -51,6 +57,24 @@ public class PhStarsame implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Column(name = "image_url", length = 100)
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    @Column(name = "star_name", length = 100)
+    public String getStarName() {
+        return starName;
+    }
+
+    public void setStarName(String starName) {
+        this.starName = starName;
     }
 
     @Column(name = "view_count", length = 11)
