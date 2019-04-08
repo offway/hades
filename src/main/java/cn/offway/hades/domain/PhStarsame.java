@@ -38,6 +38,9 @@ public class PhStarsame implements Serializable {
     /** 备注 **/
     private String remark;
 
+    /** 排序 **/
+    private Long sort;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -112,6 +115,15 @@ public class PhStarsame implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    @Column(name = "sort", length = 11)
+    public Long getSort() {
+        return sort;
+    }
+
+    public void setSort(Long sort) {
+        this.sort = sort;
     }
 
 }
