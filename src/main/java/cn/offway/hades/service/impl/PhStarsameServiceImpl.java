@@ -3,6 +3,8 @@ package cn.offway.hades.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import cn.offway.hades.service.PhStarsameService;
 
@@ -19,18 +21,28 @@ import cn.offway.hades.repository.PhStarsameRepository;
 @Service
 public class PhStarsameServiceImpl implements PhStarsameService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private PhStarsameRepository phStarsameRepository;
-	
-	@Override
-	public PhStarsame save(PhStarsame phStarsame){
-		return phStarsameRepository.save(phStarsame);
-	}
-	
-	@Override
-	public PhStarsame findOne(Long id){
-		return phStarsameRepository.findOne(id);
-	}
+    @Autowired
+    private PhStarsameRepository phStarsameRepository;
+
+    @Override
+    public PhStarsame save(PhStarsame phStarsame) {
+        return phStarsameRepository.save(phStarsame);
+    }
+
+    @Override
+    public void delete(Long id) {
+        phStarsameRepository.delete(id);
+    }
+
+    @Override
+    public Page<PhStarsame> findAll(Pageable pageable) {
+        return phStarsameRepository.findAll(pageable);
+    }
+
+    @Override
+    public PhStarsame findOne(Long id) {
+        return phStarsameRepository.findOne(id);
+    }
 }

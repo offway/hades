@@ -2,9 +2,9 @@ package cn.offway.hades.controller;
 
 import cn.offway.hades.domain.PhStarsame;
 import cn.offway.hades.properties.QiniuProperties;
-import cn.offway.hades.repository.PhStarsameGoodsRepository;
-import cn.offway.hades.repository.PhStarsameImageRepository;
-import cn.offway.hades.repository.PhStarsameRepository;
+import cn.offway.hades.service.PhStarsameGoodsService;
+import cn.offway.hades.service.PhStarsameImageService;
+import cn.offway.hades.service.PhStarsameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,11 +22,11 @@ import java.util.Map;
 @RequestMapping
 public class StarSameController {
     @Autowired
-    private PhStarsameRepository starsameRepository;
+    private PhStarsameService starsameService;
     @Autowired
-    private PhStarsameGoodsRepository starsameGoodsRepository;
+    private PhStarsameGoodsService starsameGoodsService;
     @Autowired
-    private PhStarsameImageRepository starsameImageRepository;
+    private PhStarsameImageService starsameImageService;
     @Autowired
     private QiniuProperties qiniuProperties;
 
@@ -42,7 +42,7 @@ public class StarSameController {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        Page<PhStarsame> pages = starsameRepository.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength));
+        Page<PhStarsame> pages = starsameService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
@@ -56,10 +56,16 @@ public class StarSameController {
     @RequestMapping("/starSame_del")
     public boolean delete(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {
-            starsameRepository.delete(id);
-            starsameGoodsRepository.deleteByPid(id);
-            starsameImageRepository.deleteByPid(id);
+            starsameService.delete(id);
+            starsameGoodsService.deleteByPid(id);
+            starsameImageService.deleteByPid(id);
         }
         return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/starSame_save")
+    public void save(PhStarsame starsame, String goodsIds, String images) {
+        starsameService.save(starsame);
     }
 }
