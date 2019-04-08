@@ -30,8 +30,8 @@ public class PhStarsameGoodsServiceImpl implements PhStarsameGoodsService {
     }
 
     @Override
-    public Boolean deleteByPid(Long pid) {
-        return phStarsameGoodsRepository.deleteByPid(pid);
+    public void deleteByPid(Long pid) {
+        phStarsameGoodsRepository.deleteByPid(pid);
     }
 
     @Override

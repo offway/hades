@@ -1,6 +1,7 @@
 package cn.offway.hades.controller;
 
 import cn.offway.hades.domain.PhStarsame;
+import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.repository.PhStarsameGoodsRepository;
 import cn.offway.hades.repository.PhStarsameImageRepository;
 import cn.offway.hades.repository.PhStarsameRepository;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,6 +27,14 @@ public class StarSameController {
     private PhStarsameGoodsRepository starsameGoodsRepository;
     @Autowired
     private PhStarsameImageRepository starsameImageRepository;
+    @Autowired
+    private QiniuProperties qiniuProperties;
+
+    @RequestMapping("/starSame.html")
+    public String index(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        return "starSame_index";
+    }
 
     @ResponseBody
     @RequestMapping("/starSame_list")
@@ -44,7 +54,7 @@ public class StarSameController {
 
     @ResponseBody
     @RequestMapping("/starSame_del")
-    public boolean delete(@RequestParam("ids") Long[] ids) {
+    public boolean delete(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {
             starsameRepository.delete(id);
             starsameGoodsRepository.deleteByPid(id);

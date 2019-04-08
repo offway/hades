@@ -14,5 +14,5 @@ public interface PhStarsameImageService {
 
     PhStarsameImage findOne(Long id);
 
-    Boolean deleteByPid(Long pid);
+    void deleteByPid(Long pid);
 }

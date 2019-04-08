@@ -30,8 +30,8 @@ public class PhStarsameImageServiceImpl implements PhStarsameImageService {
     }
 
     @Override
-    public Boolean deleteByPid(Long pid) {
-        return phStarsameImageRepository.deleteByPid(pid);
+    public void deleteByPid(Long pid) {
+        phStarsameImageRepository.deleteByPid(pid);
     }
 
     @Override
