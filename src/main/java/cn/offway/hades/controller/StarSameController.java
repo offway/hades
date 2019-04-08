@@ -80,9 +80,10 @@ public class StarSameController {
 
     @ResponseBody
     @PostMapping("/starSame_save")
-    public boolean save(PhStarsame starsame, String goodsID, String imagesJSONStr) {
+    public boolean save(PhStarsame starsame, String goodsIDStr, String imagesJSONStr) {
+        starsame.setCreateTime(new Date());
         PhStarsame starsameObj = starsameService.save(starsame);
-        String[] goodsList = goodsID.split(",");
+        String[] goodsList = goodsIDStr.split(",");
         for (String gid : goodsList) {
             PhGoods goods = goodsService.findOne(Long.valueOf(gid));
             if (goods != null) {
