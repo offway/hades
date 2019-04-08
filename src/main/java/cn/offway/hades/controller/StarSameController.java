@@ -95,6 +95,18 @@ public class StarSameController {
     }
 
     @ResponseBody
+    @RequestMapping("/starSame_top")
+    public boolean top(Long id) {
+        PhStarsame starsame = starsameService.findOne(id);
+        if (starsame != null) {
+            starsameService.resort(0L);
+            starsame.setSort(0L);
+            starsameService.save(starsame);
+        }
+        return true;
+    }
+
+    @ResponseBody
     @PostMapping("/starSame_save")
     public boolean save(PhStarsame starsame, String goodsIDStr, String imagesJSONStr) {
         starsame.setCreateTime(new Date());

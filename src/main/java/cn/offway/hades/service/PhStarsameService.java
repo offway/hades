@@ -19,4 +19,6 @@ public interface PhStarsameService {
     void delete(Long id);
 
     Page<PhStarsame> findAll(Pageable pageable);
+
+    void resort(Long sort);
 }

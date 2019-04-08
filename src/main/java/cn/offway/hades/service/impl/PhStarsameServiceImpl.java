@@ -42,6 +42,11 @@ public class PhStarsameServiceImpl implements PhStarsameService {
     }
 
     @Override
+    public void resort(Long sort) {
+        phStarsameRepository.resort(sort);
+    }
+
+    @Override
     public PhStarsame findOne(Long id) {
         return phStarsameRepository.findOne(id);
     }
