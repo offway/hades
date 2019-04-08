@@ -25,7 +25,7 @@
 			<div class="page-title">
 				
 				<div class="title-env">
-					<h1 class="title">Banner管理</h1>
+					<h1 class="title">明星同款管理</h1>
 					<p class="activityDescription"></p>
 				</div>
 
@@ -79,7 +79,7 @@
 			<div class="modal-content" style="width: 800px;">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加banner</h4>
+					<h4 class="modal-title">添加明星同款</h4>
 				</div>
 				
 				<div class="modal-body">
@@ -88,27 +88,17 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-3" class="control-label">活动名称</label>
-								<input type="text" class="form-control" name="remark" placeholder="活动名称"/>
+								<label for="field-3" class="control-label">明星名称</label>
+								<input type="text" class="form-control" name="starName" placeholder="明星名称"/>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-4" class="control-label">开始时间-截止时间</label>
-								<input type="text" id="daterange" class="form-control daterange" placeholder="开始时间-截止时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
-								<input type="hidden" class="form-control" name="beginTime" />
-								<input type="hidden" class="form-control" name="endTime" />
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">封面图片</label>
-								<input type="file" class="form-control" name="imageFile" placeholder="封面图片"/>
-								<input type="hidden" class="form-control" name="banner" />
+								<label for="field-4" class="control-label">主图</label>
+								<input type="file" class="form-control" name="imageFile" placeholder="主图"/>
+								<input type="hidden" class="form-control" name="imageUrl" />
 								<img alt="" src="" name="imageImage" style="display:none;"/>
 							</div>
 						</div>
@@ -116,44 +106,61 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="field-4" class="control-label">排序</label>
-                                <input type="text" class="form-control" name="sort" value="0" placeholder="排序"/>
+                                <label for="field-4" class="control-label">标题</label>
+                                <input type="text" class="form-control" name="title" value="0" placeholder="标题"/>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="field-4" class="control-label">跳转方式</label>
-                                <label><input name="type" class="" type="radio" value="2" />商品详情 </label>
-                                <!-- <label><input name="type" class="" type="radio" value="3" />商品分类列表 </label> -->
-                                <label><input name="type" class="" type="radio" value="0" />专题 </label>
-                                <label><input name="type" class="" type="radio" value="1" />品牌</label>
+                                <label for="field-4" class="control-label">详情图</label>
+								<input type="file" class="form-control" name="detailImageFile" placeholder="详情图"/>
+								<input type="button" value="添加" onclick="addMoreImg(this)"/>
+								<input type="hidden" class="form-control" name="imagesJSONStr" value="" />
                             </div>
                         </div>
                     </div>
 					<div class="row">
 						<div class="col-md-12">
-							<div class="form-group url" style="display: none">
-								<label for="field-4" class="control-label">跳转链接</label>
-								<input type="text" class="form-control" name="url" placeholder="跳转链接"/>
+							<div class="form-group">
+								<label for="field-4" class="control-label">介绍</label>
+								<input type="text" class="form-control" name="remark" placeholder="介绍"/>
+							</div>	
+						</div>
+					</div>
+<!--
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">添加标签</label>
+								<input type="text" class="form-control" name="tag" placeholder="添加标签,逗号隔开"/>
+							</div>
+						</div>
+					</div>
+-->
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">填写商品ID</label>
+								<input type="text" class="form-control" name="goodsID" placeholder="填写商品ID,逗号隔开"/>
 							</div>	
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							<div class="form-group goodsId" style="display: none">
-								<label for="field-4" class="control-label">商品详情ID</label>
-								<input type="text" class="form-control" name="goodsId" placeholder="商品详情ID"/>
-							</div>	
+							<div class="form-group">
+								<label for="field-4" class="control-label">默认点赞数量</label>
+								<input type="number" class="form-control" name="praise_count" placeholder="默认点赞数量"/>
+							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							<div class="form-group brandId" style="display: none">
-								<label for="field-4" class="control-label">品牌详情ID</label>
-								<input type="number" class="form-control" name="brandId" placeholder="品牌详情ID"/>
-							</div>	
+							<div class="form-group">
+								<label for="field-4" class="control-label">默认浏览数量</label>
+								<input type="number" class="form-control" name="view_count" placeholder="默认浏览数量"/>
+							</div>
 						</div>
 					</div>
 					</form>
@@ -174,10 +181,14 @@
 	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
 	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
+	<script src="assets/js/async.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/	
-	           
-	           
+
+	function addMoreImg(self){
+		var that = $(self);
+		that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
+	}
 	jQuery(document).ready(function($)
 	{
 		var oTable = $("#example-1").dataTable({
@@ -220,16 +231,26 @@
             	},
 				{
 					targets: 3,
+					data: "imageUrl",
+					title: "图片URL"
+				},
+				{
+					targets: 4,
+					data: "starName",
+					title: "明星姓名"
+				},
+				{
+					targets: 5,
 					data: "viewCount",
 					title: "浏览数"
 				},
                 {
-               		targets: 4,
+               		targets: 6,
 	                data: "praiseCount",
 	                title: "点赞数"
             	},
                 {
-                    targets: 5,
+                    targets: 7,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -237,7 +258,7 @@
                     }
                 },
 				{
-					targets: 6,
+					targets: 8,
 					data: "remark",
 					title: "备注"
 				}
@@ -249,37 +270,6 @@
 			oTable.fnDraw(); //or fnReloadAjax()  
 			return false;
 		});
-
-        $('[name="type"]').click(function(){
-            var value = $(this).val();  //获取选中的radio的值
-            var url = $(".url");
-            var brandId = $(".brandId");
-            var goodsId = $(".goodsId");
-            switch (parseInt(value)) {
-                case 0:
-                    url.show();
-                    brandId.hide();
-                    goodsId.hide();
-                    break;
-                case 1:
-                    url.hide();
-                    brandId.show();
-                    goodsId.hide();
-                    break;
-                case 2:
-                    url.hide();
-                    brandId.hide();
-                    goodsId.show();
-                    break;
-                case 3:
-                    url.show();
-                    brandId.hide();
-                    goodsId.hide();
-                    break;
-                default:
-                    break;
-            }
-        });
 
         $(".btn.btn-info.add").click(function(){
             var form = $("#saveForm");
@@ -319,32 +309,23 @@
 				footer.find("button").hide();
 				footer.find(".bg-lg").show();
 				var form = $("#saveForm");
+				var starName = form.find("input[name='starName']").val();
+				var title = form.find("input[name='title']").val();
 				var remark = form.find("input[name='remark']").val();
-				var url = form.find("input[name='url']").val();
-				var goods_id = form.find("input[name='goodsId']").val();
-				var brand_id = form.find("input[name='brandId']").val();
-				var daterange = $("#daterange").val();
+				var goodsID = form.find("input[name='goodsID']").val();
+				var praise_count = form.find("input[name='praise_count']").val();
+				var view_count = form.find("input[name='view_count']").val();
 				//文件
 				var imageVal = form.find("input[name='imageFile']")[0].value;
 				//已上传的图片地址
-				var imageVals = form.find("input[name='banner']").val();
+				var imageUrl = form.find("input[name='imageUrl']").val();
 
-				if(remark=='' ||daterange==''|| (imageVal=='' && imageVals=='') || (url =='' && goods_id =='' && brand_id =='')){
+				if(remark=='' ||starName==''|| title==''||goodsID==''||praise_count==''||view_count==''|| (imageVal=='' && imageUrl=='')){
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
 					return ;
 				}
-				
-				if(daterange.indexOf(' - ')!=19 || daterange.length!=41){
-					toastr.error("请输入正确的起止时间", "温馨提示");
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-				}
-
-				var dates = daterange.split(' - ');
-				form.find("input[name='beginTime']").val(dates[0]);
-				form.find("input[name='endTime']").val(dates[1]);
 				
 				var imageFile = '';
 				//上传文件获得文件地址
@@ -361,27 +342,71 @@
 				//获取token
 				$.get("/qiniu/token",{},function(token){
 					if(token !=''){
-						upload("banner",token,imageFile,function(res){},function(err){
-							console.log("上传imageFile异常:"+err);
-						},function(res){
-							//上传成功
-							if(res!=''){
-								form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+						async.series({
+							one: function(callback) {
+								upload("imageUrl",token,imageFile,function(res){},function(err){
+									console.log("上传imageFile异常:"+err);
+									callback(err);
+								},function(res){
+									//上传成功
+									if(res!=''){
+										form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+									}
+									callback();
+								});
+							},
+							two: function(callback){
+								//上传详情图
+								var imageFileList = form.find("input[name='detailImageFile']");
+								var i = 0;
+								async.eachSeries(imageFileList, function (item, cb) {
+									var f = item.files[0];
+									upload("imagesJSONStr", token, f, function () {
+										//
+									}, function (err) {
+										console.log("上传imageFile异常:" + err);
+										cb(err);
+									}, function (res) {
+										//上传成功
+										if (res != '') {
+											var url = qiniuUrl + "/" + res.key;
+											var oldValue = form.find("input[name='" + res.param + "']").val();
+											if (oldValue == '') {
+												var list = [];
+												list.push({"url": url, "sort": i, "remark": ""});
+											} else {
+												var list = JSON.parse(window.atob(oldValue));
+												list.push({"url": url, "sort": i, "remark": ""});
+											}
+											var newValue = JSON.stringify(list);
+											form.find("input[name='" + res.param + "']").val(window.btoa(newValue));
+											i++;
+										}
+										cb();
+									});
+								}, function () {
+									callback();
+								});
+							},
+							three: function(callback){
+								//提交保存
+								$.post("/starSame_save",$("#saveForm").serialize(),function(data){
+									if(data){
+										footer.find("button").show();
+										footer.find(".bg-lg").hide();
+										jQuery('#modal-6').modal('hide');
+										toastr.success("操作已成功！", "温馨提示");
+										oTable.fnDraw();
+									}else{
+										footer.find("button").show();
+										footer.find(".bg-lg").hide();
+										toastr.error("操作失败", "温馨提示");
+									}
+									callback();
+								});
 							}
-							//提交保存
-							$.post("/banner_save",$("#saveForm").serialize(),function(data){
-								if(data){
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									jQuery('#modal-6').modal('hide');
-									toastr.success("操作已成功！", "温馨提示");
-									oTable.fnDraw();
-								}else{
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败", "温馨提示");
-								}
-							});
+						}, function(err, results) {
+							console.log("OK");
 						});
 					}else{
 						footer.find("button").show();
