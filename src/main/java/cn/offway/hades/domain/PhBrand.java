@@ -44,6 +44,9 @@ public class PhBrand implements Serializable {
     /** 备注 **/
     private String remark;
 
+    /** 品牌LOGO(大) **/
+    private String logoBig;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -136,6 +139,15 @@ public class PhBrand implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    @Column(name = "logo_big", length = 200)
+    public String getLogoBig() {
+        return logoBig;
+    }
+
+    public void setLogoBig(String logoBig) {
+        this.logoBig = logoBig;
     }
 
 }
