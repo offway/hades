@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,5 +47,14 @@ public class BrandController {
         map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
         map.put("aData", pages.getContent());//数据集合
         return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/brand_del")
+    public boolean delete(@RequestParam("ids[]") Long[] ids) {
+        for (Long id : ids) {
+            brandService.del(id);
+        }
+        return true;
     }
 }

@@ -614,7 +614,7 @@
 					ids.push(e.value);
 				});
 
-				$.post("/starSame_del",{ids:ids},function(data){
+				$.post("/brand_del",{ids:ids},function(data){
 					if(data){
 						toastr.success("操作已成功！", "温馨提示");
 						oTable.fnDraw();
