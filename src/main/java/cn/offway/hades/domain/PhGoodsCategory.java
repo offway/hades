@@ -8,7 +8,7 @@ import java.util.Date;
  * 商品类目
  *
  * @author wn
- * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $
+ * @version $v: 1.0.0, $time:2019-04-01 11:26:00 Exp $
  */
 @Entity
 @Table(name = "ph_goods_category")
@@ -28,6 +28,9 @@ public class PhGoodsCategory implements Serializable {
 
     /** 图片 **/
     private String image;
+    
+    /** 排序 **/
+    private Long sort;
 
     /** 创建时间 **/
     private Date createTime;
@@ -81,6 +84,15 @@ public class PhGoodsCategory implements Serializable {
 
     public void setImage(String image) {
         this.image = image;
+    }
+    
+    @Column(name = "sort", length = 11)
+    public Long getSort() {
+        return sort;
+    }
+
+    public void setSort(Long sort) {
+        this.sort = sort;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
