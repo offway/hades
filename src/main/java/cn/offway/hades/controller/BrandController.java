@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,7 +41,8 @@ public class BrandController {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        Page<PhBrand> pages = brandService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength));
+        Sort sort = new Sort(Sort.Direction.DESC, "isRecommend");
+        Page<PhBrand> pages = brandService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
@@ -65,5 +67,45 @@ public class BrandController {
         brand.setCreateTime(new Date());
         brandService.save(brand);
         return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/brand_toggleTop")
+    public boolean toggleTop(Long id) {
+        PhBrand brand = brandService.findOne(id);
+        if (brand != null) {
+            if ("1".equals(brand.getIsRecommend())) {
+                brand.setIsRecommend("0");
+            } else {
+                brand.setIsRecommend("1");
+            }
+            brandService.save(brand);
+            return true;
+        }
+        return false;
+    }
+
+    @ResponseBody
+    @RequestMapping("/brand_top")
+    public boolean top(Long id) {
+        PhBrand brand = brandService.findOne(id);
+        if (brand != null) {
+            brand.setIsRecommend("1");
+            brandService.save(brand);
+            return true;
+        }
+        return false;
+    }
+
+    @ResponseBody
+    @RequestMapping("/brand_untop")
+    public boolean untop(Long id) {
+        PhBrand brand = brandService.findOne(id);
+        if (brand != null) {
+            brand.setIsRecommend("0");
+            brandService.save(brand);
+            return true;
+        }
+        return false;
     }
 }

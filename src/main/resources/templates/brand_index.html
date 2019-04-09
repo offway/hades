@@ -164,6 +164,14 @@
 							</div>
 						</div>
 					</div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-4" class="control-label">排序</label>
+                                <input type="number" class="form-control" name="sort" value="0" placeholder="排序(数值越小越靠前)"/>
+                            </div>
+                        </div>
+                    </div>
 <!--
 					<div class="row">
 						<div class="col-md-12">
@@ -209,14 +217,6 @@
 							</div>
 						</div>
 					</div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="field-4" class="control-label">排序</label>
-                                <input type="number" class="form-control" name="sort" placeholder="排序(数值越小越靠前)"/>
-                            </div>
-                        </div>
-                    </div>
 -->
 					</form>
 				</div>
@@ -347,18 +347,40 @@
         });
     }
 
-    var table_global;
+	var table_global;
 
-    function topIt(id) {
-        $.post("/starSame_top", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
+	function toggleTopIt(id) {
+		$.post("/brand_toggleTop", {"id": id}, function (data) {
+			if (data) {
+				table_global.fnDraw();
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	function topIt(id) {
+		$.post("/brand_top", {"id": id}, function (data) {
+			if (data) {
+				table_global.fnDraw();
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	function unTopIt(id) {
+		$.post("/brand_untop", {"id": id}, function (data) {
+			if (data) {
+				table_global.fnDraw();
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
     jQuery(document).ready(function($)
 	{
 		var oTable = $("#example-1").dataTable({
@@ -431,7 +453,10 @@
 				{
 					targets: 7,
 					data: "type",
-					title: "类型[0-国内品牌，1-国际品牌]"
+					title: "类型",
+					render: function (data, type, row, meta) {
+						return data == "0" ? "国内品牌" : "国际品牌";
+					}
 				},
                 {
                		targets: 8,
@@ -461,6 +486,19 @@
 				},
                 {
                     targets: 12,
+                    data: "isRecommend",
+                    title: "是否推荐",
+                    render: function (data, type, row, meta) {
+                        return data == "0" ? "否" : "是";
+                    }
+                },
+                {
+                    targets: 13,
+                    data: "sort",
+                    title: "排序"
+                },
+                {
+                    targets: 14,
                     data: "id",
                     orderable: false,
                     title: "操作",
@@ -468,15 +506,16 @@
                         return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
                     }
                 },
-                {
-                    targets: 13,
-                    data: "id",
-                    orderable: false,
-                    title: "操作",
-                    render: function (data, type, full, meta) {
-                        return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶"/>';
-                    }
-                }
+				{
+					targets: 15,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						var textStr = full["isRecommend"] == '1' ? "取消推荐" : "设为推荐";
+						return '<input type="button" name="topIt" onclick="toggleTopIt(' + data + ')" value="' + textStr + '"/>';
+					}
+				}
                ]
 		});
 
