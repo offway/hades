@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,6 +56,14 @@ public class BrandController {
         for (Long id : ids) {
             brandService.del(id);
         }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/brand_save")
+    public boolean save(PhBrand brand) {
+        brand.setCreateTime(new Date());
+        brandService.save(brand);
         return true;
     }
 }

@@ -77,7 +77,7 @@
 			<div class="modal-content" style="width: 800px;">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加明星同款</h4>
+					<h4 class="modal-title">添加品牌</h4>
 				</div>
 				
 				<div class="modal-body">
@@ -86,45 +86,82 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-3" class="control-label">明星名称</label>
-								<input type="text" class="form-control" name="starName" placeholder="明星名称"/>
+								<label for="field-3" class="control-label">品牌编码</label>
+								<input type="text" class="form-control" name="code" placeholder="品牌编码"/>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-4" class="control-label">主图</label>
-								<input type="file" class="form-control" name="imageFile" placeholder="主图"/>
-								<input type="hidden" class="form-control" name="imageUrl" />
-								<img alt="" src="" name="imageImage" style="display:none;"/>
+								<label for="field-3" class="control-label">品牌名称</label>
+								<input type="text" class="form-control" name="name" placeholder="品牌名称"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">品牌LOGO</label>
+								<input type="file" class="form-control" name="logoFile" placeholder="品牌LOGO"/>
+								<input type="hidden" class="form-control" name="logo" />
+								<img alt="" src="" name="logoImg" style="display:none;"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">品牌LOGO(大)</label>
+								<input type="file" class="form-control" name="logoBigFile" placeholder="品牌LOGO(大)"/>
+								<input type="hidden" class="form-control" name="logoBig" />
+								<img alt="" src="" name="logoBigImg" style="display:none;"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">品牌banner</label>
+								<input type="file" class="form-control" name="bannerFile" placeholder="品牌banner"/>
+								<input type="hidden" class="form-control" name="banner" />
+								<img alt="" src="" name="bannerImg" style="display:none;"/>
 							</div>
 						</div>
 					</div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="field-4" class="control-label">标题</label>
-                                <input type="text" class="form-control" name="title" value="0" placeholder="标题"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="field-4" class="control-label">详情图</label>
-								<input type="file" class="form-control" name="detailImageFile" placeholder="详情图"/>
-								<input type="button" value="添加" onclick="addMoreImg(this)"/>
-								<input type="hidden" class="form-control" name="imagesJSONStr" value="" />
+                                <label for="field-4" class="control-label">类型</label>
+								<label><input name="type" class="" type="radio" value="0" checked="checked" />国内品牌 </label>
+								<label><input name="type" class="" type="radio" value="1" />国际品牌</label>
                             </div>
                         </div>
                     </div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-4" class="control-label">介绍</label>
-								<input type="text" class="form-control" name="remark" placeholder="介绍"/>
+								<label for="field-4" class="control-label">简介</label>
+								<input type="text" class="form-control" name="info" placeholder="简介"/>
 							</div>	
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">背景图</label>
+								<input type="file" class="form-control" name="backgroundFile" placeholder="背景图"/>
+								<input type="hidden" class="form-control" name="background" />
+								<img alt="" src="" name="backgroundImg" style="display:none;"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">备注</label>
+								<input type="text" class="form-control" name="remark" placeholder="备注"/>
+							</div>
 						</div>
 					</div>
 <!--
@@ -136,7 +173,16 @@
 							</div>
 						</div>
 					</div>
--->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-4" class="control-label">详情图</label>
+								<input type="file" class="form-control" name="detailImageFile" placeholder="详情图"/>
+								<input type="button" value="添加" onclick="addMoreImg(this)"/>
+								<input type="hidden" class="form-control" name="imagesJSONStr" value="" />
+                            </div>
+                        </div>
+                    </div>
 					<div class="row">
 						<div class="col-md-12">
                             <div class="form-group">
@@ -171,6 +217,7 @@
                             </div>
                         </div>
                     </div>
+-->
 					</form>
 				</div>
 				
@@ -226,6 +273,31 @@
     function buildImg(url) {
         return "<img width='100px' height='100px' src='#' />".replace("#", url);
     }
+
+	function checkImg(list) {
+		var returnList = {};
+		for (var i in list) {
+			i = list[i];
+			var v = i[0];
+			var name = i[1];
+			var form = $("#saveForm");
+			var footer = $(this).parent(".modal-footer");
+			var imageFile = '';
+			//上传文件获得文件地址
+			if (v != '') {
+				imageFile = form.find("input[name='" + name + "File']")[0].files[0];
+				if (imageFile != '' && imageFile.size / 1024 > 500) {
+					toastr.error("封面图片大小超过500K,请压缩处理后上传", "温馨提示");
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					return false;
+				} else {
+					returnList[name] = imageFile;
+				}
+			}
+		}
+		return returnList;
+	}
 
     function checkIt(id) {
         $.post("/starSame_find", {"id": id}, function (data) {
@@ -454,66 +526,55 @@
 				footer.find("button").hide();
 				footer.find(".bg-lg").show();
 				var form = $("#saveForm");
-				var starName = form.find("input[name='starName']").val();
-				var title = form.find("input[name='title']").val();
+				var code = form.find("input[name='code']").val();
+				var name = form.find("input[name='name']").val();
+				var type = form.find("input[name='type']").val();
+				var info = form.find("input[name='info']").val();
 				var remark = form.find("input[name='remark']").val();
-				var goodsID = form.find("input[name='goodsID']")[0].value;
-				var praise_count = form.find("input[name='praiseCount']").val();
-				var view_count = form.find("input[name='viewCount']").val();
 				//文件
-				var imageVal = form.find("input[name='imageFile']")[0].value;
+				var logo = form.find("input[name='logoFile']").val();
+				var logoBig = form.find("input[name='logoBigFile']").val();
+				var banner = form.find("input[name='bannerFile']").val();
+				var background = form.find("input[name='backgroundFile']").val();
 				//已上传的图片地址
-				var imageUrl = form.find("input[name='imageUrl']").val();
+				var logoImg = form.find("input[name='logo']").val();
+				var logoBigImg = form.find("input[name='logoBig']").val();
+				var bannerImg = form.find("input[name='banner']").val();
+				var backgroundImg = form.find("input[name='background']").val();
 
-				if(remark=='' ||starName==''|| title==''||goodsID==''||praise_count==''||view_count==''|| (imageVal=='' && imageUrl=='')){
+				if(code=='' ||name==''|| type==''||info==''||remark==''||
+						(logo=='' && logoImg=='')||
+						(logoBig=='' && logoBigImg=='')||
+						(banner=='' && bannerImg=='')||
+						(background=='' && backgroundImg=='')
+				){
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
 					return ;
 				}
 
-                var goodsIDList = form.find("input[name='goodsID']");
-                var gidArr = [];
-                for (var gid in goodsIDList) {
-                    gidArr.push(goodsIDList[gid].value);
-                }
-                form.find("input[name='goodsIDStr']").val(gidArr.join(","));
+				var isOK = checkImg([[logo, "logo"], [logoBig, "logoBig"], [banner, "banner"], [background, "background"]]);
+				if (typeof isOK == 'boolean') {
+					return;
+				}
 
-                var imageFile = '';
-                //上传文件获得文件地址
-                if (imageVal != '') {
-                    imageFile = form.find("input[name='imageFile']")[0].files[0];
-                    if (imageFile != '' && imageFile.size / 1024 > 500) {
-                        toastr.error("封面图片大小超过500K,请压缩处理后上传", "温馨提示");
-                        footer.find("button").show();
-                        footer.find(".bg-lg").hide();
-                        return;
-                    }
-                }
-                form.find("input[name='imagesJSONStr']").val("");
                 //获取token
 				$.get("/qiniu/token",{},function(token){
 					if(token !=''){
 						async.series({
 							one: function(callback) {
-								upload("imageUrl",token,imageFile,function(res){},function(err){
-									console.log("上传imageFile异常:"+err);
-									callback(err);
-								},function(res){
-									//上传成功
-									if(res!=''){
-										form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
-									}
+								if(typeof isOK == 'object'){
 									callback();
-								});
+								}else {
+									callback("ERROR");
+								}
 							},
 							two: function(callback){
 								//上传详情图
-								var imageFileList = form.find("input[name='detailImageFile']");
-								var i = 0;
-								async.eachSeries(imageFileList, function (item, cb) {
-									var f = item.files[0];
-									upload("imagesJSONStr", token, f, function () {
+								async.eachSeries(Object.keys(isOK), function (item, cb) {
+									var f = isOK[item];
+									upload(item, token, f, function () {
 										//
 									}, function (err) {
 										console.log("上传imageFile异常:" + err);
@@ -522,17 +583,7 @@
 										//上传成功
 										if (res != '') {
 											var url = qiniuUrl + "/" + res.key;
-											var oldValue = form.find("input[name='" + res.param + "']").val();
-											if (oldValue == '') {
-												var list = [];
-												list.push({"url": url, "sort": i, "remark": ""});
-											} else {
-												var list = JSON.parse(window.atob(oldValue));
-												list.push({"url": url, "sort": i, "remark": ""});
-											}
-											var newValue = JSON.stringify(list);
-											form.find("input[name='" + res.param + "']").val(window.btoa(newValue));
-											i++;
+											form.find("input[name='" + res.param + "']").val(url);
 										}
 										cb();
 									});
@@ -542,7 +593,7 @@
 							},
 							three: function(callback){
 								//提交保存
-								$.post("/starSame_save",$("#saveForm").serialize(),function(data){
+								$.post("/brand_save",$("#saveForm").serialize(),function(data){
 									if(data){
 										footer.find("button").show();
 										footer.find(".bg-lg").hide();
