@@ -70,6 +70,12 @@ public class BrandController {
     }
 
     @ResponseBody
+    @RequestMapping("/brand_get")
+    public Object get(Long id) {
+        return brandService.findOne(id);
+    }
+
+    @ResponseBody
     @RequestMapping("/brand_toggleTop")
     public boolean toggleTop(Long id) {
         PhBrand brand = brandService.findOne(id);

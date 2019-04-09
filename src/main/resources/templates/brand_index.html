@@ -664,31 +664,23 @@
                     return;
                 }
 
-				$.post("/banner_get",{id:activityId.val()},function(data){
-					var form = $("#saveForm");
-					form.find("input[name='id']").val(data.id);
-					form.find("input[name='brandId']").val(data.brandId);
-					form.find("input[name='goodsId']").val(data.goodsId);
-					form.find("input[name='url']").val(data.url);
-					form.find("input[name='status']").val(data.status);
-					form.find("input[name='sort']").val(data.sort);
-					form.find("input[name='remark']").val(data.remark);
-                    form.find("input[name='type']").val([data.type]);
-					
-					var beginTimeStr = new Date(data.beginTime).Format('yyyy-MM-dd hh:mm:ss');
-					var endTimeStr = new Date(data.endTime).Format('yyyy-MM-dd hh:mm:ss');
-					$("#daterange").val(beginTimeStr+' - '+endTimeStr);
-					form.find("input[name='beginTime']").val(beginTimeStr);
-					form.find("input[name='endTime']").val(endTimeStr);
-					
-					if(''!=data.image){
-                        form.find("input[name='banner']").val(data.banner);
-						form.find("img[name='imageImage']").attr("src",data.banner);
-						form.find("img[name='imageImage']").show();
-						form.find(".btn.image").show();
-					}
-					jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-				});
+                $.post("/brand_get", {id: activityId.val()}, function (data) {
+                    var form = $("#saveForm");
+                    for (var i in data) {
+                        var ele = form.find("input[name='" + i + "']");
+                        switch (ele.attr("type")) {
+                            case "radio":
+                                ele.val([data[i]]);
+                                break;
+                            default:
+                                ele.val(data[i]);
+                        }
+                        form.find("img[name='" + i + "Img']").attr("src", data[i]);
+                        form.find("img[name='" + i + "Img']").show();
+                    }
+                    form.find(".btn.image").show();
+                    jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+                });
 			});
 
 			$(".btn.btn-info.del").click(function(){
