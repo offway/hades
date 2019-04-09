@@ -351,38 +351,38 @@
 
 	var table_global;
 
-	function toggleTopIt(id) {
-		$.post("/brand_toggleTop", {"id": id}, function (data) {
-			if (data) {
-				table_global.fnDraw();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function toggleTopIt(id) {
+        $.post("/brand_toggleTop", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
-	function topIt(id) {
-		$.post("/brand_top", {"id": id}, function (data) {
-			if (data) {
-				table_global.fnDraw();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function topIt(id) {
+        $.post("/brand_top", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
-	function unTopIt(id) {
-		$.post("/brand_untop", {"id": id}, function (data) {
-			if (data) {
-				table_global.fnDraw();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function unTopIt(id) {
+        $.post("/brand_untop", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
     jQuery(document).ready(function($)
 	{
 		var oTable = $("#example-1").dataTable({
@@ -508,16 +508,29 @@
                         return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
                     }
                 },
-				{
-					targets: 15,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						var textStr = full["isRecommend"] == '1' ? "取消推荐" : "设为推荐";
-						return '<input type="button" name="topIt" onclick="toggleTopIt(' + data + ')" value="' + textStr + '"/>';
-					}
-				}
+                {
+                    targets: 15,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        var textStr = full["isRecommend"] == '1' ? "取消推荐" : "设为推荐";
+                        return '<input type="button" name="topIt" onclick="toggleTopIt(' + data + ')" value="' + textStr + '"/>';
+                    }
+                },
+                {
+                    targets: 16,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        if (full["isRecommend"] == '1') {
+                            return '<input type="button" name="topIt" onclick="topIt(' + data + ')" value="置顶"/>';
+                        } else {
+                            return '<input type="button" name="topIt" disabled="disabled" onclick="#" value="非推荐无法置顶"/>';
+                        }
+                    }
+                }
                ]
 		});
 

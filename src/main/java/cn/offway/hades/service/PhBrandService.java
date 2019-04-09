@@ -19,4 +19,6 @@ public interface PhBrandService {
     Page<PhBrand> findAll(Pageable pageable);
 
     void del(Long id);
+
+    void resort(Long sort);
 }

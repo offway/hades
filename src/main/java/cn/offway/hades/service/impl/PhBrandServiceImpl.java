@@ -41,6 +41,11 @@ public class PhBrandServiceImpl implements PhBrandService {
     }
 
     @Override
+    public void resort(Long sort) {
+        phBrandRepository.resort(sort);
+    }
+
+    @Override
     public PhBrand findOne(Long id) {
         return phBrandRepository.findOne(id);
     }

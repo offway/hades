@@ -41,7 +41,7 @@ public class BrandController {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        Sort sort = new Sort(Sort.Direction.DESC, "isRecommend");
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "isRecommend"), new Sort.Order(Sort.Direction.ASC, "sort"));
         Page<PhBrand> pages = brandService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
@@ -96,7 +96,8 @@ public class BrandController {
     public boolean top(Long id) {
         PhBrand brand = brandService.findOne(id);
         if (brand != null) {
-            brand.setIsRecommend("1");
+            brandService.resort(0L);
+            brand.setSort(0L);
             brandService.save(brand);
             return true;
         }
