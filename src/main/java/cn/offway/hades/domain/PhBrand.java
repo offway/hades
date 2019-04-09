@@ -26,6 +26,9 @@ public class PhBrand implements Serializable {
     /** 品牌LOGO **/
     private String logo;
 
+    /** 品牌LOGO(大) **/
+    private String logoBig;
+
     /** 品牌banner **/
     private String banner;
 
@@ -38,14 +41,17 @@ public class PhBrand implements Serializable {
     /** 背景图 **/
     private String background;
 
+    /** 是否推荐[0-否，1-是] **/
+    private String isRecommend;
+
+    /** 排序 **/
+    private Long sort;
+
     /** 创建时间 **/
     private Date createTime;
 
     /** 备注 **/
     private String remark;
-
-    /** 品牌LOGO(大) **/
-    private String logoBig;
 
 
     @Id
@@ -86,6 +92,15 @@ public class PhBrand implements Serializable {
         this.logo = logo;
     }
 
+    @Column(name = "logo_big", length = 200)
+    public String getLogoBig() {
+        return logoBig;
+    }
+
+    public void setLogoBig(String logoBig) {
+        this.logoBig = logoBig;
+    }
+
     @Column(name = "banner", length = 100)
     public String getBanner() {
         return banner;
@@ -122,6 +137,24 @@ public class PhBrand implements Serializable {
         this.background = background;
     }
 
+    @Column(name = "is_recommend", length = 2)
+    public String getIsRecommend() {
+        return isRecommend;
+    }
+
+    public void setIsRecommend(String isRecommend) {
+        this.isRecommend = isRecommend;
+    }
+
+    @Column(name = "sort", length = 11)
+    public Long getSort() {
+        return sort;
+    }
+
+    public void setSort(Long sort) {
+        this.sort = sort;
+    }
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_time")
     public Date getCreateTime() {
@@ -139,15 +172,6 @@ public class PhBrand implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    @Column(name = "logo_big", length = 200)
-    public String getLogoBig() {
-        return logoBig;
-    }
-
-    public void setLogoBig(String logoBig) {
-        this.logoBig = logoBig;
     }
 
 }
