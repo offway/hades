@@ -83,6 +83,7 @@
 				<div class="modal-body">
 					<form role="form" id="saveForm">
 					<input type="hidden" name="id"/>
+<!--
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
@@ -91,6 +92,7 @@
 							</div>
 						</div>
 					</div>
+-->
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
@@ -565,7 +567,7 @@
 				footer.find("button").hide();
 				footer.find(".bg-lg").show();
 				var form = $("#saveForm");
-				var code = form.find("input[name='code']").val();
+				// var code = form.find("input[name='code']").val();
 				var name = form.find("input[name='name']").val();
 				var type = form.find("input[name='type']").val();
 				var info = form.find("input[name='info']").val();
@@ -581,11 +583,8 @@
 				var bannerImg = form.find("input[name='banner']").val();
 				var backgroundImg = form.find("input[name='background']").val();
 
-				if(code=='' ||name==''|| type==''||info==''||remark==''||
-						(logo=='' && logoImg=='')||
-						(logoBig=='' && logoBigImg=='')||
-						(banner=='' && bannerImg=='')||
-						(background=='' && backgroundImg=='')
+				if(name==''|| type==''||info==''||remark==''||
+						(logo=='' && logoImg=='')
 				){
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
