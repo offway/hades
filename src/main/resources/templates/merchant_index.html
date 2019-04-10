@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title>商家管理</title>
+	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
+	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<style type="text/css">
+	.form-group img{
+		max-width:400px;
+		max-height:300px;
+	}
+	</style>
+</head>
+<body class="page-body">
+
+	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+			
+		<div th:replace="sidebar-menu"></div>
+		<div class="main-content">
+			<!-- User Info, Notifications and activity Bar -->
+			<nav th:replace="navbar"></nav>
+			<div class="page-title">
+				
+				<div class="title-env">
+					<h1 class="title">商家管理</h1>
+					<p class="activityDescription"></p>
+				</div>
+
+				<div class="breadcrumb-env">
+
+					<ol class="breadcrumb bc-1">
+						<li><a href="/"><i class="fa-home"></i>Home</a></li>
+						<li><a>系统管理</a></li>
+						<li class="active"><strong>商家管理</strong></li>
+					</ol>
+
+				</div>
+
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<form role="form" class="form-inline">
+						<div class="form-group ">
+							<div class="input-group">
+								<input type="text" name="name" class="form-control" style="height:35px" placeholder="活动名"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+						</div>
+						
+					</form>
+				</div>
+				<div class="panel-body">
+					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					</table>
+					
+				</div>
+				<button class="btn btn-info add" >添加</button>
+				<button class="btn btn-info edit">修改</button>
+				<button class="btn btn-info del">删除</button>
+			</div>
+			
+					
+			<footer th:replace="footer"></footer>
+		</div>
+	</div>
+	
+	<div th:replace="body-under"></div>
+	
+	<div class="modal fade in" id="modal-6">
+		<div class="modal-dialog">
+			<div class="modal-content" style="width: 800px;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">添加商家</h4>
+				</div>
+				
+				<div class="modal-body">
+					<form role="form" id="saveForm">
+					<input type="hidden" name="id"/>
+<!--
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-3" class="control-label">品牌编码</label>
+								<input type="text" class="form-control" name="code" placeholder="品牌编码"/>
+							</div>
+						</div>
+					</div>
+-->
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-3" class="control-label">品牌名称</label>
+								<input type="text" class="form-control" name="name" placeholder="品牌名称"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">品牌LOGO</label>
+								<input type="file" class="form-control" name="logoFile" placeholder="品牌LOGO"/>
+								<input type="hidden" class="form-control" name="logo" />
+								<img alt="" src="" name="logoImg" style="display:none;"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">品牌LOGO(大)</label>
+								<input type="file" class="form-control" name="logoBigFile" placeholder="品牌LOGO(大)"/>
+								<input type="hidden" class="form-control" name="logoBig" />
+								<img alt="" src="" name="logoBigImg" style="display:none;"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">品牌banner</label>
+								<input type="file" class="form-control" name="bannerFile" placeholder="品牌banner"/>
+								<input type="hidden" class="form-control" name="banner" />
+								<img alt="" src="" name="bannerImg" style="display:none;"/>
+							</div>
+						</div>
+					</div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-4" class="control-label">类型</label>
+								<label><input name="type" class="" type="radio" value="0" checked="checked" />国内品牌 </label>
+								<label><input name="type" class="" type="radio" value="1" />国际品牌</label>
+                            </div>
+                        </div>
+                    </div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">简介</label>
+								<input type="text" class="form-control" name="info" placeholder="简介"/>
+							</div>	
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">背景图</label>
+								<input type="file" class="form-control" name="backgroundFile" placeholder="背景图"/>
+								<input type="hidden" class="form-control" name="background" />
+								<img alt="" src="" name="backgroundImg" style="display:none;"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">备注</label>
+								<input type="text" class="form-control" name="remark" placeholder="备注"/>
+							</div>
+						</div>
+					</div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-4" class="control-label">排序</label>
+                                <input type="number" class="form-control" name="sort" value="0" placeholder="排序(数值越小越靠前)"/>
+                            </div>
+                        </div>
+                    </div>
+<!--
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">添加标签</label>
+								<input type="text" class="form-control" name="tag" placeholder="添加标签,逗号隔开"/>
+							</div>
+						</div>
+					</div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-4" class="control-label">详情图</label>
+								<input type="file" class="form-control" name="detailImageFile" placeholder="详情图"/>
+								<input type="button" value="添加" onclick="addMoreImg(this)"/>
+								<input type="hidden" class="form-control" name="imagesJSONStr" value="" />
+                            </div>
+                        </div>
+                    </div>
+					<div class="row">
+						<div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-4" class="control-label">填写商品ID</label>
+                                <input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>
+                                <input type="button" value="添加" onclick="addMoreText(this)"/>
+                                <input type="hidden" class="form-control" name="goodsIDStr" value="" />
+                            </div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">默认点赞数量</label>
+								<input type="number" class="form-control" name="praiseCount" placeholder="默认点赞数量"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-4" class="control-label">默认浏览数量</label>
+								<input type="number" class="form-control" name="viewCount" placeholder="默认浏览数量"/>
+							</div>
+						</div>
+					</div>
+-->
+					</form>
+				</div>
+				
+				<div class="modal-footer">
+					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info save">保存</button>
+					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+
+    <div id="preview" style="display: none;
+    position: fixed;
+    top: 190px;
+    left: 650px;
+    background: white;
+    overflow: scroll;
+    border: solid; width: 700px; height: 600px;
+    z-index: 9999;" onclick="closeIt(this)">
+
+    </div>
+	
+	<script src="assets/js/moment.min.js"></script>
+	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
+	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
+	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+	<script src="assets/js/select2/select2.min.js"></script>
+	<script src="assets/js/async.min.js"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+
+    function addMoreImg(self) {
+        var that = $(self);
+        that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
+    }
+
+    function addMoreText(self) {
+        var that = $(self);
+        that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
+    }
+
+    function closeIt(self) {
+        var that = $(self);
+        that.hide();
+    }
+
+    function formatTime(time) {
+        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+    }
+
+    function buildImg(url) {
+        return "<img width='100px' height='100px' src='#' />".replace("#", url);
+    }
+
+	function checkImg(list) {
+		var returnList = {};
+		for (var i in list) {
+			i = list[i];
+			var v = i[0];
+			var name = i[1];
+			var form = $("#saveForm");
+			var footer = $(this).parent(".modal-footer");
+			var imageFile = '';
+			//上传文件获得文件地址
+			if (v != '') {
+				imageFile = form.find("input[name='" + name + "File']")[0].files[0];
+				if (imageFile != '' && imageFile.size / 1024 > 500) {
+					toastr.error("封面图片大小超过500K,请压缩处理后上传", "温馨提示");
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					return false;
+				} else {
+					returnList[name] = imageFile;
+				}
+			}
+		}
+		return returnList;
+	}
+
+    function checkIt(id) {
+        $.post("/starSame_find", {"id": id}, function (data) {
+            if (data) {
+                var preview = $("#preview");
+                var contentStr = "";
+                var mainObj = data["main"];
+                contentStr += "编号:" + mainObj["id"] + "<br/>";
+                contentStr += "标题:" + mainObj["title"] + "<br/>";
+                contentStr += "主图:" + buildImg(mainObj["imageUrl"]) + "<br/>";
+                contentStr += "明星名称:" + mainObj["starName"] + "<br/>";
+                contentStr += "浏览数:" + mainObj["viewCount"] + "<br/>";
+                contentStr += "点赞数:" + mainObj["praiseCount"] + "<br/>";
+                contentStr += "创建时间:" + formatTime(mainObj["createTime"]) + "<br/>";
+                contentStr += "备注:" + mainObj["remark"] + "<br/>";
+                contentStr += "排序:" + mainObj["sort"] + "<br/>";
+                contentStr += "*************<br/>";
+
+                for (var goods in data["goodsList"]) {
+                    goods = data["goodsList"][goods];
+                    contentStr += "品牌id:" + goods["brandId"] + "<br/>";
+                    contentStr += "品牌Logo:" + buildImg(goods["brandLogo"]) + "<br/>";
+                    contentStr += "品牌名:" + goods["brandName"] + "<br/>";
+                    contentStr += "创建时间:" + formatTime(goods["createTime"]) + "<br/>";
+                    contentStr += "商品id:" + goods["goodsId"] + "<br/>";
+                    contentStr += "商品图片:" + buildImg(goods["goodsImage"]) + "<br/>";
+                    contentStr += "商品名:" + goods["goodsName"] + "<br/>";
+                    contentStr += "编号:" + goods["id"] + "<br/>";
+                    contentStr += "备注:" + goods["remark"] + "<br/>";
+                }
+                contentStr += "*********************<br/>";
+
+                for (var image in data["imageList"]) {
+                    image = data["imageList"][image];
+                    contentStr += "图片:" + buildImg(image["imageUrl"]) + "<br/>";
+                    contentStr += "创建时间:" + formatTime(image["createTime"]) + "<br/>";
+                    contentStr += "排序:" + image["sort"] + "<br/>";
+                    contentStr += "编号:" + image["id"] + "<br/>";
+                    contentStr += "备注:" + image["remark"] + "<br/>";
+                }
+                preview.html(contentStr);
+                preview.show();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+	var table_global;
+
+    function toggleTopIt(id) {
+        $.post("/brand_toggleTop", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+    function topIt(id) {
+        $.post("/brand_top", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+    function unTopIt(id) {
+        $.post("/brand_untop", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+    jQuery(document).ready(function($)
+	{
+		var oTable = $("#example-1").dataTable({
+			language: {
+                url: "../assets/Chinese.txt"
+            },
+			aLengthactivity: [
+				[10, 25, 50, 100], [10, 25, 50, 100]
+			],
+			bFilter : false,
+			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
+            sAjaxSource : "/merchant_list",//通过ajax实现分页的url路径。
+            fnServerParams : function(aData){
+                var searchArray = $(".form-inline").serializeArray();
+                $.merge(aData, searchArray);
+            },
+            order: [[ 6, "desc" ]],
+            columnDefs: [
+				{	
+					targets: 0,
+				    data: "id",
+				    width:"5%",
+				    orderable: false,
+				    className: 'select-checkbox',
+				    title: '<input type="checkbox" id="checkbox-all"/>',
+				    render: function ( data, type, full, meta ) {
+				    	return '<input type="checkbox" name="activityId" value="'+data+'" />';  
+				    }
+				},
+                {
+                    targets: 1,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+               		targets: 2,
+	                data: "name",
+	                title: "商户名称"
+            	},
+				{
+					targets: 3,
+					data: "logo",
+					title: "商户LOGO",
+					render: function (data, type, row, meta) {
+						return buildImg(data);
+					}
+				},
+				{
+					targets: 4,
+					data: "address",
+					title: "商户地址"
+
+				},
+				{
+					targets: 5,
+					data: "phone",
+					title: "联系电话"
+				},
+				{
+					targets: 6,
+					data: "email",
+					title: "商户邮箱"
+				},
+				{
+					targets: 7,
+					data: "contractNo",
+					title: "合同编号"
+				},
+                {
+               		targets: 8,
+	                data: "signDate",
+	                title: "签约日期",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+            	},
+                {
+                    targets: 9,
+                    data: "expireDate",
+                    title: "到期日期",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+                },
+                {
+                    targets: 10,
+                    data: "status",
+                    title: "状态",
+                    render: function (data, type, row, meta) {
+                    	//状态[0-已申请,1-通过,2-拒绝]
+                        return data == "0" ? "已申请" : data == "1" ? "通过" : "拒绝";
+                    }
+                },
+				{
+					targets: 11,
+					data: "createTime",
+					title: "创建时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 12,
+					data: "remark",
+					title: "备注"
+				},
+				{
+					targets: 13,
+					data: "brandList",
+					title: "售卖品牌",
+					render: function (data, type, row, meta) {
+						var context = "";
+						for (var i in data) {
+							context += data[i]["brandName"] + " ";
+						}
+						return context;
+					}
+				},
+                {
+                    targets: 14,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+                    }
+                }
+                // {
+                //     targets: 15,
+                //     data: "id",
+                //     orderable: false,
+                //     title: "操作",
+                //     render: function (data, type, full, meta) {
+                //         var textStr = full["isRecommend"] == '1' ? "取消推荐" : "设为推荐";
+                //         return '<input type="button" name="topIt" onclick="toggleTopIt(' + data + ')" value="' + textStr + '"/>';
+                //     }
+                // },
+                // {
+                //     targets: 16,
+                //     data: "id",
+                //     orderable: false,
+                //     title: "操作",
+                //     render: function (data, type, full, meta) {
+                //         if (full["isRecommend"] == '1') {
+                //             return '<input type="button" name="topIt" onclick="topIt(' + data + ')" value="置顶"/>';
+                //         } else {
+                //             return '<input type="button" name="topIt" disabled="disabled" onclick="#" value="非推荐无法置顶"/>';
+                //         }
+                //     }
+                // }
+               ]
+		});
+
+		table_global = oTable;
+		
+		$(".searchBtn").click(function(){
+			$("#checkbox-all").attr("checked", false);
+			oTable.fnDraw(); //or fnReloadAjax()  
+			return false;
+		});
+
+		$(".btn.btn-info.add").click(function () {
+			window.location.href = '/merchant_add.html';
+		});
+
+        function upload(param, token, file, next, error, complete) {
+            if (file == '') {
+                complete('');
+            } else {
+                var filename = file.name;
+                var postf = filename.substring(filename.lastIndexOf("."));
+                var config = {
+                    useCdnDomain: true,
+                    region: qiniu.region.z0
+                };
+                var putExtra = {
+                    fname: "",
+                    params: {"x:param": param},
+                    mimeType: ["image/png", "image/jpeg", "image/gif"] || null
+                };
+                var observable = qiniu.upload(file, "image/wx/" + UUID.randomUUID() + postf, token,
+                    putExtra, config);
+                var subscription = observable.subscribe(next, error, complete);
+            }
+        }
+			 
+			 var qiniuUrl = [[${qiniuUrl}]];
+			//保存
+			$(".btn.btn-info.save").click(function(){
+				var footer = $(this).parent(".modal-footer");
+				footer.find("button").hide();
+				footer.find(".bg-lg").show();
+				var form = $("#saveForm");
+				// var code = form.find("input[name='code']").val();
+				var name = form.find("input[name='name']").val();
+				var type = form.find("input[name='type']").val();
+				var info = form.find("input[name='info']").val();
+				var remark = form.find("input[name='remark']").val();
+				//文件
+				var logo = form.find("input[name='logoFile']").val();
+				var logoBig = form.find("input[name='logoBigFile']").val();
+				var banner = form.find("input[name='bannerFile']").val();
+				var background = form.find("input[name='backgroundFile']").val();
+				//已上传的图片地址
+				var logoImg = form.find("input[name='logo']").val();
+				var logoBigImg = form.find("input[name='logoBig']").val();
+				var bannerImg = form.find("input[name='banner']").val();
+				var backgroundImg = form.find("input[name='background']").val();
+
+				if(name==''|| type==''||info==''||remark==''||
+						(logo=='' && logoImg=='')
+				){
+					toastr.error("请填写完整数据后提交", "温馨提示");
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					return ;
+				}
+
+				var isOK = checkImg([[logo, "logo"], [logoBig, "logoBig"], [banner, "banner"], [background, "background"]]);
+				if (typeof isOK == 'boolean') {
+					return;
+				}
+
+                //获取token
+				$.get("/qiniu/token",{},function(token){
+					if(token !=''){
+						async.series({
+							one: function(callback) {
+								if(typeof isOK == 'object'){
+									callback();
+								}else {
+									callback("ERROR");
+								}
+							},
+							two: function(callback){
+								//上传详情图
+								async.eachSeries(Object.keys(isOK), function (item, cb) {
+									var f = isOK[item];
+									upload(item, token, f, function () {
+										//
+									}, function (err) {
+										console.log("上传imageFile异常:" + err);
+										cb(err);
+									}, function (res) {
+										//上传成功
+										if (res != '') {
+											var url = qiniuUrl + "/" + res.key;
+											form.find("input[name='" + res.param + "']").val(url);
+										}
+										cb();
+									});
+								}, function () {
+									callback();
+								});
+							},
+							three: function(callback){
+								//提交保存
+								$.post("/brand_save",$("#saveForm").serialize(),function(data){
+									if(data){
+										footer.find("button").show();
+										footer.find(".bg-lg").hide();
+										jQuery('#modal-6').modal('hide');
+										toastr.success("操作已成功！", "温馨提示");
+										oTable.fnDraw();
+									}else{
+										footer.find("button").show();
+										footer.find(".bg-lg").hide();
+										toastr.error("操作失败", "温馨提示");
+									}
+									callback();
+								});
+							}
+						}, function(err, results) {
+							console.log("OK");
+						});
+					}else{
+						footer.find("button").show();
+						footer.find(".bg-lg").hide();
+						toastr.error("上传文件错误，请联系管理员", "温馨提示");
+					}
+				});
+			});
+			
+			$(".btn.btn-info.edit").click(function(){
+                var activityId = $("input[name='activityId']:checked");
+                if (activityId.length != 1) {
+                    toastr.error("请选择一条数据操作", "温馨提示");
+                    return;
+                }
+
+                $.post("/brand_get", {id: activityId.val()}, function (data) {
+                    var form = $("#saveForm");
+                    for (var i in data) {
+                        var ele = form.find("input[name='" + i + "']");
+                        switch (ele.attr("type")) {
+                            case "radio":
+                                ele.val([data[i]]);
+                                break;
+                            default:
+                                ele.val(data[i]);
+                        }
+                        form.find("img[name='" + i + "Img']").attr("src", data[i]);
+                        form.find("img[name='" + i + "Img']").show();
+                    }
+                    form.find(".btn.image").show();
+                    jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+                });
+			});
+
+			$(".btn.btn-info.del").click(function(){
+				var activityId = $("input[name='activityId']:checked");
+				if(activityId.length < 1){
+					toastr.error("请至少选择一条数据操作", "温馨提示");
+					return ;
+				}
+
+				var ids = [];
+				activityId.each(function(i,e){
+					ids.push(e.value);
+				});
+
+				$.post("/merchant_del",{ids:ids},function(data){
+					if(data){
+						toastr.success("操作已成功！", "温馨提示");
+						oTable.fnDraw();
+					}
+				})
+			});
+
+        $(".btn.btn-info.up").click(function(){
+            var activityId = $("input[name='activityId']:checked");
+            if(activityId.length < 1){
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return ;
+            }
+
+            var ids = [];
+            activityId.each(function(i,e){
+                ids.push(e.value);
+            });
+
+            $.post("/banner_up",{ids:ids},function(data){
+                if(data){
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            })
+        });
+
+        $(".btn.btn-info.down").click(function(){
+            var activityId = $("input[name='activityId']:checked");
+            if(activityId.length < 1){
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return ;
+            }
+
+            var ids = [];
+            activityId.each(function(i,e){
+                ids.push(e.value);
+            });
+
+            $.post("/banner_down",{ids:ids},function(data){
+                if(data){
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            })
+        });
+	});
+	/*]]>*/
+	</script>
+</body>
+
+</html>

@@ -1,13 +1,20 @@
 package cn.offway.hades.service.impl;
 
+import cn.offway.hades.domain.PhMerchantBrand;
+import cn.offway.hades.repository.PhMerchantBrandRepository;
+import cn.offway.hades.service.PhMerchantBrandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import cn.offway.hades.service.PhMerchantBrandService;
 
-import cn.offway.hades.domain.PhMerchantBrand;
-import cn.offway.hades.repository.PhMerchantBrandRepository;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -19,18 +26,42 @@ import cn.offway.hades.repository.PhMerchantBrandRepository;
 @Service
 public class PhMerchantBrandServiceImpl implements PhMerchantBrandService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private PhMerchantBrandRepository phMerchantBrandRepository;
-	
-	@Override
-	public PhMerchantBrand save(PhMerchantBrand phMerchantBrand){
-		return phMerchantBrandRepository.save(phMerchantBrand);
-	}
-	
-	@Override
-	public PhMerchantBrand findOne(Long id){
-		return phMerchantBrandRepository.findOne(id);
-	}
+    @Autowired
+    private PhMerchantBrandRepository phMerchantBrandRepository;
+
+    @Override
+    public PhMerchantBrand save(PhMerchantBrand phMerchantBrand) {
+        return phMerchantBrandRepository.save(phMerchantBrand);
+    }
+
+    @Override
+    public List<PhMerchantBrand> findByPid(Long pid) {
+        return phMerchantBrandRepository.findAll(new Specification<PhMerchantBrand>() {
+            @Override
+            public Predicate toPredicate(Root<PhMerchantBrand> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(criteriaBuilder.equal(root.get("merchantId"), pid));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        });
+    }
+
+    @Override
+    public void del(Long id) {
+        phMerchantBrandRepository.delete(id);
+    }
+
+    @Override
+    public void delByPid(Long pid) {
+        phMerchantBrandRepository.deleteByPid(pid);
+    }
+
+    @Override
+    public PhMerchantBrand findOne(Long id) {
+        return phMerchantBrandRepository.findOne(id);
+    }
 }
