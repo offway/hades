@@ -23,17 +23,8 @@ public class PhCollect implements Serializable {
     /** 类型[0-商品，1-品牌，2-资讯] **/
     private String type;
 
-    /** 链接地址 **/
-    private String url;
-
-    /** 标题 **/
-    private String title;
-
-    /** 内容 **/
-    private String content;
-
-    /** 图片 **/
-    private String image;
+    /** 对应的ID **/
+    private Long matchId;
 
     /** 创建时间 **/
     private Date createTime;
@@ -71,40 +62,13 @@ public class PhCollect implements Serializable {
         this.type = type;
     }
 
-    @Column(name = "url", length = 200)
-    public String getUrl() {
-        return url;
+    @Column(name = "match_id", length = 11)
+    public Long getMatchId() {
+        return matchId;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    @Column(name = "title", length = 100)
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    @Column(name = "content", length = 200)
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    @Column(name = "image", length = 200)
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
+    public void setMatchId(Long matchId) {
+        this.matchId = matchId;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
