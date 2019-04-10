@@ -108,6 +108,16 @@
 						</td>
 						<td></td>
 					</tr>
+                    <tr>
+                        <td colspan="3">
+                            <div class="">
+                                <label for="field-4" class="control-label">填写品牌ID</label>
+                                <input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>
+                                <input type="button" value="添加" onclick="addMoreText(this)"/>
+                                <input type="hidden" class="form-control" name="brandIDStr" value="" />
+                            </div>
+                        </td>
+                    </tr>
 					<tr>
 						<td colspan="3">
 							<div class="">
@@ -138,22 +148,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="field-4" class="control-label">填写商品ID</label>
-                                                <input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>
-                                                <input type="button" value="添加" onclick="addMoreText(this)"/>
-                                                <input type="hidden" class="form-control" name="goodsIDStr" value="" />
-                                            </div>
-                                        </div>
-                                    </div>
                 -->
 			</form>
 		</div>
 
 		<div class="modal-footer">
-			<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 			<button type="button" class="btn btn-info save">保存</button>
 			<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 		</div>
@@ -187,7 +186,7 @@
 
     function addMoreText(self) {
         var that = $(self);
-        that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
+        that.before('<input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>')
     }
 
     function closeIt(self) {
@@ -278,6 +277,8 @@
 
     jQuery(document).ready(function($)
 	{
+        var qiniuUrl = [[${qiniuUrl}]];
+
         function upload(param, token, file, next, error, complete) {
             if (file == '') {
                 complete('');
@@ -326,8 +327,6 @@
 			$("#expireDate").val(start.format('YYYY-MM-DD HH:mm:ss'));
 			$('input[name="expireDate"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
 		});
-			 
-			 var qiniuUrl = [[${qiniuUrl}]];
 			//保存
 			$(".btn.btn-info.save").click(function(){
 				var footer = $(this).parent(".modal-footer");
@@ -336,21 +335,18 @@
 				var form = $("#saveForm");
 				// var code = form.find("input[name='code']").val();
 				var name = form.find("input[name='name']").val();
-				var type = form.find("input[name='type']").val();
-				var info = form.find("input[name='info']").val();
-				var remark = form.find("input[name='remark']").val();
+				var address = form.find("input[name='address']").val();
+				var phone = form.find("input[name='phone']").val();
+				var contractNo = form.find("input[name='contractNo']").val();
+                var remark = form.find("input[name='remark']").val();
+                var signDate = form.find("input[name='signDate']").val();
+                var expireDate = form.find("input[name='expireDate']").val();
 				//文件
 				var logo = form.find("input[name='logoFile']").val();
-				var logoBig = form.find("input[name='logoBigFile']").val();
-				var banner = form.find("input[name='bannerFile']").val();
-				var background = form.find("input[name='backgroundFile']").val();
 				//已上传的图片地址
 				var logoImg = form.find("input[name='logo']").val();
-				var logoBigImg = form.find("input[name='logoBig']").val();
-				var bannerImg = form.find("input[name='banner']").val();
-				var backgroundImg = form.find("input[name='background']").val();
 
-				if(name==''|| type==''||info==''||remark==''||
+				if(name==''|| address==''||phone==''||contractNo==''||remark==''||signDate==''||expireDate==''||
 						(logo=='' && logoImg=='')
 				){
 					toastr.error("请填写完整数据后提交", "温馨提示");
@@ -358,8 +354,15 @@
 					footer.find(".bg-lg").hide();
 					return ;
 				}
+				//收集品牌ID列表
+                var goodsIDList = form.find("input[name='brandID']");
+                var gidArr = [];
+                for (var gid in goodsIDList) {
+                    gidArr.push(goodsIDList[gid].value);
+                }
+                form.find("input[name='brandIDStr']").val(gidArr.join(","));
 
-				var isOK = checkImg([[logo, "logo"], [logoBig, "logoBig"], [banner, "banner"], [background, "background"]]);
+				var isOK = checkImg([[logo, "logo"]]);
 				if (typeof isOK == 'boolean') {
 					return;
 				}
@@ -369,11 +372,37 @@
 					if(token !=''){
 						async.series({
 							one: function(callback) {
-								if(typeof isOK == 'object'){
-									callback();
-								}else {
-									callback("ERROR");
-								}
+                                //上传详情图
+                                var imageFileList = form.find("input[name='detailImageFile']");
+                                var i = 0;
+                                async.eachSeries(imageFileList, function (item, cb) {
+                                    var f = item.files[0];
+                                    upload("imagesJSONStr", token, f, function () {
+                                        //
+                                    }, function (err) {
+                                        console.log("上传imageFile异常:" + err);
+                                        cb(err);
+                                    }, function (res) {
+                                        //上传成功
+                                        if (res != '') {
+                                            var url = qiniuUrl + "/" + res.key;
+                                            var oldValue = form.find("input[name='" + res.param + "']").val();
+                                            if (oldValue == '') {
+                                                var list = [];
+                                                list.push({"url": url, "sort": i, "remark": ""});
+                                            } else {
+                                                var list = JSON.parse(window.atob(oldValue));
+                                                list.push({"url": url, "sort": i, "remark": ""});
+                                            }
+                                            var newValue = JSON.stringify(list);
+                                            form.find("input[name='" + res.param + "']").val(window.btoa(newValue));
+                                            i++;
+                                        }
+                                        cb();
+                                    });
+                                }, function () {
+                                    callback();
+                                });
 							},
 							two: function(callback){
 								//上传详情图
@@ -398,13 +427,12 @@
 							},
 							three: function(callback){
 								//提交保存
-								$.post("/brand_save",$("#saveForm").serialize(),function(data){
+								$.post("/merchant_save",$("#saveForm").serialize(),function(data){
 									if(data){
 										footer.find("button").show();
 										footer.find(".bg-lg").hide();
 										jQuery('#modal-6').modal('hide');
 										toastr.success("操作已成功！", "温馨提示");
-										oTable.fnDraw();
 									}else{
 										footer.find("button").show();
 										footer.find(".bg-lg").hide();
@@ -415,6 +443,7 @@
 							}
 						}, function(err, results) {
 							console.log("OK");
+                            window.location.href = '/merchant.html';
 						});
 					}else{
 						footer.find("button").show();

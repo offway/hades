@@ -1,12 +1,19 @@
 package cn.offway.hades.controller;
 
+import cn.offway.hades.domain.PhBrand;
 import cn.offway.hades.domain.PhMerchant;
 import cn.offway.hades.domain.PhMerchantBrand;
+import cn.offway.hades.domain.PhMerchantFile;
 import cn.offway.hades.properties.QiniuProperties;
+import cn.offway.hades.service.PhBrandService;
 import cn.offway.hades.service.PhMerchantBrandService;
 import cn.offway.hades.service.PhMerchantFileService;
 import cn.offway.hades.service.PhMerchantService;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.qiniu.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +22,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping
@@ -37,6 +42,8 @@ public class MerchantController {
     private PhMerchantBrandService merchantBrandService;
     @Autowired
     private PhMerchantFileService merchantFileService;
+    @Autowired
+    private PhBrandService brandService;
 
     @RequestMapping("/merchant.html")
     public String index(ModelMap map) {
@@ -86,5 +93,64 @@ public class MerchantController {
             merchantFileService.delByPid(id);
         }
         return true;
+    }
+
+    @ResponseBody
+    @PostMapping("/merchant_save")
+    public boolean save(PhMerchant merchant, String brandIDStr, String imagesJSONStr) {
+        merchant.setCreateTime(new Date());
+        merchant.setStatus("0");
+        PhMerchant merchantObj = merchantService.save(merchant);
+        String[] brandList = brandIDStr.split(",");
+        for (String bid : brandList) {
+            PhBrand brand = brandService.findOne(Long.valueOf(bid));
+            if (brand != null) {
+                PhMerchantBrand merchantBrand = new PhMerchantBrand();
+                merchantBrand.setMerchantId(merchantObj.getId());
+                merchantBrand.setMerchantName(merchantObj.getName());
+                merchantBrand.setMerchantLogo(merchantObj.getLogo());
+                merchantBrand.setBrandId(brand.getId());
+                merchantBrand.setBrandLogo(brand.getLogo());
+                merchantBrand.setBrandName(brand.getName());
+                merchantBrand.setRemark(brand.getRemark());
+                merchantBrand.setCreateTime(new Date());
+                merchantBrandService.save(merchantBrand);
+            } else {
+                logger.error("brand Id 非法");
+            }
+        }
+        String text = new String(com.qiniu.util.Base64.decode(imagesJSONStr.getBytes(), Base64.DEFAULT));
+        JSONArray jsonArray = JSON.parseArray(text);
+        if (jsonArray != null) {
+            for (Object o : jsonArray) {
+                JSONObject jsonObject = (JSONObject) o;
+                PhMerchantFile merchantFile = new PhMerchantFile();
+                merchantFile.setMerchantId(merchantObj.getId());
+                merchantFile.setLogo(merchantObj.getLogo());
+                merchantFile.setName(merchantObj.getName());
+                merchantFile.setRemark(merchantObj.getRemark());
+                merchantFile.setFileUrl(jsonObject.getString("url"));
+                merchantFile.setCreateTime(new Date());
+                merchantFileService.save(merchantFile);
+            }
+        } else {
+            logger.error("file json 非法");
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/merchant_find")
+    public Map<String, Object> find(Long id) {
+        PhMerchant merchant = merchantService.findOne(id);
+        Map<String, Object> map = new HashMap<>();
+        if (map != null) {
+            List<PhMerchantBrand> brandList = merchantBrandService.findByPid(merchant.getId());
+            List<PhMerchantFile> fileList = merchantFileService.findByPid(merchant.getId());
+            map.put("main", merchant);
+            map.put("brandList", brandList);
+            map.put("fileList", fileList);
+        }
+        return map;
     }
 }

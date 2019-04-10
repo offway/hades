@@ -302,43 +302,48 @@
 	}
 
     function checkIt(id) {
-        $.post("/starSame_find", {"id": id}, function (data) {
+        $.post("/merchant_find", {"id": id}, function (data) {
             if (data) {
                 var preview = $("#preview");
                 var contentStr = "";
                 var mainObj = data["main"];
                 contentStr += "编号:" + mainObj["id"] + "<br/>";
-                contentStr += "标题:" + mainObj["title"] + "<br/>";
-                contentStr += "主图:" + buildImg(mainObj["imageUrl"]) + "<br/>";
-                contentStr += "明星名称:" + mainObj["starName"] + "<br/>";
-                contentStr += "浏览数:" + mainObj["viewCount"] + "<br/>";
-                contentStr += "点赞数:" + mainObj["praiseCount"] + "<br/>";
+                contentStr += "商户名称:" + mainObj["name"] + "<br/>";
+                contentStr += "商户LOGO:" + buildImg(mainObj["logo"]) + "<br/>";
+                contentStr += "商户地址:" + mainObj["address"] + "<br/>";
+                contentStr += "联系电话:" + mainObj["phone"] + "<br/>";
+                contentStr += "商户邮箱:" + mainObj["email"] + "<br/>";
+                contentStr += "合同编号:" + mainObj["contractNo"] + "<br/>";
+                contentStr += "签约日期:" + formatTime(mainObj["signDate"]) + "<br/>";
+                contentStr += "到期日期:" + formatTime(mainObj["expireDate"]) + "<br/>";
+                contentStr += "状态:" + mainObj["status"] + "<br/>";
                 contentStr += "创建时间:" + formatTime(mainObj["createTime"]) + "<br/>";
                 contentStr += "备注:" + mainObj["remark"] + "<br/>";
-                contentStr += "排序:" + mainObj["sort"] + "<br/>";
                 contentStr += "*************<br/>";
 
-                for (var goods in data["goodsList"]) {
-                    goods = data["goodsList"][goods];
-                    contentStr += "品牌id:" + goods["brandId"] + "<br/>";
-                    contentStr += "品牌Logo:" + buildImg(goods["brandLogo"]) + "<br/>";
-                    contentStr += "品牌名:" + goods["brandName"] + "<br/>";
-                    contentStr += "创建时间:" + formatTime(goods["createTime"]) + "<br/>";
-                    contentStr += "商品id:" + goods["goodsId"] + "<br/>";
-                    contentStr += "商品图片:" + buildImg(goods["goodsImage"]) + "<br/>";
-                    contentStr += "商品名:" + goods["goodsName"] + "<br/>";
-                    contentStr += "编号:" + goods["id"] + "<br/>";
-                    contentStr += "备注:" + goods["remark"] + "<br/>";
+                for (var brand in data["brandList"]) {
+                    brand = data["brandList"][brand];
+                    contentStr += "品牌id:" + brand["brandId"] + "<br/>";
+                    contentStr += "品牌Logo:" + buildImg(brand["brandLogo"]) + "<br/>";
+                    contentStr += "品牌名:" + brand["brandName"] + "<br/>";
+                    contentStr += "创建时间:" + formatTime(brand["createTime"]) + "<br/>";
+                    contentStr += "商户ID:" + brand["merchantId"] + "<br/>";
+                    contentStr += "商户LOGO:" + buildImg(brand["merchantLogo"]) + "<br/>";
+                    contentStr += "商户名称:" + brand["merchantName"] + "<br/>";
+                    contentStr += "编号:" + brand["id"] + "<br/>";
+                    contentStr += "备注:" + brand["remark"] + "<br/>";
                 }
                 contentStr += "*********************<br/>";
 
-                for (var image in data["imageList"]) {
-                    image = data["imageList"][image];
-                    contentStr += "图片:" + buildImg(image["imageUrl"]) + "<br/>";
-                    contentStr += "创建时间:" + formatTime(image["createTime"]) + "<br/>";
-                    contentStr += "排序:" + image["sort"] + "<br/>";
-                    contentStr += "编号:" + image["id"] + "<br/>";
-                    contentStr += "备注:" + image["remark"] + "<br/>";
+                for (var file in data["fileList"]) {
+                    file = data["fileList"][file];
+                    contentStr += "附件URL:" + buildImg(file["fileUrl"]) + "<br/>";
+                    contentStr += "商户LOGO:" + buildImg(file["logo"]) + "<br/>";
+                    contentStr += "创建时间:" + formatTime(file["createTime"]) + "<br/>";
+                    contentStr += "商户ID:" + file["merchantId"] + "<br/>";
+                    contentStr += "商户名称:" + file["name"] + "<br/>";
+                    contentStr += "编号:" + file["id"] + "<br/>";
+                    contentStr += "备注:" + file["remark"] + "<br/>";
                 }
                 preview.html(contentStr);
                 preview.show();
@@ -474,7 +479,7 @@
                     title: "状态",
                     render: function (data, type, row, meta) {
                     	//状态[0-已申请,1-通过,2-拒绝]
-                        return data == "0" ? "已申请" : data == "1" ? "通过" : "拒绝";
+                        return data == "0" ? "待审核" : data == "1" ? "合作中" : "待审核";
                     }
                 },
 				{
