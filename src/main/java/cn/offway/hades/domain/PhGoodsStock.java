@@ -26,7 +26,7 @@ public class PhGoodsStock implements Serializable {
     /** 封面图片 **/
     private String goodsImage;
 
-    /** 颜色图片 **/
+    /** 库存图片 **/
     private String image;
 
     /** 品牌ID **/
@@ -44,14 +44,14 @@ public class PhGoodsStock implements Serializable {
     /** 类目 **/
     private String category;
 
-    /** 尺码 **/
-    private String size;
-
-    /** 颜色 **/
-    private String color;
-
     /** 库存余量 **/
     private Long stock;
+
+    /** 价格 **/
+    private Double price;
+
+    /** SKU编码 **/
+    private String sku;
 
     /** 创建时间 **/
     private Date createTime;
@@ -152,24 +152,6 @@ public class PhGoodsStock implements Serializable {
         this.category = category;
     }
 
-    @Column(name = "size", length = 10)
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
-
-    @Column(name = "color", length = 10)
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
     @Column(name = "stock", length = 11)
     public Long getStock() {
         return stock;
@@ -177,6 +159,24 @@ public class PhGoodsStock implements Serializable {
 
     public void setStock(Long stock) {
         this.stock = stock;
+    }
+
+    @Column(name = "price", precision = 15, scale = 2)
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    @Column(name = "sku", length = 100)
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
