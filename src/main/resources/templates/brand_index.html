@@ -166,6 +166,7 @@
 							</div>
 						</div>
 					</div>
+<!--
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -174,7 +175,6 @@
                             </div>
                         </div>
                     </div>
-<!--
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
@@ -441,10 +441,14 @@
 					}
 				},
                 {
-               		targets: 8,
-	                data: "info",
-	                title: "简介"
-            	},
+                    targets: 8,
+                    data: "info",
+                    title: "简介",
+                    render: function (data, type, row, meta) {
+                        data = String(data);
+                        return data.length > 10 ? data.substr(0, 9) + "...." : data;
+                    }
+                },
                 {
                     targets: 9,
                     data: "background",
@@ -524,7 +528,7 @@
 
         $(".btn.btn-info.add").click(function(){
             var form = $("#saveForm");
-            //form.find("input").val("");
+            form.find("input").val("");
             form.find("img").attr("src","");
             form.find("img").hide();
             form.find("input[type='file']").show();
@@ -597,7 +601,7 @@
 				var bannerImg = form.find("input[name='banner']").val();
 				var backgroundImg = form.find("input[name='background']").val();
 
-				if(name==''|| type==''||info==''||remark==''||
+				if(name==''|| type==''||info==''||
 						(logo=='' && logoImg=='')
 				){
 					toastr.error("请填写完整数据后提交", "温馨提示");

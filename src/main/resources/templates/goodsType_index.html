@@ -122,15 +122,22 @@
 		</div>
 	</div>
 
-    <div id="preview" style="display: none;
-    position: fixed;
-    top: 190px;
-    left: 650px;
-    background: white;
-    overflow: scroll;
-    border: solid; width: 700px; height: 600px;
-    z-index: 9999;" onclick="closeIt(this)">
+    <div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
 
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">查看详情</h4>
+                </div>
+
+                <div class="modal-body" id="preview_body"></div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
     </div>
 	
 	<script src="assets/js/moment.min.js"></script>
@@ -190,37 +197,47 @@
 		return returnList;
 	}
 
-    function checkIt(id) {
-		$.post("/goodsType_find", {"id": id}, function (data) {
-			if (data) {
-				var preview = $("#preview");
-				var contentStr = "";
-				var mainObj = data["main"];
-				contentStr += "编号:" + mainObj["id"] + "<br/>";
-				contentStr += "名称:" + mainObj["name"] + "<br/>";
-				contentStr += "图片:" + buildImg(mainObj["image"]) + "<br/>";
-				contentStr += "创建时间:" + formatTime(mainObj["createTime"]) + "<br/>";
-				contentStr += "备注:" + mainObj["remark"] + "<br/>";
-				contentStr += "*************<br/>";
+    function appendToPreview(key, value) {
+        return '<div class="row">' +
+            '<div class="col-md-2">' +
+            key +
+            '</div>' +
+            '<div class="col-md-10">' +
+            value +
+            '</div>' +
+            '</div>';
+    }
 
-				for (var category in data["categoryList"]) {
-					category = data["categoryList"][category];
-					contentStr += "商品类别ID:" + category["goodsType"] + "<br/>";
-					contentStr += "商品类别名称:" + category["goodsTypeName"] + "<br/>";
-					contentStr += "创建时间:" + formatTime(category["createTime"]) + "<br/>";
-					contentStr += "图片:" + buildImg(category["image"]) + "<br/>";
-					contentStr += "名称:" + category["name"] + "<br/>";
-					contentStr += "编号:" + category["id"] + "<br/>";
-					contentStr += "备注:" + category["remark"] + "<br/>";
-					contentStr += "排序:" + category["sort"] + "<br/>";
-				}
-				preview.html(contentStr);
-				preview.show();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
+    function checkIt(id) {
+        $.post("/goodsType_find", {"id": id}, function (data) {
+            if (data) {
+                var preview = $("#preview_body");
+                var contentStr = "";
+                var mainObj = data["main"];
+                contentStr += appendToPreview("编号:", mainObj["id"]);
+                contentStr += appendToPreview("名称:", mainObj["name"]);
+                contentStr += appendToPreview("图片:", buildImg(mainObj["image"]));
+                contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
+                contentStr += appendToPreview("备注:", mainObj["remark"]);
+
+                for (var category in data["categoryList"]) {
+                    category = data["categoryList"][category];
+                    contentStr += appendToPreview("商品类别ID:", category["goodsType"]);
+                    contentStr += appendToPreview("商品类别名称:", category["goodsTypeName"]);
+                    contentStr += appendToPreview("创建时间:", formatTime(category["createTime"]));
+                    contentStr += appendToPreview("图片:", buildImg(category["image"]));
+                    contentStr += appendToPreview("名称:", category["name"]);
+                    contentStr += appendToPreview("编号:", category["id"]);
+                    contentStr += appendToPreview("备注:", category["remark"]);
+                    contentStr += appendToPreview("排序:", category["sort"]);
+                }
+                preview.html(contentStr);
+                jQuery('#preview').modal('show', {backdrop: 'fade'});
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
     }
 
 	function checkItsList(id) {
