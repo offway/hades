@@ -112,8 +112,10 @@
                         <td colspan="3">
                             <div class="">
                                 <label for="field-4" class="control-label">填写品牌ID</label>
+                                <!--
                                 <input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>
-                                <input type="button" value="添加" onclick="addMoreText(this)"/>
+                                -->
+                                <input type="button" value="添加" id="addBrandID" onclick="addMoreText(this)"/>
                                 <input type="hidden" class="form-control" name="brandIDStr" value="" />
                             </div>
                         </td>
@@ -122,8 +124,10 @@
 						<td colspan="3">
 							<div class="">
 								<label for="field-4" class="control-label">上传营业执照/品牌授权书等</label>
+								<!--
 								<input type="file" class="form-control" name="detailImageFile" placeholder="上传营业执照/品牌授权书等"/>
-								<input type="button" value="添加" onclick="addMoreImg(this)"/>
+								-->
+								<input type="button" value="添加" id="addFile" onclick="addMoreImg(this)"/>
 								<input type="hidden" class="form-control" name="imagesJSONStr" value="" />
 							</div>
 						</td>
@@ -179,14 +183,23 @@
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
-    function addMoreImg(self) {
+    function addMoreImg(self, v) {
         var that = $(self);
-        that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="上传营业执照/品牌授权书等"/>')
+        if (v == undefined) {
+            that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="上传营业执照/品牌授权书等"/>')
+        } else {
+            that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="上传营业执照/品牌授权书等"/>')
+            that.before("<a target='_blank' href='" + v + "'>" + buildImg(v) + "</a>")
+        }
     }
 
-    function addMoreText(self) {
+    function addMoreText(self, v) {
         var that = $(self);
-        that.before('<input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>')
+        if (v == undefined) {
+            that.before('<input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>')
+        } else {
+            that.before('<input type="number" class="form-control" name="brandID" value="' + v + '" placeholder="填写品牌ID"/>')
+        }
     }
 
     function closeIt(self) {
@@ -278,6 +291,7 @@
     jQuery(document).ready(function($)
 	{
         var qiniuUrl = [[${qiniuUrl}]];
+        var theId = [[${theId}]];
 
         function upload(param, token, file, next, error, complete) {
             if (file == '') {
@@ -452,32 +466,47 @@
 					}
 				});
 			});
-			
-			$(".btn.btn-info.edit").click(function(){
-                var activityId = $("input[name='activityId']:checked");
-                if (activityId.length != 1) {
-                    toastr.error("请选择一条数据操作", "温馨提示");
-                    return;
-                }
 
-                $.post("/brand_get", {id: activityId.val()}, function (data) {
+			if(!isNaN(theId)){
+                $.post("/merchant_find", {id: theId}, function (data) {
                     var form = $("#saveForm");
-                    for (var i in data) {
+                    var main = data["main"];
+                    var brandList = data["brandList"];
+                    var fileList = data["fileList"];
+                    //商家
+                    for (var i in main) {
                         var ele = form.find("input[name='" + i + "']");
                         switch (ele.attr("type")) {
                             case "radio":
-                                ele.val([data[i]]);
+                                ele.val([main[i]]);
                                 break;
                             default:
-                                ele.val(data[i]);
+                                console.log(main[i]);
+                                console.log(typeof main[i]);
+                                if (main[i] != undefined && !isNaN(main[i]) && String(main[i]).length == 13) {
+                                    ele.val(formatTime(main[i]));
+                                    $("#" + i).val(formatTime(main[i]));
+                                } else {
+                                    ele.val(main[i]);
+                                }
                         }
-                        form.find("img[name='" + i + "Img']").attr("src", data[i]);
+                        form.find("img[name='" + i + "Img']").attr("src", main[i]);
+                        form.find("img[name='" + i + "Img']").attr("width", 200);
+                        form.find("img[name='" + i + "Img']").attr("length", 200);
                         form.find("img[name='" + i + "Img']").show();
+                    }
+                    //品牌
+                    for (var i in brandList) {
+                        addMoreText("#addBrandID", brandList[i]["brandId"]);
+                    }
+                    //资料
+                    for (var i in fileList) {
+                        addMoreImg("#addFile", fileList[i]["fileUrl"])
                     }
                     form.find(".btn.image").show();
                     jQuery('#modal-6').modal('show', {backdrop: 'fade'});
                 });
-			});
+            }
 	});
 	/*]]>*/
 	</script>

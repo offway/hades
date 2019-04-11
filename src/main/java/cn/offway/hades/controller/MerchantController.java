@@ -57,6 +57,13 @@ public class MerchantController {
         return "merchant_add";
     }
 
+    @RequestMapping("/merchant_edit.html")
+    public String merchant_edit(ModelMap map, Long id) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("theId", id);
+        return "merchant_add";
+    }
+
     @ResponseBody
     @RequestMapping("/merchant_list")
     public Map<String, Object> getList(HttpServletRequest request) {
@@ -101,6 +108,9 @@ public class MerchantController {
         merchant.setCreateTime(new Date());
         merchant.setStatus("0");
         PhMerchant merchantObj = merchantService.save(merchant);
+        //purge first
+        merchantBrandService.delByPid(merchantObj.getId());
+        //rebuild
         String[] brandList = brandIDStr.split(",");
         for (String bid : brandList) {
             PhBrand brand = brandService.findOne(Long.valueOf(bid));
@@ -119,6 +129,9 @@ public class MerchantController {
                 logger.error("brand Id 非法");
             }
         }
+        //purge first
+        merchantFileService.delByPid(merchantObj.getId());
+        //rebuild
         String text = new String(com.qiniu.util.Base64.decode(imagesJSONStr.getBytes(), Base64.DEFAULT));
         JSONArray jsonArray = JSON.parseArray(text);
         if (jsonArray != null) {

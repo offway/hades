@@ -671,32 +671,15 @@
 					}
 				});
 			});
-			
-			$(".btn.btn-info.edit").click(function(){
+
+            $(".btn.btn-info.edit").click(function () {
                 var activityId = $("input[name='activityId']:checked");
                 if (activityId.length != 1) {
                     toastr.error("请选择一条数据操作", "温馨提示");
                     return;
                 }
-
-                $.post("/brand_get", {id: activityId.val()}, function (data) {
-                    var form = $("#saveForm");
-                    for (var i in data) {
-                        var ele = form.find("input[name='" + i + "']");
-                        switch (ele.attr("type")) {
-                            case "radio":
-                                ele.val([data[i]]);
-                                break;
-                            default:
-                                ele.val(data[i]);
-                        }
-                        form.find("img[name='" + i + "Img']").attr("src", data[i]);
-                        form.find("img[name='" + i + "Img']").show();
-                    }
-                    form.find(".btn.image").show();
-                    jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-                });
-			});
+                window.location.href = '/merchant_edit.html?id=' + activityId.val();
+            });
 
 			$(".btn.btn-info.del").click(function(){
 				var activityId = $("input[name='activityId']:checked");
