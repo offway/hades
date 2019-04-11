@@ -302,44 +302,24 @@
 	}
 
     function checkIt(id) {
-        $.post("/starSame_find", {"id": id}, function (data) {
+        $.post("/brand_get", {"id": id}, function (data) {
             if (data) {
                 var preview = $("#preview");
                 var contentStr = "";
-                var mainObj = data["main"];
+                var mainObj = data;
                 contentStr += "编号:" + mainObj["id"] + "<br/>";
-                contentStr += "标题:" + mainObj["title"] + "<br/>";
-                contentStr += "主图:" + buildImg(mainObj["imageUrl"]) + "<br/>";
-                contentStr += "明星名称:" + mainObj["starName"] + "<br/>";
-                contentStr += "浏览数:" + mainObj["viewCount"] + "<br/>";
-                contentStr += "点赞数:" + mainObj["praiseCount"] + "<br/>";
+                contentStr += "品牌名称:" + mainObj["name"] + "<br/>";
+                contentStr += "简介:" + mainObj["info"] + "<br/>";
+                contentStr += "类型[0-国内品牌，1-国际品牌]:" + mainObj["type"] + "<br/>";
+                contentStr += "是否推荐[0-否，1-是]:" + mainObj["isRecommend"] + "<br/>";
+                contentStr += "品牌LOGO:" + buildImg(mainObj["logo"]) + "<br/>";
+                contentStr += "品牌LOGO(大):" + buildImg(mainObj["logoBig"]) + "<br/>";
+                contentStr += "品牌banner:" + buildImg(mainObj["banner"]) + "<br/>";
+                contentStr += "背景图:" + buildImg(mainObj["background"]) + "<br/>";
                 contentStr += "创建时间:" + formatTime(mainObj["createTime"]) + "<br/>";
                 contentStr += "备注:" + mainObj["remark"] + "<br/>";
                 contentStr += "排序:" + mainObj["sort"] + "<br/>";
                 contentStr += "*************<br/>";
-
-                for (var goods in data["goodsList"]) {
-                    goods = data["goodsList"][goods];
-                    contentStr += "品牌id:" + goods["brandId"] + "<br/>";
-                    contentStr += "品牌Logo:" + buildImg(goods["brandLogo"]) + "<br/>";
-                    contentStr += "品牌名:" + goods["brandName"] + "<br/>";
-                    contentStr += "创建时间:" + formatTime(goods["createTime"]) + "<br/>";
-                    contentStr += "商品id:" + goods["goodsId"] + "<br/>";
-                    contentStr += "商品图片:" + buildImg(goods["goodsImage"]) + "<br/>";
-                    contentStr += "商品名:" + goods["goodsName"] + "<br/>";
-                    contentStr += "编号:" + goods["id"] + "<br/>";
-                    contentStr += "备注:" + goods["remark"] + "<br/>";
-                }
-                contentStr += "*********************<br/>";
-
-                for (var image in data["imageList"]) {
-                    image = data["imageList"][image];
-                    contentStr += "图片:" + buildImg(image["imageUrl"]) + "<br/>";
-                    contentStr += "创建时间:" + formatTime(image["createTime"]) + "<br/>";
-                    contentStr += "排序:" + image["sort"] + "<br/>";
-                    contentStr += "编号:" + image["id"] + "<br/>";
-                    contentStr += "备注:" + image["remark"] + "<br/>";
-                }
                 preview.html(contentStr);
                 preview.show();
                 toastr.success("操作已成功！", "温馨提示");
