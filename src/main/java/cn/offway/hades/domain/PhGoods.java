@@ -23,6 +23,15 @@ public class PhGoods implements Serializable {
     /** 封面图片 **/
     private String image;
 
+    /** 商户ID **/
+    private Long merchantId;
+
+    /** 商户LOGO **/
+    private String merchantLogo;
+
+    /** 商户名称 **/
+    private String merchantName;
+
     /** 品牌ID **/
     private Long brandId;
 
@@ -47,17 +56,17 @@ public class PhGoods implements Serializable {
     /** 状态[0-未上架,1-已上架] **/
     private String status;
 
-    /** 创建时间 **/
-    private Date createTime;
-
-    /** 备注 **/
-    private String remark;
-
     /** 浏览数 **/
     private Long viewCount;
 
     /** 销量 **/
     private Long saleCount;
+
+    /** 创建时间 **/
+    private Date createTime;
+
+    /** 备注 **/
+    private String remark;
 
 
     @Id
@@ -87,6 +96,33 @@ public class PhGoods implements Serializable {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    @Column(name = "merchant_id", length = 11)
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
+
+    @Column(name = "merchant_logo", length = 100)
+    public String getMerchantLogo() {
+        return merchantLogo;
+    }
+
+    public void setMerchantLogo(String merchantLogo) {
+        this.merchantLogo = merchantLogo;
+    }
+
+    @Column(name = "merchant_name", length = 100)
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
     }
 
     @Column(name = "brand_id", length = 11)
@@ -161,6 +197,24 @@ public class PhGoods implements Serializable {
         this.status = status;
     }
 
+    @Column(name = "view_count", length = 11)
+    public Long getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(Long viewCount) {
+        this.viewCount = viewCount;
+    }
+
+    @Column(name = "sale_count", length = 11)
+    public Long getSaleCount() {
+        return saleCount;
+    }
+
+    public void setSaleCount(Long saleCount) {
+        this.saleCount = saleCount;
+    }
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_time")
     public Date getCreateTime() {
@@ -178,24 +232,6 @@ public class PhGoods implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    @Column(name = "view_count", length = 11)
-    public Long getViewCount() {
-        return viewCount;
-    }
-
-    public void setViewCount(Long viewCount) {
-        this.viewCount = viewCount;
-    }
-
-    @Column(name = "sale_count", length = 11)
-    public Long getSaleCount() {
-        return saleCount;
-    }
-
-    public void setSaleCount(Long saleCount) {
-        this.saleCount = saleCount;
     }
 
 }
