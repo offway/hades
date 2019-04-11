@@ -135,8 +135,8 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="field-4" class="control-label">类型</label>
-								<label><input name="type" class="" type="radio" value="0" checked="checked" />国内品牌 </label>
-								<label><input name="type" class="" type="radio" value="1" />国际品牌</label>
+								<label><input name="type" class="notMe" type="radio" value="0" checked="checked" />国内品牌 </label>
+								<label><input name="type" class="notMe" type="radio" value="1" />国际品牌</label>
                             </div>
                         </div>
                     </div>
@@ -528,7 +528,7 @@
 
         $(".btn.btn-info.add").click(function(){
             var form = $("#saveForm");
-            form.find("input").val("");
+            form.find("input:not(.notMe)").val("");
             form.find("img").attr("src","");
             form.find("img").hide();
             form.find("input[type='file']").show();
