@@ -326,7 +326,7 @@
 						params: {"x:param": param},
 						mimeType: ["image/png", "image/jpeg", "image/gif"] || null
 					};
-					var newFileName = "image/wx/" + UUID.randomUUID() + "_#W#-#H#" + postf;
+					var newFileName = "image/wx/#W#/#H#/" + UUID.randomUUID() + postf;
 					newFileName = newFileName.replace("#W#", w).replace("#H#", h);
 					var observable = qiniu.upload(file, newFileName, token,
 							putExtra, config);
