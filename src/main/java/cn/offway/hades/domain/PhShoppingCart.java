@@ -17,6 +17,12 @@ public class PhShoppingCart implements Serializable {
     /** ID **/
     private Long id;
 
+    /** 用户ID **/
+    private Long userId;
+    
+    /** 商品库存ID **/
+    private Long goodsStockId;
+
     /** 商品ID **/
     private Long goodsId;
 
@@ -25,12 +31,6 @@ public class PhShoppingCart implements Serializable {
 
     /** 商品图片 **/
     private String goodsImage;
-
-    /** 尺码 **/
-    private String size;
-
-    /** 颜色 **/
-    private String color;
 
     /** 品牌ID **/
     private Long brandId;
@@ -46,6 +46,9 @@ public class PhShoppingCart implements Serializable {
 
     /** 商品数量 **/
     private Long goodsCount;
+
+    /** 商品属性 **/
+    private String property;
 
     /** 创建时间 **/
     private Date createTime;
@@ -63,6 +66,24 @@ public class PhShoppingCart implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Column(name = "user_id", length = 11)
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+    
+    @Column(name = "goods_stock_id", length = 11)
+    public Long getGoodsStockId() {
+        return goodsStockId;
+    }
+
+    public void setGoodsStockId(Long goodsStockId) {
+        this.goodsStockId = goodsStockId;
     }
 
     @Column(name = "goods_id", length = 11)
@@ -90,24 +111,6 @@ public class PhShoppingCart implements Serializable {
 
     public void setGoodsImage(String goodsImage) {
         this.goodsImage = goodsImage;
-    }
-
-    @Column(name = "size", length = 10)
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
-
-    @Column(name = "color", length = 10)
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
     }
 
     @Column(name = "brand_id", length = 11)
@@ -153,6 +156,15 @@ public class PhShoppingCart implements Serializable {
 
     public void setGoodsCount(Long goodsCount) {
         this.goodsCount = goodsCount;
+    }
+
+    @Column(name = "property", length = 100)
+    public String getProperty() {
+        return property;
+    }
+
+    public void setProperty(String property) {
+        this.property = property;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
