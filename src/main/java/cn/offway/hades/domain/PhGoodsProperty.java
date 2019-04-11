@@ -16,6 +16,9 @@ public class PhGoodsProperty implements Serializable {
 
     /** ID **/
     private Long id;
+    
+    /** 商品ID **/
+    private Long goodsId;
 
     /** 商品库存ID **/
     private Long goodsStockId;
@@ -45,6 +48,15 @@ public class PhGoodsProperty implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    @Column(name = "goods_id", length = 11)
+    public Long getGoodsId() {
+        return goodsId;
+    }
+
+    public void setGoodsId(Long goodsId) {
+        this.goodsId = goodsId;
     }
 
     @Column(name = "goods_stock_id", length = 11)
