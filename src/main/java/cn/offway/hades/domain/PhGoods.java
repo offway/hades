@@ -47,8 +47,11 @@ public class PhGoods implements Serializable {
     /** 类目 **/
     private String category;
 
-    /** 价格范围 **/
-    private Double priceRange;
+    /** 发售价 **/
+    private Double price;
+
+    /** 价格范围[添加库存的时候更新] **/
+    private String priceRange;
 
     /** 材质 **/
     private String material;
@@ -151,17 +154,8 @@ public class PhGoods implements Serializable {
     public void setBrandLogo(String brandLogo) {
         this.brandLogo = brandLogo;
     }
-    
-    @Column(name = "price_range", length = 50)
-    public Double getPriceRange() {
-		return priceRange;
-	}
 
-	public void setPriceRange(Double priceRange) {
-		this.priceRange = priceRange;
-	}
-
-	@Column(name = "type", length = 20)
+    @Column(name = "type", length = 20)
     public String getType() {
         return type;
     }
@@ -179,6 +173,23 @@ public class PhGoods implements Serializable {
         this.category = category;
     }
 
+    @Column(name = "price", precision = 15, scale = 2)
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    @Column(name = "price_range", length = 50)
+    public String getPriceRange() {
+        return priceRange;
+    }
+
+    public void setPriceRange(String priceRange) {
+        this.priceRange = priceRange;
+    }
 
     @Column(name = "material", length = 20)
     public String getMaterial() {
