@@ -17,31 +17,31 @@ public class PhVoucherProject implements Serializable {
     /** ID **/
     private Long id;
 
-    /** 类型[0-满减，1-折扣] **/
+    /** 优惠类型[0-满减，1-折扣] **/
     private String type;
 
     /** 名称 **/
     private String name;
 
-    /** 描述 **/
-    private String content;
+    /** 券类型[0-无门槛，1-品牌，2-商品] **/
+    private String usedType;
 
-    /** 开始时间 **/
-    private Date beginTime;
+    /** 条件[0-存在，1-不存在] **/
+    private String condition;
 
-    /** 截止时间 **/
-    private Date endTime;
+    /** 对应ID[格式如,1,2,3,4,] **/
+    private String matchIds;
 
-    /** 品牌ID[多个,相隔] **/
-    private String brandIds;
+    /** 满多少金额可用 **/
+    private Double usedMinAmount;
 
-    /** 使用条件金额 **/
-    private Double conditionAmount;
-
-    /** 金额 **/
+    /** 优惠券金额 **/
     private Double amount;
 
-    /** 发放上线 **/
+    /** 有效期[单位：天] **/
+    private Long validNum;
+
+    /** 发券数量 **/
     private Long limit;
 
     /** 创建时间 **/
@@ -80,51 +80,40 @@ public class PhVoucherProject implements Serializable {
         this.name = name;
     }
 
-    @Column(name = "content", length = 200)
-    public String getContent() {
-        return content;
+    @Column(name = "used_type", length = 2)
+    public String getUsedType() {
+        return usedType;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setUsedType(String usedType) {
+        this.usedType = usedType;
     }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "begin_time")
-    public Date getBeginTime() {
-        return beginTime;
+    @Column(name = "condition", length = 2)
+    public String getCondition() {
+        return condition;
     }
 
-    public void setBeginTime(Date beginTime) {
-        this.beginTime = beginTime;
+    public void setCondition(String condition) {
+        this.condition = condition;
     }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "end_time")
-    public Date getEndTime() {
-        return endTime;
+    @Column(name = "match_ids")
+    public String getMatchIds() {
+        return matchIds;
     }
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+    public void setMatchIds(String matchIds) {
+        this.matchIds = matchIds;
     }
 
-    @Column(name = "brand_ids", length = 500)
-    public String getBrandIds() {
-        return brandIds;
+    @Column(name = "used_min_amount", precision = 15, scale = 2)
+    public Double getUsedMinAmount() {
+        return usedMinAmount;
     }
 
-    public void setBrandIds(String brandIds) {
-        this.brandIds = brandIds;
-    }
-
-    @Column(name = "condition_amount", precision = 15, scale = 2)
-    public Double getConditionAmount() {
-        return conditionAmount;
-    }
-
-    public void setConditionAmount(Double conditionAmount) {
-        this.conditionAmount = conditionAmount;
+    public void setUsedMinAmount(Double usedMinAmount) {
+        this.usedMinAmount = usedMinAmount;
     }
 
     @Column(name = "amount", precision = 15, scale = 2)
@@ -134,6 +123,15 @@ public class PhVoucherProject implements Serializable {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    @Column(name = "valid_num", length = 11)
+    public Long getValidNum() {
+        return validNum;
+    }
+
+    public void setValidNum(Long validNum) {
+        this.validNum = validNum;
     }
 
     @Column(name = "limit", length = 11)
