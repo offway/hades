@@ -1,6 +1,8 @@
 package cn.offway.hades.service;
 
 import cn.offway.hades.domain.PhGoods;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 商品表Service接口
@@ -8,9 +10,15 @@ import cn.offway.hades.domain.PhGoods;
  * @author wn
  * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $
  */
-public interface PhGoodsService{
+public interface PhGoodsService {
 
-	PhGoods save(PhGoods phGoods);
-	
-	PhGoods findOne(Long id);
+    PhGoods save(PhGoods phGoods);
+
+    PhGoods findOne(Long id);
+
+    Page<PhGoods> findAll(Pageable pageable);
+
+    Page<PhGoods> findAll(String name, Pageable pageable);
+
+    void del(Long id);
 }

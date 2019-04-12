@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<head th:replace="head"></head>
-	<title>品牌管理</title>
+	<title>商品管理</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
@@ -25,7 +25,7 @@
 			<div class="page-title">
 				
 				<div class="title-env">
-					<h1 class="title">品牌管理</h1>
+					<h1 class="title">商品管理</h1>
 					<p class="activityDescription"></p>
 				</div>
 
@@ -34,7 +34,7 @@
 					<ol class="breadcrumb bc-1">
 						<li><a href="/"><i class="fa-home"></i>Home</a></li>
 						<li><a>系统管理</a></li>
-						<li class="active"><strong>品牌管理</strong></li>
+						<li class="active"><strong>商品管理</strong></li>
 					</ol>
 
 				</div>
@@ -46,7 +46,7 @@
 					<form role="form" class="form-inline">
 						<div class="form-group ">
 							<div class="input-group">
-								<input type="text" name="name" class="form-control" style="height:35px" placeholder="品牌名"/>
+								<input type="text" name="name" class="form-control" style="height:35px" placeholder="商品名"/>
 							</div>
 						</div>
 						<div class="form-group">
@@ -77,37 +77,35 @@
 			<div class="modal-content" style="width: 800px;">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加品牌</h4>
+					<h4 class="modal-title">添加商品</h4>
 				</div>
 				
 				<div class="modal-body">
 					<form role="form" id="saveForm">
 					<input type="hidden" name="id"/>
-<!--
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-3" class="control-label">品牌编码</label>
-								<input type="text" class="form-control" name="code" placeholder="品牌编码"/>
-							</div>
-						</div>
-					</div>
--->
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-3" class="control-label">品牌名称</label>
-								<input type="text" class="form-control" name="name" placeholder="品牌名称"/>
+								<label for="field-3" class="control-label">名称</label>
+								<input type="text" class="form-control" name="name" placeholder="名称"/>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-4" class="control-label">品牌LOGO</label>
-								<input type="file" class="form-control" name="logoFile" placeholder="品牌LOGO"/>
-								<input type="hidden" class="form-control" name="logo" />
-								<img alt="" src="" name="logoImg" style="display:none;"/>
+								<label for="field-4" class="control-label">封面图片</label>
+								<input type="file" class="form-control" name="imageFile" placeholder="封面图片"/>
+								<input type="hidden" class="form-control" name="image" />
+								<img alt="" src="" name="imageImg" style="display:none;"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="field-3" class="control-label">商户ID</label>
+								<input type="text" class="form-control" name="merchantId" placeholder="商户ID"/>
 							</div>
 						</div>
 					</div>
@@ -375,7 +373,7 @@
 			bFilter : false,
 			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
             sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/brand_list",//通过ajax实现分页的url路径。
+            sAjaxSource : "/goods_list",//通过ajax实现分页的url路径。
             fnServerParams : function(aData){
                 var searchArray = $(".form-inline").serializeArray();
                 $.merge(aData, searchArray);
@@ -400,65 +398,98 @@
                 },
                 {
                		targets: 2,
-	                data: "code",
-	                title: "品牌编码"
+	                data: "name",
+	                title: "名称"
             	},
 				{
 					targets: 3,
-					data: "name",
-					title: "品牌名称"
-				},
-				{
-					targets: 4,
-					data: "logo",
-					title: "品牌LOGO",
+					data: "image",
+					title: "封面图片",
 					render: function (data, type, row, meta) {
 						return buildImg(data);
 					}
 				},
 				{
+					targets: 4,
+					data: "merchantId",
+					title: "商户ID"
+				},
+				{
 					targets: 5,
-					data: "logoBig",
-					title: "品牌LOGO(大)",
+					data: "merchantLogo",
+					title: "商户LOGO",
 					render: function (data, type, row, meta) {
 						return buildImg(data);
 					}
 				},
 				{
 					targets: 6,
-					data: "banner",
-					title: "品牌banner",
+					data: "merchantName",
+					title: "商户名称"
+				},
+				{
+					targets: 7,
+					data: "brandId",
+					title: "品牌ID"
+				},
+				{
+					targets: 8,
+					data: "brandName",
+					title: "品牌名称"
+				},
+				{
+					targets: 9,
+					data: "brandLogo",
+					title: "品牌LOGO",
 					render: function (data, type, row, meta) {
 						return buildImg(data);
 					}
 				},
 				{
-					targets: 7,
+					targets: 10,
 					data: "type",
-					title: "类型",
-					render: function (data, type, row, meta) {
-						return data == "0" ? "国内品牌" : "国际品牌";
-					}
+					title: "类别"
+				},
+				{
+					targets: 11,
+					data: "category",
+					title: "类目"
+				},
+				{
+					targets: 12,
+					data: "price",
+					title: "发售价"
 				},
                 {
-                    targets: 8,
-                    data: "info",
-                    title: "简介",
-                    render: function (data, type, row, meta) {
-                        data = String(data);
-                        return data.length > 10 ? data.substr(0, 9) + "...." : data;
-                    }
+                    targets: 13,
+                    data: "priceRange",
+                    title: "价格范围"
                 },
                 {
-                    targets: 9,
-                    data: "background",
-                    title: "背景图",
+                    targets: 14,
+                    data: "material",
+                    title: "材质"
+                },
+				{
+					targets: 15,
+					data: "status",
+					title: "状态",
 					render: function (data, type, row, meta) {
-						return buildImg(data);
+						return (data == "0" || data == undefined) ? "未上架" : "已上架";
 					}
-                },
+				},
+				{
+					targets: 16,
+					data: "viewCount",
+					title: "浏览数"
+				},
+				{
+					targets: 17,
+					data: "saleCount",
+					title: "销量"
+				},
                 {
-                    targets: 10,
+                    targets: 18,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -466,55 +497,42 @@
                     }
                 },
 				{
-					targets: 11,
+					targets: 19,
 					data: "remark",
 					title: "备注"
 				},
                 {
-                    targets: 12,
-                    data: "isRecommend",
-                    title: "是否推荐",
-                    render: function (data, type, row, meta) {
-                        return (data == "0" || data == undefined) ? "否" : "是";
-                    }
-                },
-                {
-                    targets: 13,
-                    data: "sort",
-                    title: "排序"
-                },
-                {
-                    targets: 14,
+                    targets: 20,
                     data: "id",
                     orderable: false,
                     title: "操作",
                     render: function (data, type, full, meta) {
                         return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
                     }
-                },
-                {
-                    targets: 15,
-                    data: "id",
-                    orderable: false,
-                    title: "操作",
-                    render: function (data, type, full, meta) {
-                        var textStr = full["isRecommend"] == '1' ? "取消推荐" : "设为推荐";
-                        return '<input type="button" name="topIt" onclick="toggleTopIt(' + data + ')" value="' + textStr + '"/>';
-                    }
-                },
-                {
-                    targets: 16,
-                    data: "id",
-                    orderable: false,
-                    title: "操作",
-                    render: function (data, type, full, meta) {
-                        if (full["isRecommend"] == '1') {
-                            return '<input type="button" name="topIt" onclick="topIt(' + data + ')" value="置顶"/>';
-                        } else {
-                            return '<input type="button" name="topIt" disabled="disabled" onclick="#" value="非推荐无法置顶"/>';
-                        }
-                    }
                 }
+                // {
+                //     targets: 15,
+                //     data: "id",
+                //     orderable: false,
+                //     title: "操作",
+                //     render: function (data, type, full, meta) {
+                //         var textStr = full["isRecommend"] == '1' ? "取消推荐" : "设为推荐";
+                //         return '<input type="button" name="topIt" onclick="toggleTopIt(' + data + ')" value="' + textStr + '"/>';
+                //     }
+                // },
+                // {
+                //     targets: 16,
+                //     data: "id",
+                //     orderable: false,
+                //     title: "操作",
+                //     render: function (data, type, full, meta) {
+                //         if (full["isRecommend"] == '1') {
+                //             return '<input type="button" name="topIt" onclick="topIt(' + data + ')" value="置顶"/>';
+                //         } else {
+                //             return '<input type="button" name="topIt" disabled="disabled" onclick="#" value="非推荐无法置顶"/>';
+                //         }
+                //     }
+                // }
                ]
 		});
 
@@ -714,7 +732,7 @@
 					ids.push(e.value);
 				});
 
-				$.post("/brand_del",{ids:ids},function(data){
+				$.post("/goods_del",{ids:ids},function(data){
 					if(data){
 						toastr.success("操作已成功！", "温馨提示");
 						oTable.fnDraw();
