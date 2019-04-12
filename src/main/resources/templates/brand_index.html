@@ -475,7 +475,7 @@
                     data: "isRecommend",
                     title: "是否推荐",
                     render: function (data, type, row, meta) {
-                        return data == "0" ? "否" : "是";
+                        return (data == "0" || data == undefined) ? "否" : "是";
                     }
                 },
                 {
@@ -533,7 +533,7 @@
             form.find("img").hide();
             form.find("input[type='file']").show();
             $(".imageShow").remove();
-            jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+            jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
         });
 
 		function getImgSize(file, cb) {
@@ -697,7 +697,7 @@
                         form.find("img[name='" + i + "Img']").show();
                     }
                     form.find(".btn.image").show();
-                    jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+                    jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
                 });
 			});
 
