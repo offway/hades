@@ -29,7 +29,7 @@ public class PhVoucherProject implements Serializable {
     /** 条件[0-存在，1-不存在] **/
     private String condition;
 
-    /** 对应ID[多个,相隔] **/
+    /** 对应ID[格式如,1,2,3,4,] **/
     private String matchIds;
 
     /** 满多少金额可用 **/
