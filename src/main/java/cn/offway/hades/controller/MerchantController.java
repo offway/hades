@@ -70,8 +70,9 @@ public class MerchantController {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
+        String name = request.getParameter("name");
         Sort sort = new Sort("id");
-        Page<PhMerchant> pages = merchantService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhMerchant> pages = merchantService.findAll(name, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         List<PhMerchant> list = pages.getContent();
         List<Object> data = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
