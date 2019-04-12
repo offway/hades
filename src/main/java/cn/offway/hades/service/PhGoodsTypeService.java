@@ -4,6 +4,8 @@ import cn.offway.hades.domain.PhGoodsType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * 商品类别Service接口
  *
@@ -17,6 +19,8 @@ public interface PhGoodsTypeService {
     PhGoodsType findOne(Long id);
 
     Page<PhGoodsType> findAll(Pageable pageable);
+
+    List<PhGoodsType> findAll();
 
     void del(Long id);
 }

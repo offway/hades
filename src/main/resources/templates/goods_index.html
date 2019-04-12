@@ -83,6 +83,7 @@
 				<div class="modal-body">
 					<form role="form" id="saveForm">
 					<input type="hidden" name="id"/>
+<!--
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
@@ -143,7 +144,7 @@
 							<div class="form-group">
 								<label for="field-4" class="control-label">简介</label>
 								<input type="text" class="form-control" name="info" placeholder="简介"/>
-							</div>	
+							</div>
 						</div>
 					</div>
 					<div class="row">
@@ -164,7 +165,6 @@
 							</div>
 						</div>
 					</div>
-<!--
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -509,30 +509,16 @@
                     render: function (data, type, full, meta) {
                         return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
                     }
-                }
-                // {
-                //     targets: 15,
-                //     data: "id",
-                //     orderable: false,
-                //     title: "操作",
-                //     render: function (data, type, full, meta) {
-                //         var textStr = full["isRecommend"] == '1' ? "取消推荐" : "设为推荐";
-                //         return '<input type="button" name="topIt" onclick="toggleTopIt(' + data + ')" value="' + textStr + '"/>';
-                //     }
-                // },
-                // {
-                //     targets: 16,
-                //     data: "id",
-                //     orderable: false,
-                //     title: "操作",
-                //     render: function (data, type, full, meta) {
-                //         if (full["isRecommend"] == '1') {
-                //             return '<input type="button" name="topIt" onclick="topIt(' + data + ')" value="置顶"/>';
-                //         } else {
-                //             return '<input type="button" name="topIt" disabled="disabled" onclick="#" value="非推荐无法置顶"/>';
-                //         }
-                //     }
-                // }
+                },
+				{
+					targets: 21,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看SKU"/>';
+					}
+				}
                ]
 		});
 
@@ -545,13 +531,14 @@
 		});
 
         $(".btn.btn-info.add").click(function(){
-            var form = $("#saveForm");
-            form.find("input:not(.notMe)").val("");
-            form.find("img").attr("src","");
-            form.find("img").hide();
-            form.find("input[type='file']").show();
-            $(".imageShow").remove();
-            jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+            // var form = $("#saveForm");
+            // form.find("input:not(.notMe)").val("");
+            // form.find("img").attr("src","");
+            // form.find("img").hide();
+            // form.find("input[type='file']").show();
+            // $(".imageShow").remove();
+            // jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+			window.location.href = '/goods_add.html';
         });
 
 		function getImgSize(file, cb) {

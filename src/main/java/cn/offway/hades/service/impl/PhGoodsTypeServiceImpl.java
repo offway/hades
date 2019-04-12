@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 /**
  * 商品类别Service接口实现
@@ -38,6 +40,11 @@ public class PhGoodsTypeServiceImpl implements PhGoodsTypeService {
     @Override
     public void del(Long id) {
         phGoodsTypeRepository.delete(id);
+    }
+
+    @Override
+    public List<PhGoodsType> findAll() {
+        return phGoodsTypeRepository.findAll();
     }
 
     @Override

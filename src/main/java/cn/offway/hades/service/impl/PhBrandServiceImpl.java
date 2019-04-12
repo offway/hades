@@ -68,6 +68,11 @@ public class PhBrandServiceImpl implements PhBrandService {
     }
 
     @Override
+    public List<PhBrand> findAll() {
+        return phBrandRepository.findAll();
+    }
+
+    @Override
     public PhBrand findOne(Long id) {
         return phBrandRepository.findOne(id);
     }

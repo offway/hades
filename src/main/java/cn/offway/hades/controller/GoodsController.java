@@ -1,8 +1,12 @@
 package cn.offway.hades.controller;
 
+import cn.offway.hades.domain.PhBrand;
 import cn.offway.hades.domain.PhGoods;
+import cn.offway.hades.domain.PhGoodsCategory;
+import cn.offway.hades.domain.PhGoodsType;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -37,11 +43,40 @@ public class GoodsController {
     private PhGoodsPropertyService goodsPropertyService;
     @Autowired
     private PhGoodsStockService goodsStockService;
+    @Autowired
+    private PhBrandService brandService;
 
     @RequestMapping("/goods.html")
     public String index(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         return "goods_index";
+    }
+
+    @RequestMapping("/goods_add.html")
+    public String add(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        return "goods_add";
+    }
+
+    @ResponseBody
+    @RequestMapping("/type_and_category_list")
+    public List<Object> getTypeAndCategory() {
+        List<Object> ret = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<PhGoodsType> typeList = goodsTypeService.findAll();
+        for (PhGoodsType type : typeList) {
+            Map container = objectMapper.convertValue(type, Map.class);
+            List<PhGoodsCategory> categoryList = goodsCategoryService.findByPid(type.getId());
+            container.put("sub", categoryList);
+            ret.add(container);
+        }
+        return ret;
+    }
+
+    @ResponseBody
+    @RequestMapping("/brand_list_all")
+    public List<PhBrand> getBrand() {
+        return brandService.findAll();
     }
 
     @ResponseBody

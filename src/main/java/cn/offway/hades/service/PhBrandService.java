@@ -4,6 +4,8 @@ import cn.offway.hades.domain.PhBrand;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * 品牌库Service接口
  *
@@ -17,6 +19,8 @@ public interface PhBrandService {
     PhBrand findOne(Long id);
 
     Page<PhBrand> findAll(Pageable pageable);
+
+    List<PhBrand> findAll();
 
     Page<PhBrand> findAll(String name, Pageable pageable);
 
