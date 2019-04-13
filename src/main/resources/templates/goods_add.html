@@ -68,9 +68,9 @@
 	<div th:replace="body-under"></div>
 
 
-	<div class="modal fade in" id="modal-6" aria-hidden="false" style="display: block;overflow: visible;top:47px;right: 325px;">
+	<div class="modal fade in" id="modal-6" aria-hidden="false" style="display: block;overflow: scroll;top:47px;right: 325px;">
 		<div class="modal-dialog">
-			<div class="modal-content" style="width: 1160px;">
+			<div class="modal-content" style="width: 1080px;">
 
 				<div class="modal-header">
 					<h4 class="modal-title">添加商品</h4>
@@ -146,6 +146,7 @@
 							</div>
 						</div>
 					</div>
+                    <input type="button" value="添加商品属性" onclick="addMoreAttr(this)" />
 <!--					<div class="row">-->
 <!--						<div class="col-md-4">-->
 <!--							<div class="form-group">-->
@@ -184,6 +185,9 @@
 		</div>
 	</div>
 
+	<div class="modal fade in" id="modal-7" aria-hidden="false" style="display: none;z-index: 2000">
+	</div>
+
 	<input type="hidden" id="type_and_category_list"/>
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
@@ -203,6 +207,145 @@
         var that = $(self);
         that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
     }
+
+    function delNode(self) {
+        var that = $(self);
+        var name = that.attr("name");
+        $(".NAME".replace("NAME", name)).remove();
+    }
+
+	function addMoreAttr(self) {
+		var uuid = UUID.randomUUID();
+		var content = "\t\t\t\t\t<div class=\"row NAME\">\n".replace("NAME", uuid) +
+				"\t\t\t\t\t\t<div class=\"col-md-6\">\n" +
+				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+				"\t\t\t\t\t\t\t\t<label class=\"control-label\">属性名</label>\n" +
+				"\t\t\t\t\t\t\t\t<input type='text' class=\"form-control\" name=\"attrName\" placeholder=\"属性名\" />\n" +
+				"\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t<div class=\"col-md-6\">\n" +
+				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+				"\t\t\t\t\t\t\t\t<label class=\"control-label\">属性值</label>\n" +
+				"\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrValue\" placeholder=\"属性值\" onclick=\"showAttrWindow('NAME')\" />\n".replace("NAME", uuid) +
+				"\t\t\t\t\t\t\t\t<input type='hidden' class=\"form-control NAME\" name=\"attrContainer\" value=\"\" />\n".replace("NAME", uuid) +
+				"\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t</div>";
+		var that = $(self);
+		that.before(content);
+		that.before('<input type="button" class="form-control NAME" value="删除" name="NAME" onclick="delNode(this)"/>'.replace(/NAME/g, uuid));
+	}
+
+	function addMoreAttrValue(self) {
+		var uuid = UUID.randomUUID();
+		var content = buildNewAttrValue(uuid);
+		var that = $(self);
+		that.before(content);
+		that.before('<input type="button" class="form-control NAME" value="删除" name="NAME" onclick="delNode(this)"/>'.replace(/NAME/g, uuid));
+	}
+
+	function buildNewAttrValue(uuid, one, two, three) {
+		var context = ATTR_ELEMENT_BODY;
+		context = context.replace("UUID", uuid);
+		if (one != undefined) {
+			context = context.replace("ONE", one);
+		} else {
+			context = context.replace("ONE", "");
+		}
+		if (one != undefined) {
+			context = context.replace("TWO", two);
+		} else {
+			context = context.replace("TWO", "");
+		}
+		if (one != undefined) {
+			context = context.replace("THREE", three);
+		} else {
+			context = context.replace("THREE", "0");
+		}
+		return context;
+	}
+
+	var ATTR_ELEMENT_HEADER = "\t\t<div class=\"modal-dialog\">\n" +
+			"\t\t\t<div class=\"modal-content\">\n" +
+			"\t\t\t\t<div class=\"modal-header\">\n" +
+			"\t\t\t\t\t<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button>\n" +
+			"\t\t\t\t\t<h4 class=\"modal-title\">添加属性值列表</h4>\n" +
+			"\t\t\t\t</div>\n" +
+			"\t\t\t\t<div class=\"modal-body\">\n";
+
+	var ATTR_ELEMENT_BODY = "\t\t\t\t\t<div class=\"row UUID\">\n" +
+			"\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
+			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+			"\t\t\t\t\t\t\t\t<label for=\"field-4\" class=\"control-label\">属性值</label>\n" +
+			"\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"skuValue\" value='ONE' placeholder=\"属性值\" />\n" +
+			"\t\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
+			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+			"\t\t\t\t\t\t\t\t<label for=\"field-5\" class=\"control-label\">备注</label>\n" +
+			"\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"skuRemark\" value='TWO' placeholder=\"备注\" />\n" +
+			"\t\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
+			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+			"\t\t\t\t\t\t\t\t<label for=\"field-6\" class=\"control-label\">排序</label>\n" +
+			"\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"skuSort\" value='THREE'  placeholder=\"排序\" />\n" +
+			"\t\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t</div>\n";
+
+	var ATTR_ELEMENT_FOOTER = "\t\t\t\t\t<input type=\"button\" value=\"添加商品属性值\" onclick=\"addMoreAttrValue(this)\" />\n" +
+			"\t\t\t\t</div>\n" +
+			"\t\t\t\t<div class=\"modal-footer\">\n" +
+			"\t\t\t\t\t<button type=\"button\" class=\"btn btn-white\" data-dismiss=\"modal\">关闭</button>\n" +
+			"\t\t\t\t\t<button type=\"button\" class=\"btn btn-info\" onclick=\"saveAttr('NAME')\">保存</button>\n" +
+			"\t\t\t\t</div>\n" +
+			"\t\t\t</div>\n" +
+			"\t\t</div>";
+
+	function showAttrWindow(uuid) {
+		var target = $("." + uuid);
+		var attrJSONStr = target.find("input[name=attrContainer]").val();
+		var contentStr = "";
+		if (attrJSONStr == '') {
+			contentStr = (ATTR_ELEMENT_HEADER + ATTR_ELEMENT_BODY + ATTR_ELEMENT_FOOTER).replace("ONE", "").replace("TWO", "").replace("THREE", "0").replace("NAME", uuid);
+		} else {
+			var attrList = JSON.parse(attrJSONStr);
+			contentStr += ATTR_ELEMENT_HEADER;
+			for (var i in attrList) {
+				var innerUUid = UUID.randomUUID();
+				contentStr += buildNewAttrValue(innerUUid, attrList[i]["value"], attrList[i]["remark"], attrList[i]["sort"]);
+				contentStr += '<input type="button" class="form-control NAME" value="删除" name="NAME" onclick="delNode(this)"/>'.replace(/NAME/g, innerUUid);
+			}
+			contentStr += ATTR_ELEMENT_FOOTER.replace("NAME", uuid);
+		}
+		jQuery('#modal-7').html(contentStr).modal({backdrop: 'static', keyboard: false});
+	}
+
+	function saveAttr(uuid) {
+		var form = jQuery('#modal-7');
+		var skuValueList = form.find("input[name=skuValue]");
+		var skuRemarkList = form.find("input[name=skuRemark]");
+		var skuSortList = form.find("input[name=skuSort]");
+		var list = [];
+		var valueList = [];
+		for (var i in skuValueList) {
+			if (isNaN(i)) {
+				continue;
+			}
+			var value = skuValueList[i].value;
+			var remark = skuRemarkList[i].value;
+			var sort = skuSortList[i].value;
+			var item = {"value": value, "remark": remark, "sort": sort};
+			list.push(item);
+			valueList.push(value);
+		}
+		var target = $("." + uuid);
+		target.find("input[name=attrContainer]").val(JSON.stringify(list));
+		target.find("input[name=attrValue]").val(valueList.join(","));
+		//TODO build SKU
+		form.modal('toggle');
+	}
 
     function closeIt(self) {
         var that = $(self);
@@ -241,34 +384,6 @@
 		}
 		return returnList;
 	}
-
-    function checkIt(id) {
-        $.post("/brand_get", {"id": id}, function (data) {
-            if (data) {
-                var preview = $("#preview");
-                var contentStr = "";
-                var mainObj = data;
-                contentStr += "编号:" + mainObj["id"] + "<br/>";
-                contentStr += "品牌名称:" + mainObj["name"] + "<br/>";
-                contentStr += "简介:" + mainObj["info"] + "<br/>";
-                contentStr += "类型[0-国内品牌，1-国际品牌]:" + mainObj["type"] + "<br/>";
-                contentStr += "是否推荐[0-否，1-是]:" + mainObj["isRecommend"] + "<br/>";
-                contentStr += "品牌LOGO:" + buildImg(mainObj["logo"]) + "<br/>";
-                contentStr += "品牌LOGO(大):" + buildImg(mainObj["logoBig"]) + "<br/>";
-                contentStr += "品牌banner:" + buildImg(mainObj["banner"]) + "<br/>";
-                contentStr += "背景图:" + buildImg(mainObj["background"]) + "<br/>";
-                contentStr += "创建时间:" + formatTime(mainObj["createTime"]) + "<br/>";
-                contentStr += "备注:" + mainObj["remark"] + "<br/>";
-                contentStr += "排序:" + mainObj["sort"] + "<br/>";
-                contentStr += "*************<br/>";
-                preview.html(contentStr);
-                preview.show();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
 
 	function bindTypeSelector(data) {
 		var typeStr = "";
