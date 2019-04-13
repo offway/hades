@@ -181,7 +181,7 @@
 				</div>
 
 				<div class="modal-footer">
-					<button type="button" class="btn btn-info">保存</button>
+					<button type="button" class="btn btn-info save">保存</button>
 				</div>
 			</div>
 		</div>
@@ -397,25 +397,27 @@
             "                            <div class=\"col-md-2\">\n" +
             "                                <div class=\"form-group\">\n" +
             "                                    <label class=\"control-label\">库存图片</label>\n" +
-            "                                    <input type=\"file\" class=\"form-control\" name=\"image\" placeholder=\"库存图片\" />\n" +
+			"                                    <input type=\"file\" class=\"form-control\" name=\"skuImageFile\" placeholder=\"库存图片\" />\n" +
+			"                                    <input type=\"hidden\" class=\"form-control\" name=\"skuImage\" />\n" +
+			"                                    <img src=\"\" name=\"skuImageImg\" style=\"display:none;\" />\n" +
             "                                </div>\n" +
             "                            </div>\n" +
             "                            <div class=\"col-md-2\">\n" +
             "                                <div class=\"form-group\">\n" +
             "                                    <label class=\"control-label\">库存余量</label>\n" +
-            "                                    <input type=\"number\" class=\"form-control\" name=\"stock\" placeholder=\"库存余量\" />\n" +
+            "                                    <input type=\"number\" class=\"form-control\" name=\"skuStock\" placeholder=\"库存余量\" />\n" +
             "                                </div>\n" +
             "                            </div>\n" +
             "                            <div class=\"col-md-2\">\n" +
             "                                <div class=\"form-group\">\n" +
             "                                    <label class=\"control-label\">价格</label>\n" +
-            "                                    <input type=\"number\" class=\"form-control\" name=\"price\" placeholder=\"价格\" />\n" +
+            "                                    <input type=\"number\" class=\"form-control\" name=\"skuPrice\" placeholder=\"价格\" />\n" +
             "                                </div>\n" +
             "                            </div>\n" +
             "                            <div class=\"col-md-4\">\n" +
             "                                <div class=\"form-group\">\n" +
             "                                    <label class=\"control-label\">备注</label>\n" +
-            "                                    <input type=\"text\" class=\"form-control\" name=\"remark\" value=\"REMARK\" placeholder=\"备注\" />\n".replace("REMARK", remark) +
+            "                                    <input type=\"text\" class=\"form-control\" name=\"skuRemark\" value=\"REMARK\" placeholder=\"备注\" />\n".replace("REMARK", remark) +
             "                                </div>\n" +
             "                            </div>\n" +
             "                        </div>";
@@ -448,8 +450,6 @@
 				imageFile = form.find("input[name='" + name + "File']")[0].files[0];
 				if (imageFile != '' && imageFile.size / 1024 > 1024) {
 					toastr.error("封面图片大小超过1M,请压缩处理后上传", "温馨提示");
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
 					return false;
 				} else {
 					returnList[name] = imageFile;
@@ -555,50 +555,103 @@
 
 		//保存
 		$(".btn.btn-info.save").click(function () {
-			var footer = $(this).parent(".modal-footer");
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var form = $("#saveForm");
-			// var code = form.find("input[name='code']").val();
-			var name = form.find("input[name='name']").val();
-			var type = form.find("input[name='type']").val();
-			var info = form.find("input[name='info']").val();
-			var remark = form.find("input[name='remark']").val();
-			//文件
-			var logo = form.find("input[name='logoFile']").val();
-			var logoBig = form.find("input[name='logoBigFile']").val();
-			var banner = form.find("input[name='bannerFile']").val();
-			var background = form.find("input[name='backgroundFile']").val();
-			//已上传的图片地址
-			var logoImg = form.find("input[name='logo']").val();
-			var logoBigImg = form.find("input[name='logoBig']").val();
-			var bannerImg = form.find("input[name='banner']").val();
-			var backgroundImg = form.find("input[name='background']").val();
+            var footer = $(this).parent(".modal-footer");
+            var form = $("#saveForm");
+            var type = form.find("input[name='type']").val();
+            var category = form.find("input[name='category']").val();
+            var name = form.find("input[name='name']").val();
+            var brand_id = form.find("input[name='brand_id']").val();
+            var price = form.find("input[name='price']").val();
+            var material = form.find("input[name='material']").val();
+            var remark = form.find("input[name='remark']").val();
+            //文件
+            var image = form.find("input[name='imageFile']").val();
+            //已上传的图片地址
+            var imageImg = form.find("input[name='image']").val();
 
-			if (name == '' || type == '' || info == '' ||
-					(logo == '' && logoImg == '')
-			) {
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-				return;
-			}
+            if (type == '' || category == '' || name == '' || brand_id == '' || price == '' || material == '' || remark == '' || (image == '' && imageImg == '')) {
+                toastr.error("请填写完整数据后提交", "温馨提示");
+                return;
+            }
 
-			var isOK = checkImg([[logo, "logo"], [logoBig, "logoBig"], [banner, "banner"], [background, "background"]]);
+			var isOK = checkImg([[image, "image"]]);
 			if (typeof isOK == 'boolean') {
 				return;
 			}
 
+            //多个元素 sku 属性
+            var attrName = form.find("input[name='attrName']");
+            // var attrValue = form.find("input[name='attrValue']").val();//omit
+            var attrContainer = form.find("input[name='attrContainer']");
+            var attrNameList = [];
+            var attrContainerList = [];
+			for (var i in attrName) {
+				if (isNaN(i)) {
+					continue;
+				}
+				var a = attrName[i].value;
+				var b = attrContainer[i].value;
+				if (a == '' || b == '') {
+					toastr.error("请填写完整数据后提交", "温馨提示");
+					return;
+				} else {
+					attrNameList.push(a);
+					attrContainerList.push(b);
+				}
+			}
+            //多个元素 sku stock
+            var sku = form.find("input[name='sku']");
+            var skuStock = form.find("input[name='skuStock']");
+            var skuPrice = form.find("input[name='skuPrice']");
+            var skuRemark = form.find("input[name='skuRemark']");
+            var skuImage = form.find("input[name='skuImageFile']");
+            var stockList = [];
+			for (var j in sku) {
+				if (isNaN(j)) {
+					continue;
+				}
+				var c = sku[j].value;
+				var d = skuStock[j].value;
+				var e = skuPrice[j].value;
+				var f = skuRemark[j].value;
+				var g = skuImage[j].files[0].name;
+				if (c == '' || d == '' || e == '' || f == '' || g == '') {
+					toastr.error("请填写完整数据后提交", "温馨提示");
+					return;
+				} else {
+					stockList.push({
+						"sku": c,
+						"stock": d,
+						"price": e,
+						"remark": f,
+						"image": skuImage[j].files[0]
+					});
+				}
+			}
 			//获取token
 			$.get("/qiniu/token", {}, function (token) {
 				if (token != '') {
 					async.series({
 						one: function (callback) {
-							if (typeof isOK == 'object') {
+							async.eachSeries(stockList, function (item, cb) {
+								var f = item["image"];
+								upload("", token, f, function () {
+									//
+								}, function (err) {
+									console.log("上传imageFile异常:" + err);
+									cb(err);
+								}, function (res) {
+									//上传成功
+									if (res != '') {
+										var url = qiniuUrl + "/" + res.key;
+										item["image"] = url;
+									}
+									cb();
+								});
+							}, function () {
+								console.log(stockList);
 								callback();
-							} else {
-								callback("ERROR");
-							}
+							});
 						},
 						two: function (callback) {
 							//上传详情图
