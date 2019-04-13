@@ -28,6 +28,15 @@ public class PhGoodsStock implements Serializable {
 
     /** 库存图片 **/
     private String image;
+    
+    /** 商户ID **/
+    private Long merchantId;
+
+    /** 商户LOGO **/
+    private String merchantLogo;
+
+    /** 商户名称 **/
+    private String merchantName;
 
     /** 品牌ID **/
     private Long brandId;
@@ -105,6 +114,33 @@ public class PhGoodsStock implements Serializable {
 
     public void setImage(String image) {
         this.image = image;
+    }
+    
+    @Column(name = "merchant_id", length = 11)
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
+
+    @Column(name = "merchant_logo", length = 100)
+    public String getMerchantLogo() {
+        return merchantLogo;
+    }
+
+    public void setMerchantLogo(String merchantLogo) {
+        this.merchantLogo = merchantLogo;
+    }
+
+    @Column(name = "merchant_name", length = 100)
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
     }
 
     @Column(name = "brand_id", length = 11)
