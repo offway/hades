@@ -52,7 +52,10 @@ public class PhMerchant implements Serializable {
 
     /** 备注 **/
     private String remark;
-
+    
+    /** 是否包邮[0-否,1-是] **/
+    private String isFreeFare;
+    
     /** 运费首件数 **/
     private Long fareFirstNum;
 
@@ -223,5 +226,16 @@ public class PhMerchant implements Serializable {
     public void setFareNextPrice(Double fareNextPrice) {
         this.fareNextPrice = fareNextPrice;
     }
+
+    @Column(name = "is_free_fare", length = 2)
+	public String getIsFreeFare() {
+		return isFreeFare;
+	}
+
+	public void setIsFreeFare(String isFreeFare) {
+		this.isFreeFare = isFreeFare;
+	}
+    
+    
 
 }
