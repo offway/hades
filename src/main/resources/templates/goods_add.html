@@ -147,6 +147,8 @@
 						</div>
 					</div>
                     <input type="button" value="添加商品属性" onclick="addMoreAttr(this)" />
+                    <div id="skuContainer">
+                    </div>
 <!--					<div class="row">-->
 <!--						<div class="col-md-4">-->
 <!--							<div class="form-group">-->
@@ -212,6 +214,7 @@
         var that = $(self);
         var name = that.attr("name");
         $(".NAME".replace("NAME", name)).remove();
+        generateSKUList();
     }
 
 	function addMoreAttr(self) {
@@ -343,9 +346,80 @@
 		var target = $("." + uuid);
 		target.find("input[name=attrContainer]").val(JSON.stringify(list));
 		target.find("input[name=attrValue]").val(valueList.join(","));
-		//TODO build SKU
-		form.modal('toggle');
-	}
+        //build SKU
+        generateSKUList();
+        form.modal('toggle');
+    }
+
+    function generateSKUList() {
+        var target = $("#skuContainer");
+        var form = $("#saveForm");
+        // var attrNameArr = form.find("input[name=attrName]");
+        var attrValueArr = form.find("input[name=attrValue]");
+        var attrArr = [];
+        for (var i in attrValueArr) {
+            if (isNaN(i)) {
+                continue;
+            }
+            var attr = attrValueArr[i].value;
+            attrArr.push(attr.split(","));
+        }
+        SkuStockList = [];
+        mergeSKURecursively(attrArr, 0, "");
+        var contentStr = "";
+        for (var i in SkuStockList) {
+            contentStr += buildSKUItem(SkuStockList[i]);
+        }
+        target.html(contentStr);
+    }
+
+    var SkuStockList = [];
+
+    function mergeSKURecursively(arr, i, previousItem) {
+        for (var obj in arr[i]) {
+            var newPreviousItem = previousItem + arr[i][obj] + "_";
+            if (arr.hasOwnProperty(i + 1)) {
+                mergeSKURecursively(arr, i + 1, newPreviousItem);
+            } else {
+                SkuStockList.push(newPreviousItem);
+            }
+        }
+    }
+
+    function buildSKUItem(remark) {
+        return "                        <div class=\"row\">\n" +
+            "                            <div class=\"col-md-2\">\n" +
+            "                                <div class=\"form-group\">\n" +
+            "                                    <label class=\"control-label\">SKU编码</label>\n" +
+            "                                    <input type=\"text\" class=\"form-control\" name=\"sku\" placeholder=\"SKU编码\" />\n" +
+            "                                </div>\n" +
+            "                            </div>\n" +
+            "                            <div class=\"col-md-2\">\n" +
+            "                                <div class=\"form-group\">\n" +
+            "                                    <label class=\"control-label\">库存图片</label>\n" +
+            "                                    <input type=\"file\" class=\"form-control\" name=\"image\" placeholder=\"库存图片\" />\n" +
+            "                                </div>\n" +
+            "                            </div>\n" +
+            "                            <div class=\"col-md-2\">\n" +
+            "                                <div class=\"form-group\">\n" +
+            "                                    <label class=\"control-label\">库存余量</label>\n" +
+            "                                    <input type=\"number\" class=\"form-control\" name=\"stock\" placeholder=\"库存余量\" />\n" +
+            "                                </div>\n" +
+            "                            </div>\n" +
+            "                            <div class=\"col-md-2\">\n" +
+            "                                <div class=\"form-group\">\n" +
+            "                                    <label class=\"control-label\">价格</label>\n" +
+            "                                    <input type=\"number\" class=\"form-control\" name=\"price\" placeholder=\"价格\" />\n" +
+            "                                </div>\n" +
+            "                            </div>\n" +
+            "                            <div class=\"col-md-4\">\n" +
+            "                                <div class=\"form-group\">\n" +
+            "                                    <label class=\"control-label\">备注</label>\n" +
+            "                                    <input type=\"text\" class=\"form-control\" name=\"remark\" value=\"REMARK\" placeholder=\"备注\" />\n".replace("REMARK", remark) +
+            "                                </div>\n" +
+            "                            </div>\n" +
+            "                        </div>";
+    }
 
     function closeIt(self) {
         var that = $(self);
