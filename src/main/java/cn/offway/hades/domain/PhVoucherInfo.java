@@ -23,20 +23,14 @@ public class PhVoucherInfo implements Serializable {
     /** 优惠券方案ID **/
     private Long voucherProjectId;
 
-    /** 优惠类型[0-满减，1-折扣] **/
+    /** 优惠券类型[0-平台券，1-店铺券] **/
     private String type;
 
     /** 名称 **/
     private String name;
 
-    /** 券类型[0-无门槛，1-品牌，2-商品] **/
-    private String usedType;
-
-    /** 条件[0-存在，1-不存在] **/
-    private String condition;
-
-    /** 对应ID[格式如,1,2,3,4,] **/
-    private String matchIds;
+    /** 商户ID **/
+    private Long merchantId;
 
     /** 满多少金额可用 **/
     private Double usedMinAmount;
@@ -50,8 +44,8 @@ public class PhVoucherInfo implements Serializable {
     /** 截止时间 **/
     private Date endTime;
 
-    /** 是否锁定[0-否,1-是] **/
-    private String isLock;
+    /** 状态[0-未使用,1-已使用,2-已锁定] **/
+    private String status;
 
     /** 创建时间 **/
     private Date createTime;
@@ -107,31 +101,13 @@ public class PhVoucherInfo implements Serializable {
         this.name = name;
     }
 
-    @Column(name = "used_type", length = 2)
-    public String getUsedType() {
-        return usedType;
+    @Column(name = "merchant_id", length = 11)
+    public Long getMerchantId() {
+        return merchantId;
     }
 
-    public void setUsedType(String usedType) {
-        this.usedType = usedType;
-    }
-
-    @Column(name = "condition", length = 2)
-    public String getCondition() {
-        return condition;
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
-
-    @Column(name = "match_ids")
-    public String getMatchIds() {
-        return matchIds;
-    }
-
-    public void setMatchIds(String matchIds) {
-        this.matchIds = matchIds;
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
     }
 
     @Column(name = "used_min_amount", precision = 15, scale = 2)
@@ -172,13 +148,13 @@ public class PhVoucherInfo implements Serializable {
         this.endTime = endTime;
     }
 
-    @Column(name = "is_lock", length = 2)
-    public String getIsLock() {
-        return isLock;
+    @Column(name = "status", length = 2)
+    public String getStatus() {
+        return status;
     }
 
-    public void setIsLock(String isLock) {
-        this.isLock = isLock;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Temporal(TemporalType.TIMESTAMP)

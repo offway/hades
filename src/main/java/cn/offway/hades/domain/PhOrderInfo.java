@@ -29,11 +29,17 @@ public class PhOrderInfo implements Serializable {
     /** 实付金额 **/
     private Double amount;
 
-    /** 优惠券ID **/
-    private Long voucherId;
+    /** 店铺优惠券ID **/
+    private Long mVoucherId;
 
-    /** 优惠券金额 **/
-    private Double voucherAmount;
+    /** 店铺优惠券金额 **/
+    private Double mVoucherAmount;
+
+    /** 平台优惠券ID **/
+    private Long pVoucherId;
+
+    /** 平台优惠券金额 **/
+    private Double pVoucherAmount;
 
     /** 钱包金额 **/
     private Double walletAmount;
@@ -61,6 +67,15 @@ public class PhOrderInfo implements Serializable {
 
     /** 版本号 **/
     private Long version;
+
+    /** 商户ID **/
+    private Long merchantId;
+
+    /** 商户LOGO **/
+    private String merchantLogo;
+
+    /** 商户名称 **/
+    private String merchantName;
 
 
     @Id
@@ -110,22 +125,40 @@ public class PhOrderInfo implements Serializable {
         this.amount = amount;
     }
 
-    @Column(name = "voucher_id", length = 11)
-    public Long getVoucherId() {
-        return voucherId;
+    @Column(name = "m_voucher_id", length = 11)
+    public Long getMVoucherId() {
+        return mVoucherId;
     }
 
-    public void setVoucherId(Long voucherId) {
-        this.voucherId = voucherId;
+    public void setMVoucherId(Long mVoucherId) {
+        this.mVoucherId = mVoucherId;
     }
 
-    @Column(name = "voucher_amount", precision = 15, scale = 2)
-    public Double getVoucherAmount() {
-        return voucherAmount;
+    @Column(name = "m_voucher_amount", precision = 15, scale = 2)
+    public Double getMVoucherAmount() {
+        return mVoucherAmount;
     }
 
-    public void setVoucherAmount(Double voucherAmount) {
-        this.voucherAmount = voucherAmount;
+    public void setMVoucherAmount(Double mVoucherAmount) {
+        this.mVoucherAmount = mVoucherAmount;
+    }
+
+    @Column(name = "p_voucher_id", length = 11)
+    public Long getPVoucherId() {
+        return pVoucherId;
+    }
+
+    public void setPVoucherId(Long pVoucherId) {
+        this.pVoucherId = pVoucherId;
+    }
+
+    @Column(name = "p_voucher_amount", precision = 15, scale = 2)
+    public Double getPVoucherAmount() {
+        return pVoucherAmount;
+    }
+
+    public void setPVoucherAmount(Double pVoucherAmount) {
+        this.pVoucherAmount = pVoucherAmount;
     }
 
     @Column(name = "wallet_amount", precision = 15, scale = 2)
@@ -209,6 +242,33 @@ public class PhOrderInfo implements Serializable {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    @Column(name = "merchant_id", length = 11)
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
+
+    @Column(name = "merchant_logo", length = 100)
+    public String getMerchantLogo() {
+        return merchantLogo;
+    }
+
+    public void setMerchantLogo(String merchantLogo) {
+        this.merchantLogo = merchantLogo;
+    }
+
+    @Column(name = "merchant_name", length = 100)
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
     }
 
 }
