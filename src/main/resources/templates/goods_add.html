@@ -197,6 +197,7 @@
 	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
+    <script src="assets/js/jquery.base64.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -435,7 +436,7 @@
             "                                <div class=\"form-group\">\n" +
             "                                    <label class=\"control-label\">备注</label>\n" +
             "                                    <input type=\"text\" class=\"form-control\" name=\"skuRemark\" value=\"REMARK\" placeholder=\"备注\" />\n".replace("REMARK", remark) +
-            "                                    <input type=\"hidden\" class=\"form-control\" name=\"skuDetail\" value=\"DETAIL\" />\n".replace("DETAIL", window.btoa(JSON.stringify(skuDetail))) +
+            "                                    <input type=\"hidden\" class=\"form-control\" name=\"skuDetail\" value=\"DETAIL\" />\n".replace("DETAIL", $.base64.btoa(JSON.stringify(skuDetail))) +
             "                                </div>\n" +
             "                            </div>\n" +
             "                        </div>";
@@ -518,6 +519,8 @@
 	}
 
 	jQuery(document).ready(function ($) {
+        $.base64.utf8encode = true;
+        $.base64.utf8decode = true;
 		var qiniuUrl = [[${qiniuUrl}]];
 
 		$.getJSON("/type_and_category_list", {}, function (data) {

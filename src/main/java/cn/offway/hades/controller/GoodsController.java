@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Controller
@@ -111,7 +113,7 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_add")
-    public boolean add(PhGoods goods, @RequestParam("stocks") String stocks) {
+    public boolean add(PhGoods goods, @RequestParam("stocks") String stocks) throws UnsupportedEncodingException {
         PhBrand brand = brandService.findOne(goods.getBrandId());
         if (brand != null) {
             goods.setBrandName(brand.getName());
@@ -131,7 +133,11 @@ public class GoodsController {
             goods.setCategory(goodsCategory.getName());
         }
         goods.setCreateTime(new Date());
+        goods.setStatus("1");
+        goods.setViewCount(0L);
+        goods.setSaleCount(0L);
         PhGoods goodsSaved = goodsService.save(goods);
+        List<Double> priceList = new ArrayList<>();
         for (Object o : JSON.parseArray(stocks)) {
             JSONObject obj = (JSONObject) o;
             PhGoodsStock goodsStock = new PhGoodsStock();
@@ -149,12 +155,13 @@ public class GoodsController {
             goodsStock.setSku(obj.getString("sku"));
             goodsStock.setStock(obj.getLong("stock"));
             goodsStock.setPrice(obj.getDouble("price"));
+            priceList.add(goodsStock.getPrice());
             goodsStock.setRemark(obj.getString("remark"));
             goodsStock.setImage(obj.getString("image"));
             goodsStock.setCreateTime(new Date());
             PhGoodsStock goodsStockSaved = goodsStockService.save(goodsStock);
             byte[] jsonStr = Base64.decode(obj.getString("detail"), Base64.DEFAULT);
-            JSONArray jsonArray = JSON.parseArray(new String(jsonStr));
+            JSONArray jsonArray = JSON.parseArray(new String(jsonStr, StandardCharsets.UTF_8));
             if (jsonArray != null) {
                 for (Object oo : jsonArray) {
                     JSONObject jsonObject = (JSONObject) oo;
@@ -172,6 +179,10 @@ public class GoodsController {
                 logger.error("stocks json 非法");
             }
         }
+        Collections.sort(priceList);
+        String priceRange = String.format("%f-%f", priceList.get(0), priceList.get(priceList.size() - 1));
+        goodsSaved.setPriceRange(priceRange);
+        goodsService.save(goodsSaved);
         return true;
     }
 }
