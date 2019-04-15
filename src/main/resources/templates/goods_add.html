@@ -354,39 +354,56 @@
     function generateSKUList() {
         var target = $("#skuContainer");
         var form = $("#saveForm");
-        // var attrNameArr = form.find("input[name=attrName]");
+        var attrNameArr = form.find("input[name=attrName]");
         var attrValueArr = form.find("input[name=attrValue]");
+        var attrContainerArr = form.find("input[name=attrContainer]");
         var attrArr = [];
+        var nameArr = [];
+        var containerArr = [];
         for (var i in attrValueArr) {
             if (isNaN(i)) {
                 continue;
             }
             var attr = attrValueArr[i].value;
+            var name = attrNameArr[i].value;
+            var containerStr = attrContainerArr[i].value;
             attrArr.push(attr.split(","));
+            nameArr.push(name);
+            containerArr.push(JSON.parse(containerStr));
         }
         SkuStockList = [];
-        mergeSKURecursively(attrArr, 0, "");
+        SkuStockDetailList = [];
+        mergeSKURecursively(attrArr, nameArr, containerArr, 0, "", []);
         var contentStr = "";
         for (var i in SkuStockList) {
-            contentStr += buildSKUItem(SkuStockList[i]);
+            contentStr += buildSKUItem(SkuStockList[i], SkuStockDetailList[i]);
         }
         target.html(contentStr);
     }
 
     var SkuStockList = [];
+    var SkuStockDetailList = [];
 
-    function mergeSKURecursively(arr, i, previousItem) {
+    function mergeSKURecursively(arr, nameArr, containerArr, i, previousItem, skuDetailArr) {
         for (var obj in arr[i]) {
             var newPreviousItem = previousItem + arr[i][obj] + "_";
+            var newSkuDetailArr = JSON.parse(JSON.stringify(skuDetailArr));//deep copy
+            newSkuDetailArr.push(
+                {
+                    "name": nameArr[i],
+                    "value": containerArr[i][obj]
+                }
+            );
             if (arr.hasOwnProperty(i + 1)) {
-                mergeSKURecursively(arr, i + 1, newPreviousItem);
+                mergeSKURecursively(arr, nameArr, containerArr, i + 1, newPreviousItem, newSkuDetailArr);
             } else {
                 SkuStockList.push(newPreviousItem);
+                SkuStockDetailList.push(newSkuDetailArr);
             }
         }
     }
 
-    function buildSKUItem(remark) {
+    function buildSKUItem(remark, skuDetail) {
         return "                        <div class=\"row\">\n" +
             "                            <div class=\"col-md-2\">\n" +
             "                                <div class=\"form-group\">\n" +
@@ -397,9 +414,9 @@
             "                            <div class=\"col-md-2\">\n" +
             "                                <div class=\"form-group\">\n" +
             "                                    <label class=\"control-label\">库存图片</label>\n" +
-			"                                    <input type=\"file\" class=\"form-control\" name=\"skuImageFile\" placeholder=\"库存图片\" />\n" +
-			"                                    <input type=\"hidden\" class=\"form-control\" name=\"skuImage\" />\n" +
-			"                                    <img src=\"\" name=\"skuImageImg\" style=\"display:none;\" />\n" +
+            "                                    <input type=\"file\" class=\"form-control\" name=\"skuImageFile\" placeholder=\"库存图片\" />\n" +
+            "                                    <input type=\"hidden\" class=\"form-control\" name=\"skuImage\" />\n" +
+            "                                    <img src=\"\" name=\"skuImageImg\" style=\"display:none;\" />\n" +
             "                                </div>\n" +
             "                            </div>\n" +
             "                            <div class=\"col-md-2\">\n" +
@@ -418,6 +435,7 @@
             "                                <div class=\"form-group\">\n" +
             "                                    <label class=\"control-label\">备注</label>\n" +
             "                                    <input type=\"text\" class=\"form-control\" name=\"skuRemark\" value=\"REMARK\" placeholder=\"备注\" />\n".replace("REMARK", remark) +
+            "                                    <input type=\"hidden\" class=\"form-control\" name=\"skuDetail\" value=\"DETAIL\" />\n".replace("DETAIL", JSON.stringify(skuDetail)) +
             "                                </div>\n" +
             "                            </div>\n" +
             "                        </div>";
