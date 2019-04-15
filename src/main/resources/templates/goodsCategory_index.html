@@ -23,9 +23,9 @@
 			<!-- User Info, Notifications and activity Bar -->
 			<nav th:replace="navbar"></nav>
 			<div class="page-title">
-				
+
 				<div class="title-env">
-					<h1 class="title">子分类管理</h1>
+					<h1 class="title" th:inline="text">子分类管理-[[${theName}]]</h1>
 					<p class="activityDescription"></p>
 				</div>
 
@@ -52,7 +52,9 @@
 						<div class="form-group">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
 						</div>
-						
+						<div class="form-group" style="display: block;margin-bottom: 0;vertical-align: middle;">
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px" onclick="history.go(-1)">返回一级分类</button>
+						</div>
 					</form>
 				</div>
 				<div class="panel-body">

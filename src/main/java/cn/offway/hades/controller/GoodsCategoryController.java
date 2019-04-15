@@ -37,6 +37,10 @@ public class GoodsCategoryController {
     public String index(ModelMap map, Long id) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("theId", id);
+        PhGoodsType goodsType = goodsTypeService.findOne(Long.valueOf(id));
+        if (goodsType != null) {
+            map.addAttribute("theName", goodsType.getName());
+        }
         return "goodsCategory_index";
     }
 

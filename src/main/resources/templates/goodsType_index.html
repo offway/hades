@@ -435,28 +435,29 @@
 				//已上传的图片地址
 				var imageImg = form.find("input[name='image']").val();
 
-				if(name==''|| remark==''||
-						(image=='' && imageImg=='')
-				){
+				if (name == '' || remark == ''//||(image=='' && imageImg=='')
+				) {
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
-					return ;
-				}
-
-				var isOK = checkImg([[image, "image"]]);
-				if (typeof isOK == 'boolean') {
 					return;
+				}
+				var isOK = [];
+				if (image == '' && imageImg == '') {
+					isOK = checkImg([[image, "image"]]);
+					if (typeof isOK == 'boolean') {
+						return;
+					}
 				}
 
                 //获取token
 				$.get("/qiniu/token",{},function(token){
 					if(token !=''){
 						async.series({
-							one: function(callback) {
-								if(typeof isOK == 'object'){
+							one: function (callback) {
+								if (typeof isOK == 'object') {
 									callback();
-								}else {
+								} else {
 									callback("ERROR");
 								}
 							},
