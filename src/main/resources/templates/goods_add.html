@@ -435,7 +435,7 @@
             "                                <div class=\"form-group\">\n" +
             "                                    <label class=\"control-label\">备注</label>\n" +
             "                                    <input type=\"text\" class=\"form-control\" name=\"skuRemark\" value=\"REMARK\" placeholder=\"备注\" />\n".replace("REMARK", remark) +
-            "                                    <input type=\"hidden\" class=\"form-control\" name=\"skuDetail\" value=\"DETAIL\" />\n".replace("DETAIL", JSON.stringify(skuDetail)) +
+            "                                    <input type=\"hidden\" class=\"form-control\" name=\"skuDetail\" value=\"DETAIL\" />\n".replace("DETAIL", window.btoa(JSON.stringify(skuDetail))) +
             "                                </div>\n" +
             "                            </div>\n" +
             "                        </div>";
@@ -575,10 +575,10 @@
 		$(".btn.btn-info.save").click(function () {
             var footer = $(this).parent(".modal-footer");
             var form = $("#saveForm");
-            var type = form.find("input[name='type']").val();
-            var category = form.find("input[name='category']").val();
+            var type = form.find("select[name='type']").val();
+            var category = form.find("select[name='category']").val();
             var name = form.find("input[name='name']").val();
-            var brand_id = form.find("input[name='brand_id']").val();
+            var brand_id = form.find("select[name='brand_id']").val();
             var price = form.find("input[name='price']").val();
             var material = form.find("input[name='material']").val();
             var remark = form.find("input[name='remark']").val();
@@ -623,29 +623,32 @@
             var skuPrice = form.find("input[name='skuPrice']");
             var skuRemark = form.find("input[name='skuRemark']");
             var skuImage = form.find("input[name='skuImageFile']");
+            var skuDetail = form.find("input[name='skuDetail']");
             var stockList = [];
-			for (var j in sku) {
-				if (isNaN(j)) {
-					continue;
-				}
-				var c = sku[j].value;
-				var d = skuStock[j].value;
-				var e = skuPrice[j].value;
-				var f = skuRemark[j].value;
-				var g = skuImage[j].files[0].name;
-				if (c == '' || d == '' || e == '' || f == '' || g == '') {
-					toastr.error("请填写完整数据后提交", "温馨提示");
-					return;
-				} else {
-					stockList.push({
-						"sku": c,
-						"stock": d,
-						"price": e,
-						"remark": f,
-						"image": skuImage[j].files[0]
-					});
-				}
-			}
+            for (var j in sku) {
+                if (isNaN(j)) {
+                    continue;
+                }
+                var c = sku[j].value;
+                var d = skuStock[j].value;
+                var e = skuPrice[j].value;
+                var f = skuRemark[j].value;
+                var g = skuImage[j].files[0].name;
+                var h = skuDetail[j].value;
+                if (c == '' || d == '' || e == '' || f == '' || g == '') {
+                    toastr.error("请填写完整数据后提交", "温馨提示");
+                    return;
+                } else {
+                    stockList.push({
+                        "sku": c,
+                        "stock": d,
+                        "price": e,
+                        "remark": f,
+                        "image": skuImage[j].files[0],
+                        "detail": h
+                    });
+                }
+            }
 			//获取token
 			$.get("/qiniu/token", {}, function (token) {
 				if (token != '') {
@@ -667,7 +670,6 @@
 									cb();
 								});
 							}, function () {
-								console.log(stockList);
 								callback();
 							});
 						},
@@ -693,20 +695,33 @@
 							});
 						},
 						three: function (callback) {
-							//提交保存
-							$.post("/brand_save", $("#saveForm").serialize(), function (data) {
-								if (data) {
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									jQuery('#modal-6').modal('hide');
-									toastr.success("操作已成功！", "温馨提示");
-								} else {
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败", "温馨提示");
-								}
-								callback();
-							});
+                            //提交保存
+                            var data = {
+                                "name": name,
+                                "image": form.find("input[name='image']").val(),
+                                "merchantId": 0,
+                                "brandId": brand_id,
+                                "type": type,
+                                "category": category,
+                                "price": price,
+                                "material": material,
+                                "remark": remark,
+                                "stocks": JSON.stringify(stockList)
+                            };
+                            console.log(data);
+                            $.post("/goods_add", data, function (data) {
+                                if (data) {
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    jQuery('#modal-6').modal('hide');
+                                    toastr.success("操作已成功！", "温馨提示");
+                                } else {
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    toastr.error("操作失败", "温馨提示");
+                                }
+                                callback();
+                            });
 						}
 					}, function (err, results) {
 						console.log("OK");

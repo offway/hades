@@ -1,5 +1,7 @@
 package cn.offway.hades.domain;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -39,9 +41,11 @@ public class PhMerchant implements Serializable {
     private String contractNo;
 
     /** 签约日期 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date signDate;
 
     /** 到期日期 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date expireDate;
 
     /** 状态[0-已申请,1-通过,2-拒绝] **/
