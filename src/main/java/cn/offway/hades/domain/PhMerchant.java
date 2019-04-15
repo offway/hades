@@ -28,6 +28,8 @@ public class PhMerchant implements Serializable {
     /** 商户地址 **/
     private String address;
 
+    private String company;
+
     /** 发货地址ID[见ph_address.id] **/
     private Long addrId;
 
@@ -72,6 +74,14 @@ public class PhMerchant implements Serializable {
     /** 运费续费[单位：元] **/
     private Double fareNextPrice;
 
+    @Column(name = "company", length = 200)
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

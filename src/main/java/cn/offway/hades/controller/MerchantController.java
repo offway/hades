@@ -1,14 +1,8 @@
 package cn.offway.hades.controller;
 
-import cn.offway.hades.domain.PhBrand;
-import cn.offway.hades.domain.PhMerchant;
-import cn.offway.hades.domain.PhMerchantBrand;
-import cn.offway.hades.domain.PhMerchantFile;
+import cn.offway.hades.domain.*;
 import cn.offway.hades.properties.QiniuProperties;
-import cn.offway.hades.service.PhBrandService;
-import cn.offway.hades.service.PhMerchantBrandService;
-import cn.offway.hades.service.PhMerchantFileService;
-import cn.offway.hades.service.PhMerchantService;
+import cn.offway.hades.service.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -44,6 +38,8 @@ public class MerchantController {
     private PhMerchantFileService merchantFileService;
     @Autowired
     private PhBrandService brandService;
+    @Autowired
+    private PhAddressService addressService;
 
     @RequestMapping("/merchant.html")
     public String index(ModelMap map) {
@@ -96,16 +92,18 @@ public class MerchantController {
     @RequestMapping("/merchant_del")
     public boolean delete(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {
+            PhMerchant tmpObj = merchantService.findOne(id);
             merchantService.del(id);
             merchantBrandService.delByPid(id);
             merchantFileService.delByPid(id);
+            addressService.del(tmpObj.getAddrId());
         }
         return true;
     }
 
     @ResponseBody
     @PostMapping("/merchant_save")
-    public boolean save(PhMerchant merchant, String brandIDStr, String imagesJSONStr) {
+    public boolean save(PhMerchant merchant, String brandIDStr, String imagesJSONStr, String address_send_jsonStr) {
         merchant.setCreateTime(new Date());
         merchant.setStatus("0");
         PhMerchant merchantObj = merchantService.save(merchant);
@@ -133,6 +131,23 @@ public class MerchantController {
         //purge first
         merchantFileService.delByPid(merchantObj.getId());
         //rebuild
+        PhAddress address = new PhAddress();
+        JSONObject addrObj = JSON.parseObject(address_send_jsonStr);
+        address.setProvince(addrObj.getString("province"));
+        address.setCity(addrObj.getString("city"));
+        address.setCounty(addrObj.getString("county"));
+        address.setContent(addrObj.getString("content"));
+        address.setRealName(addrObj.getString("realName"));
+        address.setPhone(addrObj.getString("phone"));
+        address.setRemark(address_send_jsonStr);
+        if (merchantObj.getAddrId() != null) {
+            address.setId(merchantObj.getAddrId());
+        } else {
+            address.setCreateTime(new Date());
+        }
+        PhAddress addressObj = addressService.save(address);
+        merchantObj.setAddrId(addressObj.getId());
+        merchantService.save(merchantObj);
         String text = new String(com.qiniu.util.Base64.decode(imagesJSONStr.getBytes(), Base64.DEFAULT));
         JSONArray jsonArray = JSON.parseArray(text);
         if (jsonArray != null) {
@@ -161,9 +176,11 @@ public class MerchantController {
         if (map != null) {
             List<PhMerchantBrand> brandList = merchantBrandService.findByPid(merchant.getId());
             List<PhMerchantFile> fileList = merchantFileService.findByPid(merchant.getId());
+            PhAddress address = addressService.findOne(merchant.getAddrId());
             map.put("main", merchant);
             map.put("brandList", brandList);
             map.put("fileList", fileList);
+            map.put("address", address);
         }
         return map;
     }

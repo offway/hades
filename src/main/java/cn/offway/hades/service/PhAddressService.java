@@ -8,9 +8,11 @@ import cn.offway.hades.domain.PhAddress;
  * @author wn
  * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $
  */
-public interface PhAddressService{
+public interface PhAddressService {
 
-	PhAddress save(PhAddress phAddress);
-	
-	PhAddress findOne(Long id);
+    PhAddress save(PhAddress phAddress);
+
+    PhAddress findOne(Long id);
+
+    void del(Long id);
 }

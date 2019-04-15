@@ -74,6 +74,22 @@
 					<tr>
 						<td>
 							<div class="">
+								<label for="field-3" class="control-label">公司名称</label>
+								<input type="text" class="form-control" name="company" placeholder="公司名称"/>
+							</div>
+						</td>
+						<td colspan="2">
+							<div class="" onclick="checkIt()">
+								<label for="field-3" class="control-label">发货地址</label>
+								<input type="text" class="form-control" readonly="readonly" name="address_send" placeholder="发货地址"/>
+								<input type="hidden" class="form-control" name="address_send_jsonStr"/>
+								<input type="hidden" class="form-control" name="addrId"/>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="">
 								<label for="field-3" class="control-label">联系电话</label>
 								<input type="text" class="form-control" name="phone" placeholder="联系电话"/>
 							</div>
@@ -132,27 +148,7 @@
 							</div>
 						</td>
 					</tr>
-
 				</table>
-
-
-
-
-
-
-
-
-
-				<!--
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="field-4" class="control-label">添加标签</label>
-                                                <input type="text" class="form-control" name="tag" placeholder="添加标签,逗号隔开"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                -->
 			</form>
 		</div>
 
@@ -164,14 +160,7 @@
 	</div>
 
     <div id="preview" style="display: none;
-    position: fixed;
-    top: 190px;
-    left: 650px;
-    background: white;
-    overflow: scroll;
-    border: solid; width: 700px; height: 600px;
-    z-index: 999;" onclick="closeIt(this)">
-
+    position: fixed;top: 190px;left: 650px;background: white;overflow: hidden;border: solid;width: 700px;height: 200px;z-index: 999;">
     </div>
 	
 	<script src="assets/js/moment.min.js"></script>
@@ -180,6 +169,8 @@
 	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
+	<script src="assets/js/distpicker.js"></script>
+	<script src="assets/js/jquery.base64.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -202,10 +193,31 @@
         }
     }
 
-    function closeIt(self) {
-        var that = $(self);
+    function closeIt() {
+        var that = $("#preview");
         that.hide();
     }
+
+	function closeAndSaveIt() {
+		var that = $("#preview");
+		var p = that.find("select[name='p']").val();
+		var c = that.find("select[name='c']").val();
+		var d = that.find("select[name='d']").val();
+		var location = that.find("input[name='location']").val();
+		var telephone = that.find("input[name='telephone']").val();
+		var real_name = that.find("input[name='real_name']").val();
+		var json = {
+			"realName": real_name,
+			"phone": telephone,
+			"province": p,
+			"city": c,
+			"county": d,
+			"content": location
+		};
+		$("input[name='address_send_jsonStr']").val(JSON.stringify(json));
+		$("input[name='address_send']").val(p + "" + c + "" + d + "" + location);
+		that.hide();
+	}
 
     function formatTime(time) {
         return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
@@ -240,53 +252,40 @@
 		return returnList;
 	}
 
-    function checkIt(id) {
-        $.post("/starSame_find", {"id": id}, function (data) {
-            if (data) {
-                var preview = $("#preview");
-                var contentStr = "";
-                var mainObj = data["main"];
-                contentStr += "编号:" + mainObj["id"] + "<br/>";
-                contentStr += "标题:" + mainObj["title"] + "<br/>";
-                contentStr += "主图:" + buildImg(mainObj["imageUrl"]) + "<br/>";
-                contentStr += "明星名称:" + mainObj["starName"] + "<br/>";
-                contentStr += "浏览数:" + mainObj["viewCount"] + "<br/>";
-                contentStr += "点赞数:" + mainObj["praiseCount"] + "<br/>";
-                contentStr += "创建时间:" + formatTime(mainObj["createTime"]) + "<br/>";
-                contentStr += "备注:" + mainObj["remark"] + "<br/>";
-                contentStr += "排序:" + mainObj["sort"] + "<br/>";
-                contentStr += "*************<br/>";
-
-                for (var goods in data["goodsList"]) {
-                    goods = data["goodsList"][goods];
-                    contentStr += "品牌id:" + goods["brandId"] + "<br/>";
-                    contentStr += "品牌Logo:" + buildImg(goods["brandLogo"]) + "<br/>";
-                    contentStr += "品牌名:" + goods["brandName"] + "<br/>";
-                    contentStr += "创建时间:" + formatTime(goods["createTime"]) + "<br/>";
-                    contentStr += "商品id:" + goods["goodsId"] + "<br/>";
-                    contentStr += "商品图片:" + buildImg(goods["goodsImage"]) + "<br/>";
-                    contentStr += "商品名:" + goods["goodsName"] + "<br/>";
-                    contentStr += "编号:" + goods["id"] + "<br/>";
-                    contentStr += "备注:" + goods["remark"] + "<br/>";
-                }
-                contentStr += "*********************<br/>";
-
-                for (var image in data["imageList"]) {
-                    image = data["imageList"][image];
-                    contentStr += "图片:" + buildImg(image["imageUrl"]) + "<br/>";
-                    contentStr += "创建时间:" + formatTime(image["createTime"]) + "<br/>";
-                    contentStr += "排序:" + image["sort"] + "<br/>";
-                    contentStr += "编号:" + image["id"] + "<br/>";
-                    contentStr += "备注:" + image["remark"] + "<br/>";
-                }
-                preview.html(contentStr);
-                preview.show();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
+	function checkIt() {
+		var preview = $("#preview");
+		var contentStr = "\t<div id=\"distpicker\">\n" +
+				"\t\t<select name='p' ></select>\n" +
+				"\t\t<select name='c' ></select>\n" +
+				"\t\t<select name='d' ></select>\n" +
+				"\t\t<input type=\"text\" name='location' placeholder='详细地址'/><br/>\n" +
+				"\t\t<input type=\"number\" name='telephone' placeholder='手机号'/>\n" +
+				"\t\t<input type=\"text\" name='real_name' placeholder='发件人'/>\n" +
+				"\t</div>";
+		contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt()" />';
+		contentStr += '<input type="button" value="关闭" onclick="closeIt()" />';
+		preview.html(contentStr);
+		//render
+		var jsonStr = $("input[name='address_send_jsonStr']").val();
+		if (jsonStr != '') {
+			var jsonObj = JSON.parse(jsonStr);
+			preview.find("input[name='location']").val(jsonObj["content"]);
+			preview.find("input[name='real_name']").val(jsonObj["realName"]);
+			preview.find("input[name='telephone']").val(jsonObj["phone"]);
+			$("#distpicker").distpicker({
+				province: jsonObj["province"],
+				city: jsonObj["city"],
+				district: jsonObj["county"]
+			});
+		} else {
+			$("#distpicker").distpicker({
+				province: '---- 所在省 ----',
+				city: '---- 所在市 ----',
+				district: '---- 所在区 ----'
+			});
+		}
+		preview.show();
+	}
 
     jQuery(document).ready(function($)
 	{
@@ -371,23 +370,25 @@
 				// var code = form.find("input[name='code']").val();
 				var name = form.find("input[name='name']").val();
 				var address = form.find("input[name='address']").val();
+				var company = form.find("input[name='company']").val();
+				var address_send_jsonStr = form.find("input[name='address_send_jsonStr']").val();
 				var phone = form.find("input[name='phone']").val();
 				var contractNo = form.find("input[name='contractNo']").val();
-                var remark = form.find("input[name='remark']").val();
-                var signDate = form.find("input[name='signDate']").val();
-                var expireDate = form.find("input[name='expireDate']").val();
+				var remark = form.find("input[name='remark']").val();
+				var signDate = form.find("input[name='signDate']").val();
+				var expireDate = form.find("input[name='expireDate']").val();
 				//文件
 				var logo = form.find("input[name='logoFile']").val();
 				//已上传的图片地址
 				var logoImg = form.find("input[name='logo']").val();
 
-				if(name==''|| address==''||phone==''||contractNo==''||remark==''||signDate==''||expireDate==''||
-						(logo=='' && logoImg=='')
-				){
+				if (name == '' || address == '' || phone == '' || contractNo == '' || remark == '' || signDate == '' || expireDate == '' || company == '' || address_send_jsonStr == '' ||
+						(logo == '' && logoImg == '')
+				) {
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
-					return ;
+					return;
 				}
 				//收集品牌ID列表
                 var goodsIDList = form.find("input[name='brandID']");
@@ -460,15 +461,16 @@
 									callback();
 								});
 							},
-							three: function(callback){
+							three: function (callback) {
 								//提交保存
-								$.post("/merchant_save",$("#saveForm").serialize(),function(data){
-									if(data){
+								var data = $("#saveForm").serializeArray();
+								$.post("/merchant_save", data, function (data) {
+									if (data) {
 										footer.find("button").show();
 										footer.find(".bg-lg").hide();
 										jQuery('#modal-6').modal('hide');
 										toastr.success("操作已成功！", "温馨提示");
-									}else{
+									} else {
 										footer.find("button").show();
 										footer.find(".bg-lg").hide();
 										toastr.error("操作失败", "温馨提示");
@@ -494,6 +496,7 @@
                     var main = data["main"];
                     var brandList = data["brandList"];
                     var fileList = data["fileList"];
+					var address = data["address"];
                     //商家
                     for (var i in main) {
                         var ele = form.find("input[name='" + i + "']");
@@ -502,8 +505,6 @@
                                 ele.val([main[i]]);
                                 break;
                             default:
-                                console.log(main[i]);
-                                console.log(typeof main[i]);
                                 if (main[i] != undefined && !isNaN(main[i]) && String(main[i]).length == 13) {
                                     ele.val(formatTime(main[i]));
                                     $("#" + i).val(formatTime(main[i]));
@@ -524,7 +525,10 @@
                     for (var i in fileList) {
                         addMoreImg("#addFile", fileList[i]["fileUrl"])
                     }
-                    form.find(".btn.image").show();
+					//地址
+					form.find("input[name='address_send']").val(address["province"] + "" + address["city"] + "" + address["county"] + "" + address["content"]);
+					form.find("input[name='address_send_jsonStr']").val(address["remark"]);
+					form.find(".btn.image").show();
                     jQuery('#modal-6').modal('show', {backdrop: 'fade'});
                 });
             }
