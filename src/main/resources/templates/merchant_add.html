@@ -118,6 +118,7 @@
 							<div class="">
 								<label class="control-label">后台登录账号</label>
 								<input type="text" class="form-control" name="admin_name" placeholder="后台登录账号"/>
+                                <input type="hidden" class="form-control" name="adminId"/>
 							</div>
 						</td>
 						<td>
@@ -405,6 +406,7 @@
 				var name = form.find("input[name='name']").val();
 				var address = form.find("input[name='address']").val();
 				var company = form.find("input[name='company']").val();
+                var admin_name = form.find("input[name='admin_name']").val();
 				var address_send_jsonStr = form.find("input[name='address_send_jsonStr']").val();
 				var phone = form.find("input[name='phone']").val();
 				var contractNo = form.find("input[name='contractNo']").val();
@@ -416,7 +418,7 @@
 				//已上传的图片地址
 				var logoImg = form.find("input[name='logo']").val();
 
-				if (name == '' || address == '' || phone == '' || contractNo == '' || remark == '' || signDate == '' || expireDate == '' || company == '' || address_send_jsonStr == '' ||
+				if (name == '' || address == '' || phone == '' || contractNo == '' || remark == '' || signDate == '' || expireDate == '' || company == '' || admin_name == '' || address_send_jsonStr == '' ||
 						(logo == '' && logoImg == '')
 				) {
 					toastr.error("请填写完整数据后提交", "温馨提示");
@@ -535,7 +537,10 @@
                     var main = data["main"];
                     var brandList = data["brandList"];
                     var fileList = data["fileList"];
-					var address = data["address"];
+                    var address = data["address"];
+                    var admin = data["admin"];
+                    //后台用户
+                    form.find("input[name='admin_name']").val(admin["username"]);
                     //商家
                     for (var i in main) {
                         var ele = form.find("input[name='" + i + "']");

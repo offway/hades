@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,6 +41,12 @@ public class MerchantController {
     private PhBrandService brandService;
     @Autowired
     private PhAddressService addressService;
+    @Autowired
+    private PhAdminService adminService;
+    @Autowired
+    private PhRoleadminService roleadminService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @RequestMapping("/merchant.html")
     public String index(ModelMap map) {
@@ -109,10 +116,25 @@ public class MerchantController {
 
     @ResponseBody
     @PostMapping("/merchant_save")
-    public boolean save(PhMerchant merchant, String brandIDStr, String imagesJSONStr, String address_send_jsonStr) {
+    public boolean save(PhMerchant merchant, String brandIDStr, String imagesJSONStr, String address_send_jsonStr, String admin_name) {
         merchant.setCreateTime(new Date());
         merchant.setStatus("0");
         PhMerchant merchantObj = merchantService.save(merchant);
+        if (merchantObj.getAdminId() == null) {
+            PhAdmin admin = new PhAdmin();
+            admin.setUsername(admin_name);
+            admin.setNickname(merchantObj.getName());
+            admin.setPassword(passwordEncoder.encode(merchantObj.getPhone()));
+            admin.setCreatedtime(new Date());
+            PhAdmin adminSaved = adminService.save(admin);
+            adminService.save(adminSaved, new Long[]{8L});
+            merchantObj.setAdminId(adminSaved.getId());
+            merchantService.save(merchantObj);
+        } else {
+            PhAdmin admin = adminService.findOne(merchantObj.getAdminId());
+            admin.setUsername(admin_name);
+            adminService.save(admin);
+        }
         //purge first
         merchantBrandService.delByPid(merchantObj.getId());
         //rebuild
@@ -183,10 +205,12 @@ public class MerchantController {
             List<PhMerchantBrand> brandList = merchantBrandService.findByPid(merchant.getId());
             List<PhMerchantFile> fileList = merchantFileService.findByPid(merchant.getId());
             PhAddress address = addressService.findOne(merchant.getAddrId());
+            PhAdmin admin = adminService.findOne(merchant.getAdminId());
             map.put("main", merchant);
             map.put("brandList", brandList);
             map.put("fileList", fileList);
             map.put("address", address);
+            map.put("admin", admin);
         }
         return map;
     }
