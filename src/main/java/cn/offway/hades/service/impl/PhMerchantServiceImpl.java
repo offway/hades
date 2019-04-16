@@ -82,6 +82,20 @@ public class PhMerchantServiceImpl implements PhMerchantService {
     }
 
     @Override
+    public PhMerchant findByAdminId(Long adminId) {
+        return phMerchantRepository.findOne(new Specification<PhMerchant>() {
+            @Override
+            public Predicate toPredicate(Root<PhMerchant> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(criteriaBuilder.equal(root.get("adminId"), adminId));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        });
+    }
+
+    @Override
     public PhMerchant findOne(Long id) {
         return phMerchantRepository.findOne(id);
     }

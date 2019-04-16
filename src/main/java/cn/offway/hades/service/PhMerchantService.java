@@ -18,6 +18,8 @@ public interface PhMerchantService {
 
     PhMerchant findOne(Long id);
 
+    PhMerchant findByAdminId(Long adminId);
+
     List<PhMerchant> findAll();
 
     List<PhMerchant> findAll(Long id);

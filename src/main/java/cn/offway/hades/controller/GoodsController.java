@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -47,6 +49,8 @@ public class GoodsController {
     private PhBrandService brandService;
     @Autowired
     private PhMerchantService merchantService;
+    @Autowired
+    private PhRoleadminService roleadminService;
 
     @RequestMapping("/goods.html")
     public String index(ModelMap map) {
@@ -77,8 +81,14 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/merchant_list_all")
-    public List<PhMerchant> getMerchant() {
-        return merchantService.findAll();
+    public List<PhMerchant> getMerchant(@AuthenticationPrincipal PhAdmin admin) {
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            PhMerchant merchant = merchantService.findByAdminId(admin.getId());
+            return merchantService.findAll(merchant.getId());
+        } else {
+            return merchantService.findAll();
+        }
     }
 
     @ResponseBody
