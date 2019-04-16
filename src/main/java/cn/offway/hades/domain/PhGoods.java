@@ -1,7 +1,7 @@
 package cn.offway.hades.domain;
 
-import java.io.Serializable;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -19,6 +19,8 @@ public class PhGoods implements Serializable {
 
     /** 名称 **/
     private String name;
+
+    private String code;
 
     /** 封面图片 **/
     private String image;
@@ -71,6 +73,14 @@ public class PhGoods implements Serializable {
     /** 备注 **/
     private String remark;
 
+    @Column(name = "code", length = 100)
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

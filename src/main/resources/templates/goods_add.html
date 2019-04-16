@@ -106,6 +106,14 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
+								<label for="field-10" class="control-label">货号</label>
+								<input type="text" class="form-control" id="field-10" name="code" placeholder="货号" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
 								<label for="field-4" class="control-label">封面图片</label>
 								<input type="file" class="form-control" id="field-4" name="imageFile" placeholder="封面图片" />
 								<input type="hidden" class="form-control" name="image" />
@@ -710,6 +718,7 @@
             var type = form.find("select[name='type']").val();
             var category = form.find("select[name='category']").val();
             var name = form.find("input[name='name']").val();
+			var code = form.find("input[name='code']").val();
             var brand_id = form.find("select[name='brand_id']").val();
             var merchant_id = form.find("select[name='merchant_id']").val();
             var price = form.find("input[name='price']").val();
@@ -720,7 +729,7 @@
             //已上传的图片地址
             var imageImg = form.find("input[name='image']").val();
 
-            if (type == '' || category == '' || name == '' || brand_id == '' || price == '' || material == '' || remark == '' || (image == '' && imageImg == '')) {
+            if (type == '' || category == '' || name == '' || code == ''|| brand_id == '' || price == '' || material == '' || remark == '' || (image == '' && imageImg == '')) {
                 toastr.error("请填写完整数据后提交", "温馨提示");
                 return;
             }
@@ -860,6 +869,7 @@
 							//提交保存
                             var data = {
                                 "name": name,
+								"code": code,
                                 "image": form.find("input[name='image']").val(),
                                 "merchantId": 0,
                                 "brandId": brand_id,
