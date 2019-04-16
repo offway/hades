@@ -200,8 +200,24 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="field-9" class="control-label">商家</label>
-                                <select class="form-control" id="field-9" name="merchant_id" placeholder="商家">
+                                <select class="form-control" id="field-9" name="merchant_id" placeholder="商家"
+                                        onchange="renderFare(this)">
                                 </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="form-group">
+                                <label for="field-11" class="control-label">运费模板</label>
+                                <select class="form-control" id="field-11" name="fare" placeholder="运费模板">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="control-label"></label>
+                                <input type="button" class="form-control" value="增加运费模板" onclick="addFare()"/>
                             </div>
                         </div>
                     </div>
@@ -253,6 +269,7 @@
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
     <script src="assets/js/jquery.base64.js"></script>
+    <script src="assets/js/distpicker.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -400,6 +417,14 @@
 			"\t\t\t\t</div>\n" +
 			"\t\t\t\t<div class=\"modal-body\">\n";
 
+	var ATTR_ELEMENT_HEADER_FARE = "\t\t<div class=\"modal-dialog\">\n" +
+			"\t\t\t<div class=\"modal-content\">\n" +
+			"\t\t\t\t<div class=\"modal-header\">\n" +
+			"\t\t\t\t\t<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button>\n" +
+			"\t\t\t\t\t<h4 class=\"modal-title\">添加运费模板</h4>\n" +
+			"\t\t\t\t</div>\n" +
+			"\t\t\t\t<div class=\"modal-body\">\n";
+
 	var ATTR_ELEMENT_BODY = "\t\t\t\t\t<div class=\"row UUID\">\n" +
 			"\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
@@ -426,6 +451,14 @@
 			"\t\t\t\t<div class=\"modal-footer\">\n" +
 			"\t\t\t\t\t<button type=\"button\" class=\"btn btn-white\" data-dismiss=\"modal\">关闭</button>\n" +
 			"\t\t\t\t\t<button type=\"button\" class=\"btn btn-info\" onclick=\"saveAttr('NAME')\">保存</button>\n" +
+			"\t\t\t\t</div>\n" +
+			"\t\t\t</div>\n" +
+			"\t\t</div>";
+
+	var ATTR_ELEMENT_FOOTER_FARE = "\t\t\t\t</div>\n" +
+			"\t\t\t\t<div class=\"modal-footer\">\n" +
+			"\t\t\t\t\t<button type=\"button\" class=\"btn btn-white\" data-dismiss=\"modal\">关闭</button>\n" +
+			"\t\t\t\t\t<button type=\"button\" class=\"btn btn-info\" onclick=\"closeAndSaveIt()\">保存</button>\n" +
 			"\t\t\t\t</div>\n" +
 			"\t\t\t</div>\n" +
 			"\t\t</div>";
@@ -565,10 +598,44 @@
             "                        </div>";
     }
 
-    function closeIt(self) {
-        var that = $(self);
-        that.hide();
+    function closeIt() {
+        var that = $("#modal-7");
+        that.toggle();
     }
+
+	function closeAndSaveIt() {
+		var that = $("#modal-7");
+		var form = $("#saveForm");
+		var p = that.find("select[name='p']").val();
+		var c = that.find("select[name='c']").val();
+		var d = that.find("select[name='d']").val();
+		var remark = that.find("input[name='remark']").val();
+		var fare_first_num = that.find("input[name='fare_first_num']").val();
+		var fare_first_price = that.find("input[name='fare_first_price']").val();
+		var fare_next_num = that.find("input[name='fare_next_num']").val();
+		var fare_next_price = that.find("input[name='fare_next_price']").val();
+		var merchantId = form.find("select[name='merchant_id']").val();
+		var json = {
+			"merchantId": merchantId,
+			"remark": remark,
+			"fareFirstNum": fare_first_num,
+			"fareFirstPrice": fare_first_price,
+			"fareNextNum": fare_next_num,
+			"fareNextPrice": fare_next_price,
+			"province": p,
+			"city": c,
+			"county": d
+		};
+		$.post("/fare_add", json, function (data) {
+			if (data) {
+				renderFare("#field-9");
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+			that.modal('toggle');
+		});
+	}
 
     function formatTime(time) {
         return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
@@ -649,6 +716,44 @@
         }
         $("#field-9").html(brandStr);
     }
+
+    function bindFareSelector(data) {
+        var brandStr = "";
+        for (var brand in data) {
+            brand = data[brand];
+            brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["remark"]);
+        }
+        $("#field-11").html(brandStr);
+    }
+
+    function renderFare(self) {
+        var id = $(self).val();
+        $.getJSON("/fare_list", {"pid": id}, function (data) {
+            bindFareSelector(data);
+        });
+    }
+
+	function addFare() {
+		var preview = $("#modal-7");
+		var contentStr = ATTR_ELEMENT_HEADER_FARE + "\t<div id=\"distpicker\">\n" +
+				"\t\t<select name='p' ></select>\n" +
+				"\t\t<select name='c' ></select>\n" +
+				"\t\t<select name='d' ></select><br/>\n" +
+				"\t\t<input type=\"text\" name='remark' placeholder='模板名称'/><br/>\n" +
+				"\t\t<input type=\"number\" name='fare_first_num' placeholder='运费首件数'/>\n" +
+				"\t\t<input type=\"number\" name='fare_first_price' placeholder='运费首费[单位：元]'/>\n" +
+				"\t\t<input type=\"number\" name='fare_next_num' placeholder='运费续件数'/>\n" +
+				"\t\t<input type=\"number\" name='fare_next_price' placeholder='运费续费[单位：元]'/>\n" +
+				"\t</div>";
+		preview.html(contentStr + ATTR_ELEMENT_FOOTER_FARE);
+		//render
+		$("#distpicker").distpicker({
+			province: '---- 所在省 ----',
+			city: '---- 所在市 ----',
+			district: '---- 所在区 ----'
+		});
+		preview.modal({backdrop: 'static', keyboard: false});
+	}
 
 	var qiniuUrl = [[${qiniuUrl}]];
 

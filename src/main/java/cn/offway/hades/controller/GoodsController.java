@@ -51,6 +51,8 @@ public class GoodsController {
     private PhMerchantService merchantService;
     @Autowired
     private PhRoleadminService roleadminService;
+    @Autowired
+    private PhMerchantFareService merchantFareService;
 
     @RequestMapping("/goods.html")
     public String index(ModelMap map) {
@@ -95,6 +97,27 @@ public class GoodsController {
     @RequestMapping("/brand_list_all")
     public List<PhBrand> getBrand() {
         return brandService.findAll();
+    }
+
+    @ResponseBody
+    @RequestMapping("/fare_list")
+    public List<PhMerchantFare> getFare(Long pid) {
+        return merchantFareService.findByPid(pid);
+    }
+
+    @ResponseBody
+    @RequestMapping("/fare_add")
+    public boolean addFare(PhMerchantFare merchantFare) {
+        merchantFare.setCreateTime(new Date());
+        PhMerchantFare merchantFareSaved = merchantFareService.save(merchantFare);
+        PhMerchant merchant = merchantService.findOne(merchantFareSaved.getMerchantId());
+        merchant.setFareFirstNum(merchantFareSaved.getFareFirstNum());
+        merchant.setFareFirstPrice(merchantFareSaved.getFareFirstPrice());
+        merchant.setFareNextNum(merchantFareSaved.getFareNextNum());
+        merchant.setFareNextPrice(merchantFareSaved.getFareNextPrice());
+        merchant.setIsFreeFare("0");//是否包邮[0-否,1-是]
+        merchantService.save(merchant);
+        return true;
     }
 
     @ResponseBody
