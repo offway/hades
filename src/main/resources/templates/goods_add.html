@@ -114,6 +114,72 @@
 						</div>
 					</div>
 					<div class="row">
+						<div class="col-md-2">
+							<div class="form-group">
+								<label class="control-label">banner 轮播图</label>
+								<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+								<input type="hidden" class="form-control" name="banner" />
+								<img alt="" src="" name="bannerImg" style="display:none;" />
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label class="control-label">banner 轮播图</label>
+								<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+								<input type="hidden" class="form-control" name="banner" />
+								<img alt="" src="" name="bannerImg" style="display:none;" />
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label class="control-label">banner 轮播图</label>
+								<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+								<input type="hidden" class="form-control" name="banner" />
+								<img alt="" src="" name="bannerImg" style="display:none;" />
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label class="control-label">banner 轮播图</label>
+								<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+								<input type="hidden" class="form-control" name="banner" />
+								<img alt="" src="" name="bannerImg" style="display:none;" />
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label class="control-label">banner 轮播图</label>
+								<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+								<input type="hidden" class="form-control" name="banner" />
+								<img alt="" src="" name="bannerImg" style="display:none;" />
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label class="control-label">banner 轮播图</label>
+								<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+								<input type="hidden" class="form-control" name="banner" />
+								<img alt="" src="" name="bannerImg" style="display:none;" />
+							</div>
+						</div>
+					</div>
+					<div class="row" id="introDIV">
+						<div class="col-md-2">
+							<div class="form-group">
+								<label class="control-label">商品长图</label>
+								<input type="file" class="form-control" name="introFile" placeholder="商品长图" onchange="uploadIntroFile(this)"/>
+								<!--<input type="button" class="form-control" value="删除" onclick="delIntroFile(this)"/>-->
+								<input type="hidden" class="form-control" name="intro" />
+								<img alt="" src="" name="introImg" style="display:none;" />
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<input type="button" class="form-control" value="添加" onclick="addIntroFile(this)"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
 								<label for="field-5" class="control-label">品牌</label>
@@ -210,6 +276,74 @@
         var that = $(self);
         that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
     }
+
+	function getQNToken(cb) {
+		$.get("/qiniu/token", {}, function (token) {
+			cb(token);
+		});
+	}
+
+	function uploadFile(self) {
+		var that = $(self);
+		if (self.files.length > 0) {
+			var file = self.files[0];
+			getQNToken(function (token) {
+				this.upload("", token, file, function () {
+					//
+				}, function (err) {
+					console.log("error");
+					console.log(err);
+				}, function (res) {
+					var url = qiniuUrl + "/" + res.key;
+					that.parent().find("[name=banner]").val(url);
+					that.parent().find("[name=bannerImg]").attr("src", url);
+					that.parent().find("[name=bannerImg]").attr("width", "100px");
+					that.parent().find("[name=bannerImg]").attr("height", "100px");
+					that.parent().find("[name=bannerImg]").show();
+				});
+			});
+		}
+	}
+
+	function delIntroFile(self) {
+		var that = $(self);
+		that.parent().parent().remove();
+	}
+
+	function addIntroFile(self) {
+		var that = $(self);
+		that.parent().parent().before("\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+				"\t\t\t\t\t\t\t\t<label class=\"control-label\">商品长图</label>\n" +
+				"\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"introFile\" placeholder=\"商品长图\" onchange=\"uploadIntroFile(this)\"/>\n" +
+				"\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control\" value=\"删除\" onclick=\"delIntroFile(this)\"/>\n" +
+				"\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"intro\" />\n" +
+				"\t\t\t\t\t\t\t\t<img alt=\"\" src=\"\" name=\"introImg\" style=\"display:none;\" />\n" +
+				"\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t</div>");
+	}
+
+	function uploadIntroFile(self) {
+		var that = $(self);
+		if (self.files.length > 0) {
+			var file = self.files[0];
+			getQNToken(function (token) {
+				this.upload("", token, file, function () {
+					//
+				}, function (err) {
+					console.log("error");
+					console.log(err);
+				}, function (res) {
+					var url = qiniuUrl + "/" + res.key;
+					that.parent().find("[name=intro]").val(url);
+					that.parent().find("[name=introImg]").attr("src", url);
+					that.parent().find("[name=introImg]").attr("width", "100px");
+					that.parent().find("[name=introImg]").attr("height", "100px");
+					that.parent().find("[name=introImg]").show();
+				});
+			});
+		}
+	}
 
     function delNode(self) {
         var that = $(self);
@@ -518,10 +652,11 @@
 		$("#field-5").html(brandStr);
 	}
 
+	var qiniuUrl = [[${qiniuUrl}]];
+
 	jQuery(document).ready(function ($) {
         $.base64.utf8encode = true;
         $.base64.utf8decode = true;
-		var qiniuUrl = [[${qiniuUrl}]];
 
 		$.getJSON("/type_and_category_list", {}, function (data) {
 			$("#type_and_category_list").val(JSON.stringify(data));
@@ -549,7 +684,7 @@
 			reader.readAsDataURL(f);
 		}
 
-		function upload(param, token, file, next, error, complete) {
+		window.upload = function upload(param, token, file, next, error, complete) {
 			if (file == '') {
 				complete('');
 			} else {
@@ -572,7 +707,7 @@
 					var subscription = observable.subscribe(next, error, complete);
 				})
 			}
-		}
+		};
 
 		//保存
 		$(".btn.btn-info.save").click(function () {
@@ -652,6 +787,35 @@
                     });
                 }
             }
+			//banner 轮播图
+			var banner = form.find("input[name='banner']");
+			var bannerList = [];
+			for (var k in banner) {
+				if (isNaN(k)) {
+					continue;
+				}
+				var bUrl = banner[k].value;
+				if (bUrl == '') {
+					toastr.error("请填写完整数据后提交", "温馨提示");
+					return;
+				} else {
+					bannerList.push(bUrl);
+				}
+			}
+			//商品长图
+			var intro = form.find("input[name='intro']");
+			var introList = [];
+			for (var l in intro) {
+				if (isNaN(l)) {
+					continue;
+				}
+				var iUrl = intro[l].value;
+				if (iUrl == '') {
+					//skip
+				} else {
+					introList.push(iUrl);
+				}
+			}
 			//获取token
 			$.get("/qiniu/token", {}, function (token) {
 				if (token != '') {
@@ -659,7 +823,7 @@
 						one: function (callback) {
 							async.eachSeries(stockList, function (item, cb) {
 								var f = item["image"];
-								upload("", token, f, function () {
+								this.upload("", token, f, function () {
 									//
 								}, function (err) {
 									console.log("上传imageFile异常:" + err);
@@ -680,7 +844,7 @@
 							//上传详情图
 							async.eachSeries(Object.keys(isOK), function (item, cb) {
 								var f = isOK[item];
-								upload(item, token, f, function () {
+								this.upload(item, token, f, function () {
 									//
 								}, function (err) {
 									console.log("上传imageFile异常:" + err);
@@ -698,19 +862,21 @@
 							});
 						},
 						three: function (callback) {
-                            //提交保存
-                            var data = {
-                                "name": name,
-                                "image": form.find("input[name='image']").val(),
-                                "merchantId": 0,
-                                "brandId": brand_id,
-                                "type": type,
-                                "category": category,
-                                "price": price,
-                                "material": material,
-                                "remark": remark,
-                                "stocks": JSON.stringify(stockList)
-                            };
+							//提交保存
+							var data = {
+								"name": name,
+								"image": form.find("input[name='image']").val(),
+								"merchantId": 0,
+								"brandId": brand_id,
+								"type": type,
+								"category": category,
+								"price": price,
+								"material": material,
+								"remark": remark,
+								"stocks": JSON.stringify(stockList),
+								"banners": bannerList.join(","),
+								"intros": introList.join(",")
+							};
                             console.log(data);
                             $.post("/goods_add", data, function (data) {
                                 if (data) {

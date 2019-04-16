@@ -113,7 +113,7 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_add")
-    public boolean add(PhGoods goods, @RequestParam("stocks") String stocks) throws UnsupportedEncodingException {
+    public boolean add(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros) throws UnsupportedEncodingException {
         PhBrand brand = brandService.findOne(goods.getBrandId());
         if (brand != null) {
             goods.setBrandName(brand.getName());
@@ -137,6 +137,32 @@ public class GoodsController {
         goods.setViewCount(0L);
         goods.setSaleCount(0L);
         PhGoods goodsSaved = goodsService.save(goods);
+        //banner 轮播图
+        long i = 0;
+        for (String banner : banners) {
+            PhGoodsImage goodsImage = new PhGoodsImage();
+            goodsImage.setGoodsId(goodsSaved.getId());
+            goodsImage.setGoodsName(goodsSaved.getName());
+            goodsImage.setImageUrl(banner);
+            goodsImage.setType("0");
+            goodsImage.setSort(i);
+            goodsImage.setCreateTime(new Date());
+            goodsImageService.save(goodsImage);
+            i++;
+        }
+        //商品长图
+        i = 0;
+        for (String intro : intros) {
+            PhGoodsImage goodsImage = new PhGoodsImage();
+            goodsImage.setGoodsId(goodsSaved.getId());
+            goodsImage.setGoodsName(goodsSaved.getName());
+            goodsImage.setImageUrl(intro);
+            goodsImage.setType("1");
+            goodsImage.setSort(i);
+            goodsImage.setCreateTime(new Date());
+            goodsImageService.save(goodsImage);
+            i++;
+        }
         List<Double> priceList = new ArrayList<>();
         for (Object o : JSON.parseArray(stocks)) {
             JSONObject obj = (JSONObject) o;
