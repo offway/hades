@@ -188,6 +188,15 @@
 							</div>
 						</div>
 					</div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="field-9" class="control-label">商家</label>
+                                <select class="form-control" id="field-9" name="merchant_id" placeholder="商家">
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
@@ -624,6 +633,15 @@
 		$("#field-5").html(brandStr);
 	}
 
+    function bindMerchantSelector(data) {
+        var brandStr = "";
+        for (var brand in data) {
+            brand = data[brand];
+            brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+        }
+        $("#field-9").html(brandStr);
+    }
+
 	var qiniuUrl = [[${qiniuUrl}]];
 
 	jQuery(document).ready(function ($) {
@@ -635,9 +653,13 @@
 			bindTypeSelector(data);
 		});
 
-		$.getJSON("/brand_list_all", {}, function (data) {
-			bindBrandSelector(data);
-		});
+        $.getJSON("/brand_list_all", {}, function (data) {
+            bindBrandSelector(data);
+        });
+
+        $.getJSON("/merchant_list_all", {}, function (data) {
+            bindMerchantSelector(data);
+        });
 
 		function getImgSize(file, cb) {
 			var f = file;//input.files[0];
@@ -689,6 +711,7 @@
             var category = form.find("select[name='category']").val();
             var name = form.find("input[name='name']").val();
             var brand_id = form.find("select[name='brand_id']").val();
+            var merchant_id = form.find("select[name='merchant_id']").val();
             var price = form.find("input[name='price']").val();
             var material = form.find("input[name='material']").val();
             var remark = form.find("input[name='remark']").val();
@@ -835,20 +858,21 @@
 						},
 						three: function (callback) {
 							//提交保存
-							var data = {
-								"name": name,
-								"image": form.find("input[name='image']").val(),
-								"merchantId": 0,
-								"brandId": brand_id,
-								"type": type,
-								"category": category,
-								"price": price,
-								"material": material,
-								"remark": remark,
-								"stocks": JSON.stringify(stockList),
-								"banners": bannerList.join(","),
-								"intros": introList.join(",")
-							};
+                            var data = {
+                                "name": name,
+                                "image": form.find("input[name='image']").val(),
+                                "merchantId": 0,
+                                "brandId": brand_id,
+                                "merchantId": merchant_id,
+                                "type": type,
+                                "category": category,
+                                "price": price,
+                                "material": material,
+                                "remark": remark,
+                                "stocks": JSON.stringify(stockList),
+                                "banners": bannerList.join(","),
+                                "intros": introList.join(",")
+                            };
                             console.log(data);
                             $.post("/goods_add", data, function (data) {
                                 if (data) {

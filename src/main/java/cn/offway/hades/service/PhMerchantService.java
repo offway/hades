@@ -4,6 +4,8 @@ import cn.offway.hades.domain.PhMerchant;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * 商户表Service接口
  *
@@ -15,6 +17,10 @@ public interface PhMerchantService {
     PhMerchant save(PhMerchant phMerchant);
 
     PhMerchant findOne(Long id);
+
+    List<PhMerchant> findAll();
+
+    List<PhMerchant> findAll(Long id);
 
     Page<PhMerchant> findAll(Pageable pageable);
 

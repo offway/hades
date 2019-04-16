@@ -76,6 +76,12 @@ public class GoodsController {
     }
 
     @ResponseBody
+    @RequestMapping("/merchant_list_all")
+    public List<PhMerchant> getMerchant() {
+        return merchantService.findAll();
+    }
+
+    @ResponseBody
     @RequestMapping("/brand_list_all")
     public List<PhBrand> getBrand() {
         return brandService.findAll();
