@@ -110,6 +110,22 @@
 					<tr>
 						<td>
 							<div class="">
+								<label class="control-label">备注</label>
+								<input type="text" class="form-control" name="remark" placeholder="备注"/>
+							</div>
+						</td>
+						<td>
+							<div class="">
+								<label class="control-label">后台登录账号</label>
+								<input type="text" class="form-control" name="admin_name" placeholder="后台登录账号"/>
+							</div>
+						</td>
+						<td>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<div class="">
 								<label for="field-4" class="control-label">签约日期</label>
 								<input type="text" id="signDate" class="form-control" placeholder="签约日期" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
 								<input type="hidden" class="form-control" name="signDate" />
@@ -184,14 +200,32 @@
         }
     }
 
-    function addMoreText(self, v) {
-        var that = $(self);
-        if (v == undefined) {
-            that.before('<input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>')
-        } else {
-            that.before('<input type="number" class="form-control" name="brandID" value="' + v + '" placeholder="填写品牌ID"/>')
-        }
-    }
+	function bindBrandSelector(data, v) {
+		var brandStr = "<select class=\"form-control\" name=\"brandID\" >";
+		for (var brand in data) {
+			brand = data[brand];
+			if (brand["id"] == v) {
+				brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			} else {
+				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			}
+		}
+		brandStr += "</select>";
+		return brandStr;
+	}
+
+	function addMoreText(self, v) {
+		$.getJSON("/brand_list_all_merchant", {}, function (data) {
+			var contentStr = bindBrandSelector(data, v);
+			var that = $(self);
+			that.before(contentStr);
+			// if (v == undefined) {
+			// 	that.before('<input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>')
+			// } else {
+			// 	that.before('<input type="number" class="form-control" name="brandID" value="' + v + '" placeholder="填写品牌ID"/>')
+			// }
+		});
+	}
 
     function closeIt() {
         var that = $("#preview");
@@ -391,7 +425,7 @@
 					return;
 				}
 				//收集品牌ID列表
-                var goodsIDList = form.find("input[name='brandID']");
+                var goodsIDList = form.find("select[name='brandID']");
                 var gidArr = [];
                 for (var gid in goodsIDList) {
                     gidArr.push(goodsIDList[gid].value);
@@ -408,37 +442,42 @@
 					if(token !=''){
 						async.series({
 							one: function(callback) {
-                                //上传详情图
-                                var imageFileList = form.find("input[name='detailImageFile']");
-                                var i = 0;
-                                async.eachSeries(imageFileList, function (item, cb) {
-                                    var f = item.files[0];
-                                    upload("imagesJSONStr", token, f, function () {
-                                        //
-                                    }, function (err) {
-                                        console.log("上传imageFile异常:" + err);
-                                        cb(err);
-                                    }, function (res) {
-                                        //上传成功
-                                        if (res != '') {
-                                            var url = qiniuUrl + "/" + res.key;
-                                            var oldValue = form.find("input[name='" + res.param + "']").val();
-                                            if (oldValue == '') {
-                                                var list = [];
-                                                list.push({"url": url, "sort": i, "remark": ""});
-                                            } else {
-                                                var list = JSON.parse(window.atob(oldValue));
-                                                list.push({"url": url, "sort": i, "remark": ""});
-                                            }
-                                            var newValue = JSON.stringify(list);
-                                            form.find("input[name='" + res.param + "']").val(window.btoa(newValue));
-                                            i++;
-                                        }
-                                        cb();
-                                    });
-                                }, function () {
-                                    callback();
-                                });
+								//上传详情图
+								var imageFileList = form.find("input[name='detailImageFile']");
+								var i = 0;
+								async.eachSeries(imageFileList, function (item, cb) {
+									var f = item.files[0];
+									if (f == undefined) {
+										i++;
+										cb();
+									} else {
+										upload("imagesJSONStr", token, f, function () {
+											//
+										}, function (err) {
+											console.log("上传imageFile异常:" + err);
+											cb(err);
+										}, function (res) {
+											//上传成功
+											if (res != '') {
+												var url = qiniuUrl + "/" + res.key;
+												var oldValue = form.find("input[name='" + res.param + "']").val();
+												if (oldValue == '') {
+													var list = [];
+													list.push({"url": url, "sort": i, "remark": ""});
+												} else {
+													var list = JSON.parse(window.atob(oldValue));
+													list[i] = {"url": url, "sort": i, "remark": ""};
+												}
+												var newValue = JSON.stringify(list);
+												form.find("input[name='" + res.param + "']").val(window.btoa(newValue));
+												i++;
+											}
+											cb();
+										});
+									}
+								}, function () {
+									callback();
+								});
 							},
 							two: function(callback){
 								//上传详情图
@@ -517,14 +556,18 @@
                         form.find("img[name='" + i + "Img']").attr("length", 200);
                         form.find("img[name='" + i + "Img']").show();
                     }
-                    //品牌
-                    for (var i in brandList) {
-                        addMoreText("#addBrandID", brandList[i]["brandId"]);
-                    }
-                    //资料
-                    for (var i in fileList) {
-                        addMoreImg("#addFile", fileList[i]["fileUrl"])
-                    }
+					//品牌
+					for (var i in brandList) {
+						addMoreText("#addBrandID", brandList[i]["brandId"]);
+					}
+					//资料
+					var list = [];
+					for (var i in fileList) {
+						addMoreImg("#addFile", fileList[i]["fileUrl"]);
+						list.push({"url": fileList[i]["fileUrl"]});
+					}
+					var newValue = JSON.stringify(list);
+					form.find("input[name='imagesJSONStr']").val(window.btoa(newValue));
 					//地址
 					form.find("input[name='address_send']").val(address["province"] + "" + address["city"] + "" + address["county"] + "" + address["content"]);
 					form.find("input[name='address_send_jsonStr']").val(address["remark"]);

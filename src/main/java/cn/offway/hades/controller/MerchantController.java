@@ -61,6 +61,12 @@ public class MerchantController {
     }
 
     @ResponseBody
+    @RequestMapping("/brand_list_all_merchant")
+    public List<PhBrand> getBrand() {
+        return brandService.findAll();
+    }
+
+    @ResponseBody
     @RequestMapping("/merchant_list")
     public Map<String, Object> getList(HttpServletRequest request) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));

@@ -2,8 +2,8 @@ package cn.offway.hades.domain;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.io.Serializable;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -29,6 +29,8 @@ public class PhMerchant implements Serializable {
     private String address;
 
     private String company;
+
+    private Long adminId;
 
     /** 发货地址ID[见ph_address.id] **/
     private Long addrId;
@@ -73,6 +75,15 @@ public class PhMerchant implements Serializable {
 
     /** 运费续费[单位：元] **/
     private Double fareNextPrice;
+
+    @Column(name = "admin_id", length = 11)
+    public Long getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(Long adminId) {
+        this.adminId = adminId;
+    }
 
     @Column(name = "company", length = 200)
     public String getCompany() {
