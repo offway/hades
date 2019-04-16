@@ -212,37 +212,9 @@
 							</div>
 						</div>
 					</div>
-                    <input type="button" value="添加商品属性" onclick="addMoreAttr(this)" />
+                    <input type="button" value="添加商品属性(如颜色、尺码等)" onclick="addMoreAttr(this)" />
                     <div id="skuContainer">
                     </div>
-<!--					<div class="row">-->
-<!--						<div class="col-md-4">-->
-<!--							<div class="form-group">-->
-<!--								<label for="field-4" class="control-label">City</label>-->
-<!--								<input type="text" class="form-control" id="field-44" placeholder="Boston" />-->
-<!--							</div>-->
-<!--						</div>-->
-<!--						<div class="col-md-4">-->
-<!--							<div class="form-group">-->
-<!--								<label for="field-5" class="control-label">Country</label>-->
-<!--								<input type="text" class="form-control" id="field-55" placeholder="United States" />-->
-<!--							</div>-->
-<!--						</div>-->
-<!--						<div class="col-md-4">-->
-<!--							<div class="form-group">-->
-<!--								<label for="field-6" class="control-label">Zip</label>-->
-<!--								<input type="text" class="form-control" id="field-66" placeholder="123456" />-->
-<!--							</div>-->
-<!--						</div>-->
-<!--					</div>-->
-<!--					<div class="row">-->
-<!--						<div class="col-md-12">-->
-<!--							<div class="form-group no-margin">-->
-<!--								<label for="field-7" class="control-label">Personal Info</label>-->
-<!--								<textarea class="form-control autogrow" id="field-7" placeholder="Write something about yourself" style="overflow: hidden; overflow-wrap: break-word; resize: horizontal; height: 104px;"></textarea>-->
-<!--							</div>-->
-<!--						</div>-->
-<!--					</div>-->
 					</form>
 				</div>
 
@@ -349,7 +321,7 @@
         var that = $(self);
         var name = that.attr("name");
         $(".NAME".replace("NAME", name)).remove();
-        generateSKUList();
+        // generateSKUList();
     }
 
 	function addMoreAttr(self) {
@@ -357,14 +329,14 @@
 		var content = "\t\t\t\t\t<div class=\"row NAME\">\n".replace("NAME", uuid) +
 				"\t\t\t\t\t\t<div class=\"col-md-6\">\n" +
 				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-				"\t\t\t\t\t\t\t\t<label class=\"control-label\">属性名</label>\n" +
-				"\t\t\t\t\t\t\t\t<input type='text' class=\"form-control\" name=\"attrName\" placeholder=\"属性名\" />\n" +
+				"\t\t\t\t\t\t\t\t<label class=\"control-label\">规格名称(如颜色、尺寸)</label>\n" +
+				"\t\t\t\t\t\t\t\t<input type='text' class=\"form-control\" name=\"attrName\" placeholder=\"规格名称(如颜色、尺寸)\" />\n" +
 				"\t\t\t\t\t\t\t</div>\n" +
 				"\t\t\t\t\t\t</div>\n" +
 				"\t\t\t\t\t\t<div class=\"col-md-6\">\n" +
 				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-				"\t\t\t\t\t\t\t\t<label class=\"control-label\">属性值</label>\n" +
-				"\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrValue\" placeholder=\"属性值\" onclick=\"showAttrWindow('NAME')\" />\n".replace("NAME", uuid) +
+				"\t\t\t\t\t\t\t\t<label class=\"control-label\">详细规格(如红、黄、大、小)</label>\n" +
+				"\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrValue\" placeholder=\"详细规格(如红、黄、大、小)\" onclick=\"showAttrWindow('NAME')\" />\n".replace("NAME", uuid) +
 				"\t\t\t\t\t\t\t\t<input type='hidden' class=\"form-control NAME\" name=\"attrContainer\" value=\"\" />\n".replace("NAME", uuid) +
 				"\t\t\t\t\t\t\t</div>\n" +
 				"\t\t\t\t\t\t</div>\n" +
@@ -407,15 +379,15 @@
 			"\t\t\t<div class=\"modal-content\">\n" +
 			"\t\t\t\t<div class=\"modal-header\">\n" +
 			"\t\t\t\t\t<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button>\n" +
-			"\t\t\t\t\t<h4 class=\"modal-title\">添加属性值列表</h4>\n" +
+			"\t\t\t\t\t<h4 class=\"modal-title\">添加详细规格列表</h4>\n" +
 			"\t\t\t\t</div>\n" +
 			"\t\t\t\t<div class=\"modal-body\">\n";
 
 	var ATTR_ELEMENT_BODY = "\t\t\t\t\t<div class=\"row UUID\">\n" +
 			"\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-			"\t\t\t\t\t\t\t\t<label for=\"field-4\" class=\"control-label\">属性值</label>\n" +
-			"\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"skuValue\" value='ONE' placeholder=\"属性值\" />\n" +
+			"\t\t\t\t\t\t\t\t<label for=\"field-4\" class=\"control-label\">规格值</label>\n" +
+			"\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"skuValue\" value='ONE' placeholder=\"规格值\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
@@ -432,7 +404,7 @@
 			"\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t</div>\n";
 
-	var ATTR_ELEMENT_FOOTER = "\t\t\t\t\t<input type=\"button\" value=\"添加商品属性值\" onclick=\"addMoreAttrValue(this)\" />\n" +
+	var ATTR_ELEMENT_FOOTER = "\t\t\t\t\t<input type=\"button\" value=\"添加详细规格(如红、黄、大、小)\" onclick=\"addMoreAttrValue(this)\" />\n" +
 			"\t\t\t\t</div>\n" +
 			"\t\t\t\t<div class=\"modal-footer\">\n" +
 			"\t\t\t\t\t<button type=\"button\" class=\"btn btn-white\" data-dismiss=\"modal\">关闭</button>\n" +
