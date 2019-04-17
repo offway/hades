@@ -224,8 +224,8 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-6" class="control-label">发售价</label>
-								<input type="number" class="form-control" id="field-6" name="price" placeholder="发售价" />
+								<label for="field-6" class="control-label">价格</label>
+								<input type="number" class="form-control" id="field-6" name="price" placeholder="价格" />
 							</div>
 						</div>
 					</div>
@@ -361,23 +361,29 @@
 	function addMoreAttr(self) {
 		var uuid = UUID.randomUUID();
 		var content = "\t\t\t\t\t<div class=\"row NAME\">\n".replace("NAME", uuid) +
-				"\t\t\t\t\t\t<div class=\"col-md-6\">\n" +
+				"\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
 				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
 				"\t\t\t\t\t\t\t\t<label class=\"control-label\">规格名称(如颜色、尺寸)</label>\n" +
 				"\t\t\t\t\t\t\t\t<input type='text' class=\"form-control\" name=\"attrName\" placeholder=\"规格名称(如颜色、尺寸)\" />\n" +
 				"\t\t\t\t\t\t\t</div>\n" +
 				"\t\t\t\t\t\t</div>\n" +
-				"\t\t\t\t\t\t<div class=\"col-md-6\">\n" +
+				"\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
 				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
 				"\t\t\t\t\t\t\t\t<label class=\"control-label\">详细规格(如红、黄、大、小)</label>\n" +
 				"\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrValue\" placeholder=\"详细规格(如红、黄、大、小)\" onclick=\"showAttrWindow('NAME')\" />\n".replace("NAME", uuid) +
 				"\t\t\t\t\t\t\t\t<input type='hidden' class=\"form-control NAME\" name=\"attrContainer\" value=\"\" />\n".replace("NAME", uuid) +
 				"\t\t\t\t\t\t\t</div>\n" +
 				"\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+				"\t\t\t\t\t\t\t\t<label class=\"control-label\">操作</label>\n" +
+				"\t\t\t\t\t\t\t\t<input type='button' class=\"form-control NAME\" name=\"NAME\" value=\"删除\" onclick=\"delNode(this)\" />\n".replace(/NAME/g, uuid) +
+				"\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t</div>\n" +
 				"\t\t\t\t\t</div>";
 		var that = $(self);
 		that.before(content);
-		that.before('<input type="button" class="form-control NAME" value="删除" name="NAME" onclick="delNode(this)"/>'.replace(/NAME/g, uuid));
+		// that.before('<input type="button" class="form-control NAME" value="删除" name="NAME" onclick="delNode(this)"/>'.replace(/NAME/g, uuid));
 	}
 
 	function addMoreAttrValue(self) {
