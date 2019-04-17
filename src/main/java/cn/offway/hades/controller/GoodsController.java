@@ -139,6 +139,20 @@ public class GoodsController {
     }
 
     @ResponseBody
+    @RequestMapping("/goods_find")
+    public Map<String, Object> find(Long id) {
+        Map<String, Object> map = new HashMap<>();
+        PhGoods goods = goodsService.findOne(id);
+        if (goods != null) {
+            map.put("main", goods);
+            map.put("propertyList", goodsPropertyService.findByPid(goods.getId()));
+            map.put("imageList", goodsImageService.findByPid(goods.getId()));
+            map.put("stockList", goodsStockService.findByPid(goods.getId()));
+        }
+        return map;
+    }
+
+    @ResponseBody
     @RequestMapping("/goods_del")
     public boolean delete(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {

@@ -58,6 +58,20 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
     }
 
     @Override
+    public List<PhGoodsStock> findByPid(Long pid) {
+        return phGoodsStockRepository.findAll(new Specification<PhGoodsStock>() {
+            @Override
+            public Predicate toPredicate(Root<PhGoodsStock> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(criteriaBuilder.equal(root.get("goodsId"), pid));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        });
+    }
+
+    @Override
     public void del(Long id) {
         phGoodsStockRepository.delete(id);
     }

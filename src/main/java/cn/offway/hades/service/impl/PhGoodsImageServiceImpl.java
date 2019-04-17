@@ -58,6 +58,20 @@ public class PhGoodsImageServiceImpl implements PhGoodsImageService {
     }
 
     @Override
+    public List<PhGoodsImage> findByPid(Long pid) {
+        return phGoodsImageRepository.findAll(new Specification<PhGoodsImage>() {
+            @Override
+            public Predicate toPredicate(Root<PhGoodsImage> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(criteriaBuilder.equal(root.get("goodsId"), pid));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        });
+    }
+
+    @Override
     public void del(Long id) {
         phGoodsImageRepository.delete(id);
     }

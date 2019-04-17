@@ -4,6 +4,8 @@ import cn.offway.hades.domain.PhGoodsStock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * 商品库存Service接口
  *
@@ -23,4 +25,6 @@ public interface PhGoodsStockService {
     void del(Long id);
 
     void delByPid(Long id);
+
+    List<PhGoodsStock> findByPid(Long pid);
 }

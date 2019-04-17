@@ -4,6 +4,8 @@ import cn.offway.hades.domain.PhGoodsProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * 商品属性Service接口
  *
@@ -23,4 +25,6 @@ public interface PhGoodsPropertyService {
     void del(Long id);
 
     void delByPid(Long id);
+
+    List<PhGoodsProperty> findByPid(Long pid);
 }

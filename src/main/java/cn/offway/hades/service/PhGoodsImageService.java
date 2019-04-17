@@ -4,6 +4,8 @@ import cn.offway.hades.domain.PhGoodsImage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * 商品图片Service接口
  *
@@ -23,4 +25,6 @@ public interface PhGoodsImageService {
     void del(Long id);
 
     void delByPid(Long id);
+
+    List<PhGoodsImage> findByPid(Long pid);
 }
