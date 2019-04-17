@@ -988,23 +988,29 @@
                                 "banners": bannerList.join(","),
                                 "intros": introList.join(",")
                             };
-                            console.log(data);
-                            $.post("/goods_add", data, function (data) {
-                                if (data) {
-                                    footer.find("button").show();
-                                    footer.find(".bg-lg").hide();
-                                    jQuery('#modal-6').modal('hide');
-                                    toastr.success("操作已成功！", "温馨提示");
-                                } else {
-                                    footer.find("button").show();
-                                    footer.find(".bg-lg").hide();
-                                    toastr.error("操作失败", "温馨提示");
-                                }
-                                callback();
-                            });
+							console.log(data);
+							$.post("/goods_add", data, function (data) {
+								if (data) {
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									jQuery('#modal-6').modal('hide');
+									toastr.success("操作已成功！", "温馨提示");
+									callback();
+								} else {
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									toastr.error("操作失败", "温馨提示");
+									callback("ERROR");
+								}
+							});
 						}
 					}, function (err, results) {
 						console.log("OK");
+						if (err) {
+							//
+						} else {
+							window.location.href = '/goods.html';
+						}
 					});
 				} else {
 					footer.find("button").show();
