@@ -383,7 +383,6 @@
 				"\t\t\t\t\t</div>";
 		var that = $(self);
 		that.before(content);
-		// that.before('<input type="button" class="form-control NAME" value="删除" name="NAME" onclick="delNode(this)"/>'.replace(/NAME/g, uuid));
 	}
 
 	function addMoreAttrValue(self) {
@@ -391,12 +390,11 @@
 		var content = buildNewAttrValue(uuid);
 		var that = $(self);
 		that.before(content);
-		that.before('<input type="button" class="form-control NAME" value="删除" name="NAME" onclick="delNode(this)"/>'.replace(/NAME/g, uuid));
 	}
 
 	function buildNewAttrValue(uuid, one, two, three) {
 		var context = ATTR_ELEMENT_BODY;
-		context = context.replace("UUID", uuid);
+		context = context.replace(/UUID/g, uuid);
 		if (one != undefined) {
 			context = context.replace("ONE", one);
 		} else {
@@ -419,7 +417,7 @@
 			"\t\t\t<div class=\"modal-content\">\n" +
 			"\t\t\t\t<div class=\"modal-header\">\n" +
 			"\t\t\t\t\t<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">×</button>\n" +
-			"\t\t\t\t\t<h4 class=\"modal-title\">添加详细规格列表</h4>\n" +
+			"\t\t\t\t\t<h4 class=\"modal-title\">添加商品详细属性列表</h4>\n" +
 			"\t\t\t\t</div>\n" +
 			"\t\t\t\t<div class=\"modal-body\">\n";
 
@@ -434,8 +432,8 @@
 	var ATTR_ELEMENT_BODY = "\t\t\t\t\t<div class=\"row UUID\">\n" +
 			"\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-			"\t\t\t\t\t\t\t\t<label for=\"field-4\" class=\"control-label\">规格值</label>\n" +
-			"\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"skuValue\" value='ONE' placeholder=\"规格值\" />\n" +
+			"\t\t\t\t\t\t\t\t<label for=\"field-4\" class=\"control-label\">商品属性值</label>\n" +
+			"\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"skuValue\" value='ONE' placeholder=\"商品属性值\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
@@ -444,10 +442,16 @@
 			"\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"skuRemark\" value='TWO' placeholder=\"备注\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
-			"\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
+			"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
 			"\t\t\t\t\t\t\t\t<label for=\"field-6\" class=\"control-label\">排序</label>\n" +
 			"\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"skuSort\" value='THREE'  placeholder=\"排序\" />\n" +
+			"\t\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+			"\t\t\t\t\t\t\t\t<label for=\"field-6\" class=\"control-label\">操作</label>\n" +
+			"\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control UUID\" name=\"UUID\" value='删除' onclick=\"delNode(this)\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t</div>\n";
@@ -456,7 +460,7 @@
 			"\t\t\t\t</div>\n" +
 			"\t\t\t\t<div class=\"modal-footer\">\n" +
 			"\t\t\t\t\t<button type=\"button\" class=\"btn btn-white\" data-dismiss=\"modal\">关闭</button>\n" +
-			"\t\t\t\t\t<button type=\"button\" class=\"btn btn-info\" onclick=\"saveAttr('NAME')\">保存</button>\n" +
+			"\t\t\t\t\t<button type=\"button\" class=\"btn btn-info\" onclick=\"saveAttr('PID')\">保存</button>\n" +
 			"\t\t\t\t</div>\n" +
 			"\t\t\t</div>\n" +
 			"\t\t</div>";
@@ -474,16 +478,16 @@
 		var attrJSONStr = target.find("input[name=attrContainer]").val();
 		var contentStr = "";
 		if (attrJSONStr == '') {
-			contentStr = (ATTR_ELEMENT_HEADER + ATTR_ELEMENT_BODY + ATTR_ELEMENT_FOOTER).replace("ONE", "").replace("TWO", "").replace("THREE", "0").replace("NAME", uuid);
+			var innerUUid = UUID.randomUUID();
+			contentStr = (ATTR_ELEMENT_HEADER + ATTR_ELEMENT_BODY + ATTR_ELEMENT_FOOTER).replace("ONE", "").replace("TWO", "").replace("THREE", "0").replace(/PID/g, uuid).replace(/UUID/g, innerUUid);
 		} else {
 			var attrList = JSON.parse(attrJSONStr);
 			contentStr += ATTR_ELEMENT_HEADER;
 			for (var i in attrList) {
 				var innerUUid = UUID.randomUUID();
 				contentStr += buildNewAttrValue(innerUUid, attrList[i]["value"], attrList[i]["remark"], attrList[i]["sort"]);
-				contentStr += '<input type="button" class="form-control NAME" value="删除" name="NAME" onclick="delNode(this)"/>'.replace(/NAME/g, innerUUid);
 			}
-			contentStr += ATTR_ELEMENT_FOOTER.replace("NAME", uuid);
+			contentStr += ATTR_ELEMENT_FOOTER.replace(/PID/g, uuid);
 		}
 		jQuery('#modal-7').html(contentStr).modal({backdrop: 'static', keyboard: false});
 	}
