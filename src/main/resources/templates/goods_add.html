@@ -896,35 +896,34 @@
                     });
                 }
             }
-			//banner 轮播图
-			var banner = form.find("input[name='banner']");
-			var bannerList = [];
-			for (var k in banner) {
-				if (isNaN(k)) {
-					continue;
-				}
-				var bUrl = banner[k].value;
-				if (bUrl == '') {
-					toastr.error("请填写完整数据后提交", "温馨提示");
-					return;
-				} else {
-					bannerList.push(bUrl);
-				}
-			}
-			//商品长图
-			var intro = form.find("input[name='intro']");
-			var introList = [];
-			for (var l in intro) {
-				if (isNaN(l)) {
-					continue;
-				}
-				var iUrl = intro[l].value;
-				if (iUrl == '') {
-					//skip
-				} else {
-					introList.push(iUrl);
-				}
-			}
+            //banner 轮播图
+            var banner = form.find("input[name='banner']");
+            var bannerList = [];
+            for (var k in banner) {
+                if (isNaN(k)) {
+                    continue;
+                }
+                var bUrl = banner[k].value;
+                if (bUrl == '') {
+                    //skip
+                } else {
+                    bannerList.push(bUrl);
+                }
+            }
+            //商品长图
+            var intro = form.find("input[name='intro']");
+            var introList = [];
+            for (var l in intro) {
+                if (isNaN(l)) {
+                    continue;
+                }
+                var iUrl = intro[l].value;
+                if (iUrl == '') {
+                    //skip
+                } else {
+                    introList.push(iUrl);
+                }
+            }
 			//获取token
 			$.get("/qiniu/token", {}, function (token) {
 				if (token != '') {
@@ -976,7 +975,6 @@
                                 "name": name,
 								"code": code,
                                 "image": form.find("input[name='image']").val(),
-                                "merchantId": 0,
                                 "brandId": brand_id,
                                 "merchantId": merchant_id,
                                 "type": type,
