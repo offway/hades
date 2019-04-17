@@ -245,7 +245,14 @@ public class GoodsController {
             }
         }
         Collections.sort(priceList);
-        String priceRange = String.format("%f-%f", priceList.get(0), priceList.get(priceList.size() - 1));
+        Double lowest = priceList.get(0);
+        Double highest = priceList.get(priceList.size() - 1);
+        String priceRange;
+        if (Double.compare(lowest, highest) == 0) {
+            priceRange = String.format("%.2f", lowest);
+        } else {
+            priceRange = String.format("%.2f-%.2f", lowest, highest);
+        }
         goodsSaved.setPriceRange(priceRange);
         goodsService.save(goodsSaved);
         return true;
