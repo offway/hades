@@ -279,12 +279,8 @@
             sAjaxSource : "/goodsCategory_list",//通过ajax实现分页的url路径。
 			fnServerParams: function (aData) {
 				var searchArray = $(".form-inline").serializeArray();
-				console.log(searchArray);
-				console.log(theId);
 				$.merge(aData, searchArray);
 				aData.push({"name": "id", "value": theId});//append pid
-				//aData["id"] = theId;
-				console.log(aData);
 			},
             order: [[ 6, "desc" ]],
             columnDefs: [

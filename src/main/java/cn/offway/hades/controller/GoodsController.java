@@ -128,6 +128,24 @@ public class GoodsController {
     }
 
     @ResponseBody
+    @RequestMapping("/goods_stock_list")
+    public Map<String, Object> getStockList(HttpServletRequest request) {
+        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
+        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
+        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
+        String gid = request.getParameter("theId");
+        Sort sort = new Sort("id");
+        Page<PhGoodsStock> pages = goodsStockService.findAll(gid, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        int initEcho = sEcho + 1;
+        Map<String, Object> map = new HashMap<>();
+        map.put("sEcho", initEcho);
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        map.put("aData", pages.getContent());//数据集合
+        return map;
+    }
+
+    @ResponseBody
     @RequestMapping("/goods_list")
     public Map<String, Object> getList(HttpServletRequest request) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
