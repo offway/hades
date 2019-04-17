@@ -2,6 +2,8 @@ package cn.offway.hades.domain;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
+
 import java.util.Date;
 
 /**
@@ -17,11 +19,17 @@ public class PhOrderInfo implements Serializable {
     /** ID **/
     private Long id;
 
+    /** 预生成订单号 **/
+    private String preorderNo;
+
     /** 订单号 **/
     private String orderNo;
 
     /** 用户ID **/
     private Long userId;
+
+    /** 地址ID **/
+    private Long addrId;
 
     /** 订单总价 **/
     private Double price;
@@ -76,6 +84,15 @@ public class PhOrderInfo implements Serializable {
 
     /** 商户名称 **/
     private String merchantName;
+    
+    /** 支付渠道[wxpay,alipay] **/
+    private String payChannel;
+    
+    /** 快递公司编码 **/
+    private String expressCode;
+
+    /** 快递单号 **/
+    private String mailNo;
 
 
     @Id
@@ -87,6 +104,15 @@ public class PhOrderInfo implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Column(name = "preorder_no", length = 50)
+    public String getPreorderNo() {
+        return preorderNo;
+    }
+
+    public void setPreorderNo(String preorderNo) {
+        this.preorderNo = preorderNo;
     }
 
     @Column(name = "order_no", length = 50)
@@ -105,6 +131,15 @@ public class PhOrderInfo implements Serializable {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    @Column(name = "addr_id", length = 11)
+    public Long getAddrId() {
+        return addrId;
+    }
+
+    public void setAddrId(Long addrId) {
+        this.addrId = addrId;
     }
 
     @Column(name = "price", precision = 15, scale = 2)
@@ -235,6 +270,7 @@ public class PhOrderInfo implements Serializable {
         this.remark = remark;
     }
 
+    @Version
     @Column(name = "version", length = 11)
     public Long getVersion() {
         return version;
@@ -269,6 +305,33 @@ public class PhOrderInfo implements Serializable {
 
     public void setMerchantName(String merchantName) {
         this.merchantName = merchantName;
+    }
+    
+    @Column(name = "pay_channel", length = 2)
+    public String getPayChannel() {
+        return payChannel;
+    }
+
+    public void setPayChannel(String payChannel) {
+        this.payChannel = payChannel;
+    }
+    
+    @Column(name = "express_code", length = 50)
+    public String getExpressCode() {
+        return expressCode;
+    }
+
+    public void setExpressCode(String expressCode) {
+        this.expressCode = expressCode;
+    }
+
+    @Column(name = "mail_no", length = 50)
+    public String getMailNo() {
+        return mailNo;
+    }
+
+    public void setMailNo(String mailNo) {
+        this.mailNo = mailNo;
     }
 
 }
