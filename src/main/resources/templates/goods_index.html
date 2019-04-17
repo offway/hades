@@ -61,7 +61,7 @@
 					
 				</div>
 				<button class="btn btn-info add" >添加</button>
-				<button class="btn btn-info edit">修改</button>
+				<!--<button class="btn btn-info edit">修改</button>-->
 				<button class="btn btn-info del">删除</button>
 			</div>
 			
@@ -82,147 +82,11 @@
 				
 				<div class="modal-body">
 					<form role="form" id="saveForm">
-					<input type="hidden" name="id"/>
-<!--
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-3" class="control-label">名称</label>
-								<input type="text" class="form-control" name="name" placeholder="名称"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">封面图片</label>
-								<input type="file" class="form-control" name="imageFile" placeholder="封面图片"/>
-								<input type="hidden" class="form-control" name="image" />
-								<img alt="" src="" name="imageImg" style="display:none;"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-3" class="control-label">商户ID</label>
-								<input type="text" class="form-control" name="merchantId" placeholder="商户ID"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">品牌LOGO(大)</label>
-								<input type="file" class="form-control" name="logoBigFile" placeholder="品牌LOGO(大)"/>
-								<input type="hidden" class="form-control" name="logoBig" />
-								<img alt="" src="" name="logoBigImg" style="display:none;"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">品牌banner</label>
-								<input type="file" class="form-control" name="bannerFile" placeholder="品牌banner"/>
-								<input type="hidden" class="form-control" name="banner" />
-								<img alt="" src="" name="bannerImg" style="display:none;"/>
-							</div>
-						</div>
-					</div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="field-4" class="control-label">类型</label>
-								<label><input name="type" class="notMe" type="radio" value="0" checked="checked" />国内品牌 </label>
-								<label><input name="type" class="notMe" type="radio" value="1" />国际品牌</label>
-                            </div>
-                        </div>
-                    </div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">简介</label>
-								<input type="text" class="form-control" name="info" placeholder="简介"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">背景图</label>
-								<input type="file" class="form-control" name="backgroundFile" placeholder="背景图"/>
-								<input type="hidden" class="form-control" name="background" />
-								<img alt="" src="" name="backgroundImg" style="display:none;"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">备注</label>
-								<input type="text" class="form-control" name="remark" placeholder="备注"/>
-							</div>
-						</div>
-					</div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="field-4" class="control-label">排序</label>
-                                <input type="number" class="form-control" name="sort" value="0" placeholder="排序(数值越小越靠前)"/>
-                            </div>
-                        </div>
-                    </div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">添加标签</label>
-								<input type="text" class="form-control" name="tag" placeholder="添加标签,逗号隔开"/>
-							</div>
-						</div>
-					</div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="field-4" class="control-label">详情图</label>
-								<input type="file" class="form-control" name="detailImageFile" placeholder="详情图"/>
-								<input type="button" value="添加" onclick="addMoreImg(this)"/>
-								<input type="hidden" class="form-control" name="imagesJSONStr" value="" />
-                            </div>
-                        </div>
-                    </div>
-					<div class="row">
-						<div class="col-md-12">
-                            <div class="form-group">
-                                <label for="field-4" class="control-label">填写商品ID</label>
-                                <input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>
-                                <input type="button" value="添加" onclick="addMoreText(this)"/>
-                                <input type="hidden" class="form-control" name="goodsIDStr" value="" />
-                            </div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">默认点赞数量</label>
-								<input type="number" class="form-control" name="praiseCount" placeholder="默认点赞数量"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">默认浏览数量</label>
-								<input type="number" class="form-control" name="viewCount" placeholder="默认浏览数量"/>
-							</div>
-						</div>
-					</div>
--->
 					</form>
 				</div>
 				
 				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				 	<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 					<button type="button" class="btn btn-info save">保存</button>
 					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 				</div>
