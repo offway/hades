@@ -53,6 +53,8 @@ public class GoodsController {
     private PhRoleadminService roleadminService;
     @Autowired
     private PhMerchantFareService merchantFareService;
+    @Autowired
+    private PhMerchantFareSpecialService merchantFareSpecialService;
 
     @RequestMapping("/goods.html")
     public String index(ModelMap map) {
@@ -71,6 +73,20 @@ public class GoodsController {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("theId", id);
         return "goods_stock_index";
+    }
+
+    @RequestMapping("/fare_index.html")
+    public String fareIndex(ModelMap map, Long id) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("theId", id);
+        return "fare_index";
+    }
+
+    @RequestMapping("/fare_spec_index.html")
+    public String fareSpecIndex(ModelMap map, Long id) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("theId", id);
+        return "fare_spec_index";
     }
 
     @ResponseBody
@@ -108,23 +124,63 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/fare_list")
-    public List<PhMerchantFare> getFare(Long pid) {
-        return merchantFareService.findByPid(pid);
+    public List<PhMerchantFare> getFareList(Long pid) {
+        return merchantFareService.getByPid(pid);
     }
 
     @ResponseBody
     @RequestMapping("/fare_add")
     public boolean addFare(PhMerchantFare merchantFare) {
         merchantFare.setCreateTime(new Date());
-        PhMerchantFare merchantFareSaved = merchantFareService.save(merchantFare);
-        PhMerchant merchant = merchantService.findOne(merchantFareSaved.getMerchantId());
-        merchant.setFareFirstNum(merchantFareSaved.getFareFirstNum());
-        merchant.setFareFirstPrice(merchantFareSaved.getFareFirstPrice());
-        merchant.setFareNextNum(merchantFareSaved.getFareNextNum());
-        merchant.setFareNextPrice(merchantFareSaved.getFareNextPrice());
-        merchant.setIsFreeFare("0");//是否包邮[0-否,1-是]
-        merchantService.save(merchant);
+        merchantFare.setIsDefault("0");
+        merchantFareService.save(merchantFare);
         return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/fare_spec_add")
+    public boolean addFare(PhMerchantFareSpecial merchantFareSpecial) {
+        merchantFareSpecial.setCreateTime(new Date());
+        merchantFareSpecialService.save(merchantFareSpecial);
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/merchant_fare_list")
+    public Map<String, Object> getMerchantFareList(HttpServletRequest request) {
+        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
+        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
+        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
+        String gid = request.getParameter("theId");
+        String remark = request.getParameter("remark");
+        Sort sort = new Sort("id");
+        Page<PhMerchantFare> pages = merchantFareService.getByPidPage(Long.valueOf(gid), remark, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        int initEcho = sEcho + 1;
+        Map<String, Object> map = new HashMap<>();
+        map.put("sEcho", initEcho);
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        map.put("aData", pages.getContent());//数据集合
+        return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/merchant_fare_spec_list")
+    public Map<String, Object> getMerchantFareSpecList(HttpServletRequest request) {
+        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
+        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
+        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
+        String gid = request.getParameter("theId");
+        String remark = request.getParameter("remark");
+        Sort sort = new Sort("id");
+        Page<PhMerchantFareSpecial> pages = merchantFareSpecialService.getByPidPage(Long.valueOf(gid), remark, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        int initEcho = sEcho + 1;
+        Map<String, Object> map = new HashMap<>();
+        map.put("sEcho", initEcho);
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        map.put("aData", pages.getContent());//数据集合
+        return map;
     }
 
     @ResponseBody
@@ -209,6 +265,47 @@ public class GoodsController {
             goodsStockService.del(id);
             goodsPropertyService.delByStockId(id);
         }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/fare_del")
+    public boolean deleteFare(@RequestParam("ids[]") Long[] ids) {
+        for (Long id : ids) {
+            merchantFareService.del(id);
+            merchantFareSpecialService.delByPid(id);
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/fare_spec_del")
+    public boolean deleteFareSpec(@RequestParam("ids[]") Long[] ids) {
+        for (Long id : ids) {
+            merchantFareSpecialService.del(id);
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/fare_get")
+    public PhMerchantFare getFare(Long id) {
+        return merchantFareService.findOne(id);
+    }
+
+    @ResponseBody
+    @RequestMapping("/fare_spec_get")
+    public PhMerchantFareSpecial getFareSpec(Long id) {
+        return merchantFareSpecialService.findOne(id);
+    }
+
+    @ResponseBody
+    @RequestMapping("/fare_set_default")
+    public boolean setDefaultFare(Long id) {
+        PhMerchantFare merchantFare = merchantFareService.findOne(id);
+        merchantFareService.makeAllToUnDefault(merchantFare.getMerchantId());
+        merchantFare.setIsDefault("1");
+        merchantFareService.save(merchantFare);
         return true;
     }
 
