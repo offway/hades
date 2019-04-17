@@ -240,6 +240,10 @@
 		});
 	}
 
+    function checkSku(id) {
+        window.location.href = '/goods_stock_index.html?id=' + id;
+    }
+
 	var table_global;
 
     function toggleTopIt(id) {
@@ -428,9 +432,9 @@
 					data: "id",
 					orderable: false,
 					title: "操作",
-					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看SKU"/>';
-					}
+                    render: function (data, type, full, meta) {
+                        return '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
+                    }
 				}
                ]
 		});

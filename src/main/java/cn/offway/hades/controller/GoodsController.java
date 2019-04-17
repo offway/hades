@@ -66,6 +66,13 @@ public class GoodsController {
         return "goods_add";
     }
 
+    @RequestMapping("/goods_stock_index.html")
+    public String stockIndex(ModelMap map, Long id) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("theId", id);
+        return "goods_stock_index";
+    }
+
     @ResponseBody
     @RequestMapping("/type_and_category_list")
     public List<Object> getTypeAndCategory() {
