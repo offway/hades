@@ -725,6 +725,7 @@
             brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
         }
         $("#field-9").html(brandStr);
+        renderFare("#field-9");
     }
 
     function bindFareSelector(data) {
