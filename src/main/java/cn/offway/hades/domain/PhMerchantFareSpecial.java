@@ -5,20 +5,29 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * 商户运费模板
+ * 商户运费特殊表
  *
  * @author wn
  * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $
  */
 @Entity
-@Table(name = "ph_merchant_fare")
-public class PhMerchantFare implements Serializable {
+@Table(name = "ph_merchant_fare_special")
+public class PhMerchantFareSpecial implements Serializable {
 
     /** ID **/
     private Long id;
 
-    /** 商户ID **/
-    private Long merchantId;
+    /** 商户运费模板ID **/
+    private Long merchantFareId;
+
+    /** 省份 **/
+    private String province;
+
+    /** 城市 **/
+    private String city;
+
+    /** 区/县 **/
+    private String county;
 
     /** 运费首件数 **/
     private Long fareFirstNum;
@@ -31,9 +40,6 @@ public class PhMerchantFare implements Serializable {
 
     /** 运费续费[单位：元] **/
     private Double fareNextPrice;
-
-    /** 是否默认[0-否,1-是] **/
-    private String isDefault;
 
     /** 创建时间 **/
     private Date createTime;
@@ -53,13 +59,40 @@ public class PhMerchantFare implements Serializable {
         this.id = id;
     }
 
-    @Column(name = "merchant_id", length = 11)
-    public Long getMerchantId() {
-        return merchantId;
+    @Column(name = "merchant_fare_id", length = 11)
+    public Long getMerchantFareId() {
+        return merchantFareId;
     }
 
-    public void setMerchantId(Long merchantId) {
-        this.merchantId = merchantId;
+    public void setMerchantFareId(Long merchantFareId) {
+        this.merchantFareId = merchantFareId;
+    }
+
+    @Column(name = "province", length = 20)
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    @Column(name = "city", length = 20)
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    @Column(name = "county", length = 20)
+    public String getCounty() {
+        return county;
+    }
+
+    public void setCounty(String county) {
+        this.county = county;
     }
 
     @Column(name = "fare_first_num", length = 11)
@@ -96,15 +129,6 @@ public class PhMerchantFare implements Serializable {
 
     public void setFareNextPrice(Double fareNextPrice) {
         this.fareNextPrice = fareNextPrice;
-    }
-
-    @Column(name = "is_default", length = 2)
-    public String getIsDefault() {
-        return isDefault;
-    }
-
-    public void setIsDefault(String isDefault) {
-        this.isDefault = isDefault;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
