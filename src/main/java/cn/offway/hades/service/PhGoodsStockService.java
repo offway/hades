@@ -22,6 +22,8 @@ public interface PhGoodsStockService {
 
     Page<PhGoodsStock> findAll(String name, Pageable pageable);
 
+    Page<PhGoodsStock> findAll(String name, String remark, Pageable pageable);
+
     void del(Long id);
 
     void delByPid(Long id);

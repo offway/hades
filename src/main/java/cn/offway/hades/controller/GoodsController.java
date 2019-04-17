@@ -134,8 +134,9 @@ public class GoodsController {
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         String gid = request.getParameter("theId");
+        String remark = request.getParameter("remark");
         Sort sort = new Sort("id");
-        Page<PhGoodsStock> pages = goodsStockService.findAll(gid, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhGoodsStock> pages = goodsStockService.findAll(gid, remark, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
@@ -185,6 +186,16 @@ public class GoodsController {
             goodsImageService.delByPid(id);
             goodsPropertyService.delByPid(id);
             goodsStockService.delByPid(id);
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/goods_stock_del")
+    public boolean deleteStock(@RequestParam("ids[]") Long[] ids) {
+        for (Long id : ids) {
+            goodsStockService.del(id);
+            goodsPropertyService.delByStockId(id);
         }
         return true;
     }

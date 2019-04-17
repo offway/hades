@@ -26,5 +26,7 @@ public interface PhGoodsPropertyService {
 
     void delByPid(Long id);
 
+    void delByStockId(Long sid);
+
     List<PhGoodsProperty> findByPid(Long pid);
 }

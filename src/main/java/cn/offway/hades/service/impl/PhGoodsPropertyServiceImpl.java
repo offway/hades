@@ -82,6 +82,11 @@ public class PhGoodsPropertyServiceImpl implements PhGoodsPropertyService {
     }
 
     @Override
+    public void delByStockId(Long sid) {
+        phGoodsPropertyRepository.deleteByStockId(sid);
+    }
+
+    @Override
     public PhGoodsProperty findOne(Long id) {
         return phGoodsPropertyRepository.findOne(id);
     }
