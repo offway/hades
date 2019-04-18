@@ -62,6 +62,9 @@ public class PhUserInfo implements Serializable {
     /** 版本号 **/
     private Long version;
 
+    /** 是否赚钱达人[0-否，1-是] **/
+    private String isMm;
+
     /** 备注 **/
     private String remark;
 
@@ -212,6 +215,15 @@ public class PhUserInfo implements Serializable {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    @Column(name = "is_mm", length = 2)
+    public String getIsMm() {
+        return isMm;
+    }
+
+    public void setIsMm(String isMm) {
+        this.isMm = isMm;
     }
 
     @Column(name = "remark", length = 200)
