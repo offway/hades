@@ -93,6 +93,12 @@ public class PhOrderInfo implements Serializable {
 
     /** 快递单号 **/
     private String mailNo;
+    
+    /** 是否隐藏[0-否，1-是] **/
+    private String isHidden;
+    
+    /** 确认收货时间  **/
+    private Date receiptTime;
 
 
     @Id
@@ -333,5 +339,26 @@ public class PhOrderInfo implements Serializable {
     public void setMailNo(String mailNo) {
         this.mailNo = mailNo;
     }
+    
+    @Column(name = "is_hidden", length = 2)
+    public String getIsHidden() {
+        return isHidden;
+    }
+
+    public void setIsHidden(String isHidden) {
+        this.isHidden = isHidden;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "receipt_time")
+	public Date getReceiptTime() {
+		return receiptTime;
+	}
+
+	public void setReceiptTime(Date receiptTime) {
+		this.receiptTime = receiptTime;
+	}
+    
+    
 
 }
