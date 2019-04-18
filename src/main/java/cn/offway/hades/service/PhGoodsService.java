@@ -18,7 +18,7 @@ public interface PhGoodsService {
 
     Page<PhGoods> findAll(Pageable pageable);
 
-    Page<PhGoods> findAll(String name, Pageable pageable);
+    Page<PhGoods> findAll(String name, String code, Pageable pageable);
 
     void del(Long id);
 }
