@@ -455,33 +455,48 @@
             "\t\t\t\t\t</div>";
     }
 
-	function addMoreAttrValue(self) {
-		var uuid = UUID.randomUUID();
-		var content = buildNewAttrValue(uuid);
-		var that = $(self);
-		that.before(content);
-	}
+    function calcHighestSort() {
+        var form = jQuery('#modal-7');
+        var skuSortList = form.find("input[name=skuSort]");
+        var highestSort = 0;
+        for (var i in skuSortList) {
+            if (isNaN(i)) {
+                continue;
+            }
+            var nowSort = parseInt(skuSortList[i].value);
+            highestSort = highestSort >= nowSort ? highestSort : nowSort;
+        }
+        return highestSort;
+    }
 
-	function buildNewAttrValue(uuid, one, two, three) {
-		var context = ATTR_ELEMENT_BODY;
-		context = context.replace(/UUID/g, uuid);
-		if (one != undefined) {
-			context = context.replace("ONE", one);
-		} else {
-			context = context.replace("ONE", "");
-		}
-		if (one != undefined) {
-			context = context.replace("TWO", two);
-		} else {
-			context = context.replace("TWO", "");
-		}
-		if (one != undefined) {
-			context = context.replace("THREE", three);
-		} else {
-			context = context.replace("THREE", "0");
-		}
-		return context;
-	}
+    function addMoreAttrValue(self) {
+        var uuid = UUID.randomUUID();
+        var newSort = calcHighestSort() + 1;
+        var content = buildNewAttrValue(uuid, null, null, newSort);
+        var that = $(self);
+        that.before(content);
+    }
+
+    function buildNewAttrValue(uuid, one, two, three) {
+        var context = ATTR_ELEMENT_BODY;
+        context = context.replace(/UUID/g, uuid);
+        if (one != undefined) {
+            context = context.replace("ONE", one);
+        } else {
+            context = context.replace("ONE", "");
+        }
+        if (two != undefined) {
+            context = context.replace("TWO", two);
+        } else {
+            context = context.replace("TWO", "");
+        }
+        if (three != undefined) {
+            context = context.replace("THREE", three);
+        } else {
+            context = context.replace("THREE", "0");
+        }
+        return context;
+    }
 
 	var ATTR_ELEMENT_HEADER = "\t\t<div class=\"modal-dialog\">\n" +
 			"\t\t\t<div class=\"modal-content\">\n" +
