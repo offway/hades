@@ -387,6 +387,7 @@ public class GoodsController {
             byte[] jsonStr = Base64.decode(obj.getString("detail"), Base64.DEFAULT);
             JSONArray jsonArray = JSON.parseArray(new String(jsonStr, StandardCharsets.UTF_8));
             if (jsonArray != null) {
+                long index = 0L;
                 for (Object oo : jsonArray) {
                     JSONObject jsonObject = (JSONObject) oo;
                     PhGoodsProperty goodsProperty = new PhGoodsProperty();
@@ -394,10 +395,12 @@ public class GoodsController {
                     goodsProperty.setGoodsStockId(goodsStockSaved.getId());
                     goodsProperty.setName(jsonObject.getString("name"));
                     goodsProperty.setValue(jsonObject.getJSONObject("value").getString("value"));
-                    goodsProperty.setSort(jsonObject.getJSONObject("value").getLong("sort"));
+                    goodsProperty.setSort(index);
+//                    goodsProperty.setSort(jsonObject.getJSONObject("value").getLong("sort"));
                     goodsProperty.setRemark(jsonObject.getJSONObject("value").getString("remark"));
                     goodsProperty.setCreateTime(new Date());
                     goodsPropertyService.save(goodsProperty);
+                    index++;
                 }
             } else {
                 logger.error("stocks json 非法");
