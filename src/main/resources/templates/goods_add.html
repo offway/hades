@@ -256,9 +256,9 @@
                             </div>
                         </div>
                     </div>
-                    <div id="skuProperty">
-                        <input id="addMoreAttrButton" style="display: none" type="button" value="添加商品属性(如颜色、尺码等)" onclick="addMoreAttr(this)" />
-                    </div>
+					<div id="skuProperty">
+						<input id="addMoreAttrButton" style="display: none" type="button" value="添加商品属性(如颜色、尺码等)" onclick="addMoreAttr(this,false)"/>
+					</div>
                     <div id="skuContainer">
                     </div>
 					</form>
@@ -369,31 +369,31 @@
 	}
 
     function initCommonSku() {
-        //添加颜色
-        addMoreAttr("#addMoreAttrButton");
-        //添加尺码
-        addMoreAttr("#addMoreAttrButton");
-        var attrNameList = $("#skuProperty").find("[name='attrName']");
-        var attrValueList = $("#skuProperty").find("[name='attrValue']");
-        var attrContainerList = $("#skuProperty").find("[name='attrContainer']");
+		//添加颜色
+		addMoreAttr("#addMoreAttrButton", true);
+		//添加尺码
+		addMoreAttr("#addMoreAttrButton", true);
+		var attrNameList = $("#skuProperty").find("[name='attrName']");
+		var attrValueList = $("#skuProperty").find("[name='attrValue']");
+		var attrContainerList = $("#skuProperty").find("[name='attrContainer']");
         var commonSku = {
             "颜色": [
-                {"value": "赤", "remark": "", "sort": 1},
-                {"value": "橙", "remark": "", "sort": 2},
-                {"value": "黄", "remark": "", "sort": 3},
-                {"value": "绿", "remark": "", "sort": 4},
-                {"value": "青", "remark": "", "sort": 5},
-                {"value": "蓝", "remark": "", "sort": 6},
-                {"value": "紫", "remark": "", "sort": 7}
+                // {"value": "赤", "remark": "", "sort": 1},
+                // {"value": "橙", "remark": "", "sort": 2},
+                // {"value": "黄", "remark": "", "sort": 3},
+                // {"value": "绿", "remark": "", "sort": 4},
+                // {"value": "青", "remark": "", "sort": 5},
+                // {"value": "蓝", "remark": "", "sort": 6},
+                // {"value": "紫", "remark": "", "sort": 7}
             ],
             "尺码": [
-                {"value": "大", "remark": "L", "sort": 1},
-                {"value": "小", "remark": "S", "sort": 2},
-                {"value": "中", "remark": "M", "sort": 3},
-                {"value": "特大", "remark": "XL", "sort": 4},
-                {"value": "特小", "remark": "XS", "sort": 5},
-                {"value": "特特大", "remark": "XXL", "sort": 6},
-                {"value": "特特小", "remark": "XXS", "sort": 7}
+                // {"value": "大", "remark": "L", "sort": 1},
+                // {"value": "小", "remark": "S", "sort": 2},
+                // {"value": "中", "remark": "M", "sort": 3},
+                // {"value": "特大", "remark": "XL", "sort": 4},
+                // {"value": "特小", "remark": "XS", "sort": 5},
+                // {"value": "特特大", "remark": "XXL", "sort": 6},
+                // {"value": "特特小", "remark": "XXS", "sort": 7}
             ]
         };
         var i = 0;
@@ -412,7 +412,7 @@
     function switchToCommon() {
         initCommonSku();
         $("#addMoreAttrButton").hide();
-        generateSKUList();
+        // generateSKUList();
     }
 
     function switchToCustom() {
@@ -430,36 +430,45 @@
         }
     }
 
-    function addMoreAttr(self) {
-        var uuid = UUID.randomUUID();
-        var content = buildNewAttr(uuid);
-        var that = $(self);
-        that.before(content);
-    }
+	function addMoreAttr(self, readonly) {
+		var uuid = UUID.randomUUID();
+		var content = buildNewAttr(uuid, readonly);
+		var that = $(self);
+		that.before(content);
+	}
 
-    function buildNewAttr(uuid) {
-        return "\t\t\t\t\t<div class=\"row NAME\">\n".replace("NAME", uuid) +
-            "\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
-            "\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-            "\t\t\t\t\t\t\t\t<label class=\"control-label\">规格名称(如颜色、尺寸)</label>\n" +
-            "\t\t\t\t\t\t\t\t<input type='text' class=\"form-control\" name=\"attrName\" placeholder=\"规格名称(如颜色、尺寸)\" />\n" +
-            "\t\t\t\t\t\t\t</div>\n" +
-            "\t\t\t\t\t\t</div>\n" +
-            "\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
-            "\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-            "\t\t\t\t\t\t\t\t<label class=\"control-label\">详细规格(如红、黄、大、小)</label>\n" +
-            "\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrValue\" placeholder=\"详细规格(如红、黄、大、小)\" onclick=\"showAttrWindow('NAME')\" />\n".replace("NAME", uuid) +
-            "\t\t\t\t\t\t\t\t<input type='hidden' class=\"form-control NAME\" name=\"attrContainer\" value=\"\" />\n".replace("NAME", uuid) +
-            "\t\t\t\t\t\t\t</div>\n" +
-            "\t\t\t\t\t\t</div>\n" +
-            "\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-            "\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-            "\t\t\t\t\t\t\t\t<label class=\"control-label\">操作</label>\n" +
-            "\t\t\t\t\t\t\t\t<input type='button' class=\"form-control NAME\" name=\"NAME\" value=\"删除\" onclick=\"delNode(this,true)\" />\n".replace(/NAME/g, uuid) +
-            "\t\t\t\t\t\t\t</div>\n" +
-            "\t\t\t\t\t\t</div>\n" +
-            "\t\t\t\t\t</div>";
-    }
+	function buildNewAttr(uuid, readonly) {
+		var contentStr = "\t\t\t\t\t<div class=\"row NAME\">\n".replace("NAME", uuid) +
+				"\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
+				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+				"\t\t\t\t\t\t\t\t<label class=\"control-label\">规格名称(如颜色、尺寸)</label>\n";
+		if (readonly) {
+			contentStr += "\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrName\" placeholder=\"规格名称(如颜色、尺寸)\" />\n";
+		} else {
+			contentStr += "\t\t\t\t\t\t\t\t<input type='text' class=\"form-control\" name=\"attrName\" placeholder=\"规格名称(如颜色、尺寸)\" />\n";
+		}
+		contentStr += "\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
+				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+				"\t\t\t\t\t\t\t\t<label class=\"control-label\">详细规格(如红、黄、大、小)</label>\n" +
+				"\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrValue\" placeholder=\"详细规格(如红、黄、大、小)\" onclick=\"showAttrWindow('NAME')\" />\n".replace("NAME", uuid) +
+				"\t\t\t\t\t\t\t\t<input type='hidden' class=\"form-control NAME\" name=\"attrContainer\" value=\"\" />\n".replace("NAME", uuid) +
+				"\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+				"\t\t\t\t\t\t\t\t<label class=\"control-label\">操作</label>\n";
+		if (readonly) {
+			contentStr += "\t\t\t\t\t\t\t\t<input type='button' class=\"form-control NAME\" name=\"NAME\" value=\"删除\" disabled='disabled' onclick=\"delNode(this,true)\" />\n".replace(/NAME/g, uuid);
+		} else {
+			contentStr += "\t\t\t\t\t\t\t\t<input type='button' class=\"form-control NAME\" name=\"NAME\" value=\"删除\" onclick=\"delNode(this,true)\" />\n".replace(/NAME/g, uuid);
+		}
+		contentStr += "\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t</div>";
+		return contentStr;
+	}
 
     function calcHighestSort() {
         var form = jQuery('#modal-7');
@@ -536,7 +545,7 @@
 			"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
 			"\t\t\t\t\t\t\t\t<label for=\"field-6\" class=\"control-label\">排序</label>\n" +
-			"\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"skuSort\" value='THREE'  placeholder=\"排序\" />\n" +
+			"\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"skuSort\" readonly='readonly' value='THREE'  placeholder=\"排序\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
