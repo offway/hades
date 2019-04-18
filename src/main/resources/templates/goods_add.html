@@ -417,11 +417,13 @@
         generateSKUList();
     }
 
-    function delNode(self) {
+    function delNode(self, refresh) {
         var that = $(self);
         var name = that.attr("name");
         $(".NAME".replace("NAME", name)).remove();
-        // generateSKUList();
+        if (refresh) {
+            generateSKUList();
+        }
     }
 
     function addMoreAttr(self) {
@@ -449,7 +451,7 @@
             "\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
             "\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
             "\t\t\t\t\t\t\t\t<label class=\"control-label\">操作</label>\n" +
-            "\t\t\t\t\t\t\t\t<input type='button' class=\"form-control NAME\" name=\"NAME\" value=\"删除\" onclick=\"delNode(this)\" />\n".replace(/NAME/g, uuid) +
+            "\t\t\t\t\t\t\t\t<input type='button' class=\"form-control NAME\" name=\"NAME\" value=\"删除\" onclick=\"delNode(this,true)\" />\n".replace(/NAME/g, uuid) +
             "\t\t\t\t\t\t\t</div>\n" +
             "\t\t\t\t\t\t</div>\n" +
             "\t\t\t\t\t</div>";
@@ -536,7 +538,7 @@
 			"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
 			"\t\t\t\t\t\t\t\t<label for=\"field-6\" class=\"control-label\">操作</label>\n" +
-			"\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control UUID\" name=\"UUID\" value='删除' onclick=\"delNode(this)\" />\n" +
+            "\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control UUID\" name=\"UUID\" value='删除' onclick=\"delNode(this,false)\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t</div>\n";
@@ -630,7 +632,29 @@
         for (var i in SkuStockList) {
             contentStr += buildSKUItem(SkuStockList[i], SkuStockDetailList[i]);
         }
+        if (contentStr != '') {
+            contentStr += "<input type=\"button\" name='batch' value=\"批量设置库存数量\" onclick=\"batchSetStockNum()\">";
+            contentStr += "<input type=\"button\" name='batch' value=\"批量设置库存价格\" onclick=\"batchSetStockPrice()\">";
+        }
         target.html(contentStr);
+    }
+
+    function batchSetStockNum() {
+        var num = prompt("输入库存数量", "0");
+        if (!isNaN(num)) {
+            $("#skuContainer").find("[name='skuStock']").val(num);
+        } else {
+            alert("请输入数字!");
+        }
+    }
+
+    function batchSetStockPrice() {
+        var num = prompt("输入库存价格", "0");
+        if (!isNaN(num)) {
+            $("#skuContainer").find("[name='skuPrice']").val(num);
+        } else {
+            alert("请输入数字!");
+        }
     }
 
     var SkuStockList = [];
