@@ -247,7 +247,18 @@
 							</div>
 						</div>
 					</div>
-                    <input type="button" value="添加商品属性(如颜色、尺码等)" onclick="addMoreAttr(this)" />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">商品属性模板</label>
+                                <label><input type="radio" class="" name="choice" value="0" checked="checked" onclick="switchToCommon()" />通用模板</label>
+                                <label><input type="radio" class="" name="choice" value="1" onclick="switchToCustom()"/>自定义模板</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="skuProperty">
+                        <input id="addMoreAttrButton" style="display: none" type="button" value="添加商品属性(如颜色、尺码等)" onclick="addMoreAttr(this)" />
+                    </div>
                     <div id="skuContainer">
                     </div>
 					</form>
@@ -353,6 +364,59 @@
 		}
 	}
 
+    function initCommonSku() {
+        //添加颜色
+        addMoreAttr("#addMoreAttrButton");
+        //添加尺码
+        addMoreAttr("#addMoreAttrButton");
+        var attrNameList = $("#skuProperty").find("[name='attrName']");
+        var attrValueList = $("#skuProperty").find("[name='attrValue']");
+        var attrContainerList = $("#skuProperty").find("[name='attrContainer']");
+        var commonSku = {
+            "颜色": [
+                {"value": "赤", "remark": "", "sort": 1},
+                {"value": "橙", "remark": "", "sort": 2},
+                {"value": "黄", "remark": "", "sort": 3},
+                {"value": "绿", "remark": "", "sort": 4},
+                {"value": "青", "remark": "", "sort": 5},
+                {"value": "蓝", "remark": "", "sort": 6},
+                {"value": "紫", "remark": "", "sort": 7}
+            ],
+            "尺码": [
+                {"value": "大", "remark": "L", "sort": 1},
+                {"value": "小", "remark": "S", "sort": 2},
+                {"value": "中", "remark": "M", "sort": 3},
+                {"value": "特大", "remark": "XL", "sort": 4},
+                {"value": "特小", "remark": "XS", "sort": 5},
+                {"value": "特特大", "remark": "XXL", "sort": 6},
+                {"value": "特特小", "remark": "XXS", "sort": 7}
+            ]
+        };
+        var i = 0;
+        for (var name in commonSku) {
+            $(attrNameList[i]).val(name);
+            var vList = [];
+            for (var value in commonSku[name]) {
+                vList.push(commonSku[name][value]["value"]);
+            }
+            $(attrValueList[i]).val(vList.join(","));
+            $(attrContainerList[i]).val(JSON.stringify(commonSku[name]));
+            i++;
+        }
+    }
+
+    function switchToCommon() {
+        initCommonSku();
+        $("#addMoreAttrButton").hide();
+        generateSKUList();
+    }
+
+    function switchToCustom() {
+        $("#skuProperty").find(".row").remove();
+        $("#addMoreAttrButton").show();
+        generateSKUList();
+    }
+
     function delNode(self) {
         var that = $(self);
         var name = that.attr("name");
@@ -360,32 +424,36 @@
         // generateSKUList();
     }
 
-	function addMoreAttr(self) {
-		var uuid = UUID.randomUUID();
-		var content = "\t\t\t\t\t<div class=\"row NAME\">\n".replace("NAME", uuid) +
-				"\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
-				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-				"\t\t\t\t\t\t\t\t<label class=\"control-label\">规格名称(如颜色、尺寸)</label>\n" +
-				"\t\t\t\t\t\t\t\t<input type='text' class=\"form-control\" name=\"attrName\" placeholder=\"规格名称(如颜色、尺寸)\" />\n" +
-				"\t\t\t\t\t\t\t</div>\n" +
-				"\t\t\t\t\t\t</div>\n" +
-				"\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
-				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-				"\t\t\t\t\t\t\t\t<label class=\"control-label\">详细规格(如红、黄、大、小)</label>\n" +
-				"\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrValue\" placeholder=\"详细规格(如红、黄、大、小)\" onclick=\"showAttrWindow('NAME')\" />\n".replace("NAME", uuid) +
-				"\t\t\t\t\t\t\t\t<input type='hidden' class=\"form-control NAME\" name=\"attrContainer\" value=\"\" />\n".replace("NAME", uuid) +
-				"\t\t\t\t\t\t\t</div>\n" +
-				"\t\t\t\t\t\t</div>\n" +
-				"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-				"\t\t\t\t\t\t\t\t<label class=\"control-label\">操作</label>\n" +
-				"\t\t\t\t\t\t\t\t<input type='button' class=\"form-control NAME\" name=\"NAME\" value=\"删除\" onclick=\"delNode(this)\" />\n".replace(/NAME/g, uuid) +
-				"\t\t\t\t\t\t\t</div>\n" +
-				"\t\t\t\t\t\t</div>\n" +
-				"\t\t\t\t\t</div>";
-		var that = $(self);
-		that.before(content);
-	}
+    function addMoreAttr(self) {
+        var uuid = UUID.randomUUID();
+        var content = buildNewAttr(uuid);
+        var that = $(self);
+        that.before(content);
+    }
+
+    function buildNewAttr(uuid) {
+        return "\t\t\t\t\t<div class=\"row NAME\">\n".replace("NAME", uuid) +
+            "\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
+            "\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t\t<label class=\"control-label\">规格名称(如颜色、尺寸)</label>\n" +
+            "\t\t\t\t\t\t\t\t<input type='text' class=\"form-control\" name=\"attrName\" placeholder=\"规格名称(如颜色、尺寸)\" />\n" +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
+            "\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t\t<label class=\"control-label\">详细规格(如红、黄、大、小)</label>\n" +
+            "\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrValue\" placeholder=\"详细规格(如红、黄、大、小)\" onclick=\"showAttrWindow('NAME')\" />\n".replace("NAME", uuid) +
+            "\t\t\t\t\t\t\t\t<input type='hidden' class=\"form-control NAME\" name=\"attrContainer\" value=\"\" />\n".replace("NAME", uuid) +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+            "\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t\t<label class=\"control-label\">操作</label>\n" +
+            "\t\t\t\t\t\t\t\t<input type='button' class=\"form-control NAME\" name=\"NAME\" value=\"删除\" onclick=\"delNode(this)\" />\n".replace(/NAME/g, uuid) +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t</div>";
+    }
 
 	function addMoreAttrValue(self) {
 		var uuid = UUID.randomUUID();
@@ -786,6 +854,8 @@
         $.getJSON("/merchant_list_all", {}, function (data) {
             bindMerchantSelector(data);
         });
+
+        switchToCommon();
 
 		function getImgSize(file, cb) {
 			var f = file;//input.files[0];
