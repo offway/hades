@@ -1015,7 +1015,7 @@
                 var d = skuStock[j].value;
                 var e = skuPrice[j].value;
                 var f = skuRemark[j].value;
-                var g = skuImage[j].files[0].name;
+                var g = skuImage[j].value;
                 var h = skuDetail[j].value;
                 if (c == '' || d == '' || e == '' || f == '' || g == '') {
                     toastr.error("请填写完整数据后提交", "温馨提示");
@@ -1136,11 +1136,11 @@
 									callback("ERROR");
 								}
 							});
+							$(".btn.btn-info.save").attr("disabled", "disabled");
 						}
 					}, function (err, results) {
-						console.log("OK");
 						if (err) {
-							//
+							$(".btn.btn-info.save").attr("disabled", "");
 						} else {
 							window.location.href = '/goods.html';
 						}

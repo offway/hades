@@ -65,6 +65,8 @@
                 <!--<button class="btn btn-info add" >添加</button>-->
                 <!--<button class="btn btn-info edit">修改</button>-->
 				<button class="btn btn-info del">删除</button>
+				<button class="btn btn-info editStock">修改库存</button>
+				<button class="btn btn-info editPrice">修改价格</button>
 			</div>
 			
 					
@@ -608,45 +610,51 @@
             })
         });
 
-        $(".btn.btn-info.up").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
+		$(".btn.btn-info.editStock").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
 
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
+			var stock = prompt("请输入库存数量", "0");
+			if (isNaN(stock)) {
+				stock = 0;
+			}
+			$.post("/goods_stock_update_stock", {"ids": ids, "stock": stock}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			})
+		});
 
-            $.post("/banner_up",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
+		$(".btn.btn-info.editPrice").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
 
-        $(".btn.btn-info.down").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
-
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
-
-            $.post("/banner_down",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
+			var price = prompt("请输入价格", "0");
+			if (isNaN(price)) {
+				price = 0;
+			}
+			$.post("/goods_stock_update_price", {"ids": ids, "price": price}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			})
+		});
 	});
 	/*]]>*/
 	</script>
