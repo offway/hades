@@ -88,12 +88,6 @@ public class PhOrderInfo implements Serializable {
     /** 支付渠道[wxpay,alipay] **/
     private String payChannel;
     
-    /** 快递公司编码 **/
-    private String expressCode;
-
-    /** 快递单号 **/
-    private String mailNo;
-    
     /** 是否隐藏[0-否，1-是] **/
     private String isHidden;
     
@@ -320,24 +314,6 @@ public class PhOrderInfo implements Serializable {
 
     public void setPayChannel(String payChannel) {
         this.payChannel = payChannel;
-    }
-    
-    @Column(name = "express_code", length = 50)
-    public String getExpressCode() {
-        return expressCode;
-    }
-
-    public void setExpressCode(String expressCode) {
-        this.expressCode = expressCode;
-    }
-
-    @Column(name = "mail_no", length = 50)
-    public String getMailNo() {
-        return mailNo;
-    }
-
-    public void setMailNo(String mailNo) {
-        this.mailNo = mailNo;
     }
     
     @Column(name = "is_hidden", length = 2)
