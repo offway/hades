@@ -44,7 +44,7 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
             @Override
             public Predicate toPredicate(Root<PhOrderInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
-                if (!"".equals(mid)) {
+                if (mid != 0L) {
                     params.add(criteriaBuilder.equal(root.get("merchantId"), mid));
                 }
                 if (!"".equals(orderNo)) {

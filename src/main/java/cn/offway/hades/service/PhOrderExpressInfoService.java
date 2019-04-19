@@ -8,9 +8,11 @@ import cn.offway.hades.domain.PhOrderExpressInfo;
  * @author wn
  * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $
  */
-public interface PhOrderExpressInfoService{
+public interface PhOrderExpressInfoService {
 
-	PhOrderExpressInfo save(PhOrderExpressInfo phOrderExpressInfo);
-	
-	PhOrderExpressInfo findOne(Long id);
+    PhOrderExpressInfo save(PhOrderExpressInfo phOrderExpressInfo);
+
+    PhOrderExpressInfo findOne(Long id);
+
+    PhOrderExpressInfo findByPid(String orderNo, String type);
 }

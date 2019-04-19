@@ -32,12 +32,6 @@ public class PhOrderGoods implements Serializable {
     /** 商品图片 **/
     private String goodsImage;
 
-    /** 尺码 **/
-    private String size;
-
-    /** 颜色 **/
-    private String color;
-
     /** 品牌ID **/
     private Long brandId;
 
@@ -123,24 +117,6 @@ public class PhOrderGoods implements Serializable {
 
     public void setGoodsImage(String goodsImage) {
         this.goodsImage = goodsImage;
-    }
-
-    @Column(name = "size", length = 10)
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
-
-    @Column(name = "color", length = 10)
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
     }
 
     @Column(name = "brand_id", length = 11)

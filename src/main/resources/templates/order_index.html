@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title>订单管理</title>
+	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
+	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<style type="text/css">
+	.form-group img{
+		max-width:400px;
+		max-height:300px;
+	}
+	</style>
+</head>
+<body class="page-body">
+
+	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+			
+		<div th:replace="sidebar-menu"></div>
+		<div class="main-content">
+			<!-- User Info, Notifications and activity Bar -->
+			<nav th:replace="navbar"></nav>
+			<div class="page-title">
+				
+				<div class="title-env">
+					<h1 class="title">订单管理</h1>
+					<p class="activityDescription"></p>
+				</div>
+
+				<div class="breadcrumb-env">
+
+					<ol class="breadcrumb bc-1">
+						<li><a href="/"><i class="fa-home"></i>Home</a></li>
+						<li><a>系统管理</a></li>
+						<li class="active"><strong>订单管理</strong></li>
+					</ol>
+
+				</div>
+
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<form role="form" class="form-inline">
+						<div class="form-group ">
+							<div class="input-group">
+								<label for="merchantId" class="control-label">商户</label>
+								<select id="merchantId" name="merchantId" class="form-control" style="height:35px">
+									<option value="0" selected="selected">全部</option>
+								</select>
+							</div>
+							<div class="input-group">
+								<label for="orderNo" class="control-label">订单号</label>
+								<input id="orderNo" type="text" name="orderNo" class="form-control" style="height:35px" placeholder="订单号"/>
+							</div>
+							<div class="input-group">
+								<label for="sTime" class="control-label">开始时间</label>
+								<input id="sTime" type="text" name="sTime" class="form-control" style="height:35px" placeholder="开始时间"/>
+							</div>
+							<div class="input-group">
+								<label for="payMethod" class="control-label">结束时间</label>
+								<input id="eTime" type="text" name="eTime" class="form-control" style="height:35px" placeholder="结束时间"/>
+							</div>
+							<div class="input-group">
+								<label for="userId" class="control-label">用户</label>
+								<input id="userId" type="text" name="userId" class="form-control" style="height:35px" placeholder="用户"/>
+							</div>
+							<div class="input-group">
+								<label for="payMethod" class="control-label">支付渠道</label>
+								<select id="payMethod" name="payMethod" class="form-control" style="height:35px">
+									<option value="" selected="selected">全部</option>
+									<option value="wxpay">微信</option>
+									<option value="alipay">支付宝</option>
+								</select>
+							</div>
+							<div class="input-group">
+								<label for="status" class="control-label">状态</label>
+								<select id="status" name="status" class="form-control" style="height:35px">
+									<option value="" selected="selected">全部</option>
+									<option value="0">已下单</option>
+									<option value="1">已付款</option>
+									<option value="2">已发货</option>
+									<option value="3">已收货</option>
+									<option value="4">取消</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+						</div>
+					</form>
+				</div>
+				<div class="panel-body">
+					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					</table>
+					
+				</div>
+				<!--<button class="btn btn-info add" >添加</button>-->
+				<!--<button class="btn btn-info edit">修改</button>-->
+				<!--<button class="btn btn-info del">删除</button>-->
+			</div>
+			
+					
+			<footer th:replace="footer"></footer>
+		</div>
+	</div>
+	
+	<div th:replace="body-under"></div>
+	
+	<div class="modal fade in" id="modal-6">
+		<div class="modal-dialog">
+			<div class="modal-content" style="width: 800px;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">添加商品</h4>
+				</div>
+				
+				<div class="modal-body">
+					<form role="form" id="saveForm">
+					</form>
+				</div>
+				
+				<div class="modal-footer">
+				 	<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info save">保存</button>
+					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">查看详情</h4>
+				</div>
+
+				<div class="modal-body" id="preview_body"></div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<script src="assets/js/moment.min.js"></script>
+	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
+	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
+	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+	<script src="assets/js/select2/select2.min.js"></script>
+	<script src="assets/js/async.min.js"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+
+    function addMoreImg(self) {
+        var that = $(self);
+        that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
+    }
+
+    function addMoreText(self) {
+        var that = $(self);
+        that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
+    }
+
+    function closeIt(self) {
+        var that = $(self);
+        that.hide();
+    }
+
+    function formatTime(time) {
+        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+    }
+
+    function buildImg(url) {
+        return "<img width='100px' height='100px' src='#' />".replace("#", url);
+    }
+
+	function checkImg(list) {
+		var returnList = {};
+		for (var i in list) {
+			i = list[i];
+			var v = i[0];
+			var name = i[1];
+			var form = $("#saveForm");
+			var footer = $(this).parent(".modal-footer");
+			var imageFile = '';
+			//上传文件获得文件地址
+			if (v != '') {
+				imageFile = form.find("input[name='" + name + "File']")[0].files[0];
+				if (imageFile != '' && imageFile.size / 1024 > 1024) {
+					toastr.error("封面图片大小超过1M,请压缩处理后上传", "温馨提示");
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					return false;
+				} else {
+					returnList[name] = imageFile;
+				}
+			}
+		}
+		return returnList;
+	}
+
+	function appendToPreview(key, value) {
+		return '<div class="row">' +
+				'<div class="col-md-2">' +
+				key +
+				'</div>' +
+				'<div class="col-md-10">' +
+				value +
+				'</div>' +
+				'</div>';
+	}
+
+	function checkIt(id) {
+		$.post("/goods_find", {"id": id}, function (data) {
+			if (data) {
+				var preview = $("#preview_body");
+				var contentStr = "";
+				var mainObj = data["main"];
+				contentStr += appendToPreview("编号:", mainObj["id"]);
+				contentStr += appendToPreview("名称:", mainObj["name"]);
+				contentStr += appendToPreview("一级分类:", mainObj["type"]);
+				contentStr += appendToPreview("二级分类:", mainObj["category"]);
+				contentStr += appendToPreview("商品编码:", mainObj["code"]);
+				contentStr += appendToPreview("材质:", mainObj["material"]);
+				contentStr += appendToPreview("价格:", mainObj["price"]);
+				contentStr += appendToPreview("价格区间:", mainObj["priceRange"]);
+				contentStr += appendToPreview("销售数量:", mainObj["saleCount"]);
+				contentStr += appendToPreview("查看数量:", mainObj["viewCount"]);
+				contentStr += appendToPreview("品牌id:", mainObj["brandId"]);
+				contentStr += appendToPreview("品牌名:", mainObj["brandName"]);
+				contentStr += appendToPreview("品牌logo:", buildImg(mainObj["brandLogo"]));
+				contentStr += appendToPreview("商家id:", mainObj["merchantId"]);
+				contentStr += appendToPreview("商家名:", mainObj["merchantName"]);
+				contentStr += appendToPreview("商家logo:", buildImg(mainObj["merchantLogo"]));
+				contentStr += appendToPreview("图片:", buildImg(mainObj["image"]));
+				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
+				contentStr += appendToPreview("备注:", mainObj["remark"]);
+				contentStr += "<hr/>";
+				for (var a in data["propertyList"]) {
+					a = data["propertyList"][a];
+					contentStr += appendToPreview("商品规格名称:", a["name"]);
+					contentStr += appendToPreview("商品属性值:", a["value"]);
+					contentStr += appendToPreview("备注:", a["remark"]);
+					contentStr += appendToPreview("排序:", a["sort"]);
+				}
+				contentStr += "<hr/>";
+				for (var b in data["imageList"]) {
+					b = data["imageList"][b];
+					contentStr += appendToPreview("商品图片:", buildImg(b["imageUrl"]));
+					contentStr += appendToPreview("图片类型:", b["type"]);
+					contentStr += appendToPreview("备注:", b["remark"]);
+					contentStr += appendToPreview("排序:", b["sort"]);
+				}
+				contentStr += "<hr/>";
+				for (var c in data["stockList"]) {
+					c = data["stockList"][c];
+					contentStr += appendToPreview("图片:", buildImg(c["image"]));
+					contentStr += appendToPreview("价格:", c["price"]);
+					contentStr += appendToPreview("sku:", c["sku"]);
+					contentStr += appendToPreview("stock:", c["stock"]);
+					contentStr += appendToPreview("备注:", c["remark"]);
+				}
+				preview.html(contentStr);
+				jQuery('#preview').modal('show', {backdrop: 'fade'});
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	function goToDetail(id) {
+		window.location.href = '/order_detail.html?id=' + id;
+	}
+
+	function checkSku(id) {
+		window.location.href = '/goods_stock_index.html?id=' + id;
+	}
+
+	var table_global;
+
+    function toggleTopIt(id) {
+        $.post("/brand_toggleTop", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+    function topIt(id) {
+        $.post("/brand_top", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+    function unTopIt(id) {
+        $.post("/brand_untop", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+	function bindMerchantSelector(data) {
+		var brandStr = "";
+		for (var brand in data) {
+			brand = data[brand];
+			brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+		}
+		$("#merchantId").html(brandStr);
+	}
+
+    jQuery(document).ready(function($)
+	{
+		$.getJSON("/merchant_list_all", {}, function (data) {
+			bindMerchantSelector(data);
+		});
+
+		var oTable = $("#example-1").dataTable({
+			language: {
+                url: "../assets/Chinese.txt"
+            },
+			aLengthactivity: [
+				[10, 25, 50, 100], [10, 25, 50, 100]
+			],
+			bFilter : false,
+			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
+            sAjaxSource : "/order_list",//通过ajax实现分页的url路径。
+            fnServerParams : function(aData){
+                var searchArray = $(".form-inline").serializeArray();
+                $.merge(aData, searchArray);
+            },
+            order: [[ 6, "desc" ]],
+            columnDefs: [
+				{	
+					targets: 0,
+				    data: "id",
+				    width:"5%",
+				    orderable: false,
+				    className: 'select-checkbox',
+				    title: '<input type="checkbox" id="checkbox-all"/>',
+				    render: function ( data, type, full, meta ) {
+				    	return '<input type="checkbox" name="activityId" value="'+data+'" />';  
+				    }
+				},
+                {
+                    targets: 1,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+               		targets: 2,
+	                data: "orderNo",
+	                title: "订单号"
+            	},
+				{
+					targets: 3,
+					data: "userId",
+					title: "用户ID"
+				},
+				{
+					targets: 4,
+					data: "price",
+					title: "订单总价"
+				},
+				{
+					targets: 5,
+					data: "amount",
+					title: "实付金额"
+				},
+				{
+					targets: 6,
+					data: "status",
+					title: "状态",
+					render: function (data, type, row, meta) {
+						//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
+						var map = ["已下单", "已付款", "已发货", "已收货", "取消"];
+						return map[parseInt(data)];
+					}
+				},
+				{
+					targets: 7,
+					data: "payChannel",
+					title: "支付渠道",
+					render: function (data, type, row, meta) {
+						//支付渠道[wxpay,alipay]
+						var map = {"wxpay": "微信支付", "alipay": "支付宝"};
+						return map.hasOwnProperty(data) ? map[data] : "未知";
+					}
+				},
+				{
+					targets: 8,
+					data: "createTime",
+					title: "创建时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 9,
+					data: "remark",
+					title: "备注"
+				},
+				{
+					targets: 10,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						return '<input type="button" name="checkIt" onclick="goToDetail(' + data + ')" value="查看详情"/>';
+					}
+				},
+				{
+					targets: 11,
+					data: "id",
+					orderable: false,
+					title: "操作",
+                    render: function (data, type, full, meta) {
+                        return '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="更多操作"/>';
+                    }
+				}
+               ]
+		});
+
+		table_global = oTable;
+		
+		$(".searchBtn").click(function(){
+			$("#checkbox-all").attr("checked", false);
+			oTable.fnDraw(); //or fnReloadAjax()  
+			return false;
+		});
+
+        $(".btn.btn-info.add").click(function(){
+            // var form = $("#saveForm");
+            // form.find("input:not(.notMe)").val("");
+            // form.find("img").attr("src","");
+            // form.find("img").hide();
+            // form.find("input[type='file']").show();
+            // $(".imageShow").remove();
+            // jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+			window.location.href = '/goods_add.html';
+        });
+
+		function getImgSize(file, cb) {
+			var f = file;//input.files[0];
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				var data = e.target.result;
+				//加载图片获取图片真实宽度和高度
+				var image = new Image();
+				image.onload = function () {
+					var width = image.width;
+					var height = image.height;
+					cb(width, height);
+				};
+				image.src = data;
+			};
+			reader.readAsDataURL(f);
+		}
+
+		function upload(param, token, file, next, error, complete) {
+			if (file == '') {
+				complete('');
+			} else {
+				getImgSize(file, function (w, h) {
+					var filename = file.name;
+					var postf = filename.substring(filename.lastIndexOf("."));
+					var config = {
+						useCdnDomain: true,
+						region: qiniu.region.z0
+					};
+					var putExtra = {
+						fname: "",
+						params: {"x:param": param},
+						mimeType: ["image/png", "image/jpeg", "image/gif"] || null
+					};
+                    var newFileName = "image/wx/#W#/#H#/" + UUID.randomUUID() + postf;
+					newFileName = newFileName.replace("#W#", w).replace("#H#", h);
+					var observable = qiniu.upload(file, newFileName, token,
+							putExtra, config);
+					var subscription = observable.subscribe(next, error, complete);
+				})
+			}
+		}
+			 
+		var qiniuUrl = [[${qiniuUrl}]];
+		//保存
+		$(".btn.btn-info.save").click(function(){
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+			var form = $("#saveForm");
+			// var code = form.find("input[name='code']").val();
+			var name = form.find("input[name='name']").val();
+			var type = form.find("input[name='type']").val();
+			var info = form.find("input[name='info']").val();
+			var remark = form.find("input[name='remark']").val();
+			//文件
+			var logo = form.find("input[name='logoFile']").val();
+			var logoBig = form.find("input[name='logoBigFile']").val();
+			var banner = form.find("input[name='bannerFile']").val();
+			var background = form.find("input[name='backgroundFile']").val();
+			//已上传的图片地址
+			var logoImg = form.find("input[name='logo']").val();
+			var logoBigImg = form.find("input[name='logoBig']").val();
+			var bannerImg = form.find("input[name='banner']").val();
+			var backgroundImg = form.find("input[name='background']").val();
+
+			if(name==''|| type==''||info==''||
+					(logo=='' && logoImg=='')
+			){
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return ;
+			}
+
+			var isOK = checkImg([[logo, "logo"], [logoBig, "logoBig"], [banner, "banner"], [background, "background"]]);
+			if (typeof isOK == 'boolean') {
+				return;
+			}
+
+			//获取token
+			$.get("/qiniu/token",{},function(token){
+				if(token !=''){
+					async.series({
+						one: function(callback) {
+							if(typeof isOK == 'object'){
+								callback();
+							}else {
+								callback("ERROR");
+							}
+						},
+						two: function(callback){
+							//上传详情图
+							async.eachSeries(Object.keys(isOK), function (item, cb) {
+								var f = isOK[item];
+								upload(item, token, f, function () {
+									//
+								}, function (err) {
+									console.log("上传imageFile异常:" + err);
+									cb(err);
+								}, function (res) {
+									//上传成功
+									if (res != '') {
+										var url = qiniuUrl + "/" + res.key;
+										form.find("input[name='" + res.param + "']").val(url);
+									}
+									cb();
+								});
+							}, function () {
+								callback();
+							});
+						},
+						three: function(callback){
+							//提交保存
+							$.post("/brand_save",$("#saveForm").serialize(),function(data){
+								if(data){
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									jQuery('#modal-6').modal('hide');
+									toastr.success("操作已成功！", "温馨提示");
+									oTable.fnDraw();
+								}else{
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									toastr.error("操作失败", "温馨提示");
+								}
+								callback();
+							});
+						}
+					}, function(err, results) {
+						console.log("OK");
+					});
+				}else{
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					toastr.error("上传文件错误，请联系管理员", "温馨提示");
+				}
+			});
+		});
+
+		$(".btn.btn-info.edit").click(function(){
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length != 1) {
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return;
+			}
+
+			$.post("/brand_get", {id: activityId.val()}, function (data) {
+				var form = $("#saveForm");
+				form.find("input:not(.notMe)").val("");
+				for (var i in data) {
+					var ele = form.find("input[name='" + i + "']");
+					switch (ele.attr("type")) {
+						case "radio":
+							ele.val([data[i]]);
+							break;
+						default:
+							ele.val(data[i]);
+					}
+					form.find("img[name='" + i + "Img']").attr("src", data[i]);
+					form.find("img[name='" + i + "Img']").show();
+				}
+				form.find(".btn.image").show();
+				jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+			});
+		});
+
+		$(".btn.btn-info.del").click(function(){
+			var activityId = $("input[name='activityId']:checked");
+			if(activityId.length < 1){
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return ;
+			}
+
+			var ids = [];
+			activityId.each(function(i,e){
+				ids.push(e.value);
+			});
+
+			$.post("/goods_del",{ids:ids},function(data){
+				if(data){
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			})
+		});
+
+        $(".btn.btn-info.up").click(function(){
+            var activityId = $("input[name='activityId']:checked");
+            if(activityId.length < 1){
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return ;
+            }
+
+            var ids = [];
+            activityId.each(function(i,e){
+                ids.push(e.value);
+            });
+
+            $.post("/banner_up",{ids:ids},function(data){
+                if(data){
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            })
+        });
+
+        $(".btn.btn-info.down").click(function(){
+            var activityId = $("input[name='activityId']:checked");
+            if(activityId.length < 1){
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return ;
+            }
+
+            var ids = [];
+            activityId.each(function(i,e){
+                ids.push(e.value);
+            });
+
+            $.post("/banner_down",{ids:ids},function(data){
+                if(data){
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            })
+        });
+	});
+	/*]]>*/
+	</script>
+</body>
+
+</html>
