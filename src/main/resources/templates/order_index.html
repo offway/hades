@@ -241,64 +241,19 @@
 				'</div>';
 	}
 
-	function checkIt(id) {
-		$.post("/goods_find", {"id": id}, function (data) {
-			if (data) {
-				var preview = $("#preview_body");
-				var contentStr = "";
-				var mainObj = data["main"];
-				contentStr += appendToPreview("编号:", mainObj["id"]);
-				contentStr += appendToPreview("名称:", mainObj["name"]);
-				contentStr += appendToPreview("一级分类:", mainObj["type"]);
-				contentStr += appendToPreview("二级分类:", mainObj["category"]);
-				contentStr += appendToPreview("商品编码:", mainObj["code"]);
-				contentStr += appendToPreview("材质:", mainObj["material"]);
-				contentStr += appendToPreview("价格:", mainObj["price"]);
-				contentStr += appendToPreview("价格区间:", mainObj["priceRange"]);
-				contentStr += appendToPreview("销售数量:", mainObj["saleCount"]);
-				contentStr += appendToPreview("查看数量:", mainObj["viewCount"]);
-				contentStr += appendToPreview("品牌id:", mainObj["brandId"]);
-				contentStr += appendToPreview("品牌名:", mainObj["brandName"]);
-				contentStr += appendToPreview("品牌logo:", buildImg(mainObj["brandLogo"]));
-				contentStr += appendToPreview("商家id:", mainObj["merchantId"]);
-				contentStr += appendToPreview("商家名:", mainObj["merchantName"]);
-				contentStr += appendToPreview("商家logo:", buildImg(mainObj["merchantLogo"]));
-				contentStr += appendToPreview("图片:", buildImg(mainObj["image"]));
-				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
-				contentStr += appendToPreview("备注:", mainObj["remark"]);
-				contentStr += "<hr/>";
-				for (var a in data["propertyList"]) {
-					a = data["propertyList"][a];
-					contentStr += appendToPreview("商品规格名称:", a["name"]);
-					contentStr += appendToPreview("商品属性值:", a["value"]);
-					contentStr += appendToPreview("备注:", a["remark"]);
-					contentStr += appendToPreview("排序:", a["sort"]);
-				}
-				contentStr += "<hr/>";
-				for (var b in data["imageList"]) {
-					b = data["imageList"][b];
-					contentStr += appendToPreview("商品图片:", buildImg(b["imageUrl"]));
-					contentStr += appendToPreview("图片类型:", b["type"]);
-					contentStr += appendToPreview("备注:", b["remark"]);
-					contentStr += appendToPreview("排序:", b["sort"]);
-				}
-				contentStr += "<hr/>";
-				for (var c in data["stockList"]) {
-					c = data["stockList"][c];
-					contentStr += appendToPreview("图片:", buildImg(c["image"]));
-					contentStr += appendToPreview("价格:", c["price"]);
-					contentStr += appendToPreview("sku:", c["sku"]);
-					contentStr += appendToPreview("stock:", c["stock"]);
-					contentStr += appendToPreview("备注:", c["remark"]);
-				}
-				preview.html(contentStr);
-				jQuery('#preview').modal('show', {backdrop: 'fade'});
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function checkIt(data) {
+        var preview = $("#preview_body");
+        var contentStr = "";
+        contentStr += appendToPreview("信息:", data["message"]);
+        contentStr += "<hr/>";
+        for (var a in data["data"]) {
+            a = data["data"][a];
+            contentStr += appendToPreview("内容:", a["context"]);
+            contentStr += appendToPreview("时间:", a["time"]);
+        }
+        preview.html(contentStr);
+        jQuery('#preview').modal('show', {backdrop: 'fade'});
+    }
 
 	function goToDetail(id) {
 		window.location.href = '/order_detail.html?id=' + id;
@@ -328,15 +283,17 @@
 		jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 	}
 
-	function trackOrder(id) {
-		$.post("/order_trackOrder", {"id": id}, function (data) {
-			if (data) {
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function trackOrder(id) {
+        $.post("/order_trackOrder", {"id": id}, function (data) {
+            console.log(data);
+            if (data != '') {
+                checkIt(JSON.parse(data));
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
 	function bindMerchantSelector(data) {
 		var brandStr = "<option value=\"0\" selected='selected'>全部</option>";

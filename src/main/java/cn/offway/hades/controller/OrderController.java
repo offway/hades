@@ -3,7 +3,9 @@ package cn.offway.hades.controller;
 import cn.offway.hades.domain.*;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
+import cn.offway.hades.utils.HttpClientUtil;
 import com.alibaba.fastjson.JSON;
+import org.apache.tomcat.util.security.MD5Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,5 +201,30 @@ public class OrderController {
             orderInfoService.save(orderInfo);
         }
         return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/order_trackOrder")
+    public String trackOrder(Long id) {
+        String key = "uyUDaSuE5009";
+        String customer = "28B3DE9A2485E14FE0DAD40604A8922C";
+        PhOrderInfo orderInfo = orderInfoService.findOne(id);
+        if (orderInfo != null) {
+            PhOrderExpressInfo orderExpressInfo = orderExpressInfoService.findByPid(orderInfo.getOrderNo(), "0");
+            if (orderExpressInfo != null) {
+                Map<String, String> innerParam = new HashMap<>();
+                innerParam.put("com", orderExpressInfo.getExpressCode());
+                innerParam.put("num", orderExpressInfo.getMailNo());
+                String innerParamStr = JSON.toJSONString(innerParam);
+                String signStr = innerParamStr + key + customer;
+                String sign = MD5Encoder.encode(signStr.getBytes());
+                Map<String, String> param = new HashMap<>();
+                param.put("customer", customer);
+                param.put("param", innerParamStr);
+                param.put("sign", sign);
+                return HttpClientUtil.post("https://poll.kuaidi100.com/poll/query.do", param);
+            }
+        }
+        return "";
     }
 }
