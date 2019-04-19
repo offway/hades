@@ -114,11 +114,34 @@
 			<div class="modal-content" style="width: 800px;">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加商品</h4>
+					<h4 class="modal-title">发货</h4>
 				</div>
 				
 				<div class="modal-body">
 					<form role="form" id="saveForm">
+						<input type="hidden" name="id"/>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label for="expressCode" class="control-label">配送方式</label>
+									<select id="expressCode" class="form-control" name="expressCode">
+										<option value="1">圆通</option>
+										<option value="2">中通</option>
+										<option value="3">申通</option>
+										<option value="4">韵达</option>
+										<option value="5">顺丰</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label for="mailNo" class="control-label">快递单号</label>
+									<input id="mailNo" type="number" class="form-control" name="mailNo" placeholder="快递单号"/>
+								</div>
+							</div>
+						</div>
 					</form>
 				</div>
 				
@@ -287,41 +310,36 @@
 
 	var table_global;
 
-    function toggleTopIt(id) {
-        $.post("/brand_toggleTop", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
+	function closeOrder(id) {
+		$.post("/order_closeOrder", {"id": id}, function (data) {
+			if (data) {
+				table_global.fnDraw();
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
 
-    function topIt(id) {
-        $.post("/brand_top", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
+	function deliverOrder(id) {
+		var form = $("#saveForm");
+		form.find("input").val("");
+		form.find("[name='id']").val(id);
+		jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+	}
 
-    function unTopIt(id) {
-        $.post("/brand_untop", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
+	function trackOrder(id) {
+		$.post("/order_trackOrder", {"id": id}, function (data) {
+			if (data) {
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
 
 	function bindMerchantSelector(data) {
-		var brandStr = "";
+		var brandStr = "<option value=\"0\" selected='selected'>全部</option>";
 		for (var brand in data) {
 			brand = data[brand];
 			brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
@@ -435,9 +453,21 @@
 					data: "id",
 					orderable: false,
 					title: "操作",
-                    render: function (data, type, full, meta) {
-                        return '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="更多操作"/>';
-                    }
+					render: function (data, type, full, meta) {
+						var str = "";
+						//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
+						var status = parseInt(full["status"]);
+						if (status == 0) {
+							str += '<input type="button" onclick="closeOrder(' + data + ')" value="关闭订单"/>';
+						}
+						if (status == 1) {
+							str += '<input type="button" onclick="deliverOrder(' + data + ')" value="订单发货"/>';
+						}
+						if (status == 2) {
+							str += '<input type="button" onclick="trackOrder(' + data + ')" value="订单跟踪"/>';
+						}
+						return str;
+					}
 				}
                ]
 		});
@@ -451,13 +481,6 @@
 		});
 
         $(".btn.btn-info.add").click(function(){
-            // var form = $("#saveForm");
-            // form.find("input:not(.notMe)").val("");
-            // form.find("img").attr("src","");
-            // form.find("img").hide();
-            // form.find("input[type='file']").show();
-            // $(".imageShow").remove();
-            // jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 			window.location.href = '/goods_add.html';
         });
 
@@ -505,83 +528,41 @@
 			 
 		var qiniuUrl = [[${qiniuUrl}]];
 		//保存
-		$(".btn.btn-info.save").click(function(){
+		$(".btn.btn-info.save").click(function () {
 			var footer = $(this).parent(".modal-footer");
 			footer.find("button").hide();
 			footer.find(".bg-lg").show();
 			var form = $("#saveForm");
-			// var code = form.find("input[name='code']").val();
-			var name = form.find("input[name='name']").val();
-			var type = form.find("input[name='type']").val();
-			var info = form.find("input[name='info']").val();
-			var remark = form.find("input[name='remark']").val();
-			//文件
-			var logo = form.find("input[name='logoFile']").val();
-			var logoBig = form.find("input[name='logoBigFile']").val();
-			var banner = form.find("input[name='bannerFile']").val();
-			var background = form.find("input[name='backgroundFile']").val();
-			//已上传的图片地址
-			var logoImg = form.find("input[name='logo']").val();
-			var logoBigImg = form.find("input[name='logoBig']").val();
-			var bannerImg = form.find("input[name='banner']").val();
-			var backgroundImg = form.find("input[name='background']").val();
+			var expressCode = form.find("input[name='expressCode']").val();
+			var mailNo = form.find("input[name='mailNo']").val();
 
-			if(name==''|| type==''||info==''||
-					(logo=='' && logoImg=='')
-			){
+			if (expressCode == '' || mailNo == '') {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
-				return ;
-			}
-
-			var isOK = checkImg([[logo, "logo"], [logoBig, "logoBig"], [banner, "banner"], [background, "background"]]);
-			if (typeof isOK == 'boolean') {
 				return;
 			}
 
 			//获取token
-			$.get("/qiniu/token",{},function(token){
-				if(token !=''){
+			$.get("/qiniu/token", {}, function (token) {
+				if (token != '') {
 					async.series({
-						one: function(callback) {
-							if(typeof isOK == 'object'){
-								callback();
-							}else {
-								callback("ERROR");
-							}
+						one: function (callback) {
+							callback();
 						},
-						two: function(callback){
-							//上传详情图
-							async.eachSeries(Object.keys(isOK), function (item, cb) {
-								var f = isOK[item];
-								upload(item, token, f, function () {
-									//
-								}, function (err) {
-									console.log("上传imageFile异常:" + err);
-									cb(err);
-								}, function (res) {
-									//上传成功
-									if (res != '') {
-										var url = qiniuUrl + "/" + res.key;
-										form.find("input[name='" + res.param + "']").val(url);
-									}
-									cb();
-								});
-							}, function () {
-								callback();
-							});
+						two: function (callback) {
+							callback();
 						},
-						three: function(callback){
+						three: function (callback) {
 							//提交保存
-							$.post("/brand_save",$("#saveForm").serialize(),function(data){
-								if(data){
+							$.post("/order_deliverOrder", $("#saveForm").serialize(), function (data) {
+								if (data) {
 									footer.find("button").show();
 									footer.find(".bg-lg").hide();
 									jQuery('#modal-6').modal('hide');
 									toastr.success("操作已成功！", "温馨提示");
 									oTable.fnDraw();
-								}else{
+								} else {
 									footer.find("button").show();
 									footer.find(".bg-lg").hide();
 									toastr.error("操作失败", "温馨提示");
@@ -589,13 +570,13 @@
 								callback();
 							});
 						}
-					}, function(err, results) {
+					}, function (err, results) {
 						console.log("OK");
 					});
-				}else{
+				} else {
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
-					toastr.error("上传文件错误，请联系管理员", "温馨提示");
+					toastr.error("错误，请联系管理员", "温馨提示");
 				}
 			});
 		});

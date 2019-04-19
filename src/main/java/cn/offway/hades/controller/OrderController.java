@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping
@@ -41,6 +38,8 @@ public class OrderController {
     private PhGoodsService goodsService;
     @Autowired
     private PhGoodsPropertyService goodsPropertyService;
+    @Autowired
+    private PhMerchantService merchantService;
 
     @RequestMapping("/order.html")
     public String index(ModelMap map) {
@@ -150,5 +149,55 @@ public class OrderController {
         map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
         map.put("aData", pages.getContent());//数据集合
         return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/order_closeOrder")
+    public boolean closeOrder(Long id) {
+        PhOrderInfo orderInfo = orderInfoService.findOne(id);
+        if (orderInfo != null) {
+            orderInfo.setStatus("4");//取消
+            orderInfoService.save(orderInfo);
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/order_deliverOrder")
+    public boolean deliverOrder(Long id, String expressCode, String mailNo) {
+        PhOrderInfo orderInfo = orderInfoService.findOne(id);
+        if (orderInfo != null) {
+            PhOrderExpressInfo orderExpressInfo = new PhOrderExpressInfo();
+            orderExpressInfo.setExpressCode(expressCode);
+            orderExpressInfo.setMailNo(mailNo);
+            orderExpressInfo.setType("0");
+            orderExpressInfo.setStatus("0");
+            orderExpressInfo.setOrderNo(orderInfo.getOrderNo());
+            orderExpressInfo.setCreateTime(new Date());
+            //收货人
+            PhAddress receiver = addressService.findOne(orderInfo.getAddrId());
+            orderExpressInfo.setToProvince(receiver.getProvince());
+            orderExpressInfo.setToCity(receiver.getCity());
+            orderExpressInfo.setToCounty(receiver.getCounty());
+            orderExpressInfo.setToContent(receiver.getContent());
+            orderExpressInfo.setToRealName(receiver.getRealName());
+            orderExpressInfo.setToPhone(receiver.getPhone());
+            //寄件人
+            PhMerchant merchant = merchantService.findOne(orderInfo.getMerchantId());
+            PhAddress sender = addressService.findOne(merchant.getAddrId());
+            orderExpressInfo.setFromProvince(sender.getProvince());
+            orderExpressInfo.setFromCity(sender.getCity());
+            orderExpressInfo.setFromCounty(sender.getCounty());
+            orderExpressInfo.setFromContent(sender.getContent());
+            orderExpressInfo.setFromRealName(sender.getRealName());
+            orderExpressInfo.setFromPhone(sender.getPhone());
+            PhOrderExpressInfo orderExpressInfoSaved = orderExpressInfoService.save(orderExpressInfo);
+            //更新订单
+            orderInfo.setDeliverName(orderExpressInfoSaved.getFromRealName());
+            orderInfo.setDeliverTime(new Date());
+            orderInfo.setStatus("2");//已发货
+            orderInfoService.save(orderInfo);
+        }
+        return true;
     }
 }
