@@ -333,6 +333,28 @@ public class GoodsController {
     }
 
     @ResponseBody
+    @RequestMapping("/goods_up")
+    public boolean goodsUp(Long id) {
+        PhGoods goods = goodsService.findOne(id);
+        if (goods != null) {
+            goods.setStatus("1");
+            goodsService.save(goods);
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/goods_down")
+    public boolean goodsDown(Long id) {
+        PhGoods goods = goodsService.findOne(id);
+        if (goods != null) {
+            goods.setStatus("0");
+            goodsService.save(goods);
+        }
+        return true;
+    }
+
+    @ResponseBody
     @RequestMapping("/goods_add")
     public boolean add(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros) throws UnsupportedEncodingException {
         PhBrand brand = brandService.findOne(goods.getBrandId());
@@ -354,7 +376,7 @@ public class GoodsController {
             goods.setCategory(goodsCategory.getName());
         }
         goods.setCreateTime(new Date());
-        goods.setStatus("1");
+        goods.setStatus("0");//默认未上架
         goods.setViewCount(0L);
         goods.setSaleCount(0L);
         PhGoods goodsSaved = goodsService.save(goods);
