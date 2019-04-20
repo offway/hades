@@ -492,11 +492,11 @@
 			var fareNextPrice = form.find("input[name='fareNextPrice']").val();
 			var remark = form.find("input[name='remark']").val();
 
-			if(fareFirstNum ==''|| fareFirstPrice==''|| fareNextNum==''|| fareNextPrice =='' || remark =='' || province =='' || city =='' || county ==''){
+			if (fareFirstNum == '' || fareFirstPrice == '' || fareNextNum == '' || fareNextPrice == '' || remark == '' || province == '') {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
-				return ;
+				return;
 			}
 
 			//获取token
