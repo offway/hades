@@ -95,9 +95,9 @@
 						<div class="col-md-12">
 							<div class="form-group">
 								<label for="field-4" class="control-label">主图</label>
-								<input type="file" class="form-control" name="imageFile" placeholder="主图"/>
+								<input type="file" class="form-control" name="imageUrlFile" placeholder="主图"/>
 								<input type="hidden" class="form-control" name="imageUrl" />
-								<img alt="" src="" name="imageImage" style="display:none;"/>
+								<img alt="" src="" name="imageUrlImg" class="initial" style="display:none;"/>
 							</div>
 						</div>
 					</div>
@@ -113,8 +113,8 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="field-4" class="control-label">详情图</label>
-								<input type="file" class="form-control" name="detailImageFile" placeholder="详情图"/>
-								<input type="button" value="添加" onclick="addMoreImg(this)"/>
+								<!--<input type="file" class="form-control initial" name="detailImageFile" placeholder="详情图"/>-->
+								<input type="button" id="addMoreImgEle" class="notMe" value="添加" onclick="addMoreImg(this,null);"/>
 								<input type="hidden" class="form-control" name="imagesJSONStr" value="" />
                             </div>
                         </div>
@@ -141,8 +141,8 @@
 						<div class="col-md-12">
                             <div class="form-group">
                                 <label for="field-4" class="control-label">填写商品ID</label>
-                                <input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>
-                                <input type="button" value="添加" onclick="addMoreText(this)"/>
+                                <!--<input type="number" class="form-control initial" name="goodsID" placeholder="填写商品ID"/>-->
+                                <input type="button" id="addMoreTextEle" class="notMe" value="添加" onclick="addMoreText(this,null);"/>
                                 <input type="hidden" class="form-control" name="goodsIDStr" value="" />
                             </div>
 						</div>
@@ -204,15 +204,51 @@
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
-    function addMoreImg(self) {
-        var that = $(self);
-        that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
-    }
+	function delNode(id, index) {
+		var that = $("#" + id);
+		that.remove();
+		if (index != null) {
+			var form = $("#saveForm");
+			var i = parseInt(index);
+			var oldValue = form.find("input[name='imagesJSONStr']").val();
+			var list = JSON.parse(window.atob(oldValue));
+			delete list[i];
+			var newValue = JSON.stringify(list);
+			form.find("input[name='imagesJSONStr']").val(window.btoa(newValue));
+		}
+	}
 
-    function addMoreText(self) {
-        var that = $(self);
-        that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
-    }
+	function addMoreImg(self, src) {
+		var form = $("#saveForm");
+		var len = form.find("[name=detailImageFile]").length;
+		var uuid = UUID.randomUUID();
+		var that = $(self);
+		var str = '<div id="UUID" class="toDel">'.replace("UUID", uuid);
+		if (src != null) {
+			str += '<input style="display:inline-block;width: 200px;" type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>';
+			str += "<img style=\"display:inline-block;width: 300px;\" width='300px' height='300px' src='#' />".replace("#", src);
+			str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\',\'INDEX\')" />'.replace("UUID", uuid).replace("INDEX", len + "");
+		} else {
+			str += '<input style="display:inline-block;width: 200px;" type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>';
+			str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
+		}
+		str += '</div>';
+		that.before(str);
+	}
+
+	function addMoreText(self, v) {
+		var uuid = UUID.randomUUID();
+		var that = $(self);
+		var str = '<div id="UUID" class="toDel">'.replace("UUID", uuid);
+		if (v != null) {
+			str += '<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsID" placeholder="填写商品ID"/>'.replace("VALUE", v);
+		} else {
+			str += '<input style="display:inline-block;width: 200px;" type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>';
+		}
+		str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
+		str += '</div>';
+		that.before(str);
+	}
 
     function closeIt(self) {
         var that = $(self);
@@ -287,6 +323,7 @@
             }
         });
     }
+
     jQuery(document).ready(function($)
 	{
 		var oTable = $("#example-1").dataTable({
@@ -397,15 +434,18 @@
 			return false;
 		});
 
-        $(".btn.btn-info.add").click(function(){
-            var form = $("#saveForm");
-            //form.find("input").val("");
-            form.find("img").attr("src","");
-            form.find("img").hide();
-            form.find("input[type='file']").show();
-            $(".imageShow").remove();
-            jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-        });
+		$(".btn.btn-info.add").click(function () {
+			var form = $("#saveForm");
+			form.find("input:not(.notMe)").val("");
+			form.find("img").attr("src", "");
+			form.find("img").hide();
+			form.find("img:not(.initial)").remove();
+			form.find("input[name='detailImageFile']").remove();
+			form.find("input[name='goodsID']").remove();
+			form.find("div.toDel").remove();
+			form.find("input[type='file']").show();
+			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+		});
 
         function getImgSize(file, cb) {
             var f = file;//input.files[0];
@@ -424,205 +464,241 @@
             reader.readAsDataURL(f);
         }
 
-        function upload(param, token, file, next, error, complete) {
-            if (file == '') {
-                complete('');
-            } else {
-                getImgSize(file, function (w, h) {
-                    var filename = file.name;
-                    var postf = filename.substring(filename.lastIndexOf("."));
-                    var config = {
-                        useCdnDomain: true,
-                        region: qiniu.region.z0
-                    };
-                    var putExtra = {
-                        fname: "",
-                        params: {"x:param": param},
-                        mimeType: ["image/png", "image/jpeg", "image/gif"] || null
-                    };
-                    var newFileName = "image/wx/#W#/#H#/" + UUID.randomUUID() + postf;
-                    newFileName = newFileName.replace("#W#", w).replace("#H#", h);
-                    var observable = qiniu.upload(file, newFileName, token,
-                        putExtra, config);
-                    var subscription = observable.subscribe(next, error, complete);
-                })
-            }
-        }
+		function upload(param, token, file, next, error, complete) {
+			if (file == '' || file == null || file == undefined) {
+				complete('');
+			} else {
+				getImgSize(file, function (w, h) {
+					var filename = file.name;
+					var postf = filename.substring(filename.lastIndexOf("."));
+					var config = {
+						useCdnDomain: true,
+						region: qiniu.region.z0
+					};
+					var putExtra = {
+						fname: "",
+						params: {"x:param": param},
+						mimeType: ["image/png", "image/jpeg", "image/gif"] || null
+					};
+					var newFileName = "image/wx/#W#/#H#/" + UUID.randomUUID() + postf;
+					newFileName = newFileName.replace("#W#", w).replace("#H#", h);
+					var observable = qiniu.upload(file, newFileName, token,
+							putExtra, config);
+					var subscription = observable.subscribe(next, error, complete);
+				})
+			}
+		}
 			 
-			 var qiniuUrl = [[${qiniuUrl}]];
-			//保存
-			$(".btn.btn-info.save").click(function(){
-				var footer = $(this).parent(".modal-footer");
-				footer.find("button").hide();
-				footer.find(".bg-lg").show();
-				var form = $("#saveForm");
-				var starName = form.find("input[name='starName']").val();
-				var title = form.find("input[name='title']").val();
-				var remark = form.find("input[name='remark']").val();
-				var goodsID = form.find("input[name='goodsID']")[0].value;
-				var praise_count = form.find("input[name='praiseCount']").val();
-				var view_count = form.find("input[name='viewCount']").val();
-				//文件
-				var imageVal = form.find("input[name='imageFile']")[0].value;
-				//已上传的图片地址
-				var imageUrl = form.find("input[name='imageUrl']").val();
+		var qiniuUrl = [[${qiniuUrl}]];
+		//保存
+		$(".btn.btn-info.save").click(function(){
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+			var form = $("#saveForm");
+			var starName = form.find("input[name='starName']").val();
+			var title = form.find("input[name='title']").val();
+			var remark = form.find("input[name='remark']").val();
+			var goodsID = form.find("input[name='goodsID']")[0].value;
+			var praise_count = form.find("input[name='praiseCount']").val();
+			var view_count = form.find("input[name='viewCount']").val();
+			//文件
+			var imageVal = form.find("input[name='imageUrlFile']")[0].value;
+			//已上传的图片地址
+			var imageUrl = form.find("input[name='imageUrl']").val();
 
-				if(remark=='' ||starName==''|| title==''||goodsID==''||praise_count==''||view_count==''|| (imageVal=='' && imageUrl=='')){
-					toastr.error("请填写完整数据后提交", "温馨提示");
+			if(remark=='' ||starName==''|| title==''||goodsID==''||praise_count==''||view_count==''|| (imageVal=='' && imageUrl=='')){
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return ;
+			}
+
+			var goodsIDList = form.find("input[name='goodsID']");
+			var gidArr = [];
+			for (var gid in goodsIDList) {
+				if (isNaN(gid)) {
+					continue;
+				}
+				gidArr.push(goodsIDList[gid].value);
+			}
+			form.find("input[name='goodsIDStr']").val(gidArr.join(","));
+
+			var imageFile = '';
+			//上传文件获得文件地址
+			if (imageVal != '') {
+				imageFile = form.find("input[name='imageUrlFile']")[0].files[0];
+				if (imageFile != '' && imageFile.size / 1024 > 500) {
+					toastr.error("封面图片大小超过500K,请压缩处理后上传", "温馨提示");
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
-					return ;
+					return;
 				}
-
-                var goodsIDList = form.find("input[name='goodsID']");
-                var gidArr = [];
-                for (var gid in goodsIDList) {
-                    gidArr.push(goodsIDList[gid].value);
-                }
-                form.find("input[name='goodsIDStr']").val(gidArr.join(","));
-
-                var imageFile = '';
-                //上传文件获得文件地址
-                if (imageVal != '') {
-                    imageFile = form.find("input[name='imageFile']")[0].files[0];
-                    if (imageFile != '' && imageFile.size / 1024 > 500) {
-                        toastr.error("封面图片大小超过500K,请压缩处理后上传", "温馨提示");
-                        footer.find("button").show();
-                        footer.find(".bg-lg").hide();
-                        return;
-                    }
-                }
-                form.find("input[name='imagesJSONStr']").val("");
-                //获取token
-				$.get("/qiniu/token",{},function(token){
-					if(token !=''){
-						async.series({
-							one: function(callback) {
-								upload("imageUrl",token,imageFile,function(res){},function(err){
-									console.log("上传imageFile异常:"+err);
-									callback(err);
-								},function(res){
+			}
+			// form.find("input[name='imagesJSONStr']").val("");
+			//获取token
+			$.get("/qiniu/token",{},function(token){
+				if(token !=''){
+					async.series({
+						one: function(callback) {
+							upload("imageUrl",token,imageFile,function(res){},function(err){
+								console.log("上传imageFile异常:"+err);
+								callback(err);
+							},function(res){
+								//上传成功
+								if(res!=''){
+									form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+								}
+								callback();
+							});
+						},
+						two: function(callback){
+							//上传详情图
+							var imageFileList = form.find("input[name='detailImageFile']");
+							var i = 0;
+							async.eachSeries(imageFileList, function (item, cb) {
+								var f = item.files[0];
+								upload("imagesJSONStr", token, f, function () {
+									//
+								}, function (err) {
+									console.log("上传imageFile异常:" + err);
+									cb(err);
+								}, function (res) {
 									//上传成功
-									if(res!=''){
-										form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
-									}
-									callback();
-								});
-							},
-							two: function(callback){
-								//上传详情图
-								var imageFileList = form.find("input[name='detailImageFile']");
-								var i = 0;
-								async.eachSeries(imageFileList, function (item, cb) {
-									var f = item.files[0];
-									upload("imagesJSONStr", token, f, function () {
-										//
-									}, function (err) {
-										console.log("上传imageFile异常:" + err);
-										cb(err);
-									}, function (res) {
-										//上传成功
-										if (res != '') {
-											var url = qiniuUrl + "/" + res.key;
-											var oldValue = form.find("input[name='" + res.param + "']").val();
-											if (oldValue == '') {
-												var list = [];
-												list.push({"url": url, "sort": i, "remark": ""});
-											} else {
-												var list = JSON.parse(window.atob(oldValue));
-												list.push({"url": url, "sort": i, "remark": ""});
-											}
-											var newValue = JSON.stringify(list);
-											form.find("input[name='" + res.param + "']").val(window.btoa(newValue));
-											i++;
+									if (res != '') {
+										var url = qiniuUrl + "/" + res.key;
+										var oldValue = form.find("input[name='" + res.param + "']").val();
+										if (oldValue == '') {
+											var list = [];
+											list.push({"url": url, "sort": i, "remark": ""});
+										} else {
+											var list = JSON.parse(window.atob(oldValue));
+											list[i] = {"url": url, "sort": i, "remark": ""};
 										}
-										cb();
-									});
-								}, function () {
-									callback();
-								});
-							},
-							three: function(callback){
-								//提交保存
-								$.post("/starSame_save",$("#saveForm").serialize(),function(data){
-									if(data){
-										footer.find("button").show();
-										footer.find(".bg-lg").hide();
-										jQuery('#modal-6').modal('hide');
-										toastr.success("操作已成功！", "温馨提示");
-										oTable.fnDraw();
-									}else{
-										footer.find("button").show();
-										footer.find(".bg-lg").hide();
-										toastr.error("操作失败", "温馨提示");
+										var newValue = JSON.stringify(list);
+										form.find("input[name='" + res.param + "']").val(window.btoa(newValue));
 									}
-									callback();
+									i++;
+									cb();
 								});
-							}
-						}, function(err, results) {
-							console.log("OK");
-						});
-					}else{
-						footer.find("button").show();
-						footer.find(".bg-lg").hide();
-						toastr.error("上传文件错误，请联系管理员", "温馨提示");
-					}
-				});
-			});
-			
-			$(".btn.btn-info.edit").click(function(){
-                var activityId = $("input[name='activityId']:checked");
-                if (activityId.length != 1) {
-                    toastr.error("请选择一条数据操作", "温馨提示");
-                    return;
-                }
-
-				$.post("/banner_get",{id:activityId.val()},function(data){
-					var form = $("#saveForm");
-					form.find("input[name='id']").val(data.id);
-					form.find("input[name='brandId']").val(data.brandId);
-					form.find("input[name='goodsId']").val(data.goodsId);
-					form.find("input[name='url']").val(data.url);
-					form.find("input[name='status']").val(data.status);
-					form.find("input[name='sort']").val(data.sort);
-					form.find("input[name='remark']").val(data.remark);
-                    form.find("input[name='type']").val([data.type]);
-					
-					var beginTimeStr = new Date(data.beginTime).Format('yyyy-MM-dd hh:mm:ss');
-					var endTimeStr = new Date(data.endTime).Format('yyyy-MM-dd hh:mm:ss');
-					$("#daterange").val(beginTimeStr+' - '+endTimeStr);
-					form.find("input[name='beginTime']").val(beginTimeStr);
-					form.find("input[name='endTime']").val(endTimeStr);
-					
-					if(''!=data.image){
-                        form.find("input[name='banner']").val(data.banner);
-						form.find("img[name='imageImage']").attr("src",data.banner);
-						form.find("img[name='imageImage']").show();
-						form.find(".btn.image").show();
-					}
-					jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-				});
-			});
-
-			$(".btn.btn-info.del").click(function(){
-				var activityId = $("input[name='activityId']:checked");
-				if(activityId.length < 1){
-					toastr.error("请至少选择一条数据操作", "温馨提示");
-					return ;
+							}, function () {
+								var oldValue = form.find("input[name='imagesJSONStr']").val();
+								var list = JSON.parse(window.atob(oldValue));
+								//purge null item
+								var newList = [];
+								for (var obj in list) {
+									console.log(list[obj]);
+									if (list[obj] != null) {
+										newList.push(list[obj]);
+									}
+								}
+								var newValue = JSON.stringify(newList);
+								form.find("input[name='imagesJSONStr']").val(window.btoa(newValue));
+								callback();
+							});
+						},
+						three: function(callback){
+							//提交保存
+							$.post("/starSame_save",$("#saveForm").serialize(),function(data){
+								if(data){
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									jQuery('#modal-6').modal('hide');
+									toastr.success("操作已成功！", "温馨提示");
+									oTable.fnDraw();
+								}else{
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									toastr.error("操作失败", "温馨提示");
+								}
+								callback();
+							});
+						}
+					}, function(err, results) {
+						console.log("OK");
+					});
+				}else{
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					toastr.error("上传文件错误，请联系管理员", "温馨提示");
 				}
-
-				var ids = [];
-				activityId.each(function(i,e){
-					ids.push(e.value);
-				});
-
-				$.post("/starSame_del",{ids:ids},function(data){
-					if(data){
-						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw();
-					}
-				})
 			});
+		});
+
+		$(".btn.btn-info.edit").click(function(){
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length != 1) {
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return;
+			}
+
+			$.post("/starSame_find",{id:activityId.val()},function(data){
+				var form = $("#saveForm");
+				form.find("input[name='detailImageFile']").remove();
+				form.find("input[name='goodsID']").remove();
+				form.find("div.toDel").remove();
+				var main = data["main"];
+				var goodsList = data["goodsList"];
+				var imageList = data["imageList"];
+				for (var i in main) {
+					var ele = form.find("input[name='" + i + "']");
+					switch (ele.attr("type")) {
+						case "radio":
+							ele.val([main[i]]);
+							break;
+						default:
+							if (main[i] != undefined && !isNaN(main[i]) && String(main[i]).length == 13) {
+								ele.val(formatTime(main[i]));
+								$("#" + i).val(formatTime(main[i]));
+							} else {
+								ele.val(main[i]);
+							}
+					}
+					form.find("img[name='" + i + "Img']").attr("src", main[i]);
+					form.find("img[name='" + i + "Img']").attr("width", 200);
+					form.find("img[name='" + i + "Img']").attr("length", 200);
+					form.find("img[name='" + i + "Img']").show();
+				}
+				//图片
+				var list = [];
+				for (var j in imageList) {
+					addMoreImg("#addMoreImgEle", imageList[j]["imageUrl"]);
+					list.push({
+						"url": imageList[j]["imageUrl"],
+						"sort": imageList[j]["sort"],
+						"remark": imageList[j]["remark"]
+					});
+				}
+				var newValue = JSON.stringify(list);
+				form.find("input[name='imagesJSONStr']").val(window.btoa(newValue));
+				//品牌
+				for (var k in goodsList) {
+					addMoreText("#addMoreTextEle", goodsList[k]["goodsId"]);
+				}
+				form.find(".btn.image").show();
+				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			});
+		});
+
+		$(".btn.btn-info.del").click(function(){
+			var activityId = $("input[name='activityId']:checked");
+			if(activityId.length < 1){
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return ;
+			}
+
+			var ids = [];
+			activityId.each(function(i,e){
+				ids.push(e.value);
+			});
+
+			$.post("/starSame_del",{ids:ids},function(data){
+				if(data){
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			})
+		});
 
         $(".btn.btn-info.up").click(function(){
             var activityId = $("input[name='activityId']:checked");

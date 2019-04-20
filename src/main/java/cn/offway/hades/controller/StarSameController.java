@@ -113,6 +113,8 @@ public class StarSameController {
     public boolean save(PhStarsame starsame, String goodsIDStr, String imagesJSONStr) {
         starsame.setCreateTime(new Date());
         PhStarsame starsameObj = starsameService.save(starsame);
+        //purge first
+        starsameGoodsService.deleteByPid(starsameObj.getId());
         String[] goodsList = goodsIDStr.split(",");
         for (String gid : goodsList) {
             PhGoods goods = goodsService.findOne(Long.valueOf(gid));
@@ -133,6 +135,8 @@ public class StarSameController {
                 logger.error("goods Id 非法");
             }
         }
+        //purge first
+        starsameImageService.deleteByPid(starsameObj.getId());
         String text = new String(Base64.decode(imagesJSONStr.getBytes(), Base64.DEFAULT));
         JSONArray jsonArray = JSON.parseArray(text);
         if (jsonArray != null) {
