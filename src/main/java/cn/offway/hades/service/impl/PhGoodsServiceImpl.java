@@ -59,6 +59,24 @@ public class PhGoodsServiceImpl implements PhGoodsService {
     }
 
     @Override
+    public Page<PhGoods> findAll(String name, String code, String status, Pageable pageable) {
+        return phGoodsRepository.findAll(new Specification<PhGoods>() {
+            @Override
+            public Predicate toPredicate(Root<PhGoods> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
+                params.add(criteriaBuilder.like(root.get("code"), "%" + code + "%"));
+                if (!"".equals(status)) {
+                    params.add(criteriaBuilder.equal(root.get("status"), status));
+                }
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        }, pageable);
+    }
+
+    @Override
     public void del(Long id) {
         phGoodsRepository.delete(id);
     }
