@@ -35,7 +35,13 @@ public class PhVoucherProject implements Serializable {
     /** 有效期[单位：天] **/
     private Long validNum;
 
-    /** 发券数量 **/
+    /** 开始时间 **/
+    private Date beginTime;
+
+    /** 截止时间 **/
+    private Date endTime;
+
+    /** 发券数量[备用字段，暂时不用] **/
     private Long limit;
 
     /** 创建时间 **/
@@ -108,6 +114,26 @@ public class PhVoucherProject implements Serializable {
 
     public void setValidNum(Long validNum) {
         this.validNum = validNum;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "begin_time")
+    public Date getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(Date beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "end_time")
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 
     @Column(name = "limit", length = 11)
