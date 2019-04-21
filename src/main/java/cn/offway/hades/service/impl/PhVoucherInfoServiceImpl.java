@@ -1,13 +1,12 @@
 package cn.offway.hades.service.impl;
 
+import cn.offway.hades.domain.PhVoucherInfo;
+import cn.offway.hades.repository.PhVoucherInfoRepository;
+import cn.offway.hades.service.PhVoucherInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import cn.offway.hades.service.PhVoucherInfoService;
-
-import cn.offway.hades.domain.PhVoucherInfo;
-import cn.offway.hades.repository.PhVoucherInfoRepository;
 
 
 /**
@@ -19,18 +18,23 @@ import cn.offway.hades.repository.PhVoucherInfoRepository;
 @Service
 public class PhVoucherInfoServiceImpl implements PhVoucherInfoService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private PhVoucherInfoRepository phVoucherInfoRepository;
-	
-	@Override
-	public PhVoucherInfo save(PhVoucherInfo phVoucherInfo){
-		return phVoucherInfoRepository.save(phVoucherInfo);
-	}
-	
-	@Override
-	public PhVoucherInfo findOne(Long id){
-		return phVoucherInfoRepository.findOne(id);
-	}
+    @Autowired
+    private PhVoucherInfoRepository phVoucherInfoRepository;
+
+    @Override
+    public PhVoucherInfo save(PhVoucherInfo phVoucherInfo) {
+        return phVoucherInfoRepository.save(phVoucherInfo);
+    }
+
+    @Override
+    public void delByPid(Long pid) {
+        phVoucherInfoRepository.deleteByPid(pid);
+    }
+
+    @Override
+    public PhVoucherInfo findOne(Long id) {
+        return phVoucherInfoRepository.findOne(id);
+    }
 }

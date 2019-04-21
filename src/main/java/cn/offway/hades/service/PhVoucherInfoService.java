@@ -8,9 +8,11 @@ import cn.offway.hades.domain.PhVoucherInfo;
  * @author wn
  * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $
  */
-public interface PhVoucherInfoService{
+public interface PhVoucherInfoService {
 
-	PhVoucherInfo save(PhVoucherInfo phVoucherInfo);
-	
-	PhVoucherInfo findOne(Long id);
+    PhVoucherInfo save(PhVoucherInfo phVoucherInfo);
+
+    PhVoucherInfo findOne(Long id);
+
+    void delByPid(Long pid);
 }

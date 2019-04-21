@@ -1,5 +1,7 @@
 package cn.offway.hades.domain;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -36,9 +38,11 @@ public class PhVoucherProject implements Serializable {
     private Long validNum;
 
     /** 开始时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date beginTime;
 
     /** 截止时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
     /** 发券数量[备用字段，暂时不用] **/
@@ -136,7 +140,7 @@ public class PhVoucherProject implements Serializable {
         this.endTime = endTime;
     }
 
-    @Column(name = "limit", length = 11)
+    @Column(name = "`limit`", length = 11)
     public Long getLimit() {
         return limit;
     }
