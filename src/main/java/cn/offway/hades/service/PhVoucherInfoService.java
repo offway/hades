@@ -2,6 +2,8 @@ package cn.offway.hades.service;
 
 import cn.offway.hades.domain.PhVoucherInfo;
 
+import java.util.List;
+
 /**
  * 优惠券Service接口
  *
@@ -15,4 +17,6 @@ public interface PhVoucherInfoService {
     PhVoucherInfo findOne(Long id);
 
     void delByPid(Long pid);
+
+    List<PhVoucherInfo> getByPid(Long pid);
 }

@@ -6,7 +6,15 @@ import cn.offway.hades.service.PhVoucherInfoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -31,6 +39,20 @@ public class PhVoucherInfoServiceImpl implements PhVoucherInfoService {
     @Override
     public void delByPid(Long pid) {
         phVoucherInfoRepository.deleteByPid(pid);
+    }
+
+    @Override
+    public List<PhVoucherInfo> getByPid(Long pid) {
+        return phVoucherInfoRepository.findAll(new Specification<PhVoucherInfo>() {
+            @Override
+            public Predicate toPredicate(Root<PhVoucherInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(criteriaBuilder.equal(root.get("voucherProjectId"), pid));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        });
     }
 
     @Override

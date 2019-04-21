@@ -60,6 +60,24 @@ public class CouponController {
     }
 
     @ResponseBody
+    @RequestMapping("/coupon_get")
+    public PhVoucherProject get(Long id) {
+        return voucherProjectService.findOne(id);
+    }
+
+    @ResponseBody
+    @RequestMapping("/coupon_find")
+    public Map<String, Object> find(Long id) {
+        Map<String, Object> map = new HashMap<>();
+        PhVoucherProject voucherProject = voucherProjectService.findOne(id);
+        if (voucherProject != null) {
+            map.put("main", voucherProject);
+            map.put("voucherInfoList", voucherInfoService.getByPid(id));
+        }
+        return map;
+    }
+
+    @ResponseBody
     @RequestMapping("/coupon_list")
     public Map<String, Object> getStockList(HttpServletRequest request) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));

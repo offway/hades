@@ -116,7 +116,7 @@
 			<div class="modal-content" style="width: 800px;">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">发货</h4>
+					<h4 class="modal-title">添加优惠券</h4>
 				</div>
 				
 				<div class="modal-body">
@@ -126,8 +126,8 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">优惠券类型</label>
-									<select class="form-control" name="type">
-                                        <option value="0">平台券</option>
+									<select class="form-control" name="type" onchange="toggleMerchant(this)">
+										<option value="0">平台券</option>
                                         <option value="1">店铺券</option>
 									</select>
 								</div>
@@ -299,19 +299,39 @@
 				'</div>';
 	}
 
-    function checkIt(data) {
-        var preview = $("#preview_body");
-        var contentStr = "";
-        contentStr += appendToPreview("信息:", data["message"]);
-        contentStr += "<hr/>";
-        for (var a in data["data"]) {
-            a = data["data"][a];
-            contentStr += appendToPreview("内容:", a["context"]);
-            contentStr += appendToPreview("时间:", a["time"]);
-        }
-        preview.html(contentStr);
-        jQuery('#preview').modal('show', {backdrop: 'fade'});
-    }
+	function checkIt(data) {
+		$.post("/coupon_find", {"id": data}, function (data) {
+			if (data) {
+				var preview = $("#preview_body");
+				var contentStr = "";
+				var mainObj = data["main"];
+				contentStr += appendToPreview("编号:", mainObj["id"]);
+				contentStr += appendToPreview("名称:", mainObj["name"]);
+				contentStr += appendToPreview("优惠券类型[0-平台券，1-店铺券]:", mainObj["type"]);
+				contentStr += appendToPreview("商户ID:", mainObj["merchantId"]);
+				contentStr += appendToPreview("满多少金额可用:", mainObj["usedMinAmount"]);
+				contentStr += appendToPreview("优惠券金额:", mainObj["amount"]);
+				contentStr += appendToPreview("有效期[单位：天]:", mainObj["validNum"]);
+				contentStr += appendToPreview("开始时间:", formatTime(mainObj["beginTime"]));
+				contentStr += appendToPreview("截止时间:", formatTime(mainObj["endTime"]));
+				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
+				contentStr += appendToPreview("备注:", mainObj["remark"]);
+				contentStr += "<hr/>";
+				for (var a in data["voucherInfoList"]) {
+					a = data["voucherInfoList"][a];
+					contentStr += appendToPreview("优惠券方案ID:", a["voucherProjectId"]);
+					contentStr += appendToPreview("用户ID:", a["userId"]);
+					contentStr += appendToPreview("开始时间:", formatTime(a["beginTime"]));
+					contentStr += appendToPreview("截止时间:", formatTime(a["endTime"]));
+				}
+				preview.html(contentStr);
+				jQuery('#preview').modal('show', {backdrop: 'fade'});
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
 
 	function goToDetail(id) {
 		window.location.href = '/order_detail.html?id=' + id;
@@ -361,6 +381,17 @@
 		}
 		$("#merchantId").html(brandStr);
 		$("#merchantIdAlt").html(brandStr);
+	}
+
+	function toggleMerchant(self) {
+		var id = $(self).val();
+		var target = $("#merchantIdAlt");
+		if (id == '0') {
+			target.val("0");
+			target.attr("disabled", "disabled");
+		} else {
+			target.removeAttr("disabled");
+		}
 	}
 
     jQuery(document).ready(function($)
@@ -500,7 +531,7 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="goToDetail(' + data + ')" value="查看详情"/>';
+						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
 					}
 				},
 				{
@@ -643,14 +674,14 @@
 			});
 		});
 
-		$(".btn.btn-info.edit").click(function(){
+		$(".btn.btn-info.edit").click(function () {
 			var activityId = $("input[name='activityId']:checked");
 			if (activityId.length != 1) {
 				toastr.error("请选择一条数据操作", "温馨提示");
 				return;
 			}
 
-			$.post("/brand_get", {id: activityId.val()}, function (data) {
+			$.post("/coupon_get", {id: activityId.val()}, function (data) {
 				var form = $("#saveForm");
 				form.find("input:not(.notMe)").val("");
 				for (var i in data) {
@@ -662,9 +693,15 @@
 						default:
 							ele.val(data[i]);
 					}
+					var eleSelect = form.find("select[name='" + i + "']");
+					eleSelect.val(data[i]);
 					form.find("img[name='" + i + "Img']").attr("src", data[i]);
 					form.find("img[name='" + i + "Img']").show();
 				}
+				var btime = new Date(data["beginTime"]).Format("yyyy-MM-dd hh:mm:ss");
+				var etime = new Date(data["endTime"]).Format("yyyy-MM-dd hh:mm:ss");
+				form.find("#beginTimeAlt").val(btime);
+				form.find("#endTimeAlt").val(etime);
 				form.find(".btn.image").show();
 				jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 			});
