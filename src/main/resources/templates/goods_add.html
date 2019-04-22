@@ -840,15 +840,19 @@
 		$("#field-5").html(brandStr);
 	}
 
-    function bindMerchantSelector(data) {
-        var brandStr = "";
-        for (var brand in data) {
-            brand = data[brand];
-            brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-        }
-        $("#field-9").html(brandStr);
-        renderFare("#field-9");
-    }
+	function bindMerchantSelector(data) {
+		var brandStr = "";
+		for (var brand in data) {
+			brand = data[brand];
+			if (parseInt(brand["id"]) == 0) {
+				brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			} else {
+				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			}
+		}
+		$("#field-9").html(brandStr);
+		renderFare("#field-9");
+	}
 
     function bindFareSelector(data) {
         var brandStr = "";

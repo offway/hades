@@ -373,15 +373,19 @@
         });
     }
 
-	function bindMerchantSelector(data) {
-		var brandStr = "<option value=\"0\" selected='selected'>全部</option>";
-		for (var brand in data) {
-			brand = data[brand];
-			brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-		}
-		$("#merchantId").html(brandStr);
-		$("#merchantIdAlt").html(brandStr);
-	}
+    function bindMerchantSelector(data) {
+        var brandStr = "";
+        for (var brand in data) {
+            brand = data[brand];
+            if (parseInt(brand["id"]) == 0) {
+                brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+            } else {
+                brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+            }
+        }
+        $("#merchantId").html(brandStr);
+        $("#merchantIdAlt").html(brandStr);
+    }
 
 	function toggleMerchant(self) {
 		var id = $(self).val();
@@ -396,9 +400,140 @@
 
     jQuery(document).ready(function($)
 	{
-		$.getJSON("/merchant_list_all", {}, function (data) {
-			bindMerchantSelector(data);
-		});
+        var oTable;
+        $.getJSON("/merchant_list_all", {}, function (data) {
+            bindMerchantSelector(data);
+            oTable = $("#example-1").dataTable({
+                language: {
+                    url: "../assets/Chinese.txt"
+                },
+                aLengthactivity: [
+                    [10, 25, 50, 100], [10, 25, 50, 100]
+                ],
+                bFilter: false,
+                bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+                sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+                sAjaxSource: "/coupon_list",//通过ajax实现分页的url路径。
+                fnServerParams: function (aData) {
+                    var searchArray = $(".form-inline").serializeArray();
+                    $.merge(aData, searchArray);
+                },
+                order: [[6, "desc"]],
+                columnDefs: [
+                    {
+                        targets: 0,
+                        data: "id",
+                        width: "5%",
+                        orderable: false,
+                        className: 'select-checkbox',
+                        title: '<input type="checkbox" id="checkbox-all"/>',
+                        render: function (data, type, full, meta) {
+                            return '<input type="checkbox" name="activityId" value="' + data + '" />';
+                        }
+                    },
+                    {
+                        targets: 1,
+                        data: "id",
+                        title: "序号"
+                    },
+                    {
+                        targets: 2,
+                        data: "type",
+                        title: "优惠券类型",
+                        render: function (data, type, row, meta) {
+                            /** 优惠券类型[0-平台券，1-店铺券] **/
+                            var map = ["平台券", "店铺券"];
+                            return map[parseInt(data)];
+                        }
+                    },
+                    {
+                        targets: 3,
+                        data: "name",
+                        title: "名称"
+                    },
+                    {
+                        targets: 4,
+                        data: "merchantId",
+                        title: "商户ID"
+                    },
+                    {
+                        targets: 5,
+                        data: "usedMinAmount",
+                        title: "满多少金额可用"
+                    },
+                    {
+                        targets: 6,
+                        data: "amount",
+                        title: "优惠券金额"
+                    },
+                    {
+                        targets: 7,
+                        data: "validNum",
+                        title: "有效期[单位：天]"
+                    },
+                    {
+                        targets: 8,
+                        data: "beginTime",
+                        title: "开始时间",
+                        render: function (data, type, row, meta) {
+                            return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                        }
+                    },
+                    {
+                        targets: 9,
+                        data: "endTime",
+                        title: "截止时间",
+                        render: function (data, type, row, meta) {
+                            return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                        }
+                    },
+                    {
+                        targets: 10,
+                        data: "createTime",
+                        title: "创建时间",
+                        render: function (data, type, row, meta) {
+                            return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                        }
+                    },
+                    {
+                        targets: 11,
+                        data: "remark",
+                        title: "备注"
+                    },
+                    {
+                        targets: 12,
+                        data: "id",
+                        orderable: false,
+                        title: "操作",
+                        render: function (data, type, full, meta) {
+                            return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+                        }
+                    },
+                    {
+                        targets: 13,
+                        data: "id",
+                        orderable: false,
+                        title: "操作",
+                        render: function (data, type, full, meta) {
+                            var str = "";
+                            //状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
+                            var status = parseInt(full["status"]);
+                            if (status == 0) {
+                                str += '<input type="button" onclick="closeOrder(' + data + ')" value="关闭订单"/>';
+                            }
+                            if (status == 1) {
+                                str += '<input type="button" onclick="deliverOrder(' + data + ')" value="订单发货"/>';
+                            }
+                            if (status == 2) {
+                                str += '<input type="button" onclick="trackOrder(' + data + ')" value="订单跟踪"/>';
+                            }
+                            return str;
+                        }
+                    }
+                ]
+            });
+            table_global = oTable;
+        });
 
 		$("#beginTimeAlt").daterangepicker({
 			singleDatePicker: true,
@@ -427,138 +562,6 @@
 			$("#endTimeAlt").val(start.format('YYYY-MM-DD HH:mm:ss'));
 			$('input[name="endTime"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
 		});
-
-		var oTable = $("#example-1").dataTable({
-			language: {
-                url: "../assets/Chinese.txt"
-            },
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
-			bFilter : false,
-			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/coupon_list",//通过ajax实现分页的url路径。
-            fnServerParams : function(aData){
-                var searchArray = $(".form-inline").serializeArray();
-                $.merge(aData, searchArray);
-            },
-            order: [[ 6, "desc" ]],
-            columnDefs: [
-				{	
-					targets: 0,
-				    data: "id",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="activityId" value="'+data+'" />';  
-				    }
-				},
-                {
-                    targets: 1,
-                    data: "id",
-                    title: "序号"
-                },
-                {
-               		targets: 2,
-	                data: "type",
-	                title: "优惠券类型",
-					render: function (data, type, row, meta) {
-						/** 优惠券类型[0-平台券，1-店铺券] **/
-						var map = ["平台券", "店铺券"];
-						return map[parseInt(data)];
-					}
-            	},
-				{
-					targets: 3,
-					data: "name",
-					title: "名称"
-				},
-				{
-					targets: 4,
-					data: "merchantId",
-					title: "商户ID"
-				},
-				{
-					targets: 5,
-					data: "usedMinAmount",
-					title: "满多少金额可用"
-				},
-				{
-					targets: 6,
-					data: "amount",
-					title: "优惠券金额"
-				},
-				{
-					targets: 7,
-					data: "validNum",
-					title: "有效期[单位：天]"
-				},
-				{
-					targets: 8,
-					data: "beginTime",
-					title: "开始时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				},
-				{
-					targets: 9,
-					data: "endTime",
-					title: "截止时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				},
-				{
-					targets: 10,
-					data: "createTime",
-					title: "创建时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				},
-				{
-					targets: 11,
-					data: "remark",
-					title: "备注"
-				},
-				{
-					targets: 12,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-					}
-				},
-				{
-					targets: 13,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						var str = "";
-						//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
-						var status = parseInt(full["status"]);
-						if (status == 0) {
-							str += '<input type="button" onclick="closeOrder(' + data + ')" value="关闭订单"/>';
-						}
-						if (status == 1) {
-							str += '<input type="button" onclick="deliverOrder(' + data + ')" value="订单发货"/>';
-						}
-						if (status == 2) {
-							str += '<input type="button" onclick="trackOrder(' + data + ')" value="订单跟踪"/>';
-						}
-						return str;
-					}
-				}
-               ]
-		});
-
-		table_global = oTable;
 		
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);

@@ -112,14 +112,26 @@ public class GoodsController {
             PhMerchant merchant = merchantService.findByAdminId(admin.getId());
             return merchantService.findAll(merchant.getId());
         } else {
-            return merchantService.findAll();
+            List<PhMerchant> list = merchantService.findAll();
+            PhMerchant defaultAll = new PhMerchant();
+            defaultAll.setId(0L);
+            defaultAll.setName("全部");
+            list.add(defaultAll);
+            return list;
         }
     }
 
     @ResponseBody
     @RequestMapping("/brand_list_all")
-    public List<PhBrand> getBrand() {
-        return brandService.findAll();
+    public List<PhBrand> getBrand(@AuthenticationPrincipal PhAdmin admin) {
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            PhMerchant merchant = merchantService.findByAdminId(admin.getId());
+            //TODO
+            return brandService.findAll();
+        } else {
+            return brandService.findAll();
+        }
     }
 
     @ResponseBody

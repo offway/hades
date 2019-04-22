@@ -68,6 +68,17 @@ public class PhBrandServiceImpl implements PhBrandService {
     }
 
     @Override
+    public List<PhBrand> findAll(Long pid) {
+        return phBrandRepository.findAll(new Specification<PhBrand>() {
+            @Override
+            public Predicate toPredicate(Root<PhBrand> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                //TODO merchant id
+                return null;
+            }
+        });
+    }
+
+    @Override
     public List<PhBrand> findAll() {
         return phBrandRepository.findAll();
     }
