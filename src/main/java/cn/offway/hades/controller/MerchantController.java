@@ -51,8 +51,14 @@ public class MerchantController {
     private PasswordEncoder passwordEncoder;
 
     @RequestMapping("/merchant.html")
-    public String index(ModelMap map) {
+    public String index(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            map.addAttribute("isAdmin", 0);
+        } else {
+            map.addAttribute("isAdmin", 1);
+        }
         return "merchant_index";
     }
 

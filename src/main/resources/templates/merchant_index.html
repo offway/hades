@@ -394,6 +394,14 @@
     }
     jQuery(document).ready(function($)
 	{
+		var qiniuUrl = [[${qiniuUrl}]];
+		var isAdmin = [[${isAdmin}]];
+		if (parseInt(isAdmin) == 0) {
+			$("button.add").hide();
+			$("button.edit").hide();
+			$("button.del").hide();
+		}
+
 		var oTable = $("#example-1").dataTable({
 			language: {
                 url: "../assets/Chinese.txt"
@@ -598,132 +606,131 @@
 				})
 			}
 		}
-			 
-			 var qiniuUrl = [[${qiniuUrl}]];
-			//保存
-			$(".btn.btn-info.save").click(function(){
-				var footer = $(this).parent(".modal-footer");
-				footer.find("button").hide();
-				footer.find(".bg-lg").show();
-				var form = $("#saveForm");
-				// var code = form.find("input[name='code']").val();
-				var name = form.find("input[name='name']").val();
-				var type = form.find("input[name='type']").val();
-				var info = form.find("input[name='info']").val();
-				var remark = form.find("input[name='remark']").val();
-				//文件
-				var logo = form.find("input[name='logoFile']").val();
-				var logoBig = form.find("input[name='logoBigFile']").val();
-				var banner = form.find("input[name='bannerFile']").val();
-				var background = form.find("input[name='backgroundFile']").val();
-				//已上传的图片地址
-				var logoImg = form.find("input[name='logo']").val();
-				var logoBigImg = form.find("input[name='logoBig']").val();
-				var bannerImg = form.find("input[name='banner']").val();
-				var backgroundImg = form.find("input[name='background']").val();
 
-				if(name==''|| type==''||info==''||remark==''||
-						(logo=='' && logoImg=='')
-				){
-					toastr.error("请填写完整数据后提交", "温馨提示");
+		//保存
+		$(".btn.btn-info.save").click(function(){
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+			var form = $("#saveForm");
+			// var code = form.find("input[name='code']").val();
+			var name = form.find("input[name='name']").val();
+			var type = form.find("input[name='type']").val();
+			var info = form.find("input[name='info']").val();
+			var remark = form.find("input[name='remark']").val();
+			//文件
+			var logo = form.find("input[name='logoFile']").val();
+			var logoBig = form.find("input[name='logoBigFile']").val();
+			var banner = form.find("input[name='bannerFile']").val();
+			var background = form.find("input[name='backgroundFile']").val();
+			//已上传的图片地址
+			var logoImg = form.find("input[name='logo']").val();
+			var logoBigImg = form.find("input[name='logoBig']").val();
+			var bannerImg = form.find("input[name='banner']").val();
+			var backgroundImg = form.find("input[name='background']").val();
+
+			if(name==''|| type==''||info==''||remark==''||
+					(logo=='' && logoImg=='')
+			){
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return ;
+			}
+
+			var isOK = checkImg([[logo, "logo"], [logoBig, "logoBig"], [banner, "banner"], [background, "background"]]);
+			if (typeof isOK == 'boolean') {
+				return;
+			}
+
+			//获取token
+			$.get("/qiniu/token",{},function(token){
+				if(token !=''){
+					async.series({
+						one: function(callback) {
+							if(typeof isOK == 'object'){
+								callback();
+							}else {
+								callback("ERROR");
+							}
+						},
+						two: function(callback){
+							//上传详情图
+							async.eachSeries(Object.keys(isOK), function (item, cb) {
+								var f = isOK[item];
+								upload(item, token, f, function () {
+									//
+								}, function (err) {
+									console.log("上传imageFile异常:" + err);
+									cb(err);
+								}, function (res) {
+									//上传成功
+									if (res != '') {
+										var url = qiniuUrl + "/" + res.key;
+										form.find("input[name='" + res.param + "']").val(url);
+									}
+									cb();
+								});
+							}, function () {
+								callback();
+							});
+						},
+						three: function(callback){
+							//提交保存
+							$.post("/brand_save",$("#saveForm").serialize(),function(data){
+								if(data){
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									jQuery('#modal-6').modal('hide');
+									toastr.success("操作已成功！", "温馨提示");
+									oTable.fnDraw();
+								}else{
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									toastr.error("操作失败", "温馨提示");
+								}
+								callback();
+							});
+						}
+					}, function(err, results) {
+						console.log("OK");
+					});
+				}else{
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
-					return ;
+					toastr.error("上传文件错误，请联系管理员", "温馨提示");
 				}
+			});
+		});
 
-				var isOK = checkImg([[logo, "logo"], [logoBig, "logoBig"], [banner, "banner"], [background, "background"]]);
-				if (typeof isOK == 'boolean') {
-					return;
-				}
+		$(".btn.btn-info.edit").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length != 1) {
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return;
+			}
+			window.location.href = '/merchant_edit.html?id=' + activityId.val();
+		});
 
-                //获取token
-				$.get("/qiniu/token",{},function(token){
-					if(token !=''){
-						async.series({
-							one: function(callback) {
-								if(typeof isOK == 'object'){
-									callback();
-								}else {
-									callback("ERROR");
-								}
-							},
-							two: function(callback){
-								//上传详情图
-								async.eachSeries(Object.keys(isOK), function (item, cb) {
-									var f = isOK[item];
-									upload(item, token, f, function () {
-										//
-									}, function (err) {
-										console.log("上传imageFile异常:" + err);
-										cb(err);
-									}, function (res) {
-										//上传成功
-										if (res != '') {
-											var url = qiniuUrl + "/" + res.key;
-											form.find("input[name='" + res.param + "']").val(url);
-										}
-										cb();
-									});
-								}, function () {
-									callback();
-								});
-							},
-							three: function(callback){
-								//提交保存
-								$.post("/brand_save",$("#saveForm").serialize(),function(data){
-									if(data){
-										footer.find("button").show();
-										footer.find(".bg-lg").hide();
-										jQuery('#modal-6').modal('hide');
-										toastr.success("操作已成功！", "温馨提示");
-										oTable.fnDraw();
-									}else{
-										footer.find("button").show();
-										footer.find(".bg-lg").hide();
-										toastr.error("操作失败", "温馨提示");
-									}
-									callback();
-								});
-							}
-						}, function(err, results) {
-							console.log("OK");
-						});
-					}else{
-						footer.find("button").show();
-						footer.find(".bg-lg").hide();
-						toastr.error("上传文件错误，请联系管理员", "温馨提示");
-					}
-				});
+		$(".btn.btn-info.del").click(function(){
+			var activityId = $("input[name='activityId']:checked");
+			if(activityId.length < 1){
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return ;
+			}
+
+			var ids = [];
+			activityId.each(function(i,e){
+				ids.push(e.value);
 			});
 
-            $(".btn.btn-info.edit").click(function () {
-                var activityId = $("input[name='activityId']:checked");
-                if (activityId.length != 1) {
-                    toastr.error("请选择一条数据操作", "温馨提示");
-                    return;
-                }
-                window.location.href = '/merchant_edit.html?id=' + activityId.val();
-            });
-
-			$(".btn.btn-info.del").click(function(){
-				var activityId = $("input[name='activityId']:checked");
-				if(activityId.length < 1){
-					toastr.error("请至少选择一条数据操作", "温馨提示");
-					return ;
+			$.post("/merchant_del",{ids:ids},function(data){
+				if(data){
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
 				}
-
-				var ids = [];
-				activityId.each(function(i,e){
-					ids.push(e.value);
-				});
-
-				$.post("/merchant_del",{ids:ids},function(data){
-					if(data){
-						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw();
-					}
-				})
-			});
+			})
+		});
 
         $(".btn.btn-info.up").click(function(){
             var activityId = $("input[name='activityId']:checked");
