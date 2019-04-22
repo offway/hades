@@ -46,6 +46,13 @@
 					<form role="form" class="form-inline">
 						<div class="form-group ">
 							<div class="input-group">
+								<label for="merchantId" class="control-label">商户</label>
+							</div>
+							<div class="input-group">
+								<select id="merchantId" name="merchantId" class="form-control" style="height:35px">
+								</select>
+							</div>
+							<div class="input-group">
 								<input type="text" name="name" class="form-control" style="height:35px" placeholder="商品名"/>
 							</div>
 							<div class="input-group">
@@ -257,6 +264,19 @@
         window.location.href = '/goods_stock_index.html?id=' + id;
     }
 
+	function bindMerchantSelector(data) {
+		var brandStr = "";
+		for (var brand in data) {
+			brand = data[brand];
+			if (parseInt(brand["id"]) == 0) {
+				brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			} else {
+				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			}
+		}
+		$("#merchantId").html(brandStr);
+	}
+
 	var table_global;
 
     function toggleTopIt(id) {
@@ -294,179 +314,182 @@
 
     jQuery(document).ready(function($)
 	{
-		var oTable = $("#example-1").dataTable({
-			language: {
-                url: "../assets/Chinese.txt"
-            },
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
-			bFilter : false,
-			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/goods_list",//通过ajax实现分页的url路径。
-            fnServerParams : function(aData){
-                var searchArray = $(".form-inline").serializeArray();
-                $.merge(aData, searchArray);
-            },
-            order: [[ 6, "desc" ]],
-            columnDefs: [
-				{	
-					targets: 0,
-				    data: "id",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="activityId" value="'+data+'" />';  
-				    }
+		var oTable;
+		$.getJSON("/merchant_list_all", {}, function (data) {
+			bindMerchantSelector(data);
+			oTable = $("#example-1").dataTable({
+				language: {
+					url: "../assets/Chinese.txt"
 				},
-                {
-                    targets: 1,
-                    data: "id",
-                    title: "序号"
-                },
-                {
-               		targets: 2,
-	                data: "name",
-	                title: "名称"
-            	},
-				{
-					targets: 3,
-					data: "image",
-					title: "封面图片",
-					render: function (data, type, row, meta) {
-						return buildImg(data);
-					}
+				aLengthactivity: [
+					[10, 25, 50, 100], [10, 25, 50, 100]
+				],
+				bFilter: false,
+				bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+				sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+				sAjaxSource: "/goods_list",//通过ajax实现分页的url路径。
+				fnServerParams: function (aData) {
+					var searchArray = $(".form-inline").serializeArray();
+					$.merge(aData, searchArray);
 				},
-				{
-					targets: 4,
-					data: "merchantId",
-					title: "商户ID"
-				},
-				{
-					targets: 5,
-					data: "merchantLogo",
-					title: "商户LOGO",
-					render: function (data, type, row, meta) {
-						return buildImg(data);
-					}
-				},
-				{
-					targets: 6,
-					data: "merchantName",
-					title: "商户名称"
-				},
-				{
-					targets: 7,
-					data: "brandId",
-					title: "品牌ID"
-				},
-				{
-					targets: 8,
-					data: "brandName",
-					title: "品牌名称"
-				},
-				{
-					targets: 9,
-					data: "brandLogo",
-					title: "品牌LOGO",
-					render: function (data, type, row, meta) {
-						return buildImg(data);
-					}
-				},
-				{
-					targets: 10,
-					data: "type",
-					title: "类别"
-				},
-				{
-					targets: 11,
-					data: "category",
-					title: "类目"
-				},
-				{
-					targets: 12,
-					data: "price",
-					title: "发售价"
-				},
-                {
-                    targets: 13,
-                    data: "priceRange",
-                    title: "价格范围"
-                },
-                {
-                    targets: 14,
-                    data: "material",
-                    title: "材质"
-                },
-				{
-					targets: 15,
-					data: "status",
-					title: "状态",
-					render: function (data, type, row, meta) {
-						return (data == "0" || data == undefined) ? "<font color='red'>未上架</font>" : "已上架";
-					}
-				},
-				{
-					targets: 16,
-					data: "viewCount",
-					title: "浏览数"
-				},
-				{
-					targets: 17,
-					data: "saleCount",
-					title: "销量"
-				},
-                {
-                    targets: 18,
-                    data: "createTime",
-                    title: "创建时间",
-                    render: function (data, type, row, meta) {
-                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-                    }
-                },
-				{
-					targets: 19,
-					data: "remark",
-					title: "备注"
-				},
-                {
-                    targets: 20,
-                    data: "id",
-                    orderable: false,
-                    title: "操作",
-                    render: function (data, type, full, meta) {
-                        return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-                    }
-                },
-				{
-					targets: 21,
-					data: "id",
-					orderable: false,
-					title: "操作",
-                    render: function (data, type, full, meta) {
-                        return '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
-                    }
-				},
-				{
-					targets: 22,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						if (full["status"] == "0") {
-							return '<input type="button" name="checkIt" onclick="upIt(' + data + ')" value="上架"/>';
-						} else {
-							return '<input type="button" name="checkIt" onclick="downIt(' + data + ')" value="下架"/>';
+				order: [[6, "desc"]],
+				columnDefs: [
+					{
+						targets: 0,
+						data: "id",
+						width: "5%",
+						orderable: false,
+						className: 'select-checkbox',
+						title: '<input type="checkbox" id="checkbox-all"/>',
+						render: function (data, type, full, meta) {
+							return '<input type="checkbox" name="activityId" value="' + data + '" />';
+						}
+					},
+					{
+						targets: 1,
+						data: "id",
+						title: "序号"
+					},
+					{
+						targets: 2,
+						data: "name",
+						title: "名称"
+					},
+					{
+						targets: 3,
+						data: "image",
+						title: "封面图片",
+						render: function (data, type, row, meta) {
+							return buildImg(data);
+						}
+					},
+					{
+						targets: 4,
+						data: "merchantId",
+						title: "商户ID"
+					},
+					{
+						targets: 5,
+						data: "merchantLogo",
+						title: "商户LOGO",
+						render: function (data, type, row, meta) {
+							return buildImg(data);
+						}
+					},
+					{
+						targets: 6,
+						data: "merchantName",
+						title: "商户名称"
+					},
+					{
+						targets: 7,
+						data: "brandId",
+						title: "品牌ID"
+					},
+					{
+						targets: 8,
+						data: "brandName",
+						title: "品牌名称"
+					},
+					{
+						targets: 9,
+						data: "brandLogo",
+						title: "品牌LOGO",
+						render: function (data, type, row, meta) {
+							return buildImg(data);
+						}
+					},
+					{
+						targets: 10,
+						data: "type",
+						title: "类别"
+					},
+					{
+						targets: 11,
+						data: "category",
+						title: "类目"
+					},
+					{
+						targets: 12,
+						data: "price",
+						title: "发售价"
+					},
+					{
+						targets: 13,
+						data: "priceRange",
+						title: "价格范围"
+					},
+					{
+						targets: 14,
+						data: "material",
+						title: "材质"
+					},
+					{
+						targets: 15,
+						data: "status",
+						title: "状态",
+						render: function (data, type, row, meta) {
+							return (data == "0" || data == undefined) ? "<font color='red'>未上架</font>" : "已上架";
+						}
+					},
+					{
+						targets: 16,
+						data: "viewCount",
+						title: "浏览数"
+					},
+					{
+						targets: 17,
+						data: "saleCount",
+						title: "销量"
+					},
+					{
+						targets: 18,
+						data: "createTime",
+						title: "创建时间",
+						render: function (data, type, row, meta) {
+							return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+						}
+					},
+					{
+						targets: 19,
+						data: "remark",
+						title: "备注"
+					},
+					{
+						targets: 20,
+						data: "id",
+						orderable: false,
+						title: "操作",
+						render: function (data, type, full, meta) {
+							return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+						}
+					},
+					{
+						targets: 21,
+						data: "id",
+						orderable: false,
+						title: "操作",
+						render: function (data, type, full, meta) {
+							return '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
+						}
+					},
+					{
+						targets: 22,
+						data: "id",
+						orderable: false,
+						title: "操作",
+						render: function (data, type, full, meta) {
+							if (full["status"] == "0") {
+								return '<input type="button" name="checkIt" onclick="upIt(' + data + ')" value="上架"/>';
+							} else {
+								return '<input type="button" name="checkIt" onclick="downIt(' + data + ')" value="下架"/>';
+							}
 						}
 					}
-				}
-               ]
+				]
+			});
+			table_global = oTable;
 		});
-
-		table_global = oTable;
 		
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);

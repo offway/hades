@@ -50,6 +50,8 @@ public class GoodsController {
     @Autowired
     private PhMerchantService merchantService;
     @Autowired
+    private PhMerchantBrandService merchantBrandService;
+    @Autowired
     private PhRoleadminService roleadminService;
     @Autowired
     private PhMerchantFareService merchantFareService;
@@ -123,12 +125,11 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/brand_list_all")
-    public List<PhBrand> getBrand(@AuthenticationPrincipal PhAdmin admin) {
+    public List<?> getBrand(@AuthenticationPrincipal PhAdmin admin) {
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
         if (roles.contains(BigInteger.valueOf(8L))) {
             PhMerchant merchant = merchantService.findByAdminId(admin.getId());
-            //TODO
-            return brandService.findAll();
+            return merchantBrandService.findByPid(merchant.getId());
         } else {
             return brandService.findAll();
         }
@@ -223,8 +224,9 @@ public class GoodsController {
         String name = request.getParameter("name");
         String code = request.getParameter("code");
         String status = request.getParameter("status");
+        String merchantId = request.getParameter("merchantId");
         Sort sort = new Sort("id");
-        Page<PhGoods> pages = goodsService.findAll(name, code, status, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhGoods> pages = goodsService.findAll(name, code, status, Long.valueOf(merchantId), new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);

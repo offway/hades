@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigInteger;
 import java.util.*;
 
 @Controller
@@ -75,13 +77,20 @@ public class MerchantController {
 
     @ResponseBody
     @RequestMapping("/merchant_list")
-    public Map<String, Object> getList(HttpServletRequest request) {
+    public Map<String, Object> getList(HttpServletRequest request, @AuthenticationPrincipal PhAdmin admin) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         String name = request.getParameter("name");
         Sort sort = new Sort("id");
-        Page<PhMerchant> pages = merchantService.findAll(name, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhMerchant> pages;
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            PhMerchant merchant = merchantService.findByAdminId(admin.getId());
+            pages = merchantService.findAll(merchant.getId(), new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        } else {
+            pages = merchantService.findAll(name, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        }
         List<PhMerchant> list = pages.getContent();
         List<Object> data = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();

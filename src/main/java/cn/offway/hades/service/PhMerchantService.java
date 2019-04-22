@@ -28,5 +28,7 @@ public interface PhMerchantService {
 
     Page<PhMerchant> findAll(String name, Pageable pageable);
 
+    Page<PhMerchant> findAll(Long id, Pageable pageable);
+
     void del(Long id);
 }

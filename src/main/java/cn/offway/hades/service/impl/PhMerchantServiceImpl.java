@@ -58,6 +58,20 @@ public class PhMerchantServiceImpl implements PhMerchantService {
     }
 
     @Override
+    public Page<PhMerchant> findAll(Long id, Pageable pageable) {
+        return phMerchantRepository.findAll(new Specification<PhMerchant>() {
+            @Override
+            public Predicate toPredicate(Root<PhMerchant> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(criteriaBuilder.equal(root.get("id"), id));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        }, pageable);
+    }
+
+    @Override
     public List<PhMerchant> findAll() {
         return phMerchantRepository.findAll();
     }
