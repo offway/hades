@@ -12,4 +12,6 @@ public interface PhBannerService {
     Page<PhBanner> findAll(Pageable pageable);
 
     void delete(Long id);
+
+    void resort(Long sort);
 }

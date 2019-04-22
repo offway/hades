@@ -75,12 +75,26 @@ public class BannerController {
         return true;
     }
 
+    @ResponseBody
+    @RequestMapping("/banner_top")
+    public boolean top(Long id) {
+        PhBanner banner = bannerService.findOne(id);
+        if (banner != null) {
+            bannerService.resort(0L);
+            banner.setSort(0L);
+            bannerService.save(banner);
+        }
+        return true;
+    }
+
     @RequestMapping("/banner_up")
     @ResponseBody
     public boolean up(@RequestParam("ids[]") Long[] ids) {
         for (long id : ids) {
             PhBanner banner = bannerService.findOne(id);
+            bannerService.resort(0L);
             banner.setStatus("1");
+            banner.setSort(0L);
             bannerService.save(banner);
         }
         return true;
@@ -92,6 +106,7 @@ public class BannerController {
         for (long id : ids) {
             PhBanner banner = bannerService.findOne(id);
             banner.setStatus("0");
+            banner.setSort(99L);
             bannerService.save(banner);
         }
         return true;

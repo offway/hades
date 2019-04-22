@@ -175,8 +175,20 @@
 	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script th:inline="javascript">
-	/*<![CDATA[*/	
-	           
+	/*<![CDATA[*/
+
+	var table_global;
+
+	function topIt(id) {
+		$.post("/banner_top", {"id": id}, function (data) {
+			if (data) {
+				table_global.fnDraw();
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
 	           
 	jQuery(document).ready(function($)
 	{
@@ -283,9 +295,29 @@
 					targets: 12,
 					data: "remark",
 					title: "备注"
+				},
+				{
+					targets: 13,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						if (parseInt(full["status"]) == 1) {
+							if (parseInt(full["sort"]) > 5) {
+								return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶"/>';
+							} else {
+								return '<input type="button" name="checkIt" disabled="disabled" value="已置顶"/>';
+							}
+						} else {
+							return '<input type="button" name="checkIt" disabled="disabled" value="下架无法置顶"/>';
+						}
+
+					}
 				}
                ]
 		});
+
+		table_global = oTable;
 		
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);
@@ -376,137 +408,138 @@
 			}
 		}
 			 
-			 var qiniuUrl = [[${qiniuUrl}]];
-			//保存
-			$(".btn.btn-info.save").click(function(){
-				var footer = $(this).parent(".modal-footer");
-				footer.find("button").hide();
-				footer.find(".bg-lg").show();
-				var form = $("#saveForm");
-				var url = form.find("input[name='url']").val();
-				var goods_id = form.find("input[name='goodsId']").val();
-				var brand_id = form.find("input[name='brandId']").val();
-				var daterange = $("#daterange").val();
-				//文件
-				var imageVal = form.find("input[name='imageFile']")[0].value;
-				//已上传的图片地址
-				var imageVals = form.find("input[name='banner']").val();
+		var qiniuUrl = [[${qiniuUrl}]];
 
-				if(daterange==''|| (imageVal=='' && imageVals=='') || (url =='' && goods_id =='' && brand_id =='')){
-					toastr.error("请填写完整数据后提交", "温馨提示");
+		//保存
+		$(".btn.btn-info.save").click(function(){
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+			var form = $("#saveForm");
+			var url = form.find("input[name='url']").val();
+			var goods_id = form.find("input[name='goodsId']").val();
+			var brand_id = form.find("input[name='brandId']").val();
+			var daterange = $("#daterange").val();
+			//文件
+			var imageVal = form.find("input[name='imageFile']")[0].value;
+			//已上传的图片地址
+			var imageVals = form.find("input[name='banner']").val();
+
+			if(daterange==''|| (imageVal=='' && imageVals=='') || (url =='' && goods_id =='' && brand_id =='')){
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return ;
+			}
+
+			if(daterange.indexOf(' - ')!=19 || daterange.length!=41){
+				toastr.error("请输入正确的起止时间", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+			}
+
+			var dates = daterange.split(' - ');
+			form.find("input[name='beginTime']").val(dates[0]);
+			form.find("input[name='endTime']").val(dates[1]);
+
+			var imageFile = '';
+			//上传文件获得文件地址
+			if(imageVal!=''){
+				imageFile = form.find("input[name='imageFile']")[0].files[0];
+				if(imageFile!='' && imageFile.size/1024>500){
+					toastr.error("封面图片大小超过500K,请压缩处理后上传", "温馨提示");
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
 					return ;
 				}
-				
-				if(daterange.indexOf(' - ')!=19 || daterange.length!=41){
-					toastr.error("请输入正确的起止时间", "温馨提示");
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-				}
+			}
 
-				var dates = daterange.split(' - ');
-				form.find("input[name='beginTime']").val(dates[0]);
-				form.find("input[name='endTime']").val(dates[1]);
-				
-				var imageFile = '';
-				//上传文件获得文件地址
-				if(imageVal!=''){
-					imageFile = form.find("input[name='imageFile']")[0].files[0];
-					if(imageFile!='' && imageFile.size/1024>500){
-						toastr.error("封面图片大小超过500K,请压缩处理后上传", "温馨提示");
-						footer.find("button").show();
-						footer.find(".bg-lg").hide();
-						return ;
-					}
-				}
-				
-				//获取token
-				$.get("/qiniu/token",{},function(token){
-					if(token !=''){
-						upload("banner",token,imageFile,function(res){},function(err){
-							console.log("上传imageFile异常:"+err);
-						},function(res){
-							//上传成功
-							if(res!=''){
-								form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+			//获取token
+			$.get("/qiniu/token",{},function(token){
+				if(token !=''){
+					upload("banner",token,imageFile,function(res){},function(err){
+						console.log("上传imageFile异常:"+err);
+					},function(res){
+						//上传成功
+						if(res!=''){
+							form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+						}
+						//提交保存
+						$.post("/banner_save",$("#saveForm").serialize(),function(data){
+							if(data){
+								footer.find("button").show();
+								footer.find(".bg-lg").hide();
+								jQuery('#modal-6').modal('hide');
+								toastr.success("操作已成功！", "温馨提示");
+								oTable.fnDraw();
+							}else{
+								footer.find("button").show();
+								footer.find(".bg-lg").hide();
+								toastr.error("操作失败", "温馨提示");
 							}
-							//提交保存
-							$.post("/banner_save",$("#saveForm").serialize(),function(data){
-								if(data){
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									jQuery('#modal-6').modal('hide');
-									toastr.success("操作已成功！", "温馨提示");
-									oTable.fnDraw();
-								}else{
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败", "温馨提示");
-								}
-							});
 						});
-					}else{
-						footer.find("button").show();
-						footer.find(".bg-lg").hide();
-						toastr.error("上传文件错误，请联系管理员", "温馨提示");
-					}
-				});
-			});
-			
-			$(".btn.btn-info.edit").click(function(){
-                var activityId = $("input[name='activityId']:checked");
-                if (activityId.length != 1) {
-                    toastr.error("请选择一条数据操作", "温馨提示");
-                    return;
-                }
-
-				$.post("/banner_get",{id:activityId.val()},function(data){
-					var form = $("#saveForm");
-					form.find("input[name='id']").val(data.id);
-					form.find("input[name='brandId']").val(data.brandId);
-					form.find("input[name='goodsId']").val(data.goodsId);
-					form.find("input[name='url']").val(data.url);
-					form.find("input[name='status']").val(data.status);
-					form.find("input[name='sort']").val(data.sort);
-					form.find("input[name='remark']").val(data.remark);
-                    form.find("input[name='type']").val([data.type]);
-					
-					var beginTimeStr = new Date(data.beginTime).Format('yyyy-MM-dd hh:mm:ss');
-					var endTimeStr = new Date(data.endTime).Format('yyyy-MM-dd hh:mm:ss');
-					$("#daterange").val(beginTimeStr+' - '+endTimeStr);
-					form.find("input[name='beginTime']").val(beginTimeStr);
-					form.find("input[name='endTime']").val(endTimeStr);
-					
-					if(''!=data.image){
-                        form.find("input[name='banner']").val(data.banner);
-						form.find("img[name='imageImage']").attr("src",data.banner);
-						form.find("img[name='imageImage']").show();
-						form.find(".btn.image").show();
-					}
-					jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-				});
-			});
-
-			$(".btn.btn-info.del").click(function(){
-				var activityId = $("input[name='activityId']:checked");
-				if(activityId.length < 1){
-					toastr.error("请至少选择一条数据操作", "温馨提示");
-					return ;
+					});
+				}else{
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					toastr.error("上传文件错误，请联系管理员", "温馨提示");
 				}
-
-				var ids = [];
-				activityId.each(function(i,e){
-					ids.push(e.value);
-				});
-
-				$.post("/banner_del",{ids:ids},function(data){
-					if(data){
-						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw();
-					}
-				})
 			});
+		});
+
+		$(".btn.btn-info.edit").click(function(){
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length != 1) {
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return;
+			}
+
+			$.post("/banner_get",{id:activityId.val()},function(data){
+				var form = $("#saveForm");
+				form.find("input[name='id']").val(data.id);
+				form.find("input[name='brandId']").val(data.brandId);
+				form.find("input[name='goodsId']").val(data.goodsId);
+				form.find("input[name='url']").val(data.url);
+				form.find("input[name='status']").val(data.status);
+				form.find("input[name='sort']").val(data.sort);
+				form.find("input[name='remark']").val(data.remark);
+				form.find("input[name='type']").val([data.type]);
+
+				var beginTimeStr = new Date(data.beginTime).Format('yyyy-MM-dd hh:mm:ss');
+				var endTimeStr = new Date(data.endTime).Format('yyyy-MM-dd hh:mm:ss');
+				$("#daterange").val(beginTimeStr+' - '+endTimeStr);
+				form.find("input[name='beginTime']").val(beginTimeStr);
+				form.find("input[name='endTime']").val(endTimeStr);
+
+				if(''!=data.image){
+					form.find("input[name='banner']").val(data.banner);
+					form.find("img[name='imageImage']").attr("src",data.banner);
+					form.find("img[name='imageImage']").show();
+					form.find(".btn.image").show();
+				}
+				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			});
+		});
+
+		$(".btn.btn-info.del").click(function(){
+			var activityId = $("input[name='activityId']:checked");
+			if(activityId.length < 1){
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return ;
+			}
+
+			var ids = [];
+			activityId.each(function(i,e){
+				ids.push(e.value);
+			});
+
+			$.post("/banner_del",{ids:ids},function(data){
+				if(data){
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			})
+		});
 
         $(".btn.btn-info.up").click(function(){
             var activityId = $("input[name='activityId']:checked");

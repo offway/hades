@@ -405,24 +405,28 @@
 					data: "remark",
 					title: "备注"
 				},
-                {
-                    targets: 10,
-                    data: "id",
-                    orderable: false,
-                    title: "操作",
-                    render: function (data, type, full, meta) {
-                        return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-                    }
-                },
-                {
-                    targets: 11,
-                    data: "id",
-                    orderable: false,
-                    title: "操作",
-                    render: function (data, type, full, meta) {
-                        return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶"/>';
-                    }
-                }
+				{
+					targets: 10,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+					}
+				},
+				{
+					targets: 11,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						if (parseInt(full["sort"]) > 5) {
+							return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶"/>';
+						} else {
+							return '<input type="button" name="checkIt" disabled="disabled" value="已置顶"/>';
+						}
+					}
+				}
                ]
 		});
 

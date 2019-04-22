@@ -44,6 +44,11 @@ public class PhBannerServiceImpl implements PhBannerService {
     }
 
     @Override
+    public void resort(Long sort) {
+        bannerRepository.resort(sort);
+    }
+
+    @Override
     public void delete(Long id) {
         bannerRepository.delete(id);
     }
