@@ -87,23 +87,19 @@
 					<input type="hidden" name="id"/>
 					<div id="distpicker">
 						<div class="row">
-							<div class="col-md-12">
+							<div class="col-md-4">
 								<div class="form-group">
 									<label class="control-label">省份</label>
 									<select class="form-control" name="province"></select>
 								</div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
+							<div class="col-md-4">
 								<div class="form-group">
 									<label class="control-label">城市</label>
 									<select class="form-control" name="city"></select>
 								</div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
+							<div class="col-md-4">
 								<div class="form-group">
 									<label class="control-label">区/县</label>
 									<select class="form-control" name="county"></select>
@@ -111,6 +107,7 @@
 							</div>
 						</div>
 					</div>
+					<input type="button" class="form-control" id="addMore" value="增加地址" onclick="addMoreText(this)"/>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
@@ -155,7 +152,7 @@
 				</div>
 				
 				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 					<button type="button" class="btn btn-info save">保存</button>
 					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 				</div>
@@ -189,10 +186,51 @@
         that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
     }
 
-    function addMoreText(self) {
-        var that = $(self);
-        that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
-    }
+	function addMoreText(self) {
+		var that = $(self);
+		var uuid = UUID.randomUUID();
+		var newId = "distpicker" + uuid;
+		var str = "\t\t\t\t\t<div name='toDEL' id=\"THEID\">\n".replace("THEID", newId) +
+				"\t\t\t\t\t\t<div class=\"row\">\n" +
+				"\t\t\t\t\t\t\t<div class=\"col-md-3\">\n" +
+				"\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+				"\t\t\t\t\t\t\t\t\t<label class=\"control-label\">省份</label>\n" +
+				"\t\t\t\t\t\t\t\t\t<select class=\"form-control\" name=\"province\"></select>\n" +
+				"\t\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t\t<div class=\"col-md-3\">\n" +
+				"\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+				"\t\t\t\t\t\t\t\t\t<label class=\"control-label\">城市</label>\n" +
+				"\t\t\t\t\t\t\t\t\t<select class=\"form-control\" name=\"city\"></select>\n" +
+				"\t\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t\t<div class=\"col-md-3\">\n" +
+				"\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+				"\t\t\t\t\t\t\t\t\t<label class=\"control-label\">区/县</label>\n" +
+				"\t\t\t\t\t\t\t\t\t<select class=\"form-control\" name=\"county\"></select>\n" +
+				"\t\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t\t<div class=\"col-md-3\">\n" +
+				"\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+				"\t\t\t\t\t\t\t\t\t<label class=\"control-label\">区/县</label>\n" +
+				"\t\t\t\t\t\t\t\t\t<input type='button' class=\"form-control\" value='删除' onclick='delNode(\"THEID\")'/>\n".replace("THEID", newId) +
+				"\t\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t\t</div>\n" +
+				"\t\t\t\t\t</div>";
+		that.before(str);
+		//render
+		$("#" + newId).distpicker({
+			province: '---- 所在省 ----',
+			city: '---- 所在市 ----',
+			district: '---- 所在区 ----'
+		});
+	}
+
+	function delNode(self) {
+		var that = $("#" + self);
+		that.remove();
+	}
 
     function closeIt(self) {
         var that = $(self);
@@ -421,11 +459,10 @@
 
 		$(".btn.btn-info.add").click(function () {
 			var form = $("#saveForm");
-			form.find("input").val("");
+			form.find("#addMore").show();
+			form.find("input:not('#addMore')").val("");
+			form.find("[name='toDEL']").remove();
 			form.find("select").val("");
-			form.find("img").attr("src","");
-			form.find("img").hide();
-			form.find("input[type='file']").show();
 			//render
 			$("#distpicker").distpicker({
 				province: '---- 所在省 ----',
@@ -483,17 +520,37 @@
 			footer.find("button").hide();
 			footer.find(".bg-lg").show();
 			var form = $("#saveForm");
-			var province = form.find("select[name='province']").val();
 			var fareFirstNum = form.find("input[name='fareFirstNum']").val();
 			var fareFirstPrice = form.find("input[name='fareFirstPrice']").val();
 			var fareNextNum = form.find("input[name='fareNextNum']").val();
 			var fareNextPrice = form.find("input[name='fareNextPrice']").val();
 
-			if (fareFirstNum == '' || fareFirstPrice == '' || fareNextNum == '' || fareNextPrice == '' || province == '') {
+			if (fareFirstNum == '' || fareFirstPrice == '' || fareNextNum == '' || fareNextPrice == '') {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
 				return;
+			}
+
+			var province = form.find("select[name='province']");
+			var city = form.find("select[name='city']");
+			var county = form.find("select[name='county']");
+			var pList = [];
+			var cList = [];
+			var ccList = [];
+			for (var p in province) {
+				if (isNaN(p)) {
+					continue;
+				}
+				if (province[p].value == '') {
+					toastr.error("请填写完整数据后提交", "温馨提示");
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					return;
+				}
+				pList.push(province[p].value);
+				cList.push(city[p].value == '' ? ' ' : city[p].value);
+				ccList.push(county[p].value == '' ? ' ' : county[p].value);
 			}
 
 			//获取token
@@ -508,8 +565,14 @@
 						},
 						three: function(callback){
 							//提交保存
-							var queryStr = $("#saveForm").serialize();
-							queryStr += "&merchantFareId=" + theId;
+							var queryStr = $("#saveForm").serializeArray();
+							queryStr.push({"name": "merchantFareId", "value": theId});//append pid
+							// queryStr.push({"name": "provinceStr", "value": pList.join(",")});
+							// queryStr.push({"name": "cityStr", "value": cList.join(",")});
+							// queryStr.push({"name": "countyStr", "value": ccList.join(",")});
+							queryStr.push({"name": "provinceStr", "value": pList});
+							queryStr.push({"name": "cityStr", "value": cList});
+							queryStr.push({"name": "countyStr", "value": ccList});
 							$.post("/fare_spec_add", queryStr, function (data) {
 								if (data) {
 									footer.find("button").show();
@@ -545,6 +608,8 @@
 
 			$.post("/fare_spec_get", {id: activityId.val()}, function (data) {
 				var form = $("#saveForm");
+				form.find("#addMore").hide();
+				form.find("div[name='toDEL']").remove();
 				//商家
 				for (var i in data) {
 					var ele = form.find("input[name='" + i + "']");
@@ -568,9 +633,6 @@
 					city: data["city"],
 					district: data["county"]
 				});
-				// form.find("select[name='province']").val(data["province"]);
-				// form.find("select[name='city']").val(data["city"]);
-				// form.find("select[name='county']").val(data["county"]);
 				form.find(".btn.image").show();
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 			});

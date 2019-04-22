@@ -151,10 +151,42 @@ public class GoodsController {
     }
 
     @ResponseBody
+    @RequestMapping("/fare_spec_add_batch")
+    public boolean addFareBatch(PhMerchantFareSpecial merchantFareSpecial, @RequestParam("provinceStr[]") String[] provinceStr, @RequestParam("cityStr[]") String[] cityStr, @RequestParam("countyStr[]") String[] countyStr) {
+        int i = 0;
+        for (String p : provinceStr) {
+            merchantFareSpecial.setProvince(provinceStr[i]);
+            merchantFareSpecial.setCity(cityStr[i]);
+            merchantFareSpecial.setCounty(countyStr[i]);
+            merchantFareSpecial.setCreateTime(new Date());
+            merchantFareSpecialService.save(merchantFareSpecial);
+            i++;
+        }
+        return true;
+    }
+
+    @ResponseBody
     @RequestMapping("/fare_spec_add")
-    public boolean addFare(PhMerchantFareSpecial merchantFareSpecial) {
-        merchantFareSpecial.setCreateTime(new Date());
-        merchantFareSpecialService.save(merchantFareSpecial);
+    public boolean addFare(PhMerchantFareSpecial merchantFareSpecial, @RequestParam("provinceStr") String provinceStr, @RequestParam("cityStr") String cityStr, @RequestParam("countyStr") String countyStr) {
+        String[] pList = provinceStr.split(",");
+        String[] cList = cityStr.split(",");
+        String[] ccList = countyStr.split(",");
+        int i = 0;
+        for (String p : pList) {
+            PhMerchantFareSpecial tmp = new PhMerchantFareSpecial();
+            tmp.setFareFirstNum(merchantFareSpecial.getFareFirstNum());
+            tmp.setFareFirstPrice(merchantFareSpecial.getFareFirstPrice());
+            tmp.setFareNextNum(merchantFareSpecial.getFareNextNum());
+            tmp.setFareNextPrice(merchantFareSpecial.getFareNextPrice());
+            tmp.setMerchantFareId(merchantFareSpecial.getMerchantFareId());
+            tmp.setRemark(merchantFareSpecial.getRemark());
+            tmp.setProvince(p);
+            tmp.setCity(cList[i]);
+            tmp.setCounty(ccList[i]);
+            tmp.setCreateTime(new Date());
+            merchantFareSpecialService.save(tmp);
+            i++;
+        }
         return true;
     }
 
