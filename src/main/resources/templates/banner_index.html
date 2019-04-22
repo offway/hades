@@ -383,7 +383,6 @@
 				footer.find("button").hide();
 				footer.find(".bg-lg").show();
 				var form = $("#saveForm");
-				var remark = form.find("input[name='remark']").val();
 				var url = form.find("input[name='url']").val();
 				var goods_id = form.find("input[name='goodsId']").val();
 				var brand_id = form.find("input[name='brandId']").val();
@@ -393,7 +392,7 @@
 				//已上传的图片地址
 				var imageVals = form.find("input[name='banner']").val();
 
-				if(remark=='' ||daterange==''|| (imageVal=='' && imageVals=='') || (url =='' && goods_id =='' && brand_id =='')){
+				if(daterange==''|| (imageVal=='' && imageVals=='') || (url =='' && goods_id =='' && brand_id =='')){
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();

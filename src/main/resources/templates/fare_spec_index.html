@@ -484,15 +484,12 @@
 			footer.find(".bg-lg").show();
 			var form = $("#saveForm");
 			var province = form.find("select[name='province']").val();
-			var city = form.find("select[name='city']").val();
-			var county = form.find("select[name='county']").val();
 			var fareFirstNum = form.find("input[name='fareFirstNum']").val();
 			var fareFirstPrice = form.find("input[name='fareFirstPrice']").val();
 			var fareNextNum = form.find("input[name='fareNextNum']").val();
 			var fareNextPrice = form.find("input[name='fareNextPrice']").val();
-			var remark = form.find("input[name='remark']").val();
 
-			if (fareFirstNum == '' || fareFirstPrice == '' || fareNextNum == '' || fareNextPrice == '' || remark == '' || province == '') {
+			if (fareFirstNum == '' || fareFirstPrice == '' || fareNextNum == '' || fareNextPrice == '' || province == '') {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();

@@ -498,8 +498,6 @@
 			var form = $("#saveForm");
 			var starName = form.find("input[name='starName']").val();
 			var title = form.find("input[name='title']").val();
-			var remark = form.find("input[name='remark']").val();
-			var goodsID = form.find("input[name='goodsID']")[0].value;
 			var praise_count = form.find("input[name='praiseCount']").val();
 			var view_count = form.find("input[name='viewCount']").val();
 			//文件
@@ -507,7 +505,7 @@
 			//已上传的图片地址
 			var imageUrl = form.find("input[name='imageUrl']").val();
 
-			if(remark=='' ||starName==''|| title==''||goodsID==''||praise_count==''||view_count==''|| (imageVal=='' && imageUrl=='')){
+			if(starName==''|| title==''||praise_count==''||view_count==''|| (imageVal=='' && imageUrl=='')){
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();

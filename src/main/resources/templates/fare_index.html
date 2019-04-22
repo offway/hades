@@ -468,9 +468,8 @@
 			var fareFirstPrice = form.find("input[name='fareFirstPrice']").val();
 			var fareNextNum = form.find("input[name='fareNextNum']").val();
 			var fareNextPrice = form.find("input[name='fareNextPrice']").val();
-			var remark = form.find("input[name='remark']").val();
 
-			if(fareFirstNum ==''|| fareFirstPrice==''|| fareNextNum==''|| fareNextPrice =='' || remark ==''){
+			if(fareFirstNum ==''|| fareFirstPrice==''|| fareNextNum==''|| fareNextPrice ==''){
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();

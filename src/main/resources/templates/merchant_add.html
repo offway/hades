@@ -419,7 +419,6 @@
 			var address_send_jsonStr = form.find("input[name='address_send_jsonStr']").val();
 			var phone = form.find("input[name='phone']").val();
 			var contractNo = form.find("input[name='contractNo']").val();
-			var remark = form.find("input[name='remark']").val();
 			var signDate = form.find("input[name='signDate']").val();
 			var expireDate = form.find("input[name='expireDate']").val();
 			//文件
@@ -427,7 +426,7 @@
 			//已上传的图片地址
 			var logoImg = form.find("input[name='logo']").val();
 
-			if (name == '' || address == '' || phone == '' || contractNo == '' || remark == '' || signDate == '' || expireDate == '' || company == '' || admin_name == '' || address_send_jsonStr == '' ||
+			if (name == '' || address == '' || phone == '' || contractNo == '' || signDate == '' || expireDate == '' || company == '' || admin_name == '' || address_send_jsonStr == '' ||
 					(logo == '' && logoImg == '')
 			) {
 				toastr.error("请填写完整数据后提交", "温馨提示");
