@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.qiniu.util.Base64;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,20 +118,24 @@ public class StarSameController {
         starsameGoodsService.deleteByPid(starsameObj.getId());
         String[] goodsList = goodsIDStr.split(",");
         for (String gid : goodsList) {
-            PhGoods goods = goodsService.findOne(Long.valueOf(gid));
-            if (goods != null) {
-                PhStarsameGoods starsameGoods = new PhStarsameGoods();
-                starsameGoods.setStarsameId(starsameObj.getId());
-                starsameGoods.setStarsameTitle(starsameObj.getTitle());
-                starsameGoods.setGoodsId(goods.getId());
-                starsameGoods.setGoodsName(goods.getName());
-                starsameGoods.setGoodsImage(goods.getImage());
-                starsameGoods.setBrandId(goods.getBrandId());
-                starsameGoods.setBrandName(goods.getBrandName());
-                starsameGoods.setBrandLogo(goods.getBrandLogo());
-                starsameGoods.setRemark(goods.getRemark());
-                starsameGoods.setCreateTime(new Date());
-                starsameGoodsService.save(starsameGoods);
+            if (NumberUtils.isNumber(gid)) {
+                PhGoods goods = goodsService.findOne(Long.valueOf(gid));
+                if (goods != null) {
+                    PhStarsameGoods starsameGoods = new PhStarsameGoods();
+                    starsameGoods.setStarsameId(starsameObj.getId());
+                    starsameGoods.setStarsameTitle(starsameObj.getTitle());
+                    starsameGoods.setGoodsId(goods.getId());
+                    starsameGoods.setGoodsName(goods.getName());
+                    starsameGoods.setGoodsImage(goods.getImage());
+                    starsameGoods.setBrandId(goods.getBrandId());
+                    starsameGoods.setBrandName(goods.getBrandName());
+                    starsameGoods.setBrandLogo(goods.getBrandLogo());
+                    starsameGoods.setRemark(goods.getRemark());
+                    starsameGoods.setCreateTime(new Date());
+                    starsameGoodsService.save(starsameGoods);
+                } else {
+                    logger.error("goods Id 非法");
+                }
             } else {
                 logger.error("goods Id 非法");
             }
