@@ -40,236 +40,217 @@
 				</div>
 
 			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group ">
-							<div class="input-group">
+
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">添加商品</h3>
+							<div class="panel-options">
+<!--								<a href="#" data-toggle="panel">-->
+<!--									<span class="collapse-icon">–</span>-->
+<!--									<span class="expand-icon">+</span>-->
+<!--								</a>-->
+<!--								<a href="#" data-toggle="remove">-->
+<!--									×-->
+<!--								</a>-->
 							</div>
 						</div>
-						<div class="form-group">
+						<div class="panel-body">
+							<form role="form" id="saveForm" class="form-horizontal">
+									<input type="hidden" name="id"/>
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label for="field-1" class="control-label">商品类别</label>
+												<select class="form-control" id="field-1" name="type" placeholder="商品类别" onchange="renderCategory(this)">
+												</select>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label for="field-2" class="control-label">商品子类别</label>
+												<select class="form-control" id="field-2" name="category" placeholder="商品子类别">
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="field-3" class="control-label">名称</label>
+												<input type="text" class="form-control" id="field-3" name="name" placeholder="名称" />
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="field-10" class="control-label">货号</label>
+												<input type="text" class="form-control" id="field-10" name="code" placeholder="货号" />
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="field-4" class="control-label">封面图片</label>
+												<input type="file" class="form-control" id="field-4" name="imageFile" placeholder="封面图片" />
+												<input type="hidden" class="form-control" name="image" />
+												<img alt="" src="" name="imageImg" style="display:none;" />
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-2">
+											<div class="form-group">
+												<label class="control-label">banner 轮播图</label>
+												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+												<input type="hidden" class="form-control" name="banner" />
+												<img alt="" src="" name="bannerImg" style="display:none;" />
+											</div>
+										</div>
+										<div class="col-md-2">
+											<div class="form-group">
+												<label class="control-label">banner 轮播图</label>
+												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+												<input type="hidden" class="form-control" name="banner" />
+												<img alt="" src="" name="bannerImg" style="display:none;" />
+											</div>
+										</div>
+										<div class="col-md-2">
+											<div class="form-group">
+												<label class="control-label">banner 轮播图</label>
+												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+												<input type="hidden" class="form-control" name="banner" />
+												<img alt="" src="" name="bannerImg" style="display:none;" />
+											</div>
+										</div>
+										<div class="col-md-2">
+											<div class="form-group">
+												<label class="control-label">banner 轮播图</label>
+												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+												<input type="hidden" class="form-control" name="banner" />
+												<img alt="" src="" name="bannerImg" style="display:none;" />
+											</div>
+										</div>
+										<div class="col-md-2">
+											<div class="form-group">
+												<label class="control-label">banner 轮播图</label>
+												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+												<input type="hidden" class="form-control" name="banner" />
+												<img alt="" src="" name="bannerImg" style="display:none;" />
+											</div>
+										</div>
+										<div class="col-md-2">
+											<div class="form-group">
+												<label class="control-label">banner 轮播图</label>
+												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+												<input type="hidden" class="form-control" name="banner" />
+												<img alt="" src="" name="bannerImg" style="display:none;" />
+											</div>
+										</div>
+									</div>
+									<div class="row" id="introDIV">
+										<div class="col-md-2">
+											<div class="form-group">
+												<label class="control-label">商品长图</label>
+												<input type="file" class="form-control" name="introFile" placeholder="商品长图" onchange="uploadIntroFile(this)"/>
+												<!--<input type="button" class="form-control" value="删除" onclick="delIntroFile(this)"/>-->
+												<input type="hidden" class="form-control" name="intro" />
+												<img alt="" src="" name="introImg" style="display:none;" />
+											</div>
+										</div>
+										<div class="col-md-2">
+											<div class="form-group">
+												<input type="button" class="form-control" value="添加" onclick="addIntroFile(this)"/>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="field-5" class="control-label">品牌</label>
+												<select class="form-control" id="field-5" name="brand_id" placeholder="品牌">
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="field-9" class="control-label">商家</label>
+												<select class="form-control" id="field-9" name="merchant_id" placeholder="商家"
+														onchange="renderFare(this)">
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="field-11" class="control-label">运费模板</label>
+												<select class="form-control" id="field-11" name="fare" placeholder="运费模板">
+												</select>
+											</div>
+										</div>
+										<!--
+                                                                <div class="col-md-2">
+                                                                    <div class="form-group">
+                                                                        <label class="control-label"></label>
+                                                                        <input type="button" class="form-control" value="增加运费模板" onclick="addFare()"/>
+                                                                    </div>
+                                                                </div>
+                                        -->
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="field-6" class="control-label">价格</label>
+												<input type="number" class="form-control" id="field-6" name="price" placeholder="价格" />
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="field-7" class="control-label">材质</label>
+												<input type="text" class="form-control" id="field-7" name="material" placeholder="材质" />
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="field-8" class="control-label">备注</label>
+												<input type="text" class="form-control" id="field-8" name="remark" placeholder="备注" />
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label class="control-label">商品属性模板</label>
+												<label><input type="radio" class="" name="choice" value="0" checked="checked" onclick="switchToCommon()" />通用模板</label>
+												<label><input type="radio" class="" name="choice" value="1" onclick="switchToCustom()"/>自定义模板</label>
+											</div>
+										</div>
+									</div>
+									<div id="skuProperty">
+										<input id="addMoreAttrButton" style="display: none" type="button" value="添加商品属性(如颜色、尺码等)" onclick="addMoreAttr(this,false)"/>
+									</div>
+									<div id="skuContainer">
+									</div>
+							</form>
 						</div>
-						
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-					
+					</div>
 				</div>
 			</div>
-			
-					
 			<footer th:replace="footer"></footer>
 		</div>
 	</div>
 	
 	<div th:replace="body-under"></div>
-
-
-	<div class="modal fade in" id="modal-6" aria-hidden="false" style="display: block;overflow: scroll;top:47px;right: 325px;">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 1080px;">
-
-				<div class="modal-header">
-					<h4 class="modal-title">添加商品</h4>
-				</div>
-
-				<div class="modal-body">
-					<form role="form" id="saveForm">
-					<input type="hidden" name="id"/>
-					<div class="row">
-						<div class="col-md-6">
-							<div class="form-group">
-								<label for="field-1" class="control-label">商品类别</label>
-								<select class="form-control" id="field-1" name="type" placeholder="商品类别" onchange="renderCategory(this)">
-								</select>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<label for="field-2" class="control-label">商品子类别</label>
-								<select class="form-control" id="field-2" name="category" placeholder="商品子类别">
-								</select>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-3" class="control-label">名称</label>
-								<input type="text" class="form-control" id="field-3" name="name" placeholder="名称" />
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-10" class="control-label">货号</label>
-								<input type="text" class="form-control" id="field-10" name="code" placeholder="货号" />
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">封面图片</label>
-								<input type="file" class="form-control" id="field-4" name="imageFile" placeholder="封面图片" />
-								<input type="hidden" class="form-control" name="image" />
-								<img alt="" src="" name="imageImg" style="display:none;" />
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-2">
-							<div class="form-group">
-								<label class="control-label">banner 轮播图</label>
-								<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-								<input type="hidden" class="form-control" name="banner" />
-								<img alt="" src="" name="bannerImg" style="display:none;" />
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="form-group">
-								<label class="control-label">banner 轮播图</label>
-								<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-								<input type="hidden" class="form-control" name="banner" />
-								<img alt="" src="" name="bannerImg" style="display:none;" />
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="form-group">
-								<label class="control-label">banner 轮播图</label>
-								<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-								<input type="hidden" class="form-control" name="banner" />
-								<img alt="" src="" name="bannerImg" style="display:none;" />
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="form-group">
-								<label class="control-label">banner 轮播图</label>
-								<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-								<input type="hidden" class="form-control" name="banner" />
-								<img alt="" src="" name="bannerImg" style="display:none;" />
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="form-group">
-								<label class="control-label">banner 轮播图</label>
-								<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-								<input type="hidden" class="form-control" name="banner" />
-								<img alt="" src="" name="bannerImg" style="display:none;" />
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="form-group">
-								<label class="control-label">banner 轮播图</label>
-								<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-								<input type="hidden" class="form-control" name="banner" />
-								<img alt="" src="" name="bannerImg" style="display:none;" />
-							</div>
-						</div>
-					</div>
-					<div class="row" id="introDIV">
-						<div class="col-md-2">
-							<div class="form-group">
-								<label class="control-label">商品长图</label>
-								<input type="file" class="form-control" name="introFile" placeholder="商品长图" onchange="uploadIntroFile(this)"/>
-								<!--<input type="button" class="form-control" value="删除" onclick="delIntroFile(this)"/>-->
-								<input type="hidden" class="form-control" name="intro" />
-								<img alt="" src="" name="introImg" style="display:none;" />
-							</div>
-						</div>
-						<div class="col-md-2">
-							<div class="form-group">
-								<input type="button" class="form-control" value="添加" onclick="addIntroFile(this)"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-5" class="control-label">品牌</label>
-								<select class="form-control" id="field-5" name="brand_id" placeholder="品牌">
-								</select>
-							</div>
-						</div>
-					</div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="field-9" class="control-label">商家</label>
-                                <select class="form-control" id="field-9" name="merchant_id" placeholder="商家"
-                                        onchange="renderFare(this)">
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="field-11" class="control-label">运费模板</label>
-                                <select class="form-control" id="field-11" name="fare" placeholder="运费模板">
-                                </select>
-                            </div>
-                        </div>
-<!--
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label class="control-label"></label>
-                                <input type="button" class="form-control" value="增加运费模板" onclick="addFare()"/>
-                            </div>
-                        </div>
--->
-                    </div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-6" class="control-label">价格</label>
-								<input type="number" class="form-control" id="field-6" name="price" placeholder="价格" />
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-7" class="control-label">材质</label>
-								<input type="text" class="form-control" id="field-7" name="material" placeholder="材质" />
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-8" class="control-label">备注</label>
-								<input type="text" class="form-control" id="field-8" name="remark" placeholder="备注" />
-							</div>
-						</div>
-					</div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="control-label">商品属性模板</label>
-                                <label><input type="radio" class="" name="choice" value="0" checked="checked" onclick="switchToCommon()" />通用模板</label>
-                                <label><input type="radio" class="" name="choice" value="1" onclick="switchToCustom()"/>自定义模板</label>
-                            </div>
-                        </div>
-                    </div>
-					<div id="skuProperty">
-						<input id="addMoreAttrButton" style="display: none" type="button" value="添加商品属性(如颜色、尺码等)" onclick="addMoreAttr(this,false)"/>
-					</div>
-                    <div id="skuContainer">
-                    </div>
-					</form>
-				</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-info save">保存</button>
-				</div>
-			</div>
-		</div>
-	</div>
 
 	<div class="modal fade in" id="modal-7" aria-hidden="false" style="display: none;z-index: 2000">
 	</div>
