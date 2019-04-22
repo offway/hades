@@ -64,6 +64,17 @@ public class PhMerchant implements Serializable {
     /** 是否包邮[0-否,1-是] **/
     private String isFreeFare;
 
+    private Double ratio;
+
+    @Column(name = "ratio", precision = 15, scale = 2)
+    public Double getRatio() {
+        return ratio;
+    }
+
+    public void setRatio(Double ratio) {
+        this.ratio = ratio;
+    }
+
     @Column(name = "admin_id", length = 11)
     public Long getAdminId() {
         return adminId;

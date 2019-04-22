@@ -38,143 +38,157 @@
 					</ol>
 				</div>
 			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">添加商家</h3>
+							<div class="panel-options">
+								<!--								<a href="#" data-toggle="panel">-->
+								<!--									<span class="collapse-icon">–</span>-->
+								<!--									<span class="expand-icon">+</span>-->
+								<!--								</a>-->
+								<!--								<a href="#" data-toggle="remove">-->
+								<!--									×-->
+								<!--								</a>-->
+							</div>
+						</div>
+						<div class="panel-body">
+							<form role="form" id="saveForm" class="form-horizontal">
+								<input type="hidden" name="id"/>
+								<div class="row">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">商户名称</label>
+											<input type="text" class="form-control" name="name" placeholder="商户名称"/>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">商户LOGO</label>
+											<input type="file" class="form-control" name="logoFile" placeholder="商户LOGO"/>
+											<input type="hidden" class="form-control" name="logo" />
+											<img alt="" src="" name="logoImg" style="display:none;"/>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">商户地址</label>
+											<input type="text" class="form-control" name="address" placeholder="商户地址"/>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">公司名称</label>
+											<input type="text" class="form-control" name="company" placeholder="公司名称"/>
+										</div>
+									</div>
+									<div class="col-md-8">
+										<div class="form-group" onclick="checkIt()">
+											<label class="control-label">发货地址</label>
+											<input type="text" class="form-control" readonly="readonly" name="address_send" placeholder="发货地址"/>
+											<input type="hidden" class="form-control" name="address_send_jsonStr"/>
+											<input type="hidden" class="form-control" name="addrId"/>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">联系电话</label>
+											<input type="text" class="form-control" name="phone" placeholder="联系电话"/>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">商户邮箱</label>
+											<input type="text" class="form-control" name="email" placeholder="商户邮箱"/>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">合同编号</label>
+											<input type="text" class="form-control" name="contractNo" placeholder="合同编号"/>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">备注</label>
+											<input type="text" class="form-control" name="remark" placeholder="备注"/>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">后台登录账号</label>
+											<input type="text" class="form-control" name="admin_name" placeholder="后台登录账号"/>
+											<input type="hidden" class="form-control" name="adminId"/>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">抽成率</label>
+											<input type="number" class="form-control" name="ratio" placeholder="抽成率"/>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label class="control-label">签约日期</label>
+											<input type="text" id="signDate" class="form-control" placeholder="签约日期" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
+											<input type="hidden" class="form-control" name="signDate" />
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label class="control-label">到期日期</label>
+											<input type="text" id="expireDate" class="form-control" placeholder="到期日期" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
+											<input type="hidden" class="form-control" name="expireDate" />
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="control-label">填写品牌ID</label>
+											<!--
+                                            <input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>
+                                            -->
+											<input type="button" value="添加" id="addBrandID" onclick="addMoreText(this)"/>
+											<input type="hidden" class="form-control" name="brandIDStr" value="" />
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="control-label">上传营业执照/品牌授权书等</label>
+											<!--
+                                            <input type="file" class="form-control" name="detailImageFile" placeholder="上传营业执照/品牌授权书等"/>
+                                            -->
+											<input type="button" value="添加" id="addFile" onclick="addMoreImg(this)"/>
+											<input type="hidden" class="form-control" name="imagesJSONStr" value="" />
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-info save">保存</button>
+									<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
 			<footer th:replace="footer"></footer>
 		</div>
 	</div>
 	
 	<div th:replace="body-under"></div>
-
-	<div style="display: block;position: fixed;top: 160px;left: 340px;background: white;overflow: scroll;border: solid;width: 1500px;height: 600px;z-index: 999;">
-		<div class="">
-			<form role="form" id="saveForm">
-				<input type="hidden" name="id"/>
-				<table>
-					<tr>
-						<td>
-							<div class="">
-								<label for="field-3" class="control-label">商户名称</label>
-								<input type="text" class="form-control" name="name" placeholder="商户名称"/>
-							</div>
-						</td>
-						<td>
-							<div class="">
-								<label for="field-4" class="control-label">商户LOGO</label>
-								<input type="file" class="form-control" name="logoFile" placeholder="商户LOGO"/>
-								<input type="hidden" class="form-control" name="logo" />
-								<img alt="" src="" name="logoImg" style="display:none;"/>
-							</div>
-						</td>
-						<td>
-							<div class="">
-								<label for="field-3" class="control-label">商户地址</label>
-								<input type="text" class="form-control" name="address" placeholder="商户地址"/>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<div class="">
-								<label for="field-3" class="control-label">公司名称</label>
-								<input type="text" class="form-control" name="company" placeholder="公司名称"/>
-							</div>
-						</td>
-						<td colspan="2">
-							<div class="" onclick="checkIt()">
-								<label for="field-3" class="control-label">发货地址</label>
-								<input type="text" class="form-control" readonly="readonly" name="address_send" placeholder="发货地址"/>
-								<input type="hidden" class="form-control" name="address_send_jsonStr"/>
-								<input type="hidden" class="form-control" name="addrId"/>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<div class="">
-								<label for="field-3" class="control-label">联系电话</label>
-								<input type="text" class="form-control" name="phone" placeholder="联系电话"/>
-							</div>
-						</td>
-						<td>
-							<div class="">
-								<label for="field-3" class="control-label">商户邮箱</label>
-								<input type="text" class="form-control" name="email" placeholder="商户邮箱"/>
-							</div>
-						</td>
-						<td>
-							<div class="">
-								<label for="field-3" class="control-label">合同编号</label>
-								<input type="text" class="form-control" name="contractNo" placeholder="合同编号"/>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<div class="">
-								<label class="control-label">备注</label>
-								<input type="text" class="form-control" name="remark" placeholder="备注"/>
-							</div>
-						</td>
-						<td>
-							<div class="">
-								<label class="control-label">后台登录账号</label>
-								<input type="text" class="form-control" name="admin_name" placeholder="后台登录账号"/>
-                                <input type="hidden" class="form-control" name="adminId"/>
-							</div>
-						</td>
-						<td>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<div class="">
-								<label for="field-4" class="control-label">签约日期</label>
-								<input type="text" id="signDate" class="form-control" placeholder="签约日期" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
-								<input type="hidden" class="form-control" name="signDate" />
-							</div>
-						</td>
-						<td>
-							<div class="">
-								<label for="field-4" class="control-label">到期日期</label>
-								<input type="text" id="expireDate" class="form-control" placeholder="到期日期" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
-								<input type="hidden" class="form-control" name="expireDate" />
-							</div>
-						</td>
-						<td></td>
-					</tr>
-                    <tr>
-                        <td colspan="3">
-                            <div class="">
-                                <label for="field-4" class="control-label">填写品牌ID</label>
-                                <!--
-                                <input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>
-                                -->
-                                <input type="button" value="添加" id="addBrandID" onclick="addMoreText(this)"/>
-                                <input type="hidden" class="form-control" name="brandIDStr" value="" />
-                            </div>
-                        </td>
-                    </tr>
-					<tr>
-						<td colspan="3">
-							<div class="">
-								<label for="field-4" class="control-label">上传营业执照/品牌授权书等</label>
-								<!--
-								<input type="file" class="form-control" name="detailImageFile" placeholder="上传营业执照/品牌授权书等"/>
-								-->
-								<input type="button" value="添加" id="addFile" onclick="addMoreImg(this)"/>
-								<input type="hidden" class="form-control" name="imagesJSONStr" value="" />
-							</div>
-						</td>
-					</tr>
-				</table>
-			</form>
-		</div>
-
-		<div class="modal-footer">
-			<button type="button" class="btn btn-info save">保存</button>
-			<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-		</div>
-
-	</div>
 
     <div id="preview" style="display: none;
     position: fixed;top: 190px;left: 650px;background: white;overflow: hidden;border: solid;width: 700px;height: 200px;z-index: 999;">
@@ -539,7 +553,7 @@
 			});
 		});
 
-		if(!isNaN(theId)){
+		if (theId != null) {
 			$.post("/merchant_find", {id: theId}, function (data) {
 				var form = $("#saveForm");
 				var main = data["main"];
