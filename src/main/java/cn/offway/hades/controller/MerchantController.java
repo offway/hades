@@ -223,4 +223,15 @@ public class MerchantController {
         }
         return map;
     }
+
+    @ResponseBody
+    @RequestMapping("/merchant_get")
+    public PhMerchant get(@AuthenticationPrincipal PhAdmin admin) {
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            return merchantService.findByAdminId(admin.getId());
+        } else {
+            return null;
+        }
+    }
 }
