@@ -167,26 +167,37 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
+									<label class="control-label">有效期设定</label>
+									<label><input name="switch" class="notMe" type="radio" value="0" />时长 </label>
+									<label><input name="switch" class="notMe" type="radio" value="1" />区间</label>
+								</div>
+							</div>
+						</div>
+						<div class="row" id="one" style="display: none">
+							<div class="col-md-12">
+								<div class="form-group">
 									<label class="control-label">有效期[单位：天]</label>
 									<input type="number" class="form-control" name="validNum" placeholder="有效期[单位：天]"/>
 								</div>
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">开始时间</label>
-									<input type="text" id="beginTimeAlt" class="form-control" placeholder="开始时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
-									<input type="hidden" class="form-control" name="beginTime" placeholder="开始时间"/>
+						<div id="two" style="display: none">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label class="control-label">开始时间</label>
+										<input type="text" id="beginTimeAlt" class="form-control" placeholder="开始时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
+										<input type="hidden" class="form-control" name="beginTime" placeholder="开始时间"/>
+									</div>
 								</div>
 							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">截止时间</label>
-									<input type="text" id="endTimeAlt" class="form-control" placeholder="截止时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
-									<input type="hidden" class="form-control" name="endTime" placeholder="截止时间"/>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label class="control-label">截止时间</label>
+										<input type="text" id="endTimeAlt" class="form-control" placeholder="截止时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
+										<input type="hidden" class="form-control" name="endTime" placeholder="截止时间"/>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -560,6 +571,28 @@
 			$("#endTimeAlt").val(start.format('YYYY-MM-DD HH:mm:ss'));
 			$('input[name="endTime"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
 		});
+
+		$('[name="switch"]').click(function () {
+			var value = $(this).val();  //获取选中的radio的值
+			toggle(value);
+		});
+
+		function toggle(value) {
+			var one = $("#one");
+			var two = $("#two");
+			switch (parseInt(value)) {
+				case 0:
+					one.show();
+					two.hide();
+					break;
+				case 1:
+					one.hide();
+					two.show();
+					break;
+				default:
+					break;
+			}
+		}
 		
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);
@@ -569,7 +602,7 @@
 
 		$(".btn.btn-info.add").click(function () {
 			var form = $("#saveForm");
-			form.find("input").val("");
+			form.find("input:not(.notMe)").val("");
 			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 		});
 
@@ -630,7 +663,7 @@
 			var endTime = form.find("input[name='endTime']").val();
 
 
-			if (name == '' || usedMinAmount == '' || amount == '' || validNum == '' || beginTime == '' || endTime == '') {
+			if (name == '' || usedMinAmount == '' || amount == '' || (validNum == '' && (beginTime == '' || endTime == ''))) {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
@@ -699,10 +732,24 @@
 					form.find("img[name='" + i + "Img']").attr("src", data[i]);
 					form.find("img[name='" + i + "Img']").show();
 				}
-				var btime = new Date(data["beginTime"]).Format("yyyy-MM-dd hh:mm:ss");
-				var etime = new Date(data["endTime"]).Format("yyyy-MM-dd hh:mm:ss");
-				form.find("#beginTimeAlt").val(btime);
-				form.find("#endTimeAlt").val(etime);
+				if (data["beginTime"] != null) {
+					var btime = new Date(data["beginTime"]).Format("yyyy-MM-dd hh:mm:ss");
+					form.find("#beginTimeAlt").val(btime);
+					$("input[name='switch']").val(["1"]);
+					toggle("1");
+				} else {
+					$("input[name='switch']").val(["0"]);
+					toggle("0");
+				}
+				if (data["endTime"] != null) {
+					var etime = new Date(data["endTime"]).Format("yyyy-MM-dd hh:mm:ss");
+					form.find("#endTimeAlt").val(etime);
+					$("input[name='switch']").val(["1"]);
+					toggle("1");
+				} else {
+					$("input[name='switch']").val(["0"]);
+					toggle("0");
+				}
 				form.find(".btn.image").show();
 				jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 			});
