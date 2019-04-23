@@ -74,7 +74,9 @@ public class PhMerchantFareServiceImpl implements PhMerchantFareService {
             public Predicate toPredicate(Root<PhMerchantFare> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
                 params.add(criteriaBuilder.equal(root.get("merchantId"), pid));
-                params.add(criteriaBuilder.like(root.get("remark"), "%" + remark + "%"));
+                if (!"".equals(remark)) {
+                    params.add(criteriaBuilder.like(root.get("remark"), "%" + remark + "%"));
+                }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
