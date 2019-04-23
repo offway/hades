@@ -17,6 +17,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -77,6 +78,16 @@ public class PhGoodsServiceImpl implements PhGoodsService {
                 return null;
             }
         }, pageable);
+    }
+
+    @Override
+    public Long getCountByPid(Long merchantId) {
+        Optional<String> res = phGoodsRepository.getCount(merchantId);
+        if (res.isPresent()) {
+            return Long.valueOf(String.valueOf(res.get()));
+        } else {
+            return 0L;
+        }
     }
 
     @Override

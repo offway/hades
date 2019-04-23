@@ -8,9 +8,13 @@ import cn.offway.hades.domain.PhSettlementInfo;
  * @author wn
  * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $
  */
-public interface PhSettlementInfoService{
+public interface PhSettlementInfoService {
 
-	PhSettlementInfo save(PhSettlementInfo phSettlementInfo);
-	
-	PhSettlementInfo findOne(Long id);
+    PhSettlementInfo save(PhSettlementInfo phSettlementInfo);
+
+    PhSettlementInfo findOne(Long id);
+
+    PhSettlementInfo findByPid(Long merchantId);
+
+    Boolean isExist(Long merchantId);
 }

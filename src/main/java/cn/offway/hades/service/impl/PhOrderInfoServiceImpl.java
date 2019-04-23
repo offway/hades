@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -67,6 +69,23 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
                 return null;
             }
         }, pageable);
+    }
+
+    @Override
+    public List<PhOrderInfo> findToCheck(Date start, Date stop) {
+        return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
+            @Override
+            public Predicate toPredicate(Root<PhOrderInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                /* 状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] */
+                params.add(criteriaBuilder.equal(root.get("status"), "3"));
+                params.add(criteriaBuilder.greaterThan(root.get("createTime"), start));
+                params.add(criteriaBuilder.lessThan(root.get("receiptTime"), stop));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        }, new Sort("merchantId"));
     }
 
     @Override

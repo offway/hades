@@ -23,4 +23,6 @@ public interface PhGoodsService {
     Page<PhGoods> findAll(String name, String code, String status, Long merchantId, Pageable pageable);
 
     void del(Long id);
+
+    Long getCountByPid(Long merchantId);
 }
