@@ -20,7 +20,7 @@ public class PhBanner implements Serializable {
     /** banner **/
     private String banner;
 
-    /** 类别[0-跳转URL,1-品牌,2-商品] **/
+    /** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款] **/
     private String type;
 
     /** 跳转对应ID **/
