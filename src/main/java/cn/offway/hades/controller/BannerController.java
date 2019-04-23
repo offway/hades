@@ -55,6 +55,9 @@ public class BannerController {
     @RequestMapping("/banner_save")
     @ResponseBody
     public boolean save(PhBanner banner) {
+        if ("".equals(banner.getUrl())) {
+            banner.setUrl(null);
+        }
         banner.setCreateTime(new Date());
         bannerService.save(banner);
         return true;

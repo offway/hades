@@ -88,7 +88,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-3" class="control-label">活动名称</label>
+								<label class="control-label">活动名称</label>
 								<input type="text" class="form-control" name="remark" placeholder="活动名称"/>
 							</div>
 						</div>
@@ -96,7 +96,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-4" class="control-label">开始时间-截止时间</label>
+								<label class="control-label">开始时间-截止时间</label>
 								<input type="text" id="daterange" class="form-control daterange" placeholder="开始时间-截止时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
 								<input type="hidden" class="form-control" name="beginTime" />
 								<input type="hidden" class="form-control" name="endTime" />
@@ -106,7 +106,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-4" class="control-label">封面图片</label>
+								<label class="control-label">封面图片</label>
 								<input type="file" class="form-control" name="imageFile" placeholder="封面图片"/>
 								<input type="hidden" class="form-control" name="banner" />
 								<img alt="" src="" name="imageImage" style="display:none;"/>
@@ -116,7 +116,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="field-4" class="control-label">排序</label>
+                                <label class="control-label">排序</label>
                                 <input type="text" class="form-control" name="sort" value="0" placeholder="排序"/>
                             </div>
                         </div>
@@ -124,18 +124,19 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="field-4" class="control-label">跳转方式</label>
-                                <label><input name="type" class="" type="radio" value="2" />商品详情 </label>
-                                <!-- <label><input name="type" class="" type="radio" value="3" />商品分类列表 </label> -->
-                                <label><input name="type" class="" type="radio" value="0" />专题 </label>
-                                <label><input name="type" class="" type="radio" value="1" />品牌</label>
+                                <label class="control-label">跳转方式</label>
+								<label><input name="type" class="notMe" type="radio" value="3" />明星同款 </label>
+                                <label><input name="type" class="notMe" type="radio" value="2" />商品详情 </label>
+                                <!-- <label><input name="type" class="" type="radio" value="4" />商品分类列表 </label> -->
+                                <label><input name="type" class="notMe" type="radio" value="0" />专题 </label>
+                                <label><input name="type" class="notMe" type="radio" value="1" />品牌</label>
                             </div>
                         </div>
                     </div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group url" style="display: none">
-								<label for="field-4" class="control-label">跳转链接</label>
+								<label class="control-label">跳转链接</label>
 								<input type="text" class="form-control" name="url" placeholder="跳转链接"/>
 							</div>	
 						</div>
@@ -143,7 +144,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group goodsId" style="display: none">
-								<label for="field-4" class="control-label">商品详情ID</label>
+								<label class="control-label">商品详情ID</label>
 								<input type="text" class="form-control" name="goodsId" placeholder="商品详情ID"/>
 							</div>	
 						</div>
@@ -151,9 +152,17 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group brandId" style="display: none">
-								<label for="field-4" class="control-label">品牌详情ID</label>
+								<label class="control-label">品牌详情ID</label>
 								<input type="number" class="form-control" name="brandId" placeholder="品牌详情ID"/>
 							</div>	
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group starSameId" style="display: none">
+								<label class="control-label">明星同款ID</label>
+								<input type="number" class="form-control" name="starSameId" placeholder="明星同款ID"/>
+							</div>
 						</div>
 					</div>
 					</form>
@@ -236,26 +245,25 @@
 				{
 					targets: 3,
 					data: "type",
-					title: "类型"
+					title: "类型",
+					render: function (data, type, row, meta) {
+						/** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款] **/
+						var map = ["跳转URL", "品牌", "商品", "明星同款"];
+						return map[parseInt(data)]
+					}
 				},
-                {
-               		targets: 4,
-	                data: "brandId",
-	                title: "品牌ID"
-            	},
-            	{
-               		targets: 5,
-	                data: "goodsId",
-	                title: "商品ID"
-            	}, 
-            	
+				{
+					targets: 4,
+					data: "redirectId",
+					title: "跳转对应ID"
+				},
+				{
+					targets: 5,
+					data: "url",
+					title: "跳转链接"
+				},
             	{
                		targets: 6,
-	                data: "url",
-	                title: "地址"
-            	},
-            	{
-               		targets: 7,
 	                data: "beginTime",
 	                title: "开始时间",
                     render: function (data, type, row, meta) {
@@ -263,7 +271,7 @@
                     }
             	},
             	{
-               		targets: 8,
+               		targets: 7,
 	                data: "endTime",
 	                title: "截止时间",
                     render: function (data, type, row, meta) {
@@ -271,7 +279,7 @@
                     }
             	},
 				{
-					targets: 9,
+					targets: 8,
 					data: "status",
 					title: "是否上架",
 					render: function (data, type, row, meta) {
@@ -279,12 +287,12 @@
 					}
 				},
             	{
-               		targets: 10,
+               		targets: 9,
 	                data: "sort",
 	                title: "排序"
             	},
                 {
-                    targets: 11,
+                    targets: 10,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -292,12 +300,12 @@
                     }
                 },
 				{
-					targets: 12,
+					targets: 11,
 					data: "remark",
 					title: "备注"
 				},
 				{
-					targets: 13,
+					targets: 12,
 					data: "id",
 					orderable: false,
 					title: "操作",
@@ -311,7 +319,6 @@
 						} else {
 							return '<input type="button" name="checkIt" disabled="disabled" value="下架无法置顶"/>';
 						}
-
 					}
 				}
                ]
@@ -325,46 +332,55 @@
 			return false;
 		});
 
-        $('[name="type"]').click(function(){
-            var value = $(this).val();  //获取选中的radio的值
-            var url = $(".url");
-            var brandId = $(".brandId");
-            var goodsId = $(".goodsId");
-            switch (parseInt(value)) {
-                case 0:
-                    url.show();
-                    brandId.hide();
-                    goodsId.hide();
-                    break;
-                case 1:
-                    url.hide();
-                    brandId.show();
-                    goodsId.hide();
-                    break;
-                case 2:
-                    url.hide();
-                    brandId.hide();
-                    goodsId.show();
-                    break;
-                case 3:
-                    url.show();
-                    brandId.hide();
-                    goodsId.hide();
-                    break;
-                default:
-                    break;
-            }
-        });
+		$('[name="type"]').click(function () {
+			var value = $(this).val();  //获取选中的radio的值
+			toggle(value);
+		});
 
-        $(".btn.btn-info.add").click(function(){
-            var form = $("#saveForm");
-            //form.find("input").val("");
-            form.find("img").attr("src","");
-            form.find("img").hide();
-            form.find("input[type='file']").show();
-            $(".imageShow").remove();
-            jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-        });
+		function toggle(value) {
+			var url = $(".url");
+			var brandId = $(".brandId");
+			var goodsId = $(".goodsId");
+			var starSameId = $(".starSameId");
+			switch (parseInt(value)) {
+				case 0:
+					url.show();
+					brandId.hide();
+					goodsId.hide();
+					starSameId.hide();
+					break;
+				case 1:
+					url.hide();
+					brandId.show();
+					goodsId.hide();
+					starSameId.hide();
+					break;
+				case 2:
+					url.hide();
+					brandId.hide();
+					goodsId.show();
+					starSameId.hide();
+					break;
+				case 3:
+					url.hide();
+					brandId.hide();
+					goodsId.hide();
+					starSameId.show();
+					break;
+				default:
+					break;
+			}
+		}
+
+		$(".btn.btn-info.add").click(function () {
+			var form = $("#saveForm");
+			form.find("input:not(.notMe)").val("");
+			form.find("img").attr("src", "");
+			form.find("img").hide();
+			form.find("input[type='file']").show();
+			$(".imageShow").remove();
+			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+		});
 
 		function getImgSize(file, cb) {
 			var f = file;//input.files[0];
@@ -417,19 +433,21 @@
 			footer.find(".bg-lg").show();
 			var form = $("#saveForm");
 			var url = form.find("input[name='url']").val();
-			var goods_id = form.find("input[name='goodsId']").val();
-			var brand_id = form.find("input[name='brandId']").val();
+			var goodsId = form.find("input[name='goodsId']").val();
+			var brandId = form.find("input[name='brandId']").val();
+			var starSameId = form.find("input[name='starSameId']").val();
+			var type = form.find("input[name='type']:checked").val();
 			var daterange = $("#daterange").val();
 			//文件
 			var imageVal = form.find("input[name='imageFile']")[0].value;
 			//已上传的图片地址
 			var imageVals = form.find("input[name='banner']").val();
 
-			if(daterange==''|| (imageVal=='' && imageVals=='') || (url =='' && goods_id =='' && brand_id =='')){
+			if (daterange == '' || (imageVal == '' && imageVals == '') || (url == '' && goodsId == '' && brandId == '' && starSameId == '')) {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
-				return ;
+				return;
 			}
 
 			if(daterange.indexOf(' - ')!=19 || daterange.length!=41){
@@ -465,7 +483,16 @@
 							form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
 						}
 						//提交保存
-						$.post("/banner_save",$("#saveForm").serialize(),function(data){
+						var postData = $("#saveForm").serializeArray();
+						/** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款] **/
+						if (type == 1) {
+							postData.push({"name": "redirectId", "value": brandId});//append pid
+						} else if (type == 2) {
+							postData.push({"name": "redirectId", "value": goodsId});//append pid
+						} else if (type == 3) {
+							postData.push({"name": "redirectId", "value": starSameId});//append pid
+						}
+						$.post("/banner_save",postData,function(data){
 							if(data){
 								footer.find("button").show();
 								footer.find(".bg-lg").hide();
@@ -494,11 +521,22 @@
 				return;
 			}
 
-			$.post("/banner_get",{id:activityId.val()},function(data){
+			$.post("/banner_get", {id: activityId.val()}, function (data) {
 				var form = $("#saveForm");
 				form.find("input[name='id']").val(data.id);
-				form.find("input[name='brandId']").val(data.brandId);
-				form.find("input[name='goodsId']").val(data.goodsId);
+				/** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款] **/
+				switch (parseInt(data.type)) {
+					case 1:
+						form.find("input[name='brandId']").val(data.redirectId);
+						break;
+					case 2:
+						form.find("input[name='goodsId']").val(data.redirectId);
+						break;
+					case 3:
+						form.find("input[name='starSameId']").val(data.redirectId);
+						break;
+				}
+				toggle(data.type);
 				form.find("input[name='url']").val(data.url);
 				form.find("input[name='status']").val(data.status);
 				form.find("input[name='sort']").val(data.sort);
