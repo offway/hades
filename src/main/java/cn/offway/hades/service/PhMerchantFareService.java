@@ -27,4 +27,6 @@ public interface PhMerchantFareService {
     void del(Long id);
 
     void makeAllToUnDefault(Long pid);
+
+    Long getCountByPid(Long pid);
 }

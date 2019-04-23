@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 /**
  * 商户运费模板Repository接口
  *
@@ -18,4 +20,7 @@ public interface PhMerchantFareRepository extends JpaRepository<PhMerchantFare, 
     @Modifying
     @Query(nativeQuery = true, value = "UPDATE `ph_merchant_fare` SET `is_default` = '0' WHERE (`merchant_id` = ?1)")
     void makeAllToUnDefault(Long pid);
+
+    @Query(nativeQuery = true, value = "SELECT count(*) FROM ph_merchant_fare WHERE (`merchant_id` = ?1)")
+    Optional<String> getCountByPid(Long pid);
 }

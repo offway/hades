@@ -145,7 +145,12 @@ public class GoodsController {
     @RequestMapping("/fare_add")
     public boolean addFare(PhMerchantFare merchantFare) {
         merchantFare.setCreateTime(new Date());
-        merchantFare.setIsDefault("0");
+        Long cnt = merchantFareService.getCountByPid(merchantFare.getMerchantId());
+        if (cnt > 0) {
+            merchantFare.setIsDefault("0");
+        } else {
+            merchantFare.setIsDefault("1");
+        }
         merchantFareService.save(merchantFare);
         return true;
     }
