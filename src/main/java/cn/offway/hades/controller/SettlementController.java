@@ -4,22 +4,33 @@ import cn.offway.hades.domain.PhMerchant;
 import cn.offway.hades.domain.PhOrderInfo;
 import cn.offway.hades.domain.PhSettlementDetail;
 import cn.offway.hades.domain.PhSettlementInfo;
+import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping
 public class SettlementController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Autowired
+    private QiniuProperties qiniuProperties;
     @Autowired
     private PhOrderInfoService orderInfoService;
     @Autowired
@@ -34,10 +45,12 @@ public class SettlementController {
     private PhGoodsService goodsService;
 
     @Scheduled(cron = "0 0 * * * *")
+    @RequestMapping("/stat")
+    @ResponseBody
     public void dailyStat() {
         DateTime oneWeekAgo = new DateTime().minusDays(7);
         DateTime oneMonthAgo = new DateTime().minusMonths(1);
-        List<PhOrderInfo> list = orderInfoService.findToCheck(oneWeekAgo.toDate(), oneMonthAgo.toDate());
+        List<PhOrderInfo> list = orderInfoService.findToCheck(oneMonthAgo.toDate(), oneWeekAgo.toDate());
         PhMerchant merchant = null;
         PhSettlementInfo settlementInfo = null;
         double orderAmount = 0;
@@ -47,12 +60,6 @@ public class SettlementController {
         for (PhOrderInfo orderInfo : list) {
             if (merchant == null || (Long.compare(merchant.getId(), orderInfo.getMerchantId()) != 0)) {
                 if (merchant != null) {
-                    //save previous one before switch
-                    settlementInfo.setOrderAmount(orderAmount);
-                    settlementInfo.setOrderCount(orderCount);
-                    settlementInfo.setUnsettledAmount(unsettledAmount);
-                    settlementInfo.setUnsettledCount(unsettleCount);
-                    settlementInfoService.save(settlementInfo);
                     //reset counter
                     orderAmount = 0;
                     orderCount = 0;
@@ -108,7 +115,60 @@ public class SettlementController {
                 settlementDetail.setStatus("0");
                 settlementDetailService.save(settlementDetail);
             }
+            //save previous one before switch
+            settlementInfo.setOrderAmount(orderAmount);
+            settlementInfo.setOrderCount(orderCount);
+            settlementInfo.setUnsettledAmount(unsettledAmount);
+            settlementInfo.setUnsettledCount(unsettleCount);
+            settlementInfoService.save(settlementInfo);
         }
+    }
 
+    @RequestMapping("/settle.html")
+    public String index(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        return "settle_index";
+    }
+
+    @RequestMapping("/settle_inner.html")
+    public String inner(ModelMap map, Long id) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("theId", id);
+        return "settle_sub_index";
+    }
+
+    @ResponseBody
+    @RequestMapping("/settle_list")
+    public Map<String, Object> getSettleList(HttpServletRequest request) {
+        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
+        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
+        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
+        Sort sort = new Sort("id");
+        Page<PhSettlementInfo> pages = settlementInfoService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        int initEcho = sEcho + 1;
+        Map<String, Object> map = new HashMap<>();
+        map.put("sEcho", initEcho);
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        map.put("aData", pages.getContent());//数据集合
+        return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/settle_inner_list")
+    public Map<String, Object> getSettleSubList(HttpServletRequest request) {
+        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
+        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
+        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
+        String id = request.getParameter("theId");
+        Sort sort = new Sort("id");
+        Page<PhSettlementDetail> pages = settlementDetailService.findAll(Long.valueOf(id), new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        int initEcho = sEcho + 1;
+        Map<String, Object> map = new HashMap<>();
+        map.put("sEcho", initEcho);
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        map.put("aData", pages.getContent());//数据集合
+        return map;
     }
 }

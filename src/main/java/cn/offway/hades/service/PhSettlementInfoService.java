@@ -1,6 +1,8 @@
 package cn.offway.hades.service;
 
 import cn.offway.hades.domain.PhSettlementInfo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 商户结算表Service接口
@@ -17,4 +19,6 @@ public interface PhSettlementInfoService {
     PhSettlementInfo findByPid(Long merchantId);
 
     Boolean isExist(Long merchantId);
+
+    Page<PhSettlementInfo> findAll(Pageable pageable);
 }
