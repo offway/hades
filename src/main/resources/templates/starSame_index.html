@@ -509,7 +509,7 @@
 			//已上传的图片地址
 			var imageUrl = form.find("input[name='imageUrl']").val();
 
-			if(starName==''|| title==''||praise_count==''||view_count==''|| (imageVal=='' && imageUrl=='')){
+			if(starName==''|| praise_count==''||view_count==''|| (imageVal=='' && imageUrl=='')){
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
