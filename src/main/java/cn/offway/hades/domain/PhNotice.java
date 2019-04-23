@@ -8,7 +8,7 @@ import java.util.Date;
  * 消息通知
  *
  * @author wn
- * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $
+ * @version $v: 1.0.0, $time:2019-04-01 11:26:00 Exp $
  */
 @Entity
 @Table(name = "ph_notice")
@@ -34,6 +34,9 @@ public class PhNotice implements Serializable {
 
     /** 备注 **/
     private String remark;
+    
+    /** 图片 **/
+    private String image;
 
 
     @Id
@@ -101,5 +104,16 @@ public class PhNotice implements Serializable {
     public void setRemark(String remark) {
         this.remark = remark;
     }
+
+    @Column(name = "image", length = 200)
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+    
+    
 
 }
