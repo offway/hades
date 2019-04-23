@@ -29,4 +29,6 @@ public interface PhBrandService {
     void del(Long id);
 
     void resort(Long sort);
+
+    Long getMaxSort();
 }

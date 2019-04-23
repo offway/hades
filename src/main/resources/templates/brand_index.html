@@ -342,16 +342,21 @@
         });
     }
 
-    function topIt(id) {
-        $.post("/brand_top", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
+	function topIt(id) {
+		var num = prompt("输入置顶位置,从0开始,0为第一位", "0");
+		if (isNaN(num)) {
+			alert("请输入数字！")
+		} else {
+			$.post("/brand_top", {"id": id, "sort": num}, function (data) {
+				if (data) {
+					table_global.fnDraw();
+					toastr.success("操作已成功！", "温馨提示");
+				} else {
+					toastr.error("操作失败", "温馨提示");
+				}
+			});
+		}
+	}
 
     function unTopIt(id) {
         $.post("/brand_untop", {"id": id}, function (data) {

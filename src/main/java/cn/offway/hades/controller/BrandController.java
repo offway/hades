@@ -83,8 +83,11 @@ public class BrandController {
         if (brand != null) {
             if ("1".equals(brand.getIsRecommend())) {
                 brand.setIsRecommend("0");
+                brand.setSort(null);
             } else {
                 brand.setIsRecommend("1");
+                long lastSort = brandService.getMaxSort();
+                brand.setSort(lastSort + 1);
             }
             brandService.save(brand);
             return true;
@@ -94,11 +97,11 @@ public class BrandController {
 
     @ResponseBody
     @RequestMapping("/brand_top")
-    public boolean top(Long id) {
+    public boolean top(Long id, Long sort) {
         PhBrand brand = brandService.findOne(id);
         if (brand != null) {
-            brandService.resort(0L);
-            brand.setSort(0L);
+            brandService.resort(sort);
+            brand.setSort(sort);
             brandService.save(brand);
             return true;
         }

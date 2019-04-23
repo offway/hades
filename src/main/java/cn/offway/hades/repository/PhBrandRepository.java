@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 /**
  * 品牌库Repository接口
  *
@@ -18,4 +20,7 @@ public interface PhBrandRepository extends JpaRepository<PhBrand, Long>, JpaSpec
     @Modifying
     @Query(nativeQuery = true, value = "update `ph_brand` set `sort` = `sort` + 1 where `sort` >= ?1")
     void resort(Long sort);
+
+    @Query(nativeQuery = true, value = "SELECT max(sort) as a FROM ph_brand where is_recommend = 1")
+    Optional<String> getMaxSort();
 }

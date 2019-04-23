@@ -17,6 +17,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -76,6 +77,16 @@ public class PhBrandServiceImpl implements PhBrandService {
                 return null;
             }
         });
+    }
+
+    @Override
+    public Long getMaxSort() {
+        Optional<String> res = phBrandRepository.getMaxSort();
+        if (res.isPresent()) {
+            return Long.valueOf(String.valueOf(res.get()));
+        } else {
+            return 0L;
+        }
     }
 
     @Override
