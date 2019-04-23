@@ -5,7 +5,7 @@ import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
 import cn.offway.hades.utils.HttpClientUtil;
 import com.alibaba.fastjson.JSON;
-import org.apache.tomcat.util.security.MD5Encoder;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -217,7 +217,7 @@ public class OrderController {
                 innerParam.put("num", orderExpressInfo.getMailNo());
                 String innerParamStr = JSON.toJSONString(innerParam);
                 String signStr = innerParamStr + key + customer;
-                String sign = MD5Encoder.encode(signStr.getBytes());
+                String sign = DigestUtils.md5Hex(signStr.getBytes()).toUpperCase();
                 Map<String, String> param = new HashMap<>();
                 param.put("customer", customer);
                 param.put("param", innerParamStr);
