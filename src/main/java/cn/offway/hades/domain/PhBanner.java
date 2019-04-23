@@ -1,16 +1,14 @@
 package cn.offway.hades.domain;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
  * Banner管理
  *
  * @author wn
- * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $
+ * @version $v: 1.0.0, $time:2019-04-01 11:26:00 Exp $
  */
 @Entity
 @Table(name = "ph_banner")
@@ -25,21 +23,16 @@ public class PhBanner implements Serializable {
     /** 类别[0-跳转URL,1-品牌,2-商品] **/
     private String type;
 
-    /** 品牌ID **/
-    private Long brandId;
-
-    /** 商品ID **/
-    private Long goodsId;
+    /** 跳转对应ID **/
+    private Long redirectId;
 
     /** 跳转链接 **/
     private String url;
 
     /** 开始时间 **/
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date beginTime;
 
     /** 截止时间 **/
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
     /** 状态[0-未上架,1-已上架] **/
@@ -49,7 +42,6 @@ public class PhBanner implements Serializable {
     private Long sort;
 
     /** 创建时间 **/
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /** 备注 **/
@@ -85,30 +77,22 @@ public class PhBanner implements Serializable {
         this.type = type;
     }
 
-    @Column(name = "brand_id", length = 11)
-    public Long getBrandId() {
-        return brandId;
-    }
+    @Column(name = "redirect_id", length = 11)
 
-    public void setBrandId(Long brandId) {
-        this.brandId = brandId;
-    }
+    public Long getRedirectId() {
+		return redirectId;
+	}
 
-    @Column(name = "goods_id", length = 11)
-    public Long getGoodsId() {
-        return goodsId;
-    }
-
-    public void setGoodsId(Long goodsId) {
-        this.goodsId = goodsId;
-    }
+	public void setRedirectId(Long redirectId) {
+		this.redirectId = redirectId;
+	}
 
     @Column(name = "url", length = 50)
     public String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
+	public void setUrl(String url) {
         this.url = url;
     }
 
@@ -168,4 +152,5 @@ public class PhBanner implements Serializable {
     public void setRemark(String remark) {
         this.remark = remark;
     }
+
 }
