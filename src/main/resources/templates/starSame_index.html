@@ -636,6 +636,7 @@
 
 			$.post("/starSame_find",{id:activityId.val()},function(data){
 				var form = $("#saveForm");
+				form.find("input:not(.notMe)").val("");
 				form.find("input[name='detailImageFile']").remove();
 				form.find("input[name='goodsID']").remove();
 				form.find("div.toDel").remove();
