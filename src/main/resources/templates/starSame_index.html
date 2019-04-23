@@ -86,7 +86,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-3" class="control-label">明星名称</label>
+								<label class="control-label">明星名称</label>
 								<input type="text" class="form-control" name="starName" placeholder="明星名称"/>
 							</div>
 						</div>
@@ -94,7 +94,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-4" class="control-label">主图</label>
+								<label class="control-label">主图</label>
 								<input type="file" class="form-control" name="imageUrlFile" placeholder="主图"/>
 								<input type="hidden" class="form-control" name="imageUrl" />
 								<img alt="" src="" name="imageUrlImg" class="initial" style="display:none;"/>
@@ -104,7 +104,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="field-4" class="control-label">标题</label>
+                                <label class="control-label">标题</label>
                                 <input type="text" class="form-control" name="title" value="0" placeholder="标题"/>
                             </div>
                         </div>
@@ -112,7 +112,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="field-4" class="control-label">详情图</label>
+                                <label class="control-label">详情图</label>
 								<!--<input type="file" class="form-control initial" name="detailImageFile" placeholder="详情图"/>-->
 								<input type="button" id="addMoreImgEle" class="notMe" value="添加" onclick="addMoreImg(this,null);"/>
 								<input type="hidden" class="form-control" name="imagesJSONStr" value="" />
@@ -122,7 +122,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-4" class="control-label">备注</label>
+								<label class="control-label">备注</label>
 								<input type="text" class="form-control" name="remark" placeholder="备注"/>
 							</div>	
 						</div>
@@ -140,7 +140,7 @@
 					<div class="row">
 						<div class="col-md-12">
                             <div class="form-group">
-                                <label for="field-4" class="control-label">填写商品ID</label>
+                                <label class="control-label">填写商品ID</label>
                                 <!--<input type="number" class="form-control initial" name="goodsID" placeholder="填写商品ID"/>-->
                                 <input type="button" id="addMoreTextEle" class="notMe" value="添加" onclick="addMoreText(this,null);"/>
                                 <input type="hidden" class="form-control" name="goodsIDStr" value="" />
@@ -150,24 +150,24 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-4" class="control-label">默认点赞数量</label>
-								<input type="number" class="form-control" name="praiseCount" placeholder="默认点赞数量"/>
+								<label class="control-label">默认点赞数量</label>
+								<input type="number" class="form-control" value="0" name="praiseCount" placeholder="默认点赞数量"/>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-4" class="control-label">默认浏览数量</label>
-								<input type="number" class="form-control" name="viewCount" placeholder="默认浏览数量"/>
+								<label class="control-label">默认浏览数量</label>
+								<input type="number" class="form-control" value="0" name="viewCount" placeholder="默认浏览数量"/>
 							</div>
 						</div>
 					</div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="field-4" class="control-label">排序</label>
-                                <input type="number" class="form-control" name="sort" placeholder="排序(数值越小越靠前)"/>
+                                <label class="control-label">排序</label>
+                                <input type="number" class="form-control" value="99" name="sort" placeholder="排序(数值越小越靠前)"/>
                             </div>
                         </div>
                     </div>
@@ -420,7 +420,7 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						if (parseInt(full["sort"]) > 5) {
+						if (full["sort"] == null || parseInt(full["sort"]) > 5) {
 							return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶"/>';
 						} else {
 							return '<input type="button" name="checkIt" disabled="disabled" value="已置顶"/>';

@@ -113,6 +113,11 @@ public class StarSameController {
     @PostMapping("/starSame_save")
     public boolean save(PhStarsame starsame, String goodsIDStr, String imagesJSONStr) {
         starsame.setCreateTime(new Date());
+        if (starsame.getSort() == null) {
+            starsame.setSort(99L);
+        } else if (starsame.getSort() == 0) {
+            starsameService.resort(0L);
+        }
         PhStarsame starsameObj = starsameService.save(starsame);
         //purge first
         starsameGoodsService.deleteByPid(starsameObj.getId());
