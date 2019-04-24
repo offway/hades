@@ -56,6 +56,7 @@
 						<div class="panel-body">
 							<form role="form" id="saveForm" class="form-horizontal">
 								<input type="hidden" name="id"/>
+								<input type="hidden" value="0" name="isFreeFare"/>
 								<div class="row">
 									<div class="col-md-4">
 										<div class="form-group">
@@ -452,6 +453,9 @@
 			var goodsIDList = form.find("select[name='brandID']");
 			var gidArr = [];
 			for (var gid in goodsIDList) {
+				if (isNaN(gid)) {
+					continue;
+				}
 				gidArr.push(goodsIDList[gid].value);
 			}
 			form.find("input[name='brandIDStr']").val(gidArr.join(","));
