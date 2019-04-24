@@ -150,9 +150,21 @@ public class GoodsController {
             merchantFare.setIsDefault("0");
         } else {
             merchantFare.setIsDefault("1");
+            updateFreeFare(merchantFare);
         }
         merchantFareService.save(merchantFare);
         return true;
+    }
+
+    private void updateFreeFare(PhMerchantFare merchantFare) {
+        PhMerchant merchant = merchantService.findOne(merchantFare.getMerchantId());
+        if (merchantFare.getFareFirstPrice() == 0d && merchantFare.getFareNextPrice() == 0d) {
+            /* 是否包邮[0-否,1-是] */
+            merchant.setIsFreeFare("1");
+        } else {
+            merchant.setIsFreeFare("0");
+        }
+        merchantService.save(merchant);
     }
 
     @ResponseBody
@@ -388,6 +400,7 @@ public class GoodsController {
         PhMerchantFare merchantFare = merchantFareService.findOne(id);
         merchantFareService.makeAllToUnDefault(merchantFare.getMerchantId());
         merchantFare.setIsDefault("1");
+        updateFreeFare(merchantFare);
         merchantFareService.save(merchantFare);
         return true;
     }
