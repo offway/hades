@@ -814,14 +814,18 @@
 		}
 	}
 
-	function bindBrandSelector(data) {
-		var brandStr = "";
-		for (var brand in data) {
-			brand = data[brand];
-			brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-		}
-		$("#field-5").html(brandStr);
-	}
+    function bindBrandSelector(data) {
+        var brandStr = "";
+        for (var brand in data) {
+            brand = data[brand];
+            if (brand.hasOwnProperty("brandId") && brand.hasOwnProperty("brandName")) {
+                brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
+            } else {
+                brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+            }
+        }
+        $("#field-5").html(brandStr);
+    }
 
 	function bindMerchantSelector(data) {
 		var brandStr = "";
