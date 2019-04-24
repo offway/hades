@@ -853,13 +853,16 @@
         $("#field-11").html(brandStr);
     }
 
-	function renderFare(self) {
-		// var id = $(self).val();
-		var id = $(self).parent().find("li.es-visible").val();
-		$.getJSON("/fare_list", {"pid": id}, function (data) {
-			bindFareSelector(data);
-		});
-	}
+    function renderFare(self) {
+        // var id = $(self).val();
+        //延迟1秒触发 等dom 对象ready
+        setTimeout(function () {
+            var id = $(self).parent().find("li.es-visible").val();
+            $.getJSON("/fare_list", {"pid": id}, function (data) {
+                bindFareSelector(data);
+            });
+        }, 1000);
+    }
 
 	function addFare() {
 		var preview = $("#modal-7");
