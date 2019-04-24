@@ -219,7 +219,12 @@ public class MerchantController {
         if (map != null) {
             List<PhMerchantBrand> brandList = merchantBrandService.findByPid(merchant.getId());
             List<PhMerchantFile> fileList = merchantFileService.findByPid(merchant.getId());
-            PhAddress address = addressService.findOne(merchant.getAddrId());
+            PhAddress address;
+            if (merchant.getAddrId() == null) {
+                address = new PhAddress();
+            } else {
+                address = addressService.findOne(merchant.getAddrId());
+            }
             PhAdmin admin;
             if (merchant.getAdminId() == null) {
                 admin = new PhAdmin();
