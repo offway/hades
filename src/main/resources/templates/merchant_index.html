@@ -718,7 +718,10 @@
 				toastr.error("请至少选择一条数据操作", "温馨提示");
 				return ;
 			}
-
+			var confirm = window.confirm("你确定要这么做？");
+			if (confirm == false) {
+				return;
+			}
 			var ids = [];
 			activityId.each(function(i,e){
 				ids.push(e.value);
