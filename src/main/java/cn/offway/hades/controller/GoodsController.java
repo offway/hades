@@ -186,8 +186,16 @@ public class GoodsController {
             tmp.setMerchantFareId(merchantFareSpecial.getMerchantFareId());
             tmp.setRemark(merchantFareSpecial.getRemark());
             tmp.setProvince(p);
-            tmp.setCity(cList[i]);
-            tmp.setCounty(ccList[i]);
+            if ("".equals(cList[i].trim())) {
+                tmp.setCity(null);
+            } else {
+                tmp.setCity(cList[i]);
+            }
+            if ("".equals(ccList[i].trim())) {
+                tmp.setCounty(null);
+            } else {
+                tmp.setCounty(ccList[i]);
+            }
             tmp.setCreateTime(new Date());
             merchantFareSpecialService.save(tmp);
             i++;
