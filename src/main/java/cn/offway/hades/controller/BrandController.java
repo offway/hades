@@ -65,6 +65,9 @@ public class BrandController {
     @ResponseBody
     @RequestMapping("/brand_save")
     public boolean save(PhBrand brand) {
+        if ("".equals(brand.getBanner().trim())) {
+            brand.setBanner(null);
+        }
         brand.setCreateTime(new Date());
         brandService.save(brand);
         return true;
