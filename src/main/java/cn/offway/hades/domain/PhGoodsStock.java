@@ -67,6 +67,9 @@ public class PhGoodsStock implements Serializable {
 
     /** 备注 **/
     private String remark;
+    
+    /** 版本号 **/
+    private Long version;
 
 
     @Id
@@ -232,6 +235,16 @@ public class PhGoodsStock implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+    
+    @Version
+    @Column(name = "version", length = 11)
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
 }
