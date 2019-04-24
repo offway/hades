@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-editable-select.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -266,6 +267,7 @@
 	<script src="assets/js/async.min.js"></script>
     <script src="assets/js/jquery.base64.js"></script>
     <script src="assets/js/distpicker.js"></script>
+	<script src="assets/js/jquery-editable-select.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -832,7 +834,8 @@
 		for (var brand in data) {
 			brand = data[brand];
 			if (parseInt(brand["id"]) == 0) {
-				brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+				// brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
 			} else {
 				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
 			}
@@ -850,12 +853,13 @@
         $("#field-11").html(brandStr);
     }
 
-    function renderFare(self) {
-        var id = $(self).val();
-        $.getJSON("/fare_list", {"pid": id}, function (data) {
-            bindFareSelector(data);
-        });
-    }
+	function renderFare(self) {
+		// var id = $(self).val();
+		var id = $(self).parent().find("li.es-visible").val();
+		$.getJSON("/fare_list", {"pid": id}, function (data) {
+			bindFareSelector(data);
+		});
+	}
 
 	function addFare() {
 		var preview = $("#modal-7");
@@ -890,13 +894,15 @@
 			bindTypeSelector(data);
 		});
 
-        $.getJSON("/brand_list_all", {}, function (data) {
-            bindBrandSelector(data);
-        });
+		$.getJSON("/brand_list_all", {}, function (data) {
+			bindBrandSelector(data);
+			$('#field-5').editableSelect();
+		});
 
-        $.getJSON("/merchant_list_all", {}, function (data) {
-            bindMerchantSelector(data);
-        });
+		$.getJSON("/merchant_list_all", {}, function (data) {
+			bindMerchantSelector(data);
+			$('#field-9').editableSelect();
+		});
 
 		$(document).on("wheel", "input[type=number]", function (e) {
 			$(this).blur();
@@ -954,8 +960,10 @@
             var category = form.find("select[name='category']").val();
             var name = form.find("input[name='name']").val();
 			var code = form.find("input[name='code']").val();
-            var brand_id = form.find("select[name='brand_id']").val();
-            var merchant_id = form.find("select[name='merchant_id']").val();
+			// var brand_id = form.find("select[name='brand_id']").val();
+			var brand_id = form.find("input[name='brand_id']").parent().find("li.es-visible").val();
+			// var merchant_id = form.find("select[name='merchant_id']").val();
+			var merchant_id = form.find("input[name='merchant_id']").parent().find("li.es-visible").val();
             var price = form.find("input[name='price']").val();
             var material = form.find("input[name='material']").val();
             var remark = form.find("input[name='remark']").val();
