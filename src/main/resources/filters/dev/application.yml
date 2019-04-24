@@ -1,10 +1,11 @@
+debug: true
 #服务相关配置
 server: 
 #HTTP端口
   port: 8088
   session:  
     #session超时时间，单位秒
-    timeout:  1800     
+    timeout:  3600     
 spring:
   #集群session存储方式
   session:  

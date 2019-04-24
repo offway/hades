@@ -1,11 +1,12 @@
 package cn.offway.hades.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import cn.offway.hades.domain.PhAdmin;
+import cn.offway.hades.domain.PhLotteryTicket;
+import cn.offway.hades.domain.PhMerchant;
+import cn.offway.hades.domain.PhResource;
+import cn.offway.hades.service.PhLotteryTicketService;
+import cn.offway.hades.service.PhMerchantService;
+import cn.offway.hades.service.PhRoleadminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +15,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import cn.offway.hades.domain.PhAdmin;
-import cn.offway.hades.domain.PhLotteryTicket;
-import cn.offway.hades.domain.PhResource;
-import cn.offway.hades.service.PhLotteryTicketService;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping
@@ -30,6 +33,10 @@ public class IndexController {
 
 	@Autowired
 	private PhLotteryTicketService phLotteryTicketService;
+	@Autowired
+	private PhRoleadminService roleadminService;
+	@Autowired
+	private PhMerchantService merchantService;
 
 	/**
 	 * 登录页面
@@ -48,16 +55,21 @@ public class IndexController {
 	public List<PhResource> resoures(@AuthenticationPrincipal PhAdmin admin){
 		return admin.getResources();
 	}
-	
-	
-	
+
+
 	/**
 	 * 首页
-	 * @return
 	 */
 	@RequestMapping("/")
-	public String index(){
-		return "home";
+	public String index(@AuthenticationPrincipal PhAdmin admin, ModelMap map) {
+		List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+		if (roles.contains(BigInteger.valueOf(8L))) {
+			PhMerchant merchant = merchantService.findByAdminId(admin.getId());
+			map.addAttribute("theId", merchant.getId());
+			return "new_home";
+		} else {
+			return "home";
+		}
 	}
 	
 	/**

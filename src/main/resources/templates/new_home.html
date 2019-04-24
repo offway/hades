@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title>商家首页</title>
+	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
+	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<style type="text/css">
+	.form-group img{
+		max-width:400px;
+		max-height:300px;
+	}
+	</style>
+</head>
+<body class="page-body">
+
+	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+			
+		<div th:replace="sidebar-menu"></div>
+		<div class="main-content">
+			<!-- User Info, Notifications and activity Bar -->
+			<nav th:replace="navbar"></nav>
+			<div class="page-title">
+				
+				<div class="title-env">
+					<h1 class="title">商家首页</h1>
+					<p class="activityDescription"></p>
+				</div>
+
+				<div class="breadcrumb-env">
+
+					<ol class="breadcrumb bc-1">
+						<li><a href="/"><i class="fa-home"></i>Home</a></li>
+						<li><a>系统管理</a></li>
+						<li class="active"><strong>商家首页</strong></li>
+					</ol>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">商家首页</h3>
+							<div class="panel-options">
+							</div>
+						</div>
+						<div class="panel-body">
+							<form role="form" id="saveForm" class="form-horizontal">
+								<input type="hidden" name="id"/>
+								<div class="row">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">商户名称</label>
+											<input type="text" class="form-control" name="name" placeholder="商户名称"/>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">商户LOGO</label>
+											<input type="hidden" class="form-control" name="logo" />
+											<img alt="" src="" name="logoImg" style="display:none;"/>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">商户地址</label>
+											<input type="text" class="form-control" name="address" placeholder="商户地址"/>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">公司名称</label>
+											<input type="text" class="form-control" name="company" placeholder="公司名称"/>
+										</div>
+									</div>
+									<div class="col-md-8">
+										<div class="form-group">
+											<label class="control-label">发货地址</label>
+											<input type="text" class="form-control" readonly="readonly" name="address_send" placeholder="发货地址"/>
+											<input type="hidden" class="form-control" name="address_send_jsonStr"/>
+											<input type="hidden" class="form-control" name="addrId"/>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">联系电话</label>
+											<input type="text" class="form-control" name="phone" placeholder="联系电话"/>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">商户邮箱</label>
+											<input type="text" class="form-control" name="email" placeholder="商户邮箱"/>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">合同编号</label>
+											<input type="text" class="form-control" name="contractNo" placeholder="合同编号"/>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">备注</label>
+											<input type="text" class="form-control" name="remark" placeholder="备注"/>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">后台登录账号</label>
+											<input type="text" class="form-control" name="admin_name" placeholder="后台登录账号"/>
+											<input type="hidden" class="form-control" name="adminId"/>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label class="control-label">抽成率</label>
+											<input type="number" class="form-control" name="ratio" placeholder="抽成率"/>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label class="control-label">签约日期</label>
+											<input type="text" id="signDate" class="form-control" placeholder="签约日期" data-time-picker="false" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
+											<input type="hidden" class="form-control" name="signDate" />
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label class="control-label">到期日期</label>
+											<input type="text" id="expireDate" class="form-control" placeholder="到期日期" data-time-picker="false" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
+											<input type="hidden" class="form-control" name="expireDate" />
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="control-label">品牌ID</label>
+											<input type="hidden" class="form-control" id="addBrandID" name="" value="" />
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="control-label">营业执照/品牌授权书等</label>
+											<input type="hidden" class="form-control" id="addFile" name="" value="" />
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<footer th:replace="footer"></footer>
+		</div>
+	</div>
+	
+	<div th:replace="body-under"></div>
+
+    <div id="preview" style="display: none;
+    position: fixed;top: 190px;left: 650px;background: white;overflow: hidden;border: solid;width: 700px;height: 200px;z-index: 999;">
+    </div>
+	
+	<script src="assets/js/moment.min.js"></script>
+	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
+	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
+	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+	<script src="assets/js/select2/select2.min.js"></script>
+	<script src="assets/js/async.min.js"></script>
+	<script src="assets/js/distpicker.js"></script>
+	<script src="assets/js/jquery.base64.js"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+
+    function addMoreImg(self, v) {
+        var that = $(self);
+        if (v == undefined) {
+        	//
+        } else {
+            that.before("<a target='_blank' href='" + v + "'>" + buildImg(v) + "</a>")
+        }
+    }
+
+	function bindBrandSelector(data, v) {
+		var uuid = UUID.randomUUID();
+		var brandStr = "<div id='UUID'><select class=\"form-control\" style='display: inline-block;width: 200px;' name=\"brandID\" >";
+		for (var brand in data) {
+			brand = data[brand];
+			if (brand["id"] == v) {
+				brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			} else {
+				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			}
+		}
+		brandStr += "</select>";
+		brandStr += "</div>";
+		return brandStr.replace(/UUID/g, uuid);
+	}
+
+	function addMoreText(self, v) {
+		$.getJSON("/brand_list_all_merchant", {}, function (data) {
+			var contentStr = bindBrandSelector(data, v);
+			var that = $(self);
+			that.before(contentStr);
+			// if (v == undefined) {
+			// 	that.before('<input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>')
+			// } else {
+			// 	that.before('<input type="number" class="form-control" name="brandID" value="' + v + '" placeholder="填写品牌ID"/>')
+			// }
+		});
+	}
+
+	function closeIt() {
+		var that = $("#preview");
+		that.hide();
+	}
+
+	function delNode(id) {
+		var that = $("#" + id);
+		that.remove();
+	}
+
+	function closeAndSaveIt() {
+		var that = $("#preview");
+		var p = that.find("select[name='p']").val();
+		var c = that.find("select[name='c']").val();
+		var d = that.find("select[name='d']").val();
+		var location = that.find("input[name='location']").val();
+		var telephone = that.find("input[name='telephone']").val();
+		var real_name = that.find("input[name='real_name']").val();
+		var json = {
+			"realName": real_name,
+			"phone": telephone,
+			"province": p,
+			"city": c,
+			"county": d,
+			"content": location
+		};
+		$("input[name='address_send_jsonStr']").val(JSON.stringify(json));
+		$("input[name='address_send']").val(p + "" + c + "" + d + "" + location);
+		that.hide();
+	}
+
+    function formatTime(time) {
+        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+    }
+
+    function buildImg(url) {
+        return "<img width='100px' height='100px' src='#' />".replace("#", url);
+    }
+
+	function checkImg(list) {
+		var returnList = {};
+		for (var i in list) {
+			i = list[i];
+			var v = i[0];
+			var name = i[1];
+			var form = $("#saveForm");
+			var footer = $(this).parent(".modal-footer");
+			var imageFile = '';
+			//上传文件获得文件地址
+			if (v != '') {
+				imageFile = form.find("input[name='" + name + "File']")[0].files[0];
+				if (imageFile != '' && imageFile.size / 1024 > 500) {
+					toastr.error("封面图片大小超过500K,请压缩处理后上传", "温馨提示");
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					return false;
+				} else {
+					returnList[name] = imageFile;
+				}
+			}
+		}
+		return returnList;
+	}
+
+	function checkIt() {
+		var preview = $("#preview");
+		var contentStr = "\t<div id=\"distpicker\">\n" +
+				"\t\t<select name='p' ></select>\n" +
+				"\t\t<select name='c' ></select>\n" +
+				"\t\t<select name='d' ></select>\n" +
+				"\t\t<input type=\"text\" name='location' placeholder='详细地址'/><br/>\n" +
+				"\t\t<input type=\"number\" name='telephone' placeholder='手机号'/>\n" +
+				"\t\t<input type=\"text\" name='real_name' placeholder='发件人'/>\n" +
+				"\t</div>";
+		contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt()" />';
+		contentStr += '<input type="button" value="关闭" onclick="closeIt()" />';
+		preview.html(contentStr);
+		//render
+		var jsonStr = $("input[name='address_send_jsonStr']").val();
+		if (jsonStr != '') {
+			var jsonObj = JSON.parse(jsonStr);
+			preview.find("input[name='location']").val(jsonObj["content"]);
+			preview.find("input[name='real_name']").val(jsonObj["realName"]);
+			preview.find("input[name='telephone']").val(jsonObj["phone"]);
+			$("#distpicker").distpicker({
+				province: jsonObj["province"],
+				city: jsonObj["city"],
+				district: jsonObj["county"]
+			});
+		} else {
+			$("#distpicker").distpicker({
+				province: '---- 所在省 ----',
+				city: '---- 所在市 ----',
+				district: '---- 所在区 ----'
+			});
+		}
+		preview.show();
+	}
+
+    jQuery(document).ready(function($)
+	{
+        var qiniuUrl = [[${qiniuUrl}]];
+        var theId = [[${theId}]];
+
+		function getImgSize(file, cb) {
+			var f = file;//input.files[0];
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				var data = e.target.result;
+				//加载图片获取图片真实宽度和高度
+				var image = new Image();
+				image.onload = function () {
+					var width = image.width;
+					var height = image.height;
+					cb(width, height);
+				};
+				image.src = data;
+			};
+			reader.readAsDataURL(f);
+		}
+
+		function upload(param, token, file, next, error, complete) {
+			if (file == '') {
+				complete('');
+			} else {
+				getImgSize(file, function (w, h) {
+					var filename = file.name;
+					var postf = filename.substring(filename.lastIndexOf("."));
+					var config = {
+						useCdnDomain: true,
+						region: qiniu.region.z0
+					};
+					var putExtra = {
+						fname: "",
+						params: {"x:param": param},
+						mimeType: ["image/png", "image/jpeg", "image/gif"] || null
+					};
+					var newFileName = "image/wx/#W#/#H#/" + UUID.randomUUID() + postf;
+					newFileName = newFileName.replace("#W#", w).replace("#H#", h);
+					var observable = qiniu.upload(file, newFileName, token,
+							putExtra, config);
+					var subscription = observable.subscribe(next, error, complete);
+				})
+			}
+		}
+
+		$("#signDate").daterangepicker({
+			singleDatePicker: true,
+			timePicker: true,
+			showDropdowns: true,
+			startDate: moment().startOf('hour'),
+			endDate: moment().startOf('hour').add(32, 'hour'),
+			locale: {
+				format: 'YYYY-MM-DD HH:mm:ss'
+			}
+		}, function(start, end, label) {
+			$("#signDate").val(start.format('YYYY-MM-DD HH:mm:ss'));
+			$('input[name="signDate"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
+		});
+
+		$("#expireDate").daterangepicker({
+			singleDatePicker: true,
+			timePicker: true,
+			showDropdowns: true,
+			startDate: moment().startOf('hour'),
+			endDate: moment().startOf('hour').add(32, 'hour'),
+			locale: {
+				format: 'YYYY-MM-DD HH:mm:ss'
+			}
+		}, function(start, end, label) {
+			$("#expireDate").val(start.format('YYYY-MM-DD HH:mm:ss'));
+			$('input[name="expireDate"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
+		});
+
+		//保存
+		$(".btn.btn-info.save").click(function(){
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+			var form = $("#saveForm");
+			// var code = form.find("input[name='code']").val();
+			var name = form.find("input[name='name']").val();
+			var address = form.find("input[name='address']").val();
+			var company = form.find("input[name='company']").val();
+			var admin_name = form.find("input[name='admin_name']").val();
+			var address_send_jsonStr = form.find("input[name='address_send_jsonStr']").val();
+			var phone = form.find("input[name='phone']").val();
+			var contractNo = form.find("input[name='contractNo']").val();
+			var signDate = form.find("input[name='signDate']").val();
+			var expireDate = form.find("input[name='expireDate']").val();
+			//文件
+			var logo = form.find("input[name='logoFile']").val();
+			//已上传的图片地址
+			var logoImg = form.find("input[name='logo']").val();
+
+			if (name == '' || address == '' || phone == '' || contractNo == '' || signDate == '' || expireDate == '' || company == '' || admin_name == '' || address_send_jsonStr == '' ||
+					(logo == '' && logoImg == '')
+			) {
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return;
+			}
+			//收集品牌ID列表
+			var goodsIDList = form.find("select[name='brandID']");
+			var gidArr = [];
+			for (var gid in goodsIDList) {
+				gidArr.push(goodsIDList[gid].value);
+			}
+			form.find("input[name='brandIDStr']").val(gidArr.join(","));
+
+			var isOK = checkImg([[logo, "logo"]]);
+			if (typeof isOK == 'boolean') {
+				return;
+			}
+
+			//获取token
+			$.get("/qiniu/token",{},function(token){
+				if(token !=''){
+					async.series({
+						one: function(callback) {
+							//上传详情图
+							var imageFileList = form.find("input[name='detailImageFile']");
+							var i = 0;
+							async.eachSeries(imageFileList, function (item, cb) {
+								var f = item.files[0];
+								if (f == undefined) {
+									i++;
+									cb();
+								} else {
+									upload("imagesJSONStr", token, f, function () {
+										//
+									}, function (err) {
+										console.log("上传imageFile异常:" + err);
+										cb(err);
+									}, function (res) {
+										//上传成功
+										if (res != '') {
+											var url = qiniuUrl + "/" + res.key;
+											var oldValue = form.find("input[name='" + res.param + "']").val();
+											if (oldValue == '') {
+												var list = [];
+												list.push({"url": url, "sort": i, "remark": ""});
+											} else {
+												var list = JSON.parse(window.atob(oldValue));
+												list[i] = {"url": url, "sort": i, "remark": ""};
+											}
+											var newValue = JSON.stringify(list);
+											form.find("input[name='" + res.param + "']").val(window.btoa(newValue));
+											i++;
+										}
+										cb();
+									});
+								}
+							}, function () {
+								callback();
+							});
+						},
+						two: function(callback){
+							//上传详情图
+							async.eachSeries(Object.keys(isOK), function (item, cb) {
+								var f = isOK[item];
+								upload(item, token, f, function () {
+									//
+								}, function (err) {
+									console.log("上传imageFile异常:" + err);
+									cb(err);
+								}, function (res) {
+									//上传成功
+									if (res != '') {
+										var url = qiniuUrl + "/" + res.key;
+										form.find("input[name='" + res.param + "']").val(url);
+									}
+									cb();
+								});
+							}, function () {
+								callback();
+							});
+						},
+						three: function (callback) {
+							//提交保存
+							var data = $("#saveForm").serializeArray();
+							$.post("/merchant_save", data, function (data) {
+								if (data) {
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									jQuery('#modal-6').modal('hide');
+									toastr.success("操作已成功！", "温馨提示");
+								} else {
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									toastr.error("操作失败", "温馨提示");
+								}
+								callback();
+							});
+						}
+					}, function(err, results) {
+						console.log("OK");
+						window.location.href = '/merchant.html';
+					});
+				}else{
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					toastr.error("上传文件错误，请联系管理员", "温馨提示");
+				}
+			});
+		});
+
+		if (theId != null) {
+			$.post("/merchant_find", {id: theId}, function (data) {
+				var form = $("#saveForm");
+				var main = data["main"];
+				var brandList = data["brandList"];
+				var fileList = data["fileList"];
+				var address = data["address"];
+				var admin = data["admin"];
+				//后台用户
+				form.find("input[name='admin_name']").val(admin["username"]);
+				//商家
+				for (var i in main) {
+					var ele = form.find("input[name='" + i + "']");
+					switch (ele.attr("type")) {
+						case "radio":
+							ele.val([main[i]]);
+							break;
+						default:
+							if (main[i] != undefined && !isNaN(main[i]) && String(main[i]).length == 13) {
+								ele.val(formatTime(main[i]));
+								$("#" + i).val(formatTime(main[i]));
+							} else {
+								ele.val(main[i]);
+							}
+					}
+					form.find("img[name='" + i + "Img']").attr("src", main[i]);
+					form.find("img[name='" + i + "Img']").attr("width", 200);
+					form.find("img[name='" + i + "Img']").attr("length", 200);
+					form.find("img[name='" + i + "Img']").show();
+				}
+				//品牌
+				for (var i in brandList) {
+					addMoreText("#addBrandID", brandList[i]["brandId"]);
+				}
+				//资料
+				var list = [];
+				for (var i in fileList) {
+					addMoreImg("#addFile", fileList[i]["fileUrl"]);
+					list.push({"url": fileList[i]["fileUrl"]});
+				}
+				var newValue = JSON.stringify(list);
+				form.find("input[name='imagesJSONStr']").val(window.btoa(newValue));
+				//地址
+				form.find("input[name='address_send']").val(address["province"] + "" + address["city"] + "" + address["county"] + "" + address["content"]);
+				form.find("input[name='address_send_jsonStr']").val(address["remark"]);
+				form.find(".btn.image").show();
+				//readonly
+				form.find("input").attr("readonly", "readonly");
+				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			});
+		}
+	});
+	/*]]>*/
+	</script>
+</body>
+
+</html>
