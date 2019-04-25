@@ -22,4 +22,6 @@ public interface PhOrderInfoService {
     Page<PhOrderInfo> findAll(Long mid, String orderNo, String sTime, String eTime, String userId, String payMethod, String status, Pageable pageable);
 
     List<PhOrderInfo> findToCheck(Date start, Date stop);
+
+    List<PhOrderInfo> findToProcess(Date start, Date stop);
 }

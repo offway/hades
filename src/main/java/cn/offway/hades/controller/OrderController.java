@@ -6,12 +6,14 @@ import cn.offway.hades.service.*;
 import cn.offway.hades.utils.HttpClientUtil;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Controller
 @RequestMapping
@@ -248,5 +252,29 @@ public class OrderController {
             }
         }
         return "";
+    }
+
+    @Scheduled(cron = "0 0/5 * * * ? *")
+    @ResponseBody
+    @RequestMapping("/order_check")
+    public void processAllOrder() {
+        DateTime now = new DateTime();
+        DateTime start = now.minusMinutes(25);
+        DateTime stop = now.minusMinutes(20);
+        List<PhOrderInfo> list = orderInfoService.findToProcess(start.toDate(), stop.toDate());
+        if (list.isEmpty()) {
+            logger.info("nothing to do");
+        } else {
+            ExecutorService pool = Executors.newFixedThreadPool(list.size());
+            for (PhOrderInfo orderInfo : list) {
+                pool.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        jPushService.sendPushUser("未付款", "20分钟后提示：亲，您有一笔订单未支付哦！", null, String.valueOf(orderInfo.getUserId()));
+                    }
+                });
+            }
+            pool.shutdown();
+        }
     }
 }
