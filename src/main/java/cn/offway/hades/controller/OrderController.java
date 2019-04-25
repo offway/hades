@@ -254,7 +254,7 @@ public class OrderController {
         return "";
     }
 
-    @Scheduled(cron = "0 0/5 * * * ? *")
+    @Scheduled(cron = "0 0/5 * * * *")
     @ResponseBody
     @RequestMapping("/order_check")
     public void processAllOrder() {
