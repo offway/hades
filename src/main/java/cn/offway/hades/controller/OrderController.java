@@ -42,6 +42,8 @@ public class OrderController {
     private PhGoodsPropertyService goodsPropertyService;
     @Autowired
     private PhMerchantService merchantService;
+    @Autowired
+    private JPushService jPushService;
 
     @RequestMapping("/order.html")
     public String index(ModelMap map) {
@@ -199,8 +201,28 @@ public class OrderController {
             orderInfo.setDeliverTime(new Date());
             orderInfo.setStatus("2");//已发货
             orderInfoService.save(orderInfo);
+            jPushService.sendPushUser("已发货", "已发货提醒：亲，您购买的商品已经发货啦！", null, String.valueOf(orderInfo.getUserId()));
+            subscribeExpressInfo(orderExpressInfo, orderInfo);
         }
         return true;
+    }
+
+    private void subscribeExpressInfo(PhOrderExpressInfo orderExpressInfo, PhOrderInfo orderInfo) {
+        String key = "uyUDaSuE5009";
+        Map<String, String> innerInnerParam = new HashMap<>();
+        innerInnerParam.put("callbackurl", "https://admin.offway.cn/callback/express?uid=" + orderInfo.getUserId());
+        String innerInnerParamStr = JSON.toJSONString(innerInnerParam);
+        Map<String, String> innerParam = new HashMap<>();
+        innerParam.put("company", orderExpressInfo.getExpressCode());
+        innerParam.put("number", orderExpressInfo.getMailNo());
+        innerParam.put("key", key);
+        innerParam.put("parameters", innerInnerParamStr);
+        String innerParamStr = JSON.toJSONString(innerParam);
+        Map<String, String> param = new HashMap<>();
+        param.put("schema", "json");
+        param.put("param", innerParamStr);
+        String body = HttpClientUtil.post("https://poll.kuaidi100.com/poll", param);
+        logger.info(body);
     }
 
     @ResponseBody
