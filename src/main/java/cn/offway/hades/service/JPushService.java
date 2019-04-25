@@ -13,5 +13,7 @@ public interface JPushService {
 
 	boolean createSingleSchedule(String businessId, String businessType, String name, Date time, String tilte,
 			String alert, Map<String, String> extras);
+
+	boolean sendPushUser(String tilte, String alert, Map<String, String> extras, String... alias);
 	
 }

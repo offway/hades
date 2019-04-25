@@ -41,6 +41,34 @@ public class JPushServiceImpl implements JPushService{
 	@Autowired
 	private PhJpushScheduleService phJpushScheduleService;
 	
+	
+	/**
+	 * 极光推送指定用户
+	 * @param tilte
+	 * @param alert
+	 * @param extras
+	 * @param alias 别名
+	 * @return
+	 */
+	@Override
+	public boolean sendPushUser(String tilte, String alert, Map<String, String> extras,String... alias){
+		try {
+			PushResult pushResult = jPushClient.sendPush(buildPushUser(tilte, alert, extras,alias));
+			String resultJson = JSON.toJSONString(pushResult);
+			logger.info("极光推送响应:{}",resultJson);
+			boolean result = pushResult.isResultOK();
+			if(!result){
+				logger.error("极光推送失败,返回:{}",resultJson);
+			}
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("极光推送异常",e);
+			return false;
+		}
+	}
+	
+	
 	/**
 	 * 极光推送-带参数
 	 * @param tilte
@@ -186,10 +214,37 @@ public class JPushServiceImpl implements JPushService{
 						.build())
 				.build();
 
-		Audience audience = Audience.alias("2a322c540b9642e98ce025e019bc1790","9016fa43d9f443e8bab1b00085d545ba","ff8b026042724ec792ff8a6bffa0ea9e");
+		Audience audience = Audience.alias("14");
 		
 		if(jPushProperties.getApnsProduction()){
 			audience = Audience.all();
+		}
+		return PushPayload.newBuilder().setPlatform(Platform.all()).setAudience(audience)
+				.setNotification(notification).build();
+	}
+	
+	/**
+	 * 带参数推送指定用户
+	 * 
+	 * @param content
+	 * @param extras
+	 * @return
+	 */
+	public  PushPayload buildPushUser(String tilte, String alert, Map<String, String> extras,String... alias) {
+
+		Notification notification = Notification.newBuilder()
+				.addPlatformNotification(
+						AndroidNotification.newBuilder().setAlert(alert).setTitle(tilte).addExtras(extras).build())
+				.addPlatformNotification(IosNotification.newBuilder()
+						.setAlert(IosAlert.newBuilder().setTitleAndBody(tilte, null, alert).build()).addExtras(extras)
+						.build())
+				.build();
+
+		//开发环境只推送给Mark
+		Audience audience = Audience.alias("14");
+		
+		if(jPushProperties.getApnsProduction()){
+			audience = Audience.alias(alias);
 		}
 		return PushPayload.newBuilder().setPlatform(Platform.all()).setAudience(audience)
 				.setNotification(notification).build();
