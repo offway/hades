@@ -189,14 +189,19 @@
 	var table_global;
 
 	function topIt(id) {
-		$.post("/banner_top", {"id": id}, function (data) {
-			if (data) {
-				table_global.fnDraw();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
+		var num = prompt("输入排序位置,从0开始,0为第一位", "0");
+		if (isNaN(num) || num == null) {
+			alert("请输入数字！");
+		} else {
+			$.post("/banner_top", {"id": id, "sort": num}, function (data) {
+				if (data) {
+					table_global.fnDraw();
+					toastr.success("操作已成功！", "温馨提示");
+				} else {
+					toastr.error("操作失败", "温馨提示");
+				}
+			});
+		}
 	}
 	           
 	jQuery(document).ready(function($)
@@ -283,14 +288,17 @@
 					data: "status",
 					title: "是否上架",
 					render: function (data, type, row, meta) {
-						return "1"==data?"已上架":"<font color='blue'>未上架</font>";
+						return "1" == data ? "已上架" : "<font color='blue'>未上架</font>";
 					}
 				},
-            	{
-               		targets: 9,
-	                data: "sort",
-	                title: "排序"
-            	},
+				{
+					targets: 9,
+					data: "sort",
+					title: "排序",
+					render: function (data, type, row, meta) {
+						return "1" == row["status"] ? data : "";
+					}
+				},
                 {
                     targets: 10,
                     data: "createTime",
@@ -311,13 +319,9 @@
 					title: "操作",
 					render: function (data, type, full, meta) {
 						if (parseInt(full["status"]) == 1) {
-							if (parseInt(full["sort"]) > 5) {
-								return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶"/>';
-							} else {
-								return '<input type="button" name="checkIt" disabled="disabled" value="已置顶"/>';
-							}
+							return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="排序"/>';
 						} else {
-							return '<input type="button" name="checkIt" disabled="disabled" value="下架无法置顶"/>';
+							return '<input type="button" name="checkIt" disabled="disabled" value="下架无法排序"/>';
 						}
 					}
 				}

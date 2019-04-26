@@ -344,8 +344,8 @@
 
 	function topIt(id) {
 		var num = prompt("输入置顶位置,从0开始,0为第一位", "0");
-		if (isNaN(num)) {
-			alert("请输入数字！")
+		if (isNaN(num) || num == null) {
+			alert("请输入数字！");
 		} else {
 			$.post("/brand_top", {"id": id, "sort": num}, function (data) {
 				if (data) {

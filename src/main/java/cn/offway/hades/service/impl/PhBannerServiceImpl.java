@@ -13,6 +13,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.Optional;
 
 /*
 Banner管理Service接口实现
@@ -41,6 +42,16 @@ public class PhBannerServiceImpl implements PhBannerService {
                 return null;
             }
         }, pageable);
+    }
+
+    @Override
+    public Long getMaxSort() {
+        Optional<String> res = bannerRepository.getMaxSort();
+        if (res.isPresent()) {
+            return Long.valueOf(String.valueOf(res.get()));
+        } else {
+            return 0L;
+        }
     }
 
     @Override

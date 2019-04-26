@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 /**
  * Banner管理Repository接口
  *
@@ -18,4 +20,7 @@ public interface PhBannerRepository extends JpaRepository<PhBanner, Long>, JpaSp
     @Modifying
     @Query(nativeQuery = true, value = "update `ph_banner` set `sort` = `sort` + 1 where `sort` >= ?1 and `status` = 1")
     void resort(Long sort);
+
+    @Query(nativeQuery = true, value = "SELECT max(sort) as a FROM ph_banner where status = 1")
+    Optional<String> getMaxSort();
 }

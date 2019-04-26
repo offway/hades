@@ -6,6 +6,7 @@ import cn.offway.hades.service.PhBannerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,7 +43,8 @@ public class BannerController {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        Page<PhBanner> pages = bannerService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength));
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "status"), new Sort.Order("sort"));
+        Page<PhBanner> pages = bannerService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
@@ -57,6 +59,10 @@ public class BannerController {
     public boolean save(PhBanner banner) {
         if ("".equals(banner.getUrl())) {
             banner.setUrl(null);
+        }
+        if (banner.getId() == null) {
+            banner.setStatus("0");
+            banner.setSort(null);
         }
         banner.setCreateTime(new Date());
         bannerService.save(banner);
@@ -80,11 +86,11 @@ public class BannerController {
 
     @ResponseBody
     @RequestMapping("/banner_top")
-    public boolean top(Long id) {
+    public boolean top(Long id, Long sort) {
         PhBanner banner = bannerService.findOne(id);
         if (banner != null) {
-            bannerService.resort(0L);
-            banner.setSort(0L);
+            bannerService.resort(sort);
+            banner.setSort(sort);
             bannerService.save(banner);
         }
         return true;
@@ -95,9 +101,9 @@ public class BannerController {
     public boolean up(@RequestParam("ids[]") Long[] ids) {
         for (long id : ids) {
             PhBanner banner = bannerService.findOne(id);
-            bannerService.resort(0L);
+            long latest = bannerService.getMaxSort();
             banner.setStatus("1");
-            banner.setSort(0L);
+            banner.setSort(latest + 1);
             bannerService.save(banner);
         }
         return true;
@@ -109,7 +115,7 @@ public class BannerController {
         for (long id : ids) {
             PhBanner banner = bannerService.findOne(id);
             banner.setStatus("0");
-            banner.setSort(99L);
+            banner.setSort(null);
             bannerService.save(banner);
         }
         return true;

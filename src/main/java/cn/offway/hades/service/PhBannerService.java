@@ -14,4 +14,6 @@ public interface PhBannerService {
     void delete(Long id);
 
     void resort(Long sort);
+
+    Long getMaxSort();
 }
