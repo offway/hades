@@ -1,7 +1,7 @@
 package cn.offway.hades.domain;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -19,8 +19,6 @@ public class PhGoods implements Serializable {
 
     /** 名称 **/
     private String name;
-
-    private String code;
 
     /** 封面图片 **/
     private String image;
@@ -73,14 +71,12 @@ public class PhGoods implements Serializable {
     /** 备注 **/
     private String remark;
 
-    @Column(name = "code", length = 100)
-    public String getCode() {
-        return code;
-    }
+    /** 货号 **/
+    private String code;
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+    /** 上架时间 **/
+    private Date upTime;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -254,6 +250,25 @@ public class PhGoods implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    @Column(name = "code", length = 100)
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "up_time")
+    public Date getUpTime() {
+        return upTime;
+    }
+
+    public void setUpTime(Date upTime) {
+        this.upTime = upTime;
     }
 
 }
