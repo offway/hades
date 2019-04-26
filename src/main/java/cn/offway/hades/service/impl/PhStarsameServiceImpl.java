@@ -1,15 +1,14 @@
 package cn.offway.hades.service.impl;
 
+import cn.offway.hades.domain.PhStarsame;
+import cn.offway.hades.repository.PhStarsameRepository;
+import cn.offway.hades.service.PhStarsameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import cn.offway.hades.service.PhStarsameService;
-
-import cn.offway.hades.domain.PhStarsame;
-import cn.offway.hades.repository.PhStarsameRepository;
 
 
 /**
@@ -44,6 +43,11 @@ public class PhStarsameServiceImpl implements PhStarsameService {
     @Override
     public void resort(Long sort) {
         phStarsameRepository.resort(sort);
+    }
+
+    @Override
+    public void resetSort() {
+        phStarsameRepository.resetSort();
     }
 
     @Override

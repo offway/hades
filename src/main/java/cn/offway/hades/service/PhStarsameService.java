@@ -21,4 +21,6 @@ public interface PhStarsameService {
     Page<PhStarsame> findAll(Pageable pageable);
 
     void resort(Long sort);
+
+    void resetSort();
 }

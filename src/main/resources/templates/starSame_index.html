@@ -313,16 +313,21 @@
 
     var table_global;
 
-    function topIt(id) {
-        $.post("/starSame_top", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
+	function topIt(id) {
+		var num = prompt("输入置顶位置,从0开始,0为第一位", "0");
+		if (isNaN(num) || num == null) {
+			alert("请输入数字！");
+		} else {
+			$.post("/starSame_top", {"id": id, "sort": num}, function (data) {
+				if (data) {
+					table_global.fnDraw();
+					toastr.success("操作已成功！", "温馨提示");
+				} else {
+					toastr.error("操作失败", "温馨提示");
+				}
+			});
+		}
+	}
 
     jQuery(document).ready(function($)
 	{
@@ -387,11 +392,14 @@
 	                data: "praiseCount",
 	                title: "点赞数"
             	},
-                {
-                    targets: 7,
-                    data: "sort",
-                    title: "排序"
-                },
+				{
+					targets: 7,
+					data: "sort",
+					title: "排序",
+					render: function (data, type, row, meta) {
+						return parseInt(data) < 6 ? data : "";
+					}
+				},
                 {
                     targets: 8,
                     data: "createTime",
@@ -423,7 +431,7 @@
 						if (full["sort"] == null || parseInt(full["sort"]) > 5) {
 							return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶"/>';
 						} else {
-							return '<input type="button" name="checkIt" disabled="disabled" value="已置顶"/>';
+							return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶排序"/>';
 						}
 					}
 				}

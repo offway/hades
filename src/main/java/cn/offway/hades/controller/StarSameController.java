@@ -60,7 +60,7 @@ public class StarSameController {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        Sort sort = new Sort("sort");
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, "sort"), new Sort.Order(Sort.Direction.DESC, "createTime"));
         Page<PhStarsame> pages = starsameService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
@@ -99,12 +99,13 @@ public class StarSameController {
 
     @ResponseBody
     @RequestMapping("/starSame_top")
-    public boolean top(Long id) {
+    public boolean top(Long id, Long sort) {
         PhStarsame starsame = starsameService.findOne(id);
         if (starsame != null) {
-            starsameService.resort(0L);
-            starsame.setSort(0L);
+            starsameService.resort(sort);
+            starsame.setSort(sort);
             starsameService.save(starsame);
+            starsameService.resetSort();
         }
         return true;
     }
@@ -113,10 +114,8 @@ public class StarSameController {
     @PostMapping("/starSame_save")
     public boolean save(PhStarsame starsame, String goodsIDStr, String imagesJSONStr) {
         starsame.setCreateTime(new Date());
-        if (starsame.getSort() == null) {
-            starsame.setSort(99L);
-        } else if (starsame.getSort() == 0) {
-            starsameService.resort(0L);
+        if (starsame.getId() == null) {
+            starsame.setSort(999L);
         }
         PhStarsame starsameObj = starsameService.save(starsame);
         //purge first
