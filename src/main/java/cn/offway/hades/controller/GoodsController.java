@@ -419,6 +419,7 @@ public class GoodsController {
         PhGoods goods = goodsService.findOne(id);
         if (goods != null) {
             goods.setStatus("1");
+            goods.setUpTime(new Date());
             goodsService.save(goods);
         }
         return true;
