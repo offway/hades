@@ -777,24 +777,34 @@
 		return returnList;
 	}
 
-	function bindTypeSelector(data) {
-		var typeStr = "";
-		for (var type in data) {
-			type = data[type];
-			typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["id"]).replace("KEY", type["name"]);
-		}
-		$("#field-1").html(typeStr);
-		bindCategorySelector(data[0]["sub"]);
-	}
+    function bindTypeSelector(data, v1, v2) {
+        var typeStr = "";
+        var i = 0;
+        for (var j in data) {
+            var type = data[j];
+            if (type["name"] == v1) {
+                i = j;
+                typeStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", type["id"]).replace("KEY", type["name"]);
+            } else {
+                typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["id"]).replace("KEY", type["name"]);
+            }
+        }
+        $("#field-1").html(typeStr);
+        bindCategorySelector(data[i]["sub"], v2);
+    }
 
-	function bindCategorySelector(data) {
-		var categoryStr = "";
-		for (var category in data) {
-			category = data[category];
-			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["id"]).replace("KEY", category["name"]);
-		}
-		$("#field-2").html(categoryStr);
-	}
+    function bindCategorySelector(data, v) {
+        var categoryStr = "";
+        for (var category in data) {
+            category = data[category];
+            if (category["name"] == v) {
+                categoryStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", category["id"]).replace("KEY", category["name"]);
+            } else {
+                categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["id"]).replace("KEY", category["name"]);
+            }
+        }
+        $("#field-2").html(categoryStr);
+    }
 
 	function renderCategory(self) {
 		var jsonStr = $("#type_and_category_list").val();
@@ -808,39 +818,51 @@
 		}
 	}
 
-    function bindBrandSelector(data) {
+    function bindBrandSelector(data, id) {
         var brandStr = "";
         for (var brand in data) {
             brand = data[brand];
             if (brand.hasOwnProperty("brandId") && brand.hasOwnProperty("brandName")) {
-                brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
+                if (brand["brandId"] == id) {
+                    brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
+                } else {
+                    brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
+                }
             } else {
-                brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+                if (brand["id"] == id) {
+                    brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+                } else {
+                    brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+                }
             }
         }
         $("#field-5").html(brandStr);
     }
 
-	function bindMerchantSelector(data) {
-		var brandStr = "";
-		for (var brand in data) {
-			brand = data[brand];
-			if (parseInt(brand["id"]) == 0) {
-				// brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-			} else {
-				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-			}
-		}
-		$("#field-9").html(brandStr);
-		renderFare("#field-9");
-	}
+    function bindMerchantSelector(data, id) {
+        var brandStr = "";
+        for (var brand in data) {
+            brand = data[brand];
+            if (parseInt(brand["id"]) == id) {
+                // brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+                brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+            } else {
+                brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+            }
+        }
+        $("#field-9").html(brandStr);
+        renderFare("#field-9");
+    }
 
     function bindFareSelector(data) {
         var brandStr = "";
         for (var brand in data) {
             brand = data[brand];
-            brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["remark"]);
+            if (brand["isDefault" == "1"]) {//isDefault
+                brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["remark"]);
+            } else {
+                brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["remark"]);
+            }
         }
         $("#field-11").html(brandStr);
     }
@@ -864,26 +886,57 @@
         $.base64.utf8encode = true;
         $.base64.utf8decode = true;
 
-		$.getJSON("/type_and_category_list", {}, function (data) {
-			$("#type_and_category_list").val(JSON.stringify(data));
-			bindTypeSelector(data);
-		});
-
-		$.getJSON("/brand_list_all", {}, function (data) {
-			bindBrandSelector(data);
-			$('#field-5').editableSelect();
-		});
-
-		$.getJSON("/merchant_list_all", {}, function (data) {
-			bindMerchantSelector(data);
-			$('#field-9').editableSelect();
-		});
+        if (theId != null) {
+            $.getJSON("/goods_find", {"id": theId}, function (data) {
+                console.log(data);
+                var form = $("#saveForm");
+                var main = data["main"];
+                var imageList = data["imageList"];
+                var propertyList = data["propertyList"];
+                var stockList = data["stockList"];
+                //main
+                for (var i in main) {
+                    var ele = form.find("input[name='" + i + "']");
+                    switch (ele.attr("type")) {
+                        case "radio":
+                            ele.val([main[i]]);
+                            break;
+                        default:
+                            if (main[i] != undefined && !isNaN(main[i]) && String(main[i]).length == 13) {
+                                ele.val(formatTime(main[i]));
+                                $("#" + i).val(formatTime(main[i]));
+                            } else {
+                                ele.val(main[i]);
+                            }
+                    }
+                    form.find("img[name='" + i + "Img']").attr("src", main[i]);
+                    form.find("img[name='" + i + "Img']").attr("width", 200);
+                    form.find("img[name='" + i + "Img']").attr("length", 200);
+                    form.find("img[name='" + i + "Img']").show();
+                }
+                //分类
+                $.getJSON("/type_and_category_list", {}, function (data) {
+                    $("#type_and_category_list").val(JSON.stringify(data));
+                    bindTypeSelector(data, main["type"], main["category"]);
+                });
+                //品牌
+                $.getJSON("/brand_list_all", {}, function (data) {
+                    bindBrandSelector(data, main["brandId"]);
+                    $('#field-5').editableSelect();
+                });
+                //商家
+                $.getJSON("/merchant_list_all", {}, function (data) {
+                    bindMerchantSelector(data, main["merchantId"]);
+                    $('#field-9').editableSelect();
+                });
+            });
+        }
 
 		$(document).on("wheel", "input[type=number]", function (e) {
 			$(this).blur();
 		});
 
-        switchToCommon();
+        // switchToCommon();
 
 		function getImgSize(file, cb) {
 			var f = file;//input.files[0];
