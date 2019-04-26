@@ -198,7 +198,7 @@
 
 	function bindBrandSelector(data, v) {
 		var uuid = UUID.randomUUID();
-		var brandStr = "<div id='UUID'><select class=\"form-control\" style='display: inline-block;width: 200px;' name=\"brandID\" >";
+		var brandStr = "<div id='UUID'><select disabled='disabled' class=\"form-control\" style='display: inline-block;width: 200px;' name=\"brandID\" >";
 		for (var brand in data) {
 			brand = data[brand];
 			if (brand["id"] == v) {
