@@ -70,6 +70,13 @@ public class GoodsController {
         return "goods_add";
     }
 
+    @RequestMapping("/goods_edit.html")
+    public String edit(ModelMap map, Long id) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("theId", id);
+        return "goods_edit";
+    }
+
     @RequestMapping("/goods_stock_index.html")
     public String stockIndex(ModelMap map, Long id) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
@@ -346,7 +353,8 @@ public class GoodsController {
     public boolean updateStockStock(@RequestParam("ids[]") Long[] ids, Long stock) {
         for (Long id : ids) {
             PhGoodsStock goodsStock = goodsStockService.findOne(id);
-            goodsStock.setStock(stock);
+            goodsStock.setStock(goodsStock.getStock() + stock);
+            goodsStock.setStock(goodsStock.getVersion() + 1);
             goodsStockService.save(goodsStock);
         }
         return true;

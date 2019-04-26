@@ -81,7 +81,7 @@
 					
 				</div>
 				<button class="btn btn-info add" >添加</button>
-				<!--<button class="btn btn-info edit">修改</button>-->
+				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
 			</div>
 			
@@ -497,16 +497,9 @@
 			return false;
 		});
 
-        $(".btn.btn-info.add").click(function(){
-            // var form = $("#saveForm");
-            // form.find("input:not(.notMe)").val("");
-            // form.find("img").attr("src","");
-            // form.find("img").hide();
-            // form.find("input[type='file']").show();
-            // $(".imageShow").remove();
-            // jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+		$(".btn.btn-info.add").click(function () {
 			window.location.href = '/goods_add.html';
-        });
+		});
 
 		function getImgSize(file, cb) {
 			var f = file;//input.files[0];
@@ -648,31 +641,13 @@
 			});
 		});
 
-		$(".btn.btn-info.edit").click(function(){
+		$(".btn.btn-info.edit").click(function () {
 			var activityId = $("input[name='activityId']:checked");
 			if (activityId.length != 1) {
 				toastr.error("请选择一条数据操作", "温馨提示");
 				return;
 			}
-
-			$.post("/brand_get", {id: activityId.val()}, function (data) {
-				var form = $("#saveForm");
-				form.find("input:not(.notMe)").val("");
-				for (var i in data) {
-					var ele = form.find("input[name='" + i + "']");
-					switch (ele.attr("type")) {
-						case "radio":
-							ele.val([data[i]]);
-							break;
-						default:
-							ele.val(data[i]);
-					}
-					form.find("img[name='" + i + "Img']").attr("src", data[i]);
-					form.find("img[name='" + i + "Img']").show();
-				}
-				form.find(".btn.image").show();
-				jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
-			});
+			window.location.href = '/goods_edit.html?id=' + activityId[0].value;
 		});
 
 		$(".btn.btn-info.del").click(function(){
