@@ -1,7 +1,9 @@
 package cn.offway.hades.controller;
 
+import cn.offway.hades.domain.PhMerchant;
 import cn.offway.hades.domain.PhVoucherProject;
 import cn.offway.hades.properties.QiniuProperties;
+import cn.offway.hades.service.PhMerchantService;
 import cn.offway.hades.service.PhVoucherInfoService;
 import cn.offway.hades.service.PhVoucherProjectService;
 import org.slf4j.Logger;
@@ -33,6 +35,8 @@ public class CouponController {
     private PhVoucherProjectService voucherProjectService;
     @Autowired
     private PhVoucherInfoService voucherInfoService;
+    @Autowired
+    private PhMerchantService merchantService;
 
     @RequestMapping("/coupon.html")
     public String index(ModelMap map) {
@@ -43,6 +47,10 @@ public class CouponController {
     @ResponseBody
     @RequestMapping("/coupon_save")
     public boolean save(PhVoucherProject voucherProject) {
+        PhMerchant merchant = merchantService.findOne(voucherProject.getMerchantId());
+        if (merchant != null) {
+            voucherProject.setMerchantName(merchant.getName());
+        }
         voucherProject.setCreateTime(new Date());
         voucherProject.setLimit(0L);
         voucherProjectService.save(voucherProject);

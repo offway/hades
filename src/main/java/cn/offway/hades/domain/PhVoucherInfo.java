@@ -53,6 +53,17 @@ public class PhVoucherInfo implements Serializable {
     /** 备注 **/
     private String remark;
 
+    /** 商户名称 **/
+    private String merchantName;
+
+    @Column(name = "merchant_name", length = 100)
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
