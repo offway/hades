@@ -354,7 +354,7 @@ public class GoodsController {
         for (Long id : ids) {
             PhGoodsStock goodsStock = goodsStockService.findOne(id);
             goodsStock.setStock(goodsStock.getStock() + stock);
-            goodsStock.setStock(goodsStock.getVersion() + 1);
+            goodsStock.setVersion(goodsStock.getVersion() + 1);
             goodsStockService.save(goodsStock);
         }
         return true;

@@ -621,8 +621,8 @@
 			activityId.each(function (i, e) {
 				ids.push(e.value);
 			});
-			var stock = prompt("请输入库存数量", "0");
-			if (isNaN(stock)) {
+			var stock = prompt("请输入库存数量,正数(如 10 )代表增加，负数(如 -10 )表示减少", "0");
+			if (isNaN(stock) || stock == null) {
 				stock = 0;
 			}
 			$.post("/goods_stock_update_stock", {"ids": ids, "stock": stock}, function (data) {
@@ -630,7 +630,7 @@
 					toastr.success("操作已成功！", "温馨提示");
 					oTable.fnDraw();
 				}
-			})
+			});
 		});
 
 		$(".btn.btn-info.editPrice").click(function () {
@@ -645,15 +645,16 @@
 				ids.push(e.value);
 			});
 			var price = prompt("请输入价格", "0");
-			if (isNaN(price)) {
-				price = 0;
+			if (isNaN(price) || price == null) {
+				alert("请输入数字！")
+			} else {
+				$.post("/goods_stock_update_price", {"ids": ids, "price": price}, function (data) {
+					if (data) {
+						toastr.success("操作已成功！", "温馨提示");
+						oTable.fnDraw();
+					}
+				});
 			}
-			$.post("/goods_stock_update_price", {"ids": ids, "price": price}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			})
 		});
 	});
 	/*]]>*/
