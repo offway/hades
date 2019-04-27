@@ -100,13 +100,33 @@ public class StarSameController {
     @ResponseBody
     @RequestMapping("/starSame_top")
     public boolean top(Long id, Long sort) {
-        PhStarsame starsame = starsameService.findOne(id);
-        if (starsame != null) {
-            starsameService.resort(sort);
-            starsame.setSort(sort);
-            starsameService.save(starsame);
-            starsameService.resetSort();
+        List<PhStarsame> top6 = starsameService.getLimitList();
+        long i = 0;
+        boolean included = false;
+        for (int index = 0; index < 6; index++) {
+            if (index < top6.size()) {
+                PhStarsame obj = top6.get(index);
+                if (Long.compare(id, obj.getId()) == 0) {
+                    included = true;
+                    obj.setSort(sort);
+                    starsameService.save(obj);
+                    continue;
+                }
+                if (Long.compare(i, sort) == 0) {
+                    //skip specific position
+                    i++;
+                }
+                obj.setSort(i);
+                starsameService.save(obj);
+                i++;
+            }
         }
+        if (!included) {
+            PhStarsame newOne = starsameService.findOne(id);
+            newOne.setSort(sort);
+            starsameService.save(newOne);
+        }
+        starsameService.resetSort();
         return true;
     }
 

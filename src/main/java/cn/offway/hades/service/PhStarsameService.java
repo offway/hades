@@ -4,6 +4,8 @@ import cn.offway.hades.domain.PhStarsame;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * 明星同款Service接口
  *
@@ -23,4 +25,6 @@ public interface PhStarsameService {
     void resort(Long sort);
 
     void resetSort();
+
+    List<PhStarsame> getLimitList();
 }
