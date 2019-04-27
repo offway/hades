@@ -229,7 +229,7 @@
 <!--										</div>-->
 <!--									</div>-->
 									<div id="skuProperty">
-<!--										<input id="addMoreAttrButton" style="display: none" type="button" value="添加商品属性(如颜色、尺码等)" onclick="addMoreAttr(this,false)"/>-->
+										<input id="addMoreAttrButton" style="display: none" type="button" value="添加商品属性(如颜色、尺码等)" onclick="addMoreAttr(this,false)"/>
 									</div>
 									<div id="skuContainer">
 									</div>
@@ -357,14 +357,7 @@
 		}
 	}
 
-    function initCommonSku() {
-		//添加颜色
-		addMoreAttr("#addMoreAttrButton", true);
-		//添加尺码
-		addMoreAttr("#addMoreAttrButton", true);
-		var attrNameList = $("#skuProperty").find("[name='attrName']");
-		var attrValueList = $("#skuProperty").find("[name='attrValue']");
-		var attrContainerList = $("#skuProperty").find("[name='attrContainer']");
+    function initCommonSku(savedSku) {
         var commonSku = {
             "颜色": [
                 // {"value": "赤", "remark": "", "sort": 1},
@@ -385,6 +378,19 @@
                 // {"value": "特特小", "remark": "XXS", "sort": 7}
             ]
         };
+        if (savedSku != null) {
+            commonSku = savedSku;
+        }
+        // //添加颜色
+        // addMoreAttr("#addMoreAttrButton", true);
+        // //添加尺码
+        // addMoreAttr("#addMoreAttrButton", true);
+        for (var i in commonSku) {
+            addMoreAttr("#addMoreAttrButton", true);
+        }
+        var attrNameList = $("#skuProperty").find("[name='attrName']");
+        var attrValueList = $("#skuProperty").find("[name='attrValue']");
+        var attrContainerList = $("#skuProperty").find("[name='attrContainer']");
         var i = 0;
         for (var name in commonSku) {
             $(attrNameList[i]).val(name);
@@ -398,8 +404,8 @@
         }
     }
 
-    function switchToCommon() {
-        initCommonSku();
+    function switchToCommon(savedSku) {
+        initCommonSku(savedSku);
         $("#addMoreAttrButton").hide();
         // generateSKUList();
     }
@@ -481,7 +487,7 @@
         that.before(content);
     }
 
-    function buildNewAttrValue(uuid, one, two, three) {
+    function buildNewAttrValue(uuid, one, two, three, five) {
         var context = ATTR_ELEMENT_BODY;
         context = context.replace(/UUID/g, uuid);
         if (one != undefined) {
@@ -498,6 +504,11 @@
             context = context.replace("THREE", three);
         } else {
             context = context.replace("THREE", "0");
+        }
+        if (five != undefined) {
+            context = context.replace("DELETE", "disabled='disabled'");
+        } else {
+            context = context.replace("DELETE", "");
         }
         return context;
     }
@@ -540,7 +551,7 @@
 			"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
 			"\t\t\t\t\t\t\t\t<label for=\"field-6\" class=\"control-label\">操作</label>\n" +
-            "\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control UUID\" name=\"UUID\" value='删除' onclick=\"delNode(this,false)\" />\n" +
+            "\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control UUID\" name=\"UUID\" value='删除' DELETE onclick=\"delNode(this,false)\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t</div>\n";
@@ -568,13 +579,13 @@
 		var contentStr = "";
 		if (attrJSONStr == '') {
 			var innerUUid = UUID.randomUUID();
-			contentStr = (ATTR_ELEMENT_HEADER + ATTR_ELEMENT_BODY + ATTR_ELEMENT_FOOTER).replace("ONE", "").replace("TWO", "").replace("THREE", "0").replace(/PID/g, uuid).replace(/UUID/g, innerUUid);
+            contentStr = (ATTR_ELEMENT_HEADER + ATTR_ELEMENT_BODY + ATTR_ELEMENT_FOOTER).replace("ONE", "").replace("TWO", "").replace("THREE", "0").replace("DELETE", "").replace(/PID/g, uuid).replace(/UUID/g, innerUUid);
 		} else {
 			var attrList = JSON.parse(attrJSONStr);
 			contentStr += ATTR_ELEMENT_HEADER;
 			for (var i in attrList) {
 				var innerUUid = UUID.randomUUID();
-				contentStr += buildNewAttrValue(innerUUid, attrList[i]["value"], attrList[i]["remark"], attrList[i]["sort"]);
+                contentStr += buildNewAttrValue(innerUUid, attrList[i]["value"], attrList[i]["remark"], attrList[i]["sort"], true);
 			}
 			contentStr += ATTR_ELEMENT_FOOTER.replace(/PID/g, uuid);
 		}
@@ -958,6 +969,66 @@
 						addIntroFile("#addIntroFileBtn", image["imageUrl"]);
 					}
 				}
+                //规格
+                var savedSku = {
+                    // "颜色": [
+                    //     // {"value": "赤", "remark": "", "sort": 1},
+                    //     // {"value": "橙", "remark": "", "sort": 2},
+                    //     // {"value": "黄", "remark": "", "sort": 3},
+                    //     // {"value": "绿", "remark": "", "sort": 4},
+                    //     // {"value": "青", "remark": "", "sort": 5},
+                    //     // {"value": "蓝", "remark": "", "sort": 6},
+                    //     // {"value": "紫", "remark": "", "sort": 7}
+                    // ],
+                    // "尺码": [
+                    //     // {"value": "大", "remark": "L", "sort": 1},
+                    //     // {"value": "小", "remark": "S", "sort": 2},
+                    //     // {"value": "中", "remark": "M", "sort": 3},
+                    //     // {"value": "特大", "remark": "XL", "sort": 4},
+                    //     // {"value": "特小", "remark": "XS", "sort": 5},
+                    //     // {"value": "特特大", "remark": "XXL", "sort": 6},
+                    //     // {"value": "特特小", "remark": "XXS", "sort": 7}
+                    // ]
+                };
+                loop:for (var property in propertyList) {
+                    // {
+                    //     "id": 509,
+                    //     "goodsId": 60,
+                    //     "goodsStockId": 270,
+                    //     "name": "颜色",
+                    //     "value": "黑色",
+                    //     "sort": 0,
+                    //     "createTime": 1555583063000,
+                    //     "remark": ""
+                    // }
+                    property = propertyList[property];
+                    if (savedSku.hasOwnProperty(property["name"])) {
+                        var tmpArr = savedSku[property["name"]];
+                        for (var tmpObj in tmpArr) {
+                            tmpObj = tmpArr[tmpObj];
+                            if (tmpObj["value"] == property["value"]) {
+                                continue loop;
+                            }
+                        }
+                        tmpArr.push(
+                            {
+                                "value": property["value"],
+                                "remark": property["remark"],
+                                "sort": property["sort"]
+                            }
+                        );
+                    } else {
+                        savedSku[property["name"]] = [
+                            {
+                                "value": property["value"],
+                                "remark": property["remark"],
+                                "sort": property["sort"]
+                            }
+                        ];
+                    }
+                }
+                console.log(savedSku);
+                switchToCommon(savedSku);
             });
         }
 
