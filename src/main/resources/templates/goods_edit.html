@@ -152,18 +152,18 @@
 										</div>
 									</div>
 									<div class="row" id="introDIV">
+<!--										<div class="col-md-2">-->
+<!--											<div class="form-group">-->
+<!--												<label class="control-label">商品长图</label>-->
+<!--												<input type="file" class="form-control" name="introFile" placeholder="商品长图" onchange="uploadIntroFile(this)"/>-->
+<!--												&lt;!&ndash;<input type="button" class="form-control" value="删除" onclick="delIntroFile(this)"/>&ndash;&gt;-->
+<!--												<input type="hidden" class="form-control" name="intro" />-->
+<!--												<img alt="" src="" name="introImg" style="display:none;" />-->
+<!--											</div>-->
+<!--										</div>-->
 										<div class="col-md-2">
 											<div class="form-group">
-												<label class="control-label">商品长图</label>
-												<input type="file" class="form-control" name="introFile" placeholder="商品长图" onchange="uploadIntroFile(this)"/>
-												<!--<input type="button" class="form-control" value="删除" onclick="delIntroFile(this)"/>-->
-												<input type="hidden" class="form-control" name="intro" />
-												<img alt="" src="" name="introImg" style="display:none;" />
-											</div>
-										</div>
-										<div class="col-md-2">
-											<div class="form-group">
-												<input type="button" class="form-control" value="添加" onclick="addIntroFile(this)"/>
+												<input type="button" class="form-control" value="添加" id="addIntroFileBtn" onclick="addIntroFile(this)"/>
 											</div>
 										</div>
 									</div>
@@ -308,17 +308,29 @@
 		that.parent().parent().remove();
 	}
 
-	function addIntroFile(self) {
+	function addIntroFile(self, url) {
 		var that = $(self);
-		that.parent().parent().before("\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-				"\t\t\t\t\t\t\t\t<label class=\"control-label\">商品长图</label>\n" +
-				"\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"introFile\" placeholder=\"商品长图\" onchange=\"uploadIntroFile(this)\"/>\n" +
-				"\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control\" value=\"删除\" onclick=\"delIntroFile(this)\"/>\n" +
-				"\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"intro\" />\n" +
-				"\t\t\t\t\t\t\t\t<img alt=\"\" src=\"\" name=\"introImg\" style=\"display:none;\" />\n" +
-				"\t\t\t\t\t\t\t</div>\n" +
-				"\t\t\t\t\t\t</div>");
+		if (url != null) {
+			that.parent().parent().before("\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+					"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+					"\t\t\t\t\t\t\t\t<label class=\"control-label\">商品长图</label>\n" +
+					"\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"introFile\" placeholder=\"商品长图\" onchange=\"uploadIntroFile(this)\"/>\n" +
+					"\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control\" value=\"删除\" onclick=\"delIntroFile(this)\"/>\n" +
+					"\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"intro\" value='SRC' />\n".replace("SRC", url) +
+					"\t\t\t\t\t\t\t\t<img alt=\"\" src=\"SRC\" name=\"introImg\"/>\n".replace("SRC", url) +
+					"\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t</div>");
+		} else {
+			that.parent().parent().before("\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+					"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+					"\t\t\t\t\t\t\t\t<label class=\"control-label\">商品长图</label>\n" +
+					"\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"introFile\" placeholder=\"商品长图\" onchange=\"uploadIntroFile(this)\"/>\n" +
+					"\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control\" value=\"删除\" onclick=\"delIntroFile(this)\"/>\n" +
+					"\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"intro\" />\n" +
+					"\t\t\t\t\t\t\t\t<img alt=\"\" src=\"\" name=\"introImg\" style=\"display:none;\" />\n" +
+					"\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t</div>");
+		}
 	}
 
 	function uploadIntroFile(self) {
@@ -929,6 +941,23 @@
                     bindMerchantSelector(data, main["merchantId"]);
                     $('#field-9').editableSelect();
                 });
+				//图片
+				var bannerHide = form.find("[name='banner']");
+				var bannerImg = form.find("[name='bannerImg']");
+				var bannerIndex = 0;
+				for (var image in imageList) {
+					image = imageList[image];
+					//类型[0-banner,1-内容]
+					if (image["type"] == '0') {
+						$(bannerHide[bannerIndex]).val(image["imageUrl"]);
+						$(bannerImg[bannerIndex]).attr("src", image["imageUrl"]);
+						$(bannerImg[bannerIndex]).css({'height': '200px', 'width': '200px'});
+						$(bannerImg[bannerIndex]).show();
+						bannerIndex++;
+					} else {
+						addIntroFile("#addIntroFileBtn", image["imageUrl"]);
+					}
+				}
             });
         }
 
