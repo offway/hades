@@ -339,6 +339,12 @@ public class GoodsController {
     }
 
     @ResponseBody
+    @RequestMapping("/goods_findOne")
+    public PhGoods findOne(Long id) {
+        return goodsService.findOne(id);
+    }
+
+    @ResponseBody
     @RequestMapping("/goods_del")
     public boolean delete(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {
