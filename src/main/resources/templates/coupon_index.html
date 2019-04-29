@@ -735,6 +735,7 @@
 				if (data["beginTime"] != null) {
 					var btime = new Date(data["beginTime"]).Format("yyyy-MM-dd hh:mm:ss");
 					form.find("#beginTimeAlt").val(btime);
+					form.find('input[name="beginTime"]').val(btime);
 					$("input[name='switch']").val(["1"]);
 					toggle("1");
 				} else {
@@ -744,6 +745,7 @@
 				if (data["endTime"] != null) {
 					var etime = new Date(data["endTime"]).Format("yyyy-MM-dd hh:mm:ss");
 					form.find("#endTimeAlt").val(etime);
+					form.find('input[name="endTime"]').val(btime);
 					$("input[name='switch']").val(["1"]);
 					toggle("1");
 				} else {
