@@ -7,6 +7,8 @@ import cn.offway.hades.utils.HttpClientUtil;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +50,24 @@ public class OrderController {
     private PhMerchantService merchantService;
     @Autowired
     private JPushService jPushService;
+    @Autowired
+    private PhPreorderInfoService preorderInfoService;
 
     @RequestMapping("/order.html")
-    public String index(ModelMap map) {
+    public String index(ModelMap map, String theId) {
+        if (theId != null) {
+            map.addAttribute("theId", theId);
+        } else {
+            map.addAttribute("theId", null);
+        }
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         return "order_index";
+    }
+
+    @RequestMapping("/preOrder.html")
+    public String indexPre(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        return "order_index_pre";
     }
 
     @RequestMapping("/order_detail.html")
@@ -96,9 +111,15 @@ public class OrderController {
             List<Map> goodsInfoList = new ArrayList<>();
             List<PhOrderGoods> orderGoodsList = orderGoodsService.findAllByPid(orderInfo.getOrderNo());
             for (PhOrderGoods obj : orderGoodsList) {
+                if (obj.getGoodsId() == null || obj.getGoodsStockId() == null) {
+                    continue;
+                }
                 Map<String, Object> goodsInfo = new HashMap<>();
                 PhGoodsStock stock = goodsStockService.findOne(obj.getGoodsStockId());
                 PhGoods goods = goodsService.findOne(obj.getGoodsId());
+                if (stock == null || goods == null) {
+                    continue;
+                }
                 List<PhGoodsProperty> properties = goodsPropertyService.findByStockId(stock.getId());
                 goodsInfo.put("sku", stock.getSku());
                 goodsInfo.put("goodsId", stock.getGoodsId());
@@ -140,16 +161,58 @@ public class OrderController {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        String merchantId = request.getParameter("merchantId");
-        merchantId = merchantId != null ? merchantId : "0";
+        String theId = request.getParameter("theId");
+        Page<PhOrderInfo> pages = null;
+        if ("".equals(theId)) {
+            String merchantId = request.getParameter("merchantId");
+            merchantId = merchantId != null ? merchantId : "0";
+            String orderNo = request.getParameter("orderNo");
+            String sTimeStr = request.getParameter("sTime");
+            String eTimeStr = request.getParameter("eTime");
+            Date sTime = null, eTime = null;
+            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            if (!"".equals(sTimeStr) && !"".equals(eTimeStr)) {
+                sTime = DateTime.parse(sTimeStr, format).toDate();
+                eTime = DateTime.parse(eTimeStr, format).toDate();
+            }
+            String userId = request.getParameter("userId");
+            String payMethod = request.getParameter("payMethod");
+            String status = request.getParameter("status");
+            Sort sort = new Sort("id");
+            pages = orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        } else {
+            Sort sort = new Sort("id");
+            pages = orderInfoService.findAll(theId, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        }
+        int initEcho = sEcho + 1;
+        Map<String, Object> map = new HashMap<>();
+        map.put("sEcho", initEcho);
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        map.put("aData", pages.getContent());//数据集合
+        return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/order_list_pre")
+    public Map<String, Object> getPreOrderList(HttpServletRequest request) {
+        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
+        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
+        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         String orderNo = request.getParameter("orderNo");
-        String sTime = request.getParameter("sTime");
-        String eTime = request.getParameter("eTime");
+        String sTimeStr = request.getParameter("sTime");
+        String eTimeStr = request.getParameter("eTime");
+        Date sTime = null, eTime = null;
+        if (!"".equals(sTimeStr) && !"".equals(eTimeStr)) {
+            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            sTime = DateTime.parse(sTimeStr, format).toDate();
+            eTime = DateTime.parse(eTimeStr, format).toDate();
+        }
         String userId = request.getParameter("userId");
         String payMethod = request.getParameter("payMethod");
         String status = request.getParameter("status");
         Sort sort = new Sort("id");
-        Page<PhOrderInfo> pages = orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhPreorderInfo> pages = preorderInfoService.findAll(orderNo, sTime, eTime, userId, payMethod, status, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);

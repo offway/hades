@@ -41,7 +41,7 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
     }
 
     @Override
-    public Page<PhOrderInfo> findAll(Long mid, String orderNo, String sTime, String eTime, String userId, String payMethod, String status, Pageable pageable) {
+    public Page<PhOrderInfo> findAll(Long mid, String orderNo, Date sTime, Date eTime, String userId, String payMethod, String status, Pageable pageable) {
         return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
             @Override
             public Predicate toPredicate(Root<PhOrderInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -52,7 +52,7 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
                 if (!"".equals(orderNo)) {
                     params.add(criteriaBuilder.like(root.get("orderNo"), "%" + orderNo + "%"));
                 }
-                if (!"".equals(sTime) && !"".equals(eTime)) {
+                if (sTime != null && eTime != null) {
                     params.add(criteriaBuilder.between(root.get("createTime"), sTime, eTime));
                 }
                 if (!"".equals(userId)) {
@@ -63,6 +63,22 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
                 }
                 if (!"".equals(status)) {
                     params.add(criteriaBuilder.equal(root.get("status"), status));
+                }
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        }, pageable);
+    }
+
+    @Override
+    public Page<PhOrderInfo> findAll(String pid, Pageable pageable) {
+        return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
+            @Override
+            public Predicate toPredicate(Root<PhOrderInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                if (!"".equals(pid)) {
+                    params.add(criteriaBuilder.equal(root.get("preorderNo"), pid));
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<head th:replace="head"></head>
-	<title>订单管理</title>
+	<title>总订单管理</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
@@ -25,7 +25,7 @@
 			<div class="page-title">
 				
 				<div class="title-env">
-					<h1 class="title">订单管理</h1>
+					<h1 class="title">总订单管理</h1>
 					<p class="activityDescription"></p>
 				</div>
 
@@ -34,7 +34,7 @@
 					<ol class="breadcrumb bc-1">
 						<li><a href="/"><i class="fa-home"></i>Home</a></li>
 						<li><a>系统管理</a></li>
-						<li class="active"><strong>订单管理</strong></li>
+						<li class="active"><strong>总订单管理</strong></li>
 					</ol>
 
 				</div>
@@ -43,14 +43,8 @@
 			
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<form role="form" class="form-inline" id="queryForm">
+					<form role="form" class="form-inline">
 						<div class="form-group ">
-                            <input type="hidden" name="theId"/>
-							<div class="input-group">
-								<label for="merchantId" class="control-label">商户</label>
-								<select id="merchantId" name="merchantId" class="form-control" style="height:35px">
-								</select>
-							</div>
 							<div class="input-group">
 								<label for="orderNo" class="control-label">订单号</label>
 								<input id="orderNo" type="text" name="orderNo" class="form-control" style="height:35px" placeholder="订单号"/>
@@ -58,12 +52,12 @@
 							<div class="input-group">
 								<label for="sTime" class="control-label">开始时间</label>
 								<input id="sTime" type="text" class="form-control" style="height:35px" placeholder="开始时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss"/>
-                                <input type="hidden" class="form-control" name="sTime" />
+								<input type="hidden" class="form-control" name="sTime" />
 							</div>
 							<div class="input-group">
 								<label for="eTime" class="control-label">结束时间</label>
 								<input id="eTime" type="text" class="form-control" style="height:35px" placeholder="结束时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss"/>
-                                <input type="hidden" class="form-control" name="eTime" />
+								<input type="hidden" class="form-control" name="eTime" />
 							</div>
 							<div class="input-group">
 								<label for="userId" class="control-label">用户</label>
@@ -268,7 +262,7 @@
     }
 
 	function goToDetail(id) {
-		window.open('/order_detail.html?id=' + id, "_blank");
+		window.open('/order.html?theId=' + id, "_blank");
 	}
 
 	function checkSku(id) {
@@ -322,165 +316,133 @@
 
     jQuery(document).ready(function($)
 	{
-        var qiniuUrl = [[${qiniuUrl}]];
-        var theId = [[${theId}]];
-        if (theId != null) {
-            var form = $("#queryForm");
-            form.hide();
-            form.find("[name='theId']").val(theId);
-        } else {
-            $("#sTime").daterangepicker({
-                singleDatePicker: true,
-                timePicker: true,
-                showDropdowns: true,
-                startDate: moment().startOf('hour'),
-                endDate: moment().startOf('hour').add(32, 'hour'),
-                locale: {
-                    format: 'YYYY-MM-DD HH:mm:ss'
-                }
-            }, function (start, end, label) {
-                $("#sTime").val(start.format('YYYY-MM-DD HH:mm:ss'));
-                $('input[name="sTime"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
-            });
-            $("#eTime").daterangepicker({
-                singleDatePicker: true,
-                timePicker: true,
-                showDropdowns: true,
-                startDate: moment().startOf('hour'),
-                endDate: moment().startOf('hour').add(32, 'hour'),
-                locale: {
-                    format: 'YYYY-MM-DD HH:mm:ss'
-                }
-            }, function (start, end, label) {
-                $("#eTime").val(start.format('YYYY-MM-DD HH:mm:ss'));
-                $('input[name="eTime"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
-            });
-        }
-        var oTable;
-
-		$.getJSON("/merchant_list_all", {}, function (data) {
-			bindMerchantSelector(data);
-			oTable = $("#example-1").dataTable({
-				language: {
-					url: "../assets/Chinese.txt"
-				},
-				aLengthactivity: [
-					[10, 25, 50, 100], [10, 25, 50, 100]
-				],
-				bFilter: false,
-				bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
-				sAjaxDataProp: "aData",//是服务器分页的标志，必须有
-				sAjaxSource: "/order_list",//通过ajax实现分页的url路径。
-				fnServerParams: function (aData) {
-					var searchArray = $(".form-inline").serializeArray();
-					$.merge(aData, searchArray);
-				},
-				order: [[6, "desc"]],
-				columnDefs: [
-					{
-						targets: 0,
-						data: "id",
-						width: "5%",
-						orderable: false,
-						className: 'select-checkbox',
-						title: '<input type="checkbox" id="checkbox-all"/>',
-						render: function (data, type, full, meta) {
-							return '<input type="checkbox" name="activityId" value="' + data + '" />';
-						}
-					},
-					{
-						targets: 1,
-						data: "id",
-						title: "序号"
-					},
-					{
-						targets: 2,
-						data: "orderNo",
-						title: "订单号"
-					},
-					{
-						targets: 3,
-						data: "userId",
-						title: "用户ID"
-					},
-					{
-						targets: 4,
-						data: "price",
-						title: "订单总价"
-					},
-					{
-						targets: 5,
-						data: "amount",
-						title: "实付金额"
-					},
-					{
-						targets: 6,
-						data: "status",
-						title: "状态",
-						render: function (data, type, row, meta) {
-							//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
-							var map = ["已下单", "已付款", "已发货", "已收货", "取消"];
-							return map[parseInt(data)];
-						}
-					},
-					{
-						targets: 7,
-						data: "payChannel",
-						title: "支付渠道",
-						render: function (data, type, row, meta) {
-							//支付渠道[wxpay,alipay]
-							var map = {"wxpay": "微信支付", "alipay": "支付宝"};
-							return map.hasOwnProperty(data) ? map[data] : "未知";
-						}
-					},
-					{
-						targets: 8,
-						data: "createTime",
-						title: "创建时间",
-						render: function (data, type, row, meta) {
-							return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-						}
-					},
-					{
-						targets: 9,
-						data: "remark",
-						title: "备注"
-					},
-					{
-						targets: 10,
-						data: "id",
-						orderable: false,
-						title: "操作",
-						render: function (data, type, full, meta) {
-							return '<input type="button" name="checkIt" onclick="goToDetail(' + data + ')" value="查看详情"/>';
-						}
-					},
-					{
-						targets: 11,
-						data: "id",
-						orderable: false,
-						title: "操作",
-						render: function (data, type, full, meta) {
-							var str = "";
-							//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
-							var status = parseInt(full["status"]);
-							if (status == 0) {
-								str += '<input type="button" onclick="closeOrder(' + data + ')" value="关闭订单"/>';
-							}
-							if (status == 1) {
-								str += '<input type="button" onclick="deliverOrder(' + data + ')" value="订单发货"/>';
-							}
-							if (status == 2) {
-								str += '<input type="button" onclick="trackOrder(' + data + ')" value="订单跟踪"/>';
-							}
-							return str;
-						}
+		var oTable;
+		oTable = $("#example-1").dataTable({
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			aLengthactivity: [
+				[10, 25, 50, 100], [10, 25, 50, 100]
+			],
+			bFilter: false,
+			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+			sAjaxSource: "/order_list_pre",//通过ajax实现分页的url路径。
+			fnServerParams: function (aData) {
+				var searchArray = $(".form-inline").serializeArray();
+				$.merge(aData, searchArray);
+			},
+			order: [[6, "desc"]],
+			columnDefs: [
+				{
+					targets: 0,
+					data: "id",
+					width: "5%",
+					orderable: false,
+					className: 'select-checkbox',
+					title: '<input type="checkbox" id="checkbox-all"/>',
+					render: function (data, type, full, meta) {
+						return '<input type="checkbox" name="activityId" value="' + data + '" />';
 					}
-				]
-			});
-			table_global = oTable;
+				},
+				{
+					targets: 1,
+					data: "id",
+					title: "序号"
+				},
+				{
+					targets: 2,
+					data: "orderNo",
+					title: "订单号"
+				},
+				{
+					targets: 3,
+					data: "userId",
+					title: "用户ID"
+				},
+				{
+					targets: 4,
+					data: "price",
+					title: "订单总价"
+				},
+				{
+					targets: 5,
+					data: "amount",
+					title: "实付金额"
+				},
+				{
+					targets: 6,
+					data: "status",
+					title: "状态",
+					render: function (data, type, row, meta) {
+						//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
+						var map = ["已下单", "已付款", "已发货", "已收货", "取消"];
+						return map[parseInt(data)];
+					}
+				},
+				{
+					targets: 7,
+					data: "payChannel",
+					title: "支付渠道",
+					render: function (data, type, row, meta) {
+						//支付渠道[wxpay,alipay]
+						var map = {"wxpay": "微信支付", "alipay": "支付宝"};
+						return map.hasOwnProperty(data) ? map[data] : "未知";
+					}
+				},
+				{
+					targets: 8,
+					data: "createTime",
+					title: "创建时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 9,
+					data: "remark",
+					title: "备注"
+				},
+				{
+					targets: 10,
+					data: "orderNo",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						return '<input type="button" name="checkIt" onclick="goToDetail(\'' + data + '\')" value="查看子订单"/>';
+					}
+				}
+			]
 		});
-		
+		table_global = oTable;
+
+		$("#sTime").daterangepicker({
+			singleDatePicker: true,
+			timePicker: true,
+			showDropdowns: true,
+			startDate: moment().startOf('hour'),
+			endDate: moment().startOf('hour').add(32, 'hour'),
+			locale: {
+				format: 'YYYY-MM-DD HH:mm:ss'
+			}
+		}, function (start, end, label) {
+			$("#sTime").val(start.format('YYYY-MM-DD HH:mm:ss'));
+			$('input[name="sTime"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
+		});
+		$("#eTime").daterangepicker({
+			singleDatePicker: true,
+			timePicker: true,
+			showDropdowns: true,
+			startDate: moment().startOf('hour'),
+			endDate: moment().startOf('hour').add(32, 'hour'),
+			locale: {
+				format: 'YYYY-MM-DD HH:mm:ss'
+			}
+		}, function (start, end, label) {
+			$("#eTime").val(start.format('YYYY-MM-DD HH:mm:ss'));
+			$('input[name="eTime"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
+		});
+
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);
 			oTable.fnDraw(); //or fnReloadAjax()  
