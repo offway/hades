@@ -309,7 +309,19 @@ public class GoodsController {
             map.put("main", goods);
             map.put("propertyList", goodsPropertyService.findByPid(goods.getId()));
             map.put("imageList", goodsImageService.findByPid(goods.getId()));
-            map.put("stockList", goodsStockService.findByPid(goods.getId()));
+            List<PhGoodsStock> stocks = goodsStockService.findByPid(goods.getId());
+            map.put("stockList", stocks);
+            Map<String, Object> stockMap = new HashMap<>();
+            for (PhGoodsStock stock : stocks) {
+                StringBuilder sb = new StringBuilder();
+                List<PhGoodsProperty> l = goodsPropertyService.findByStockId(stock.getId());
+                for (PhGoodsProperty property : l) {
+                    sb.append(property.getName());
+                    sb.append(property.getValue());
+                }
+                stockMap.put(sb.toString(), stock);
+            }
+            map.put("stockMap", stockMap);
         }
         return map;
     }

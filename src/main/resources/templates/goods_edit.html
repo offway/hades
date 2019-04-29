@@ -249,7 +249,7 @@
 
 	<div class="modal fade in" id="modal-7" aria-hidden="false" style="display: none;z-index: 2000">
 	</div>
-
+	<input type="hidden" id="stockHolder" value=""/>
 	<input type="hidden" id="type_and_category_list"/>
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
@@ -618,15 +618,26 @@
         form.modal('toggle');
     }
 
-    function generateSKUList() {
-        var target = $("#skuContainer");
-        var form = $("#saveForm");
-        var attrNameArr = form.find("input[name=attrName]");
-        var attrValueArr = form.find("input[name=attrValue]");
-        var attrContainerArr = form.find("input[name=attrContainer]");
-        var attrArr = [];
-        var nameArr = [];
-        var containerArr = [];
+    function generateSKUList(stockList) {
+		SkuStockList = [];
+		SkuStockDetailList = [];
+		SkuStockSavedList = [];
+		var stockHolder = $("#stockHolder");
+		if (stockList != null) {
+			stockHolder.val(JSON.stringify(stockList));
+			SkuStockSavedList = stockList;
+		} else {
+			SkuStockSavedList = JSON.parse(stockHolder.val());
+		}
+		console.log(SkuStockSavedList);
+		var target = $("#skuContainer");
+		var form = $("#saveForm");
+		var attrNameArr = form.find("input[name=attrName]");
+		var attrValueArr = form.find("input[name=attrValue]");
+		var attrContainerArr = form.find("input[name=attrContainer]");
+		var attrArr = [];
+		var nameArr = [];
+		var containerArr = [];
         for (var i in attrValueArr) {
             if (isNaN(i)) {
                 continue;
@@ -638,13 +649,27 @@
             nameArr.push(name);
             containerArr.push(JSON.parse(containerStr));
         }
-        SkuStockList = [];
-        SkuStockDetailList = [];
-        mergeSKURecursively(attrArr, nameArr, containerArr, 0, "", []);
-        var contentStr = "";
-        for (var i in SkuStockList) {
-            contentStr += buildSKUItem(SkuStockList[i], SkuStockDetailList[i]);
-        }
+		mergeSKURecursively(attrArr, nameArr, containerArr, 0, "", []);
+		var contentStr = "";
+		for (var i in SkuStockList) {
+			var iDStr = "";
+			for (var j in SkuStockDetailList[i]) {
+				var item = SkuStockDetailList[i][j];
+				iDStr += item["name"];
+				iDStr += item["value"]["value"];
+			}
+			if (SkuStockSavedList.hasOwnProperty(iDStr)) {
+				console.log("IN");
+				console.log(iDStr);
+				var obj = SkuStockSavedList[iDStr];
+				console.log(obj);
+				contentStr += buildSKUItem(SkuStockList[i], SkuStockDetailList[i], obj["id"], obj["sku"], obj["image"], obj["stock"], obj["price"]);
+			} else {
+				console.log("OUT");
+				console.log(iDStr);
+				contentStr += buildSKUItem(SkuStockList[i], SkuStockDetailList[i]);
+			}
+		}
         if (contentStr != '') {
             contentStr += "<input type=\"button\" name='batch' value=\"批量设置库存数量\" onclick=\"batchSetStockNum()\">";
             contentStr += "<input type=\"button\" name='batch' value=\"批量设置价格\" onclick=\"batchSetStockPrice()\">";
@@ -672,6 +697,7 @@
 
     var SkuStockList = [];
     var SkuStockDetailList = [];
+	var SkuStockSavedList = [];
 
     function mergeSKURecursively(arr, nameArr, containerArr, i, previousItem, skuDetailArr) {
         for (var obj in arr[i]) {
@@ -692,43 +718,44 @@
         }
     }
 
-    function buildSKUItem(remark, skuDetail) {
-        return "                        <div class=\"row\">\n" +
-            "                            <div class=\"col-md-2\">\n" +
-            "                                <div class=\"form-group\">\n" +
-            "                                    <label class=\"control-label\">SKU编码</label>\n" +
-            "                                    <input type=\"text\" class=\"form-control\" name=\"sku\" placeholder=\"SKU编码\" />\n" +
-            "                                </div>\n" +
-            "                            </div>\n" +
-            "                            <div class=\"col-md-2\">\n" +
-            "                                <div class=\"form-group\">\n" +
-            "                                    <label class=\"control-label\">库存图片</label>\n" +
-            "                                    <input type=\"file\" class=\"form-control\" name=\"skuImageFile\" placeholder=\"库存图片\" />\n" +
-            "                                    <input type=\"hidden\" class=\"form-control\" name=\"skuImage\" />\n" +
-            "                                    <img src=\"\" name=\"skuImageImg\" style=\"display:none;\" />\n" +
-            "                                </div>\n" +
-            "                            </div>\n" +
-            "                            <div class=\"col-md-2\">\n" +
-            "                                <div class=\"form-group\">\n" +
-            "                                    <label class=\"control-label\">库存余量</label>\n" +
-            "                                    <input type=\"number\" class=\"form-control\" name=\"skuStock\" placeholder=\"库存余量\" />\n" +
-            "                                </div>\n" +
-            "                            </div>\n" +
-            "                            <div class=\"col-md-2\">\n" +
-            "                                <div class=\"form-group\">\n" +
-            "                                    <label class=\"control-label\">价格</label>\n" +
-            "                                    <input type=\"number\" class=\"form-control\" name=\"skuPrice\" placeholder=\"价格\" />\n" +
-            "                                </div>\n" +
-            "                            </div>\n" +
-            "                            <div class=\"col-md-4\">\n" +
-            "                                <div class=\"form-group\">\n" +
-            "                                    <label class=\"control-label\">备注</label>\n" +
-            "                                    <input type=\"text\" class=\"form-control\" name=\"skuRemark\" value=\"REMARK\" placeholder=\"备注\" />\n".replace("REMARK", remark) +
-            "                                    <input type=\"hidden\" class=\"form-control\" name=\"skuDetail\" value=\"DETAIL\" />\n".replace("DETAIL", $.base64.btoa(JSON.stringify(skuDetail))) +
-            "                                </div>\n" +
-            "                            </div>\n" +
-            "                        </div>";
-    }
+	function buildSKUItem(remark, skuDetail, id, sku, skuImage, skuStock, skuPrice) {
+		return "                        <div class=\"row\">\n" +
+				"                            <div class=\"col-md-2\">\n" +
+				"                                <div class=\"form-group\">\n" +
+				"                                    <label class=\"control-label\">SKU编码</label>\n" +
+				"                                    <input type=\"text\" class=\"form-control\" name=\"sku\" placeholder=\"SKU编码\" value='VALUE' />\n".replace("VALUE", sku != null ? sku : "") +
+				"                                    <input type=\"hidden\" name=\"id\" value='VALUE' />\n".replace("VALUE", id != null ? id : "") +
+				"                                </div>\n" +
+				"                            </div>\n" +
+				"                            <div class=\"col-md-2\">\n" +
+				"                                <div class=\"form-group\">\n" +
+				"                                    <label class=\"control-label\">库存图片</label>\n" +
+				"                                    <input type=\"file\" class=\"form-control\" name=\"skuImageFile\" placeholder=\"库存图片\" />\n" +
+				"                                    <input type=\"hidden\" class=\"form-control\" name=\"skuImage\" value='VALUE' />\n".replace("VALUE", skuImage != null ? skuImage : "") +
+				"                                    <img src=\"SRC\" name=\"skuImageImg\" style=\"STYLE;\" />\n".replace("SRC", skuImage != null ? skuImage : "").replace("STYLE", skuImage != null ? "display:block" : "display:none") +
+				"                                </div>\n" +
+				"                            </div>\n" +
+				"                            <div class=\"col-md-2\">\n" +
+				"                                <div class=\"form-group\">\n" +
+				"                                    <label class=\"control-label\">库存余量</label>\n" +
+				"                                    <input type=\"number\" class=\"form-control\" name=\"skuStock\" placeholder=\"库存余量\" value='VALUE' />\n".replace("VALUE", skuStock != null ? skuStock : "") +
+				"                                </div>\n" +
+				"                            </div>\n" +
+				"                            <div class=\"col-md-2\">\n" +
+				"                                <div class=\"form-group\">\n" +
+				"                                    <label class=\"control-label\">价格</label>\n" +
+				"                                    <input type=\"number\" class=\"form-control\" name=\"skuPrice\" placeholder=\"价格\" value='VALUE' />\n".replace("VALUE", skuPrice != null ? skuPrice : "") +
+				"                                </div>\n" +
+				"                            </div>\n" +
+				"                            <div class=\"col-md-4\">\n" +
+				"                                <div class=\"form-group\">\n" +
+				"                                    <label class=\"control-label\">备注</label>\n" +
+				"                                    <input type=\"text\" class=\"form-control\" name=\"skuRemark\" value=\"REMARK\" placeholder=\"备注\" />\n".replace("REMARK", remark) +
+				"                                    <input type=\"hidden\" class=\"form-control\" name=\"skuDetail\" value=\"DETAIL\" />\n".replace("DETAIL", $.base64.btoa(JSON.stringify(skuDetail))) +
+				"                                </div>\n" +
+				"                            </div>\n" +
+				"                        </div>";
+	}
 
     function closeIt() {
         var that = $("#modal-7");
@@ -917,6 +944,7 @@
                 var imageList = data["imageList"];
                 var propertyList = data["propertyList"];
                 var stockList = data["stockList"];
+				var stockMap = data["stockMap"];
                 //main
                 for (var i in main) {
                     var ele = form.find("input[name='" + i + "']");
@@ -969,66 +997,68 @@
 						addIntroFile("#addIntroFileBtn", image["imageUrl"]);
 					}
 				}
-                //规格
-                var savedSku = {
-                    // "颜色": [
-                    //     // {"value": "赤", "remark": "", "sort": 1},
-                    //     // {"value": "橙", "remark": "", "sort": 2},
-                    //     // {"value": "黄", "remark": "", "sort": 3},
-                    //     // {"value": "绿", "remark": "", "sort": 4},
-                    //     // {"value": "青", "remark": "", "sort": 5},
-                    //     // {"value": "蓝", "remark": "", "sort": 6},
-                    //     // {"value": "紫", "remark": "", "sort": 7}
-                    // ],
-                    // "尺码": [
-                    //     // {"value": "大", "remark": "L", "sort": 1},
-                    //     // {"value": "小", "remark": "S", "sort": 2},
-                    //     // {"value": "中", "remark": "M", "sort": 3},
-                    //     // {"value": "特大", "remark": "XL", "sort": 4},
-                    //     // {"value": "特小", "remark": "XS", "sort": 5},
-                    //     // {"value": "特特大", "remark": "XXL", "sort": 6},
-                    //     // {"value": "特特小", "remark": "XXS", "sort": 7}
-                    // ]
-                };
-                loop:for (var property in propertyList) {
-                    // {
-                    //     "id": 509,
-                    //     "goodsId": 60,
-                    //     "goodsStockId": 270,
-                    //     "name": "颜色",
-                    //     "value": "黑色",
-                    //     "sort": 0,
-                    //     "createTime": 1555583063000,
-                    //     "remark": ""
-                    // }
-                    property = propertyList[property];
-                    if (savedSku.hasOwnProperty(property["name"])) {
-                        var tmpArr = savedSku[property["name"]];
-                        for (var tmpObj in tmpArr) {
-                            tmpObj = tmpArr[tmpObj];
-                            if (tmpObj["value"] == property["value"]) {
-                                continue loop;
-                            }
-                        }
-                        tmpArr.push(
-                            {
-                                "value": property["value"],
-                                "remark": property["remark"],
-                                "sort": property["sort"]
-                            }
-                        );
-                    } else {
-                        savedSku[property["name"]] = [
-                            {
-                                "value": property["value"],
-                                "remark": property["remark"],
-                                "sort": property["sort"]
-                            }
-                        ];
-                    }
-                }
-                console.log(savedSku);
-                switchToCommon(savedSku);
+				//规格
+				var savedSku = {
+					// "颜色": [
+					//     // {"value": "赤", "remark": "", "sort": 1},
+					//     // {"value": "橙", "remark": "", "sort": 2},
+					//     // {"value": "黄", "remark": "", "sort": 3},
+					//     // {"value": "绿", "remark": "", "sort": 4},
+					//     // {"value": "青", "remark": "", "sort": 5},
+					//     // {"value": "蓝", "remark": "", "sort": 6},
+					//     // {"value": "紫", "remark": "", "sort": 7}
+					// ],
+					// "尺码": [
+					//     // {"value": "大", "remark": "L", "sort": 1},
+					//     // {"value": "小", "remark": "S", "sort": 2},
+					//     // {"value": "中", "remark": "M", "sort": 3},
+					//     // {"value": "特大", "remark": "XL", "sort": 4},
+					//     // {"value": "特小", "remark": "XS", "sort": 5},
+					//     // {"value": "特特大", "remark": "XXL", "sort": 6},
+					//     // {"value": "特特小", "remark": "XXS", "sort": 7}
+					// ]
+				};
+				loop:for (var property in propertyList) {
+					// {
+					//     "id": 509,
+					//     "goodsId": 60,
+					//     "goodsStockId": 270,
+					//     "name": "颜色",
+					//     "value": "黑色",
+					//     "sort": 0,
+					//     "createTime": 1555583063000,
+					//     "remark": ""
+					// }
+					property = propertyList[property];
+					if (savedSku.hasOwnProperty(property["name"])) {
+						var tmpArr = savedSku[property["name"]];
+						for (var tmpObj in tmpArr) {
+							tmpObj = tmpArr[tmpObj];
+							if (tmpObj["value"] == property["value"]) {
+								continue loop;
+							}
+						}
+						tmpArr.push(
+								{
+									"value": property["value"],
+									"remark": property["remark"],
+									"sort": property["sort"]
+								}
+						);
+					} else {
+						savedSku[property["name"]] = [
+							{
+								"value": property["value"],
+								"remark": property["remark"],
+								"sort": property["sort"]
+							}
+						];
+					}
+				}
+				console.log(savedSku);
+				switchToCommon(savedSku);
+				//库存
+				generateSKUList(stockMap);
             });
         }
 
