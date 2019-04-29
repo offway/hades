@@ -20,7 +20,7 @@ import cn.offway.hades.domain.PhResource;
  */
 public interface PhResourceRepository extends JpaRepository<PhResource,Long>,JpaSpecificationExecutor<PhResource> {
 
-	@Query(nativeQuery = true,value="select ru.* from ph_resource ru ,ph_roleresource rr,ph_roleadmin ra where ru.id = rr.resource_id and rr.role_id = ra.role_id and ra.admin_id=?1 order by  ru.parent_id asc, ru.sort asc")
+	@Query(nativeQuery = true,value="select * from ph_resource where id in (select DISTINCT(ru.id) from ph_resource ru ,ph_roleresource rr,ph_roleadmin ra where ru.id = rr.resource_id and rr.role_id = ra.role_id and ra.admin_id=?1 ) ORDER BY parent_id ASC,sort ASC")
 	List<PhResource> findByAdminId(Long adminId);
 	
 	@Query(nativeQuery = true,value="select DISTINCT(ru.link) from ph_resource ru ,ph_roleresource rr,ph_roleadmin ra where ru.id = rr.resource_id and rr.role_id = ra.role_id and ra.admin_id=?1")
