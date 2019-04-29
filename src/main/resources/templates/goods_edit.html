@@ -724,7 +724,7 @@
 				"                                <div class=\"form-group\">\n" +
 				"                                    <label class=\"control-label\">SKU编码</label>\n" +
 				"                                    <input type=\"text\" class=\"form-control\" name=\"sku\" placeholder=\"SKU编码\" value='VALUE' />\n".replace("VALUE", sku != null ? sku : "") +
-				"                                    <input type=\"hidden\" name=\"id\" value='VALUE' />\n".replace("VALUE", id != null ? id : "") +
+				"                                    <input type=\"hidden\" name=\"skuId\" value='VALUE' />\n".replace("VALUE", id != null ? id : "") +
 				"                                </div>\n" +
 				"                            </div>\n" +
 				"                            <div class=\"col-md-2\">\n" +
@@ -1116,6 +1116,7 @@
             var form = $("#saveForm");
             var type = form.find("select[name='type']").val();
             var category = form.find("select[name='category']").val();
+            var id = form.find("input[name='id']").val();
             var name = form.find("input[name='name']").val();
 			var code = form.find("input[name='code']").val();
 			// var brand_id = form.find("select[name='brand_id']").val();
@@ -1166,7 +1167,9 @@
             var skuPrice = form.find("input[name='skuPrice']");
             var skuRemark = form.find("input[name='skuRemark']");
             var skuImage = form.find("input[name='skuImageFile']");
+            var skuImageSaved = form.find("input[name='skuImage']");
             var skuDetail = form.find("input[name='skuDetail']");
+            var skuId = form.find("input[name='skuId']");
             var stockList = [];
             for (var j in sku) {
                 if (isNaN(j)) {
@@ -1178,16 +1181,19 @@
                 var f = skuRemark[j].value;
                 var g = skuImage[j].value;
                 var h = skuDetail[j].value;
-                if (c == '' || d == '' || e == '' || f == '' || g == '') {
+                var m = skuId[j].value;
+                var n = skuImageSaved[j].value;
+                if (c == '' || d == '' || e == '' || f == '' || (g == '' && n == '')) {
                     toastr.error("请填写完整数据后提交", "温馨提示");
                     return;
                 } else {
                     stockList.push({
+                        "id": m,
                         "sku": c,
                         "stock": d,
                         "price": e,
                         "remark": f,
-                        "image": skuImage[j].files[0],
+                        "image": n == '' ? skuImage[j].files[0] : n,
                         "detail": h
                     });
                 }
@@ -1226,20 +1232,25 @@
 					async.series({
 						one: function (callback) {
 							async.eachSeries(stockList, function (item, cb) {
-								var f = item["image"];
-								this.upload("", token, f, function () {
-									//
-								}, function (err) {
-									console.log("上传imageFile异常:" + err);
-									cb(err);
-								}, function (res) {
-									//上传成功
-									if (res != '') {
-										var url = qiniuUrl + "/" + res.key;
-										item["image"] = url;
-									}
-									cb();
-								});
+                                var f = item["image"];
+                                if (f instanceof File) {
+                                    this.upload("", token, f, function () {
+                                        //
+                                    }, function (err) {
+                                        console.log("上传imageFile异常:" + err);
+                                        cb(err);
+                                    }, function (res) {
+                                        //上传成功
+                                        if (res != '') {
+                                            var url = qiniuUrl + "/" + res.key;
+                                            item["image"] = url;
+                                        }
+                                        cb();
+                                    });
+                                } else {
+                                    item["image"] = f;
+                                    cb();
+                                }
 							}, function () {
 								callback();
 							});
@@ -1266,10 +1277,11 @@
 							});
 						},
 						three: function (callback) {
-							//提交保存
+                            //提交保存
                             var data = {
+                                "id": id,
                                 "name": name,
-								"code": code,
+                                "code": code,
                                 "image": form.find("input[name='image']").val(),
                                 "brandId": brand_id,
                                 "merchantId": merchant_id,

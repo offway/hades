@@ -469,11 +469,25 @@ public class GoodsController {
         if (goodsCategory != null) {
             goods.setCategory(goodsCategory.getName());
         }
-        goods.setCreateTime(new Date());
-        goods.setStatus("0");//默认未上架
-        goods.setViewCount(0L);
-        goods.setSaleCount(0L);
+        if (goods.getId() == null) {//add
+            goods.setCreateTime(new Date());
+            goods.setStatus("0");//默认未上架
+            goods.setViewCount(0L);
+            goods.setSaleCount(0L);
+            goods.setUpTime(null);
+        } else {
+            PhGoods tmpObj = goodsService.findOne(goods.getId());
+            goods.setCreateTime(tmpObj.getCreateTime());
+            goods.setStatus(tmpObj.getStatus());
+            goods.setViewCount(tmpObj.getViewCount());
+            goods.setSaleCount(tmpObj.getSaleCount());
+            goods.setUpTime(tmpObj.getUpTime());
+        }
         PhGoods goodsSaved = goodsService.save(goods);
+        if (goods.getId() != null) {
+            //try purge first 轮播图 & 商品长图
+            goodsImageService.delByPid(goods.getId());
+        }
         //banner 轮播图
         long i = 0;
         for (String banner : banners) {
@@ -500,10 +514,16 @@ public class GoodsController {
             goodsImageService.save(goodsImage);
             i++;
         }
+        //库存 & 规格
         List<Double> priceList = new ArrayList<>();
         for (Object o : JSON.parseArray(stocks)) {
             JSONObject obj = (JSONObject) o;
-            PhGoodsStock goodsStock = new PhGoodsStock();
+            PhGoodsStock goodsStock;
+            if (obj.containsKey("id") && !"".equals(obj.getString("id"))) {//edit
+                goodsStock = goodsStockService.findOne(Long.valueOf(obj.getString("id")));
+            } else {
+                goodsStock = new PhGoodsStock();
+            }
             goodsStock.setBrandId(goodsSaved.getBrandId());
             goodsStock.setBrandLogo(goodsSaved.getBrandLogo());
             goodsStock.setBrandName(goodsSaved.getBrandName());
@@ -523,6 +543,10 @@ public class GoodsController {
             goodsStock.setImage(obj.getString("image"));
             goodsStock.setCreateTime(new Date());
             PhGoodsStock goodsStockSaved = goodsStockService.save(goodsStock);
+            if (goodsStock.getId() != null) {
+                //try purge first 规格
+                goodsPropertyService.delByStockId(goodsStock.getId());
+            }
             byte[] jsonStr = Base64.decode(obj.getString("detail"), Base64.DEFAULT);
             JSONArray jsonArray = JSON.parseArray(new String(jsonStr, StandardCharsets.UTF_8));
             if (jsonArray != null) {
