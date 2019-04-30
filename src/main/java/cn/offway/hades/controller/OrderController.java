@@ -127,6 +127,7 @@ public class OrderController {
                 goodsInfo.put("sku", stock.getSku());
                 goodsInfo.put("goodsId", stock.getGoodsId());
                 goodsInfo.put("goodsName", stock.getGoodsName());
+                goodsInfo.put("image", stock.getImage());
                 goodsInfo.put("code", goods.getCode());
                 goodsInfo.put("price", stock.getPrice());
                 goodsInfo.put("brandName", goods.getBrandName());
