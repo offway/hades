@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<link rel="stylesheet" href="assets/js/multiselect/css/multi-select.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -63,6 +64,7 @@
 				<button class="btn btn-info add" >添加</button>
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
+				<button class="btn btn-info config">导航栏配置</button>
 			</div>
 			
 					
@@ -86,7 +88,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-3" class="control-label">名称</label>
+								<label class="control-label">名称</label>
 								<input type="text" class="form-control" name="name" placeholder="名称"/>
 							</div>
 						</div>
@@ -94,7 +96,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-4" class="control-label">图片</label>
+								<label class="control-label">图片</label>
 								<input type="file" class="form-control" name="imageFile" placeholder="图片"/>
 								<input type="hidden" class="form-control" name="image" />
 								<img alt="" src="" name="imageImg" style="display:none;"/>
@@ -104,7 +106,7 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label for="field-4" class="control-label">备注</label>
+								<label class="control-label">备注</label>
 								<input type="text" class="form-control" name="remark" placeholder="备注"/>
 							</div>
 						</div>
@@ -118,6 +120,36 @@
 					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 				</div>
 				
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade in" id="modal-7">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">首页商品导航栏配置</h4>
+				</div>
+				<div class="modal-body">
+					<form role="form" id="saveForm7">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class=" control-label">选择分类</label>
+									<div class="col-md-12">
+										<select class="form-control" multiple="multiple" id="multi-select" name="resources">
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info saveConfig">保存</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -146,6 +178,7 @@
 	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
+	<script src="assets/js/multiselect/js/jquery.multi-select.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -280,6 +313,8 @@
     }
     jQuery(document).ready(function($)
 	{
+		var qiniuUrl = [[${qiniuUrl}]];
+
 		var oTable = $("#example-1").dataTable({
 			language: {
                 url: "../assets/Chinese.txt"
@@ -420,147 +455,186 @@
 				})
 			}
 		}
-			 
-			 var qiniuUrl = [[${qiniuUrl}]];
-			//保存
-			$(".btn.btn-info.save").click(function(){
-				var footer = $(this).parent(".modal-footer");
-				footer.find("button").hide();
-				footer.find(".bg-lg").show();
-				var form = $("#saveForm");
-				var name = form.find("input[name='name']").val();
-				//文件
-				var image = form.find("input[name='imageFile']").val();
-				//已上传的图片地址
-				var imageImg = form.find("input[name='image']").val();
 
-				if (name == '') {
-					toastr.error("请填写完整数据后提交", "温馨提示");
+		//保存
+		$(".btn.btn-info.save").click(function(){
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+			var form = $("#saveForm");
+			var name = form.find("input[name='name']").val();
+			//文件
+			var image = form.find("input[name='imageFile']").val();
+			//已上传的图片地址
+			var imageImg = form.find("input[name='image']").val();
+
+			if (name == '') {
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return;
+			}
+			var isOK = [];
+			if (image == '' && imageImg == '') {
+				isOK = checkImg([[image, "image"]]);
+				if (typeof isOK == 'boolean') {
+					return;
+				}
+			}
+
+			//获取token
+			$.get("/qiniu/token",{},function(token){
+				if(token !=''){
+					async.series({
+						one: function (callback) {
+							if (typeof isOK == 'object') {
+								callback();
+							} else {
+								callback("ERROR");
+							}
+						},
+						two: function(callback){
+							//上传详情图
+							async.eachSeries(Object.keys(isOK), function (item, cb) {
+								var f = isOK[item];
+								upload(item, token, f, function () {
+									//
+								}, function (err) {
+									console.log("上传imageFile异常:" + err);
+									cb(err);
+								}, function (res) {
+									//上传成功
+									if (res != '') {
+										var url = qiniuUrl + "/" + res.key;
+										form.find("input[name='" + res.param + "']").val(url);
+									}
+									cb();
+								});
+							}, function () {
+								callback();
+							});
+						},
+						three: function(callback){
+							//提交保存
+							$.post("/goodsType_save",$("#saveForm").serialize(),function(data){
+								if(data){
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									jQuery('#modal-6').modal('hide');
+									toastr.success("操作已成功！", "温馨提示");
+									oTable.fnDraw();
+								}else{
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									toastr.error("操作失败", "温馨提示");
+								}
+								callback();
+							});
+						}
+					}, function(err, results) {
+						console.log("OK");
+					});
+				}else{
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
-					return;
+					toastr.error("上传文件错误，请联系管理员", "温馨提示");
 				}
-				var isOK = [];
-				if (image == '' && imageImg == '') {
-					isOK = checkImg([[image, "image"]]);
-					if (typeof isOK == 'boolean') {
-						return;
-					}
-				}
+			});
+		});
 
-                //获取token
-				$.get("/qiniu/token",{},function(token){
-					if(token !=''){
-						async.series({
-							one: function (callback) {
-								if (typeof isOK == 'object') {
-									callback();
-								} else {
-									callback("ERROR");
-								}
-							},
-							two: function(callback){
-								//上传详情图
-								async.eachSeries(Object.keys(isOK), function (item, cb) {
-									var f = isOK[item];
-									upload(item, token, f, function () {
-										//
-									}, function (err) {
-										console.log("上传imageFile异常:" + err);
-										cb(err);
-									}, function (res) {
-										//上传成功
-										if (res != '') {
-											var url = qiniuUrl + "/" + res.key;
-											form.find("input[name='" + res.param + "']").val(url);
-										}
-										cb();
-									});
-								}, function () {
-									callback();
-								});
-							},
-							three: function(callback){
-								//提交保存
-								$.post("/goodsType_save",$("#saveForm").serialize(),function(data){
-									if(data){
-										footer.find("button").show();
-										footer.find(".bg-lg").hide();
-										jQuery('#modal-6').modal('hide');
-										toastr.success("操作已成功！", "温馨提示");
-										oTable.fnDraw();
-									}else{
-										footer.find("button").show();
-										footer.find(".bg-lg").hide();
-										toastr.error("操作失败", "温馨提示");
-									}
-									callback();
-								});
+		$(".btn.btn-info.edit").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length != 1) {
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return;
+			}
+
+			$.post("/goodsType_get", {id: activityId.val()}, function (data) {
+				var form = $("#saveForm");
+				//商家
+				for (var i in data) {
+					var ele = form.find("input[name='" + i + "']");
+					switch (ele.attr("type")) {
+						case "radio":
+							ele.val([data[i]]);
+							break;
+						default:
+							if (data[i] != undefined && !isNaN(data[i]) && String(data[i]).length == 13) {
+								ele.val(formatTime(data[i]));
+								$("#" + i).val(formatTime(data[i]));
+							} else {
+								ele.val(data[i]);
 							}
-						}, function(err, results) {
-							console.log("OK");
-						});
-					}else{
-						footer.find("button").show();
-						footer.find(".bg-lg").hide();
-						toastr.error("上传文件错误，请联系管理员", "温馨提示");
 					}
-				});
-			});
-
-			$(".btn.btn-info.edit").click(function () {
-				var activityId = $("input[name='activityId']:checked");
-				if (activityId.length != 1) {
-					toastr.error("请选择一条数据操作", "温馨提示");
-					return;
+					form.find("img[name='" + i + "Img']").attr("src", data[i]);
+					form.find("img[name='" + i + "Img']").attr("width", 200);
+					form.find("img[name='" + i + "Img']").attr("length", 200);
+					form.find("img[name='" + i + "Img']").show();
 				}
+				form.find(".btn.image").show();
+				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			});
+		});
 
-				$.post("/goodsType_get", {id: activityId.val()}, function (data) {
-					var form = $("#saveForm");
-					//商家
-					for (var i in data) {
-						var ele = form.find("input[name='" + i + "']");
-						switch (ele.attr("type")) {
-							case "radio":
-								ele.val([data[i]]);
-								break;
-							default:
-								if (data[i] != undefined && !isNaN(data[i]) && String(data[i]).length == 13) {
-									ele.val(formatTime(data[i]));
-									$("#" + i).val(formatTime(data[i]));
-								} else {
-									ele.val(data[i]);
-								}
+		$(".btn.btn-info.config").click(function () {
+			$.post("/goodsType_listAll", {}, function (data) {
+				if (data) {
+					var ele = $('#multi-select');
+					ele.empty();
+					$.each(data, function (i, e) {
+						if (e.hasOwnProperty("goodsType")) {
+							ele.append("<option value='C" + e["id"] + "'>" + e["goodsTypeName"] + "-" + e["name"] + "</option>");
+						} else {
+							ele.append("<option value='T" + e["id"] + "'>" + e["name"] + "</option>");
 						}
-						form.find("img[name='" + i + "Img']").attr("src", data[i]);
-						form.find("img[name='" + i + "Img']").attr("width", 200);
-						form.find("img[name='" + i + "Img']").attr("length", 200);
-						form.find("img[name='" + i + "Img']").show();
-					}
-					form.find(".btn.image").show();
-					jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-				});
-			});
-
-			$(".btn.btn-info.del").click(function(){
-				var activityId = $("input[name='activityId']:checked");
-				if(activityId.length < 1){
-					toastr.error("请至少选择一条数据操作", "温馨提示");
-					return ;
+					});
+					ele.multiSelect({
+						afterInit: function () {
+							// Add alternative scrollbar to list
+							this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar();
+						},
+						afterSelect: function () {
+							// Update scrollbar size
+							this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar('update');
+						}
+					});
+					ele.multiSelect('refresh');
+					jQuery('#modal-7').modal('show', {backdrop: 'fade'});
 				}
+			})
+		});
 
-				var ids = [];
-				activityId.each(function(i,e){
-					ids.push(e.value);
-				});
-
-				$.post("/goodsType_del",{ids:ids},function(data){
-					if(data){
-						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw();
-					}
-				})
+		$(".btn.btn-info.saveConfig").click(function () {
+			var ele = $('#multi-select');
+			var data = ele.val();
+			console.log(data);
+			$.post("/goodsType_saveConfig", {"keys": data}, function (data) {
+				if (data) {
+					jQuery('#modal-7').modal('hide');
+					toastr.success("操作已成功！", "温馨提示");
+				}
 			});
+		});
+
+		$(".btn.btn-info.del").click(function(){
+			var activityId = $("input[name='activityId']:checked");
+			if(activityId.length < 1){
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return ;
+			}
+
+			var ids = [];
+			activityId.each(function(i,e){
+				ids.push(e.value);
+			});
+
+			$.post("/goodsType_del",{ids:ids},function(data){
+				if(data){
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			})
+		});
 
         $(".btn.btn-info.up").click(function(){
             var activityId = $("input[name='activityId']:checked");

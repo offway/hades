@@ -1,9 +1,13 @@
 package cn.offway.hades.controller;
 
+import cn.offway.hades.domain.PhConfig;
+import cn.offway.hades.domain.PhGoodsCategory;
 import cn.offway.hades.domain.PhGoodsType;
 import cn.offway.hades.properties.QiniuProperties;
+import cn.offway.hades.service.PhConfigService;
 import cn.offway.hades.service.PhGoodsCategoryService;
 import cn.offway.hades.service.PhGoodsTypeService;
+import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping
@@ -31,6 +33,8 @@ public class GoodsTypeController {
     private PhGoodsTypeService goodsTypeService;
     @Autowired
     private PhGoodsCategoryService goodsCategoryService;
+    @Autowired
+    private PhConfigService configService;
 
     @RequestMapping("/goodsType.html")
     public String index(ModelMap map) {
@@ -53,6 +57,39 @@ public class GoodsTypeController {
         map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
         map.put("aData", pages.getContent());//数据集合
         return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/goodsType_listAll")
+    public List<Object> getAll() {
+        List<Object> ret = new ArrayList<>();
+        List<PhGoodsType> typeList = goodsTypeService.findAll();
+        List<PhGoodsCategory> categoryList = goodsCategoryService.findAll();
+        ret.addAll(typeList);
+        ret.addAll(categoryList);
+        return ret;
+    }
+
+    @ResponseBody
+    @RequestMapping("/goodsType_saveConfig")
+    public boolean saveConfig(@RequestParam(value = "keys[]") String[] keys) {
+        List<Map<String, String>> list = new ArrayList<>();
+        for (String key : keys) {
+            Map<String, String> item = new HashMap<>();
+            if (key.startsWith("T")) {//type
+                item.put("is", "type");
+            } else {
+                item.put("is", "category");
+            }
+            item.put("id", key.substring(1));
+            list.add(item);
+        }
+        PhConfig config = configService.findOne("INDEX_CATEGORY");
+        if (config != null) {
+            config.setContent(JSON.toJSONString(list));
+            configService.save(config);
+        }
+        return true;
     }
 
     @ResponseBody

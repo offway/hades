@@ -77,6 +77,11 @@ public class PhGoodsCategoryServiceImpl implements PhGoodsCategoryService {
     }
 
     @Override
+    public List<PhGoodsCategory> findAll() {
+        return phGoodsCategoryRepository.findAll();
+    }
+
+    @Override
     public void delByPid(Long pid) {
         phGoodsCategoryRepository.deleteByPid(pid);
     }

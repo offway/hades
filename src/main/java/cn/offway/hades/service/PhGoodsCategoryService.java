@@ -20,6 +20,8 @@ public interface PhGoodsCategoryService {
 
     Page<PhGoodsCategory> findAll(Pageable pageable);
 
+    List<PhGoodsCategory> findAll();
+
     void del(Long id);
 
     List<PhGoodsCategory> findByPid(Long pid);
