@@ -1068,6 +1068,7 @@
 			//获取token
 			$.get("/qiniu/token", {}, function (token) {
 				if (token != '') {
+					$(".btn.btn-info.save").attr("disabled", "disabled");
 					async.series({
 						one: function (callback) {
 							async.eachSeries(stockList, function (item, cb) {
@@ -1142,11 +1143,10 @@
 									callback("ERROR");
 								}
 							});
-							$(".btn.btn-info.save").attr("disabled", "disabled");
 						}
 					}, function (err, results) {
 						if (err) {
-							$(".btn.btn-info.save").attr("disabled", "");
+							$(".btn.btn-info.save").removeAttr("disabled");
 						} else {
 							window.location.href = '/goods.html';
 						}
