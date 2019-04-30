@@ -285,12 +285,16 @@ public class GoodsController {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
+        String id = request.getParameter("id");
+        if ("".equals(id.trim())) {
+            id = "0";
+        }
         String name = request.getParameter("name");
         String code = request.getParameter("code");
         String status = request.getParameter("status");
         String merchantId = request.getParameter("merchantId");
         Sort sort = new Sort("id");
-        Page<PhGoods> pages = goodsService.findAll(name, code, status, Long.valueOf(merchantId), new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, Long.valueOf(merchantId), new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);

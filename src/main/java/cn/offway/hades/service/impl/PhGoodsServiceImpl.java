@@ -60,7 +60,7 @@ public class PhGoodsServiceImpl implements PhGoodsService {
     }
 
     @Override
-    public Page<PhGoods> findAll(String name, String code, String status, Long merchantId, Pageable pageable) {
+    public Page<PhGoods> findAll(String name, Long id, String code, String status, Long merchantId, Pageable pageable) {
         return phGoodsRepository.findAll(new Specification<PhGoods>() {
             @Override
             public Predicate toPredicate(Root<PhGoods> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -72,6 +72,9 @@ public class PhGoodsServiceImpl implements PhGoodsService {
                 }
                 if (merchantId != 0L) {
                     params.add(criteriaBuilder.equal(root.get("merchantId"), merchantId));
+                }
+                if (id != 0L) {
+                    params.add(criteriaBuilder.equal(root.get("id"), id));
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));

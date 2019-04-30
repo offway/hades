@@ -20,7 +20,7 @@ public interface PhGoodsService {
 
     Page<PhGoods> findAll(String name, String code, Pageable pageable);
 
-    Page<PhGoods> findAll(String name, String code, String status, Long merchantId, Pageable pageable);
+    Page<PhGoods> findAll(String name, Long id, String code, String status, Long merchantId, Pageable pageable);
 
     void del(Long id);
 
