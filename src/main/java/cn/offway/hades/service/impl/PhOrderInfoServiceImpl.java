@@ -41,7 +41,7 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
     }
 
     @Override
-    public Page<PhOrderInfo> findAll(Long mid, String orderNo, Date sTime, Date eTime, String userId, String payMethod, String status, Pageable pageable) {
+    public Page<PhOrderInfo> findAll(Long mid, String orderNo, Date sTime, Date eTime, String userId, String payMethod, String[] status, Pageable pageable) {
         return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
             @Override
             public Predicate toPredicate(Root<PhOrderInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -61,8 +61,16 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
                 if (!"".equals(payMethod)) {
                     params.add(criteriaBuilder.equal(root.get("payChannel"), payMethod));
                 }
-                if (!"".equals(status)) {
-                    params.add(criteriaBuilder.equal(root.get("status"), status));
+                if (status.length > 0) {
+                    CriteriaBuilder.In<String> in = criteriaBuilder.in(root.get("status"));
+                    boolean isOk = true;
+                    for (String v : status) {
+                        in.value(v);
+                        isOk = "".equals(v.trim()) ? isOk && false : isOk && true;
+                    }
+                    if (isOk) {
+                        params.add(in);
+                    }
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
