@@ -200,6 +200,40 @@ public class OrderController {
     }
 
     @ResponseBody
+    @RequestMapping("/order_list_all")
+    public Map<String, Object> getOrderListAll(HttpServletRequest request, @RequestParam(name = "status[]", required = false, defaultValue = "") String[] status) {
+        String theId = request.getParameter("theId");
+        List<PhOrderInfo> list = null;
+        if ("".equals(theId)) {
+            String merchantId = request.getParameter("merchantId");
+            merchantId = merchantId != null ? merchantId : "0";
+            String orderNo = request.getParameter("orderNo");
+            String userId = request.getParameter("userId");
+            String payMethod = request.getParameter("payMethod");
+            Date sTime = null, eTime = null;
+            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            String sTimeStr = request.getParameter("sTime");
+            String eTimeStr = request.getParameter("eTime");
+            if (!"".equals(sTimeStr) && !"".equals(eTimeStr)) {
+                sTime = DateTime.parse(sTimeStr, format).toDate();
+                eTime = DateTime.parse(eTimeStr, format).toDate();
+            }
+            list = orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status);
+        } else {
+            list = orderInfoService.findAll(theId);
+        }
+        Map<String, Object> map = new HashMap<>();
+        double amount = 0, price = 0;
+        for (PhOrderInfo item : list) {
+            amount += item.getAmount();
+            price += item.getPrice();
+        }
+        map.put("amount", amount);
+        map.put("price", price);
+        return map;
+    }
+
+    @ResponseBody
     @RequestMapping("/order_list_pre")
     public Map<String, Object> getPreOrderList(HttpServletRequest request) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));

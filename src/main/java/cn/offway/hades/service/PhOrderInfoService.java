@@ -21,6 +21,8 @@ public interface PhOrderInfoService {
 
     Page<PhOrderInfo> findAll(Long mid, String orderNo, Date sTime, Date eTime, String userId, String payMethod, String[] status, Pageable pageable);
 
+    List<PhOrderInfo> findAll(Long mid, String orderNo, Date sTime, Date eTime, String userId, String payMethod, String[] status);
+
     Page<PhOrderInfo> findAll(String pid, Pageable pageable);
 
     List<PhOrderInfo> findToCheck(Date start, Date stop);

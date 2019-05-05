@@ -512,18 +512,28 @@
 							.reduce(function (a, b) {
 								return intVal(a) + intVal(b);
 							}, 0);
-					// Update footer
-					$(this).find("tfoot tr td").html(
-							'订单价格总计￥' + total.toFixed(2) + '元' + "       " +
-							'实付金额总计￥' + totalPay.toFixed(2) + '元'
+					// Update footer part 1
+					$(this).find("#tfoot1").html(
+							'当页订单价格总计￥' + total.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+							'当页实付金额总计￥' + totalPay.toFixed(2) + '元'
 					);
+					var searchArray = $(".form-inline").serializeArray();
+					$.post("order_list_all", searchArray, function (data) {
+						var total = parseFloat(data["price"]);
+						var totalPay = parseFloat(data["amount"]);
+						// Update footer part 2
+						$("#tfoot2").html(
+								'全部订单价格总计￥' + total.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+								'全部实付金额总计￥' + totalPay.toFixed(2) + '元'
+						);
+					});
 				}
 			});
 			setTimeout(function () {
 				// $("#example-1").append(
 				// 		$('<tfoot/>').append($("#example-1 thead tr").clone())
 				// );
-				$("#example-1").append('<tfoot><tr><td colspan="5"></td></tr></tfoot>');
+				$("#example-1").append('<tfoot><tr><td id="tfoot1" colspan="5"></td><td id="tfoot2" colspan="5"></td></tr></tfoot>');
 				oTable.fnDraw(); //or fnReloadAjax()
 			}, 500);
 			table_global = oTable;

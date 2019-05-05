@@ -80,6 +80,45 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
     }
 
     @Override
+    public List<PhOrderInfo> findAll(Long mid, String orderNo, Date sTime, Date eTime, String userId, String payMethod, String[] status) {
+        return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
+            @Override
+            public Predicate toPredicate(Root<PhOrderInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                if (mid != 0L) {
+                    params.add(criteriaBuilder.equal(root.get("merchantId"), mid));
+                }
+                if (!"".equals(orderNo)) {
+                    params.add(criteriaBuilder.like(root.get("orderNo"), "%" + orderNo + "%"));
+                }
+                if (sTime != null && eTime != null) {
+                    params.add(criteriaBuilder.between(root.get("createTime"), sTime, eTime));
+                }
+                if (!"".equals(userId)) {
+                    params.add(criteriaBuilder.equal(root.get("userId"), userId));
+                }
+                if (!"".equals(payMethod)) {
+                    params.add(criteriaBuilder.equal(root.get("payChannel"), payMethod));
+                }
+                if (status.length > 0) {
+                    CriteriaBuilder.In<String> in = criteriaBuilder.in(root.get("status"));
+                    boolean isOk = true;
+                    for (String v : status) {
+                        in.value(v);
+                        isOk = "".equals(v.trim()) ? isOk && false : isOk && true;
+                    }
+                    if (isOk) {
+                        params.add(in);
+                    }
+                }
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        });
+    }
+
+    @Override
     public Page<PhOrderInfo> findAll(String pid, Pageable pageable) {
         return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
             @Override
