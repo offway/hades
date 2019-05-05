@@ -55,6 +55,8 @@ public class OrderController {
     private PhPreorderInfoService preorderInfoService;
     @Autowired
     private PhUserInfoService userInfoService;
+    @Autowired
+    private PhPreorderInfoService phPreorderInfoService;
 
     @RequestMapping("/order.html")
     public String index(ModelMap map, String theId) {
@@ -243,30 +245,43 @@ public class OrderController {
     public boolean cancelOrder(Long id) {
         PhOrderInfo orderInfo = orderInfoService.findOne(id);
         if (orderInfo != null) {
-            orderInfo.setStatus("4");//取消
-            orderInfo.setVersion(orderInfo.getVersion() + 1);
-            orderInfoService.save(orderInfo);
-            //恢复库存
-            List<PhOrderGoods> goodsList = orderGoodsService.findAllByPid(orderInfo.getOrderNo());
-            for (PhOrderGoods orderGoods : goodsList) {
-                PhGoods goods = goodsService.findOne(orderGoods.getGoodsId());
-                PhGoodsStock goodsStock = goodsStockService.findOne(orderGoods.getGoodsStockId());
-                if (goods != null && goodsStock != null) {
-                    goods.setSaleCount(goods.getSaleCount() - orderGoods.getGoodsCount());//撤销销量
-                    goodsStock.setStock(goodsStock.getStock() + orderGoods.getGoodsCount());//撤销库存数量
-                    goodsStock.setVersion(goodsStock.getVersion() + 1);
-                    goodsService.save(goods);
-                    goodsStockService.save(goodsStock);
+            PhPreorderInfo preorderInfo = preorderInfoService.findByOrderNoAndStatus(orderInfo.getPreorderNo(), "1");
+            if (preorderInfo != null) {
+                List<PhOrderInfo> list = orderInfoService.findAll(preorderInfo.getOrderNo());
+                for (PhOrderInfo item : list) {
+                    doCancelOrder(item);
                 }
-            }
-            //恢复用户钱包余额
-            PhUserInfo userInfo = userInfoService.findOne(orderInfo.getUserId());
-            if (userInfo != null) {
-                userInfo.setBalance(userInfo.getBalance() + orderInfo.getWalletAmount());
-                userInfoService.save(userInfo);
+                preorderInfo.setStatus("4");//取消
+                preorderInfo.setVersion(preorderInfo.getVersion() + 1);
+                preorderInfoService.save(preorderInfo);
             }
         }
         return true;
+    }
+
+    private void doCancelOrder(PhOrderInfo orderInfo) {
+        orderInfo.setStatus("4");//取消
+        orderInfo.setVersion(orderInfo.getVersion() + 1);
+        orderInfoService.save(orderInfo);
+        //恢复库存
+        List<PhOrderGoods> goodsList = orderGoodsService.findAllByPid(orderInfo.getOrderNo());
+        for (PhOrderGoods orderGoods : goodsList) {
+            PhGoods goods = goodsService.findOne(orderGoods.getGoodsId());
+            PhGoodsStock goodsStock = goodsStockService.findOne(orderGoods.getGoodsStockId());
+            if (goods != null && goodsStock != null) {
+                goods.setSaleCount(goods.getSaleCount() - orderGoods.getGoodsCount());//撤销销量
+                goodsStock.setStock(goodsStock.getStock() + orderGoods.getGoodsCount());//撤销库存数量
+                goodsStock.setVersion(goodsStock.getVersion() + 1);
+                goodsService.save(goods);
+                goodsStockService.save(goodsStock);
+            }
+        }
+        //恢复用户钱包余额
+        PhUserInfo userInfo = userInfoService.findOne(orderInfo.getUserId());
+        if (userInfo != null) {
+            userInfo.setBalance(userInfo.getBalance() + orderInfo.getWalletAmount());
+            userInfoService.save(userInfo);
+        }
     }
 
     @ResponseBody

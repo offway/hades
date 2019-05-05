@@ -26,4 +26,6 @@ public interface PhOrderInfoService {
     List<PhOrderInfo> findToCheck(Date start, Date stop);
 
     List<PhOrderInfo> findToProcess(Date start, Date stop);
+
+    List<PhOrderInfo> findAll(String preOrderNo);
 }
