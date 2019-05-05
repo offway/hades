@@ -185,7 +185,7 @@ public class OrderController {
             String userId = request.getParameter("userId");
             String payMethod = request.getParameter("payMethod");
             Sort sort = new Sort("id");
-            pages = orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+            pages = (Page<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         } else {
             Sort sort = new Sort("id");
             pages = orderInfoService.findAll(theId, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
@@ -218,7 +218,7 @@ public class OrderController {
                 sTime = DateTime.parse(sTimeStr, format).toDate();
                 eTime = DateTime.parse(eTimeStr, format).toDate();
             }
-            list = orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status);
+            list = (List<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, null);
         } else {
             list = orderInfoService.findAll(theId);
         }
