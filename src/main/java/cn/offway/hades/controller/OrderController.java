@@ -223,13 +223,17 @@ public class OrderController {
             list = orderInfoService.findAll(theId);
         }
         Map<String, Object> map = new HashMap<>();
-        double amount = 0, price = 0;
+        double amount = 0, price = 0, mailFee = 0, pVoucherAmount = 0;
         for (PhOrderInfo item : list) {
             amount += item.getAmount();
-            price += item.getPrice();
+            price += item.getPrice() - item.getMVoucherAmount();
+            mailFee += item.getMailFee();
+            pVoucherAmount += item.getPVoucherAmount();
         }
         map.put("amount", amount);
         map.put("price", price);
+        map.put("mailFee", mailFee);
+        map.put("pVoucherAmount", pVoucherAmount);
         return map;
     }
 

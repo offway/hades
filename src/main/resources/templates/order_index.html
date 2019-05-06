@@ -427,8 +427,23 @@
 						data: "amount",
 						title: "实付金额"
 					},
+                    {
+                        targets: 6,
+                        data: "mailFee",
+                        title: "运费"
+                    },
+                    {
+                        targets: 7,
+                        data: "pvoucherAmount",
+                        title: "平台优惠券金额"
+                    },
+                    {
+                        targets: 8,
+                        data: "mvoucherAmount",
+                        title: "店铺优惠券金额"
+                    },
 					{
-						targets: 6,
+						targets: 9,
 						data: "status",
 						title: "状态",
 						render: function (data, type, row, meta) {
@@ -438,7 +453,7 @@
 						}
 					},
 					{
-						targets: 7,
+						targets: 10,
 						data: "payChannel",
 						title: "支付渠道",
 						render: function (data, type, row, meta) {
@@ -448,7 +463,7 @@
 						}
 					},
 					{
-						targets: 8,
+						targets: 11,
 						data: "createTime",
 						title: "创建时间",
 						render: function (data, type, row, meta) {
@@ -456,12 +471,12 @@
 						}
 					},
 					{
-						targets: 9,
+						targets: 12,
 						data: "remark",
 						title: "备注"
 					},
 					{
-						targets: 10,
+						targets: 13,
 						data: "id",
 						orderable: false,
 						title: "操作",
@@ -470,7 +485,7 @@
 						}
 					},
 					{
-						targets: 11,
+						targets: 14,
 						data: "id",
 						orderable: false,
 						title: "操作",
@@ -493,47 +508,74 @@
 					}
 				],
 				"footerCallback": function (row, data, start, end, display) {
-					var api = this.api();
-					// Remove the formatting to get integer data for summation
-					var intVal = function (i) {
-						return parseFloat(i);
-					};
-					// Total over all pages
-					var total = api
-							.column(4)
-							.data()
-							.reduce(function (a, b) {
-								return intVal(a) + intVal(b);
-							}, 0);
-					// Total over all pages
-					var totalPay = api
-							.column(5)
-							.data()
-							.reduce(function (a, b) {
-								return intVal(a) + intVal(b);
-							}, 0);
+                    var api = this.api();
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function (i) {
+                        return parseFloat(i);
+                    };
+                    // Total over all pages
+                    var total = api
+                        .column(4)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                    // Total over all pages
+                    var totalPay = api
+                        .column(5)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                    // Total over all pages
+                    var totalMailFee = api
+                        .column(6)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                    // Total over all pages
+                    var totalCouponOfPlatform = api
+                        .column(7)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                    // Total over all pages
+                    var totalCouponOfMerchant = api
+                        .column(8)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
 					// Update footer part 1
-					$(this).find("#tfoot1").html(
-							'当页订单价格总计￥' + total.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
-							'当页实付金额总计￥' + totalPay.toFixed(2) + '元'
-					);
+                    $(this).find("#tfoot1").html(
+                        '当页订单价格总计￥' + (total - totalCouponOfMerchant).toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                        '当页实付金额总计￥' + totalPay.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                        '当页平台优惠券金额总计￥' + totalCouponOfPlatform.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                        '当页运费总计￥' + totalMailFee.toFixed(2) + '元'
+                    );
 					var searchArray = $(".form-inline").serializeArray();
-					$.post("order_list_all", searchArray, function (data) {
-						var total = parseFloat(data["price"]);
-						var totalPay = parseFloat(data["amount"]);
-						// Update footer part 2
-						$("#tfoot2").html(
-								'全部订单价格总计￥' + total.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
-								'全部实付金额总计￥' + totalPay.toFixed(2) + '元'
-						);
-					});
+                    $.post("order_list_all", searchArray, function (data) {
+                        var total = parseFloat(data["price"]);
+                        var totalPay = parseFloat(data["amount"]);
+                        var totalMailFee = parseFloat(data["mailFee"]);
+                        var totalCoupon = parseFloat(data["pVoucherAmount"]);
+                        // Update footer part 2
+                        $("#tfoot2").html(
+                            '全部订单价格总计￥' + total.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                            '全部实付金额总计￥' + totalPay.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                            '全部平台优惠券金额总计￥' + totalCoupon.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                            '全部运费总计￥' + totalMailFee.toFixed(2) + '元'
+                        );
+                    });
 				}
 			});
 			setTimeout(function () {
 				// $("#example-1").append(
 				// 		$('<tfoot/>').append($("#example-1 thead tr").clone())
 				// );
-				$("#example-1").append('<tfoot><tr><td id="tfoot1" colspan="5"></td><td id="tfoot2" colspan="5"></td></tr></tfoot>');
+				$("#example-1").append('<tfoot><tr><td id="tfoot1" colspan="6"></td><td id="tfoot2" colspan="6"></td></tr></tfoot>');
 				oTable.fnDraw(); //or fnReloadAjax()
 			}, 500);
 			table_global = oTable;
