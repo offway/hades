@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -58,6 +60,8 @@ public class OrderController {
     private PhUserInfoService userInfoService;
     @Autowired
     private PhPreorderInfoService phPreorderInfoService;
+    @Autowired
+    private PhRoleadminService roleadminService;
 
     @RequestMapping("/order.html")
     public String index(ModelMap map, String theId) {
@@ -280,7 +284,13 @@ public class OrderController {
     @ResponseBody
     @RequestMapping("/order_cancelOrder")
     @Transactional
-    public boolean cancelOrder(Long id) {
+    public Map<String, String> cancelOrder(Long id, @AuthenticationPrincipal PhAdmin admin) {
+        Map<String, String> res = new HashMap<>();
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            res.put("error", "非管理员无权操作");
+            return res;
+        }
         PhOrderInfo orderInfo = orderInfoService.findOne(id);
         if (orderInfo != null) {
             PhPreorderInfo preorderInfo = preorderInfoService.findByOrderNoAndStatus(orderInfo.getPreorderNo(), "1");
@@ -294,7 +304,8 @@ public class OrderController {
                 preorderInfoService.save(preorderInfo);
             }
         }
-        return true;
+        res.put("msg", "OK");
+        return res;
     }
 
     private void doCancelOrder(PhOrderInfo orderInfo) {

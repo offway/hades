@@ -289,20 +289,20 @@
 		});
 	}
 
-    function cancelOrder(id) {
-        var confirm = window.confirm("你确定要这么做？");
-        if (confirm == false) {
-            return;
-        }
-        $.post("/order_cancelOrder", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
+	function cancelOrder(id) {
+		var confirm = window.confirm("你确定要这么做？");
+		if (confirm == false) {
+			return;
+		}
+		$.post("/order_cancelOrder", {"id": id}, function (data) {
+			if (data.hasOwnProperty("msg")) {
+				table_global.fnDraw();
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败" + data["error"], "温馨提示");
+			}
+		});
+	}
 
     function deliverOrder(id) {
         var form = $("#saveForm");
