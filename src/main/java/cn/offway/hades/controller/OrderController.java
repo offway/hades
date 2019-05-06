@@ -5,6 +5,7 @@ import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
 import cn.offway.hades.utils.HttpClientUtil;
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -199,7 +200,14 @@ public class OrderController {
         map.put("sEcho", initEcho);
         map.put("iTotalRecords", pages.getTotalElements());//数据总条数
         map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
-        map.put("aData", pages.getContent());//数据集合
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Object> list = new ArrayList<>();
+        for (PhOrderInfo item : pages.getContent()) {
+            Map m = objectMapper.convertValue(item, Map.class);
+            m.put("sub", orderGoodsService.findAllByPid(item.getOrderNo()));
+            list.add(m);
+        }
+        map.put("aData", list);//数据集合
         return map;
     }
 
