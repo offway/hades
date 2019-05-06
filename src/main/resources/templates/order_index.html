@@ -122,6 +122,7 @@
 				<div class="modal-body">
 					<form role="form" id="saveForm">
 						<input type="hidden" name="id"/>
+                        <input type="hidden" name="action"/>
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
@@ -303,12 +304,28 @@
         });
     }
 
-	function deliverOrder(id) {
-		var form = $("#saveForm");
-		form.find("input").val("");
-		form.find("[name='id']").val(id);
-		jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-	}
+    function deliverOrder(id) {
+        var form = $("#saveForm");
+        form.find("input").val("");
+        form.find("[name='id']").val(id);
+        form.find("[name='action']").val("create");
+        jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+    }
+
+    function editDeliveredOrder(id) {
+        $.post("/order_getDeliveredOrder", {"id": id}, function (data) {
+            if (data != '') {
+                var form = $("#saveForm");
+                form.find("select[name='expressCode']").val(data["expressCode"]);
+                form.find("input[name='mailNo']").val(data["mailNo"]);
+                form.find("[name='id']").val(id);
+                form.find("[name='action']").val("update");
+                jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
     function trackOrder(id) {
         $.post("/order_trackOrder", {"id": id}, function (data) {
@@ -490,20 +507,21 @@
 						orderable: false,
 						title: "操作",
 						render: function (data, type, full, meta) {
-							var str = "";
-							//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
-							var status = parseInt(full["status"]);
-							if (status == 0) {
-								str += '<input type="button" onclick="closeOrder(' + data + ')" value="关闭订单"/>';
-							}
-							if (status == 1) {
-								str += '<input type="button" onclick="deliverOrder(' + data + ')" value="订单发货"/>';
-								str += '<input type="button" onclick="cancelOrder(' + data + ')" value="紧急退款"/>';
-							}
-							if (status == 2) {
-								str += '<input type="button" onclick="trackOrder(' + data + ')" value="订单跟踪"/>';
-							}
-							return str;
+                            var str = "";
+                            //状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
+                            var status = parseInt(full["status"]);
+                            if (status == 0) {
+                                str += '<input type="button" onclick="closeOrder(' + data + ')" value="关闭订单"/>';
+                            }
+                            if (status == 1) {
+                                str += '<input type="button" onclick="deliverOrder(' + data + ')" value="订单发货"/>';
+                                str += '<input type="button" onclick="cancelOrder(' + data + ')" value="紧急退款"/>';
+                            }
+                            if (status == 2) {
+                                str += '<input type="button" onclick="trackOrder(' + data + ')" value="订单跟踪"/>';
+                                str += '<input type="button" onclick="editDeliveredOrder(' + data + ')" value="修改订单号"/>';
+                            }
+                            return str;
 						}
 					}
 				],

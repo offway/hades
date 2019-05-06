@@ -323,42 +323,59 @@ public class OrderController {
     }
 
     @ResponseBody
-    @RequestMapping("/order_deliverOrder")
-    public boolean deliverOrder(Long id, String expressCode, String mailNo) {
+    @RequestMapping("/order_getDeliveredOrder")
+    public PhOrderExpressInfo getDeliveredOrder(Long id) {
         PhOrderInfo orderInfo = orderInfoService.findOne(id);
         if (orderInfo != null) {
-            PhOrderExpressInfo orderExpressInfo = new PhOrderExpressInfo();
-            orderExpressInfo.setExpressCode(expressCode);
-            orderExpressInfo.setMailNo(mailNo);
-            orderExpressInfo.setType("0");
-            orderExpressInfo.setStatus("0");
-            orderExpressInfo.setOrderNo(orderInfo.getOrderNo());
-            orderExpressInfo.setCreateTime(new Date());
-            //收货人
-            PhAddress receiver = addressService.findOne(orderInfo.getAddrId());
-            orderExpressInfo.setToProvince(receiver.getProvince());
-            orderExpressInfo.setToCity(receiver.getCity());
-            orderExpressInfo.setToCounty(receiver.getCounty());
-            orderExpressInfo.setToContent(receiver.getContent());
-            orderExpressInfo.setToRealName(receiver.getRealName());
-            orderExpressInfo.setToPhone(receiver.getPhone());
-            //寄件人
-            PhMerchant merchant = merchantService.findOne(orderInfo.getMerchantId());
-            PhAddress sender = addressService.findOne(merchant.getAddrId());
-            orderExpressInfo.setFromProvince(sender.getProvince());
-            orderExpressInfo.setFromCity(sender.getCity());
-            orderExpressInfo.setFromCounty(sender.getCounty());
-            orderExpressInfo.setFromContent(sender.getContent());
-            orderExpressInfo.setFromRealName(sender.getRealName());
-            orderExpressInfo.setFromPhone(sender.getPhone());
-            PhOrderExpressInfo orderExpressInfoSaved = orderExpressInfoService.save(orderExpressInfo);
-            //更新订单
-            orderInfo.setDeliverName(orderExpressInfoSaved.getFromRealName());
-            orderInfo.setDeliverTime(new Date());
-            orderInfo.setStatus("2");//已发货
-            orderInfoService.save(orderInfo);
-            jPushService.sendPushUser("已发货", "已发货提醒：亲，您购买的商品已经发货啦！", null, String.valueOf(orderInfo.getUserId()));
-            subscribeExpressInfo(orderExpressInfo, orderInfo);
+            return orderExpressInfoService.findByPid(orderInfo.getOrderNo(), "0");
+        }
+        return null;
+    }
+
+    @ResponseBody
+    @RequestMapping("/order_deliverOrder")
+    public boolean deliverOrder(Long id, String expressCode, String mailNo, String action) {
+        PhOrderInfo orderInfo = orderInfoService.findOne(id);
+        if (orderInfo != null) {
+            if ("create".equals(action)) {
+                PhOrderExpressInfo orderExpressInfo = new PhOrderExpressInfo();
+                orderExpressInfo.setExpressCode(expressCode);
+                orderExpressInfo.setMailNo(mailNo);
+                orderExpressInfo.setType("0");
+                orderExpressInfo.setStatus("0");
+                orderExpressInfo.setOrderNo(orderInfo.getOrderNo());
+                orderExpressInfo.setCreateTime(new Date());
+                //收货人
+                PhAddress receiver = addressService.findOne(orderInfo.getAddrId());
+                orderExpressInfo.setToProvince(receiver.getProvince());
+                orderExpressInfo.setToCity(receiver.getCity());
+                orderExpressInfo.setToCounty(receiver.getCounty());
+                orderExpressInfo.setToContent(receiver.getContent());
+                orderExpressInfo.setToRealName(receiver.getRealName());
+                orderExpressInfo.setToPhone(receiver.getPhone());
+                //寄件人
+                PhMerchant merchant = merchantService.findOne(orderInfo.getMerchantId());
+                PhAddress sender = addressService.findOne(merchant.getAddrId());
+                orderExpressInfo.setFromProvince(sender.getProvince());
+                orderExpressInfo.setFromCity(sender.getCity());
+                orderExpressInfo.setFromCounty(sender.getCounty());
+                orderExpressInfo.setFromContent(sender.getContent());
+                orderExpressInfo.setFromRealName(sender.getRealName());
+                orderExpressInfo.setFromPhone(sender.getPhone());
+                PhOrderExpressInfo orderExpressInfoSaved = orderExpressInfoService.save(orderExpressInfo);
+                //更新订单
+                orderInfo.setDeliverName(orderExpressInfoSaved.getFromRealName());
+                orderInfo.setDeliverTime(new Date());
+                orderInfo.setStatus("2");//已发货
+                orderInfoService.save(orderInfo);
+                jPushService.sendPushUser("已发货", "已发货提醒：亲，您购买的商品已经发货啦！", null, String.valueOf(orderInfo.getUserId()));
+                subscribeExpressInfo(orderExpressInfo, orderInfo);
+            } else {
+                PhOrderExpressInfo orderExpressInfo = orderExpressInfoService.findByPid(orderInfo.getOrderNo(), "0");
+                orderExpressInfo.setExpressCode(expressCode);
+                orderExpressInfo.setMailNo(mailNo);
+                orderExpressInfoService.save(orderExpressInfo);
+            }
         }
         return true;
     }
