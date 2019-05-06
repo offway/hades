@@ -6,6 +6,7 @@ import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhMerchantService;
 import cn.offway.hades.service.PhVoucherInfoService;
 import cn.offway.hades.service.PhVoucherProjectService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping
@@ -88,6 +87,7 @@ public class CouponController {
     @ResponseBody
     @RequestMapping("/coupon_list")
     public Map<String, Object> getStockList(HttpServletRequest request) {
+        ObjectMapper objectMapper = new ObjectMapper();
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
@@ -115,7 +115,22 @@ public class CouponController {
         map.put("sEcho", initEcho);
         map.put("iTotalRecords", pages.getTotalElements());//数据总条数
         map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
-        map.put("aData", pages.getContent());//数据集合
+        List<Object> list = new ArrayList<>();
+        for (PhVoucherProject item : pages.getContent()) {
+            Map m = objectMapper.convertValue(item, Map.class);
+            if (item.getMerchantId() != null) {
+                PhMerchant merchant = merchantService.findOne(item.getMerchantId());
+                if (merchant != null) {
+                    m.put("merchantName", merchant.getName());
+                } else {
+                    m.put("merchantName", "未知");
+                }
+            } else {
+                m.put("merchantName", "");
+            }
+            list.add(m);
+        }
+        map.put("aData", list);//数据集合
         return map;
     }
 }

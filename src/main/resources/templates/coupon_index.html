@@ -465,23 +465,28 @@
                         data: "merchantId",
                         title: "商户ID"
                     },
+					{
+						targets: 5,
+						data: "merchantName",
+						title: "商户名称"
+					},
                     {
-                        targets: 5,
+                        targets: 6,
                         data: "usedMinAmount",
                         title: "满多少金额可用"
                     },
                     {
-                        targets: 6,
+                        targets: 7,
                         data: "amount",
                         title: "优惠券金额"
                     },
                     {
-                        targets: 7,
+                        targets: 8,
                         data: "validNum",
                         title: "有效期[单位：天]"
                     },
                     {
-                        targets: 8,
+                        targets: 9,
                         data: "beginTime",
                         title: "开始时间",
                         render: function (data, type, row, meta) {
@@ -489,7 +494,7 @@
                         }
                     },
                     {
-                        targets: 9,
+                        targets: 10,
                         data: "endTime",
                         title: "截止时间",
                         render: function (data, type, row, meta) {
@@ -497,7 +502,7 @@
                         }
                     },
                     {
-                        targets: 10,
+                        targets: 11,
                         data: "createTime",
                         title: "创建时间",
                         render: function (data, type, row, meta) {
@@ -505,18 +510,9 @@
                         }
                     },
                     {
-                        targets: 11,
+                        targets: 12,
                         data: "remark",
                         title: "备注"
-                    },
-                    {
-                        targets: 12,
-                        data: "id",
-                        orderable: false,
-                        title: "操作",
-                        render: function (data, type, full, meta) {
-                            return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-                        }
                     },
                     {
                         targets: 13,
@@ -524,19 +520,7 @@
                         orderable: false,
                         title: "操作",
                         render: function (data, type, full, meta) {
-                            var str = "";
-                            //状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
-                            var status = parseInt(full["status"]);
-                            if (status == 0) {
-                                str += '<input type="button" onclick="closeOrder(' + data + ')" value="关闭订单"/>';
-                            }
-                            if (status == 1) {
-                                str += '<input type="button" onclick="deliverOrder(' + data + ')" value="订单发货"/>';
-                            }
-                            if (status == 2) {
-                                str += '<input type="button" onclick="trackOrder(' + data + ')" value="订单跟踪"/>';
-                            }
-                            return str;
+                            return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
                         }
                     }
                 ]
