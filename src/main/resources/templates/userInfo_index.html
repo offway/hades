@@ -302,7 +302,7 @@
 				{
 					targets: 3,
 					data: "nickname",
-					title: "用户昵称"
+					title: "昵称"
 				},
 				{
 					targets: 4,
@@ -325,7 +325,7 @@
 				{
 					targets: 6,
 					data: "height",
-					title: "身高[单位:cm]"
+					title: "身高"
 				},
 				{
 					targets: 7,
@@ -336,7 +336,7 @@
 				{
 					targets: 8,
 					data: "headimgurl",
-					title: "用户头像",
+					title: "头像",
 					render: function (data, type, row, meta) {
 						return buildImg(data);
 					}
@@ -344,7 +344,7 @@
 				{
 					targets: 9,
 					data: "unionid",
-					title: "微信openid"
+					title: "微信ID"
 				},
 				{
 					targets: 10,
@@ -389,6 +389,14 @@
 				},
 				{
 					targets: 17,
+					data: "createTime",
+					title: "注册时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 18,
 					data: "id",
 					orderable: false,
 					title: "操作",
@@ -397,7 +405,7 @@
 					}
 				},
 				{
-					targets: 18,
+					targets: 19,
 					data: "merchantId",
 					orderable: false,
 					title: "操作",
