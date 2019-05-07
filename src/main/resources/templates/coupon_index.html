@@ -5,7 +5,7 @@
 	<title>优惠券管理</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -186,8 +186,7 @@
 								<div class="col-md-12">
 									<div class="form-group">
 										<label class="control-label">开始时间</label>
-										<input type="text" id="beginTimeAlt" class="form-control" placeholder="开始时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
-										<input type="hidden" class="form-control" name="beginTime" placeholder="开始时间"/>
+										<input type="text" id="beginTimeAlt" name="beginTime" class="form-control" placeholder="开始时间"/>
 									</div>
 								</div>
 							</div>
@@ -195,8 +194,7 @@
 								<div class="col-md-12">
 									<div class="form-group">
 										<label class="control-label">截止时间</label>
-										<input type="text" id="endTimeAlt" class="form-control" placeholder="截止时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
-										<input type="hidden" class="form-control" name="endTime" placeholder="截止时间"/>
+										<input type="text" id="endTimeAlt" name="endTime" class="form-control" placeholder="截止时间"/>
 									</div>
 								</div>
 							</div>
@@ -241,9 +239,7 @@
 	</div>
 	
 	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
 	<script th:inline="javascript">
@@ -528,33 +524,27 @@
             table_global = oTable;
         });
 
-		$("#beginTimeAlt").daterangepicker({
-			singleDatePicker: true,
-			timePicker: true,
-			showDropdowns: true,
-			startDate: moment().startOf('hour'),
-			endDate: moment().startOf('hour').add(32, 'hour'),
-			locale: {
-				format: 'YYYY-MM-DD HH:mm:ss'
-			}
-		}, function (start, end, label) {
-			$("#beginTimeAlt").val(start.format('YYYY-MM-DD HH:mm:ss'));
-			$('input[name="beginTime"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
-		});
-
-		$("#endTimeAlt").daterangepicker({
-			singleDatePicker: true,
-			timePicker: true,
-			showDropdowns: true,
-			startDate: moment().startOf('hour'),
-			endDate: moment().startOf('hour').add(32, 'hour'),
-			locale: {
-				format: 'YYYY-MM-DD HH:mm:ss'
-			}
-		}, function (start, end, label) {
-			$("#endTimeAlt").val(start.format('YYYY-MM-DD HH:mm:ss'));
-			$('input[name="endTime"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
-		});
+        jQuery.datetimepicker.setLocale('zh');
+		jQuery('#beginTimeAlt').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#endTimeAlt').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
 
 		$('[name="switch"]').click(function () {
 			var value = $(this).val();  //获取选中的radio的值
@@ -719,7 +709,6 @@
 				if (data["beginTime"] != null) {
 					var btime = new Date(data["beginTime"]).Format("yyyy-MM-dd hh:mm:ss");
 					form.find("#beginTimeAlt").val(btime);
-					form.find('input[name="beginTime"]').val(btime);
 					$("input[name='switch']").val(["1"]);
 					toggle("1");
 				} else {
@@ -729,7 +718,6 @@
 				if (data["endTime"] != null) {
 					var etime = new Date(data["endTime"]).Format("yyyy-MM-dd hh:mm:ss");
 					form.find("#endTimeAlt").val(etime);
-					form.find('input[name="endTime"]').val(etime);
 					$("input[name='switch']").val(["1"]);
 					toggle("1");
 				} else {
