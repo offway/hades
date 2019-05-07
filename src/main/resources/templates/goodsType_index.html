@@ -583,9 +583,9 @@
 					ele.empty();
 					$.each(data, function (i, e) {
 						if (e.hasOwnProperty("goodsType")) {
-							ele.append("<option value='C" + e["id"] + "'>" + e["goodsTypeName"] + "-" + e["name"] + "</option>");
+							ele.append("<option value='C" + e["goodsTypeName"] + "'>" + e["goodsTypeName"] + "-" + e["name"] + "</option>");
 						} else {
-							ele.append("<option value='T" + e["id"] + "'>" + e["name"] + "</option>");
+							ele.append("<option value='T" + e["name"] + "'>" + e["name"] + "</option>");
 						}
 					});
 					ele.multiSelect({

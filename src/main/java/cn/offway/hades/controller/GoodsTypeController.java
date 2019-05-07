@@ -77,11 +77,11 @@ public class GoodsTypeController {
         for (String key : keys) {
             Map<String, String> item = new HashMap<>();
             if (key.startsWith("T")) {//type
-                item.put("is", "type");
+                item.put("name", "type");
             } else {
-                item.put("is", "category");
+                item.put("name", "category");
             }
-            item.put("id", key.substring(1));
+            item.put("value", key.substring(1));
             list.add(item);
         }
         PhConfig config = configService.findOne("INDEX_CATEGORY");
