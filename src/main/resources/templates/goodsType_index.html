@@ -582,11 +582,11 @@
 					var ele = $('#multi-select');
 					ele.empty();
 					$.each(data, function (i, e) {
-						if (e.hasOwnProperty("goodsType")) {
-							ele.append("<option value='C" + e["goodsTypeName"] + "'>" + e["goodsTypeName"] + "-" + e["name"] + "</option>");
-						} else {
-							ele.append("<option value='T" + e["name"] + "'>" + e["name"] + "</option>");
-						}
+                        if (e.hasOwnProperty("goodsType")) {
+                            ele.append("<option value='C" + e["name"].trim() + "_" + UUID.randomUUID() + "'>" + e["goodsTypeName"] + "-" + e["name"] + "</option>");
+                        } else {
+                            ele.append("<option value='T" + e["name"].trim() + "_" + UUID.randomUUID() + "'>" + e["name"] + "</option>");
+                        }
 					});
 					ele.multiSelect({
 						afterInit: function () {

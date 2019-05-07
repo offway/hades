@@ -81,7 +81,7 @@ public class GoodsTypeController {
             } else {
                 item.put("name", "category");
             }
-            item.put("value", key.substring(1));
+            item.put("value", key.split("_")[0].substring(1));
             list.add(item);
         }
         PhConfig config = configService.findOne("INDEX_CATEGORY");
