@@ -465,10 +465,10 @@
                         title: "订单内商品",
                         render: function (data, type, row, meta) {
                             var str = "";
-                            for (var i in data) {
-                                var it = data[i];
-                                str += "<p>" + it["goodsName"] + "&nbsp;" + it["remark"] + "</p>";
-                            }
+							for (var i in data) {
+								var it = data[i];
+								str += "<p>" + it["goodsName"] + "&nbsp;" + it["remark"] + "&nbsp;" + it["goodsCount"] + "件</p>";
+							}
                             return str;
                         }
                     },
