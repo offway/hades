@@ -729,7 +729,7 @@
 				if (data["endTime"] != null) {
 					var etime = new Date(data["endTime"]).Format("yyyy-MM-dd hh:mm:ss");
 					form.find("#endTimeAlt").val(etime);
-					form.find('input[name="endTime"]').val(btime);
+					form.find('input[name="endTime"]').val(etime);
 					$("input[name='switch']").val(["1"]);
 					toggle("1");
 				} else {
