@@ -49,6 +49,9 @@ public class PhGoods implements Serializable {
 
     /** 发售价 **/
     private Double price;
+    
+    /** 原价 **/
+    private Double originalPrice;
 
     /** 价格范围[添加库存的时候更新] **/
     private String priceRange;
@@ -187,8 +190,17 @@ public class PhGoods implements Serializable {
     public void setPrice(Double price) {
         this.price = price;
     }
+    
+    @Column(name = "original_price", precision = 15, scale = 2)
+    public Double getOriginalPrice() {
+		return originalPrice;
+	}
 
-    @Column(name = "price_range", length = 50)
+	public void setOriginalPrice(Double originalPrice) {
+		this.originalPrice = originalPrice;
+	}
+
+	@Column(name = "price_range", length = 50)
     public String getPriceRange() {
         return priceRange;
     }
