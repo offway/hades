@@ -69,6 +69,20 @@ public class PhBrandServiceImpl implements PhBrandService {
     }
 
     @Override
+    public List<PhBrand> findAll(String prefix) {
+        return phBrandRepository.findAll(new Specification<PhBrand>() {
+            @Override
+            public Predicate toPredicate(Root<PhBrand> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(criteriaBuilder.like(root.get("name"), prefix + "%"));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        });
+    }
+
+    @Override
     public List<PhBrand> findAll(Long pid) {
         return phBrandRepository.findAll(new Specification<PhBrand>() {
             @Override

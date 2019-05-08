@@ -4,6 +4,8 @@ import cn.offway.hades.domain.PhGoods;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * 商品表Service接口
  *
@@ -25,4 +27,6 @@ public interface PhGoodsService {
     void del(Long id);
 
     Long getCountByPid(Long merchantId);
+
+    List<PhGoods> findAll(Long pid);
 }

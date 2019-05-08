@@ -24,6 +24,8 @@ public interface PhBrandService {
 
     List<PhBrand> findAll(Long pid);
 
+    List<PhBrand> findAll(String prefix);
+
     Page<PhBrand> findAll(String name, Pageable pageable);
 
     void del(Long id);

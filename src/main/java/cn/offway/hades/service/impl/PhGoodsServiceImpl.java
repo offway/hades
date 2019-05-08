@@ -84,6 +84,21 @@ public class PhGoodsServiceImpl implements PhGoodsService {
     }
 
     @Override
+    public List<PhGoods> findAll(Long pid) {
+        return phGoodsRepository.findAll(new Specification<PhGoods>() {
+            @Override
+            public Predicate toPredicate(Root<PhGoods> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(criteriaBuilder.equal(root.get("status"), "1"));
+                params.add(criteriaBuilder.equal(root.get("brandId"), pid));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        });
+    }
+
+    @Override
     public Long getCountByPid(Long merchantId) {
         Optional<String> res = phGoodsRepository.getCount(merchantId);
         if (res.isPresent()) {
