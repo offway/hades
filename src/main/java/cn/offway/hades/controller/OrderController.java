@@ -205,10 +205,20 @@ public class OrderController {
         for (PhOrderInfo item : pages.getContent()) {
             Map m = objectMapper.convertValue(item, Map.class);
             m.put("sub", orderGoodsService.findAllByPid(item.getOrderNo()));
+            m.put("price_alt", item.getPrice() * getRatioOfMerchant(item.getMerchantId()));
             list.add(m);
         }
         map.put("aData", list);//数据集合
         return map;
+    }
+
+    private double getRatioOfMerchant(long id) {
+        PhMerchant merchant = merchantService.findOne(id);
+        if (merchant != null) {
+            return merchant.getRatio() / 100;
+        } else {
+            return 1;
+        }
     }
 
     @ResponseBody
@@ -238,7 +248,7 @@ public class OrderController {
         double amount = 0, price = 0, mailFee = 0, pVoucherAmount = 0;
         for (PhOrderInfo item : list) {
             amount += item.getAmount();
-            price += item.getPrice() - item.getMVoucherAmount();
+            price += item.getPrice() * getRatioOfMerchant(item.getMerchantId()) - item.getMVoucherAmount();
             mailFee += item.getMailFee();
             pVoucherAmount += item.getPVoucherAmount();
         }

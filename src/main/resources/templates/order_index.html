@@ -441,26 +441,34 @@
 					},
 					{
 						targets: 5,
+						data: "price_alt",
+						title: "订单结算价",
+						render: function (data, type, row, meta) {
+							return parseFloat(data).toFixed(2);
+						}
+					},
+					{
+						targets: 6,
 						data: "amount",
 						title: "实付金额"
 					},
                     {
-                        targets: 6,
+                        targets: 7,
                         data: "mailFee",
                         title: "运费"
                     },
                     {
-                        targets: 7,
+                        targets: 8,
                         data: "pvoucherAmount",
                         title: "平台优惠券金额"
                     },
                     {
-                        targets: 8,
+                        targets: 9,
                         data: "mvoucherAmount",
                         title: "店铺优惠券金额"
                     },
                     {
-                        targets: 9,
+                        targets: 10,
                         data: "sub",
                         title: "订单内商品",
                         render: function (data, type, row, meta) {
@@ -473,7 +481,7 @@
                         }
                     },
 					{
-						targets: 10,
+						targets: 11,
 						data: "status",
 						title: "状态",
 						render: function (data, type, row, meta) {
@@ -483,7 +491,7 @@
 						}
 					},
 					{
-						targets: 11,
+						targets: 12,
 						data: "payChannel",
 						title: "支付渠道",
 						render: function (data, type, row, meta) {
@@ -493,7 +501,7 @@
 						}
 					},
 					{
-						targets: 12,
+						targets: 13,
 						data: "createTime",
 						title: "创建时间",
 						render: function (data, type, row, meta) {
@@ -501,12 +509,12 @@
 						}
 					},
 					{
-						targets: 13,
+						targets: 14,
 						data: "remark",
 						title: "备注"
 					},
 					{
-						targets: 14,
+						targets: 15,
 						data: "id",
 						orderable: false,
 						title: "操作",
@@ -515,7 +523,7 @@
 						}
 					},
 					{
-						targets: 15,
+						targets: 16,
 						data: "id",
 						orderable: false,
 						title: "操作",
@@ -546,35 +554,35 @@
                     };
                     // Total over all pages
                     var total = api
-                        .column(4)
-                        .data()
-                        .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
-                        }, 0);
-                    // Total over all pages
-                    var totalPay = api
                         .column(5)
                         .data()
                         .reduce(function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0);
                     // Total over all pages
-                    var totalMailFee = api
+                    var totalPay = api
                         .column(6)
                         .data()
                         .reduce(function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0);
                     // Total over all pages
-                    var totalCouponOfPlatform = api
+                    var totalMailFee = api
                         .column(7)
                         .data()
                         .reduce(function (a, b) {
                             return intVal(a) + intVal(b);
                         }, 0);
                     // Total over all pages
-                    var totalCouponOfMerchant = api
+                    var totalCouponOfPlatform = api
                         .column(8)
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                    // Total over all pages
+                    var totalCouponOfMerchant = api
+                        .column(9)
                         .data()
                         .reduce(function (a, b) {
                             return intVal(a) + intVal(b);
@@ -606,7 +614,7 @@
 				// $("#example-1").append(
 				// 		$('<tfoot/>').append($("#example-1 thead tr").clone())
 				// );
-				$("#example-1").append('<tfoot><tr><td id="tfoot1" colspan="6"></td><td id="tfoot2" colspan="6"></td></tr></tfoot>');
+				$("#example-1").append('<tfoot><tr><td id="tfoot1" colspan="10"></td><td id="tfoot2" colspan="6"></td></tr></tfoot>');
 				oTable.fnDraw(); //or fnReloadAjax()
 			}, 500);
 			table_global = oTable;
