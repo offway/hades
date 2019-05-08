@@ -581,6 +581,7 @@
 				if (data) {
 					var ele = $('#multi-select');
 					ele.empty();
+					ele.append("<option value='T全部_" + UUID.randomUUID() + "'>全部</option>");
 					$.each(data, function (i, e) {
                         if (e.hasOwnProperty("goodsType")) {
                             ele.append("<option value='C" + e["name"].trim() + "_" + UUID.randomUUID() + "'>" + e["goodsTypeName"] + "-" + e["name"] + "</option>");

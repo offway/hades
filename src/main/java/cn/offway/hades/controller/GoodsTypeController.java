@@ -78,6 +78,8 @@ public class GoodsTypeController {
             Map<String, String> item = new HashMap<>();
             if (key.startsWith("T")) {//type
                 item.put("name", "type");
+            } else if (key.startsWith("C")) {//category
+                item.put("name", "category");
             } else {
                 item.put("name", "category");
             }
