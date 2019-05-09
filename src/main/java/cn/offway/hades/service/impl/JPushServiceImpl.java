@@ -214,8 +214,8 @@ public class JPushServiceImpl implements JPushService{
 						.build())
 				.build();
 
-		Audience audience = Audience.alias("14");
-		
+		Audience audience = Audience.alias("7", "8");
+
 		if(jPushProperties.getApnsProduction()){
 			audience = Audience.all();
 		}
@@ -241,7 +241,7 @@ public class JPushServiceImpl implements JPushService{
 				.build();
 
 		//开发环境只推送给Mark
-		Audience audience = Audience.alias("14");
+		Audience audience = Audience.alias("7", "8");
 		
 		if(jPushProperties.getApnsProduction()){
 			audience = Audience.alias(alias);
