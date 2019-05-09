@@ -248,7 +248,8 @@ public class OrderController {
         double amount = 0, price = 0, mailFee = 0, pVoucherAmount = 0;
         for (PhOrderInfo item : list) {
             amount += item.getAmount();
-            price += item.getPrice() * getRatioOfMerchant(item.getMerchantId()) - item.getMVoucherAmount();
+//            price += item.getPrice() * getRatioOfMerchant(item.getMerchantId()) - item.getMVoucherAmount();
+            price += item.getPrice() - item.getMVoucherAmount();
             mailFee += item.getMailFee();
             pVoucherAmount += item.getPVoucherAmount();
         }
