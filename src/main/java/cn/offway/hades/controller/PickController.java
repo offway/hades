@@ -51,7 +51,7 @@ public class PickController {
 
     @ResponseBody
     @RequestMapping("/pick_list")
-    public Map<String, Object> usersData(HttpServletRequest request, String phone, String nickname) {
+    public Map<String, Object> usersData(HttpServletRequest request) {
         DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         ObjectMapper objectMapper = new ObjectMapper();
         String sortCol = request.getParameter("iSortCol_0");
