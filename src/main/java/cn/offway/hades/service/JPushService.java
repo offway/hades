@@ -5,15 +5,15 @@ import java.util.Map;
 
 public interface JPushService {
 
-	boolean updateScheduleTrigger(String businessId, String businessType, Date time);
+    boolean updateScheduleTrigger(String businessId, String businessType, Date time);
 
-	void deleteSchedule(String businessId, String businessType);
+    void deleteSchedule(String businessId, String businessType);
 
-	boolean sendPush(String tilte, String alert, Map<String, String> extras);
+    boolean sendPush(String title, String alert, Map<String, String> extras);
 
-	boolean createSingleSchedule(String businessId, String businessType, String name, Date time, String tilte,
-			String alert, Map<String, String> extras);
+    boolean createSingleSchedule(String businessId, String businessType, String name, Date time, String title,
+                                 String alert, Map<String, String> extras, String... alias);
 
-	boolean sendPushUser(String tilte, String alert, Map<String, String> extras, String... alias);
-	
+    boolean sendPushUser(String title, String alert, Map<String, String> extras, String... alias);
+
 }

@@ -1,16 +1,5 @@
 package cn.offway.hades.service.impl;
 
-import java.util.Date;
-import java.util.Map;
-
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.alibaba.fastjson.JSON;
-
 import cn.jpush.api.JPushClient;
 import cn.jpush.api.push.PushResult;
 import cn.jpush.api.push.model.Platform;
@@ -26,6 +15,15 @@ import cn.offway.hades.domain.PhJpushSchedule;
 import cn.offway.hades.properties.JPushProperties;
 import cn.offway.hades.service.JPushService;
 import cn.offway.hades.service.PhJpushScheduleService;
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.Map;
 
 @Service
 public class JPushServiceImpl implements JPushService{
@@ -44,11 +42,6 @@ public class JPushServiceImpl implements JPushService{
 	
 	/**
 	 * 极光推送指定用户
-	 * @param tilte
-	 * @param alert
-	 * @param extras
-	 * @param alias 别名
-	 * @return
 	 */
 	@Override
 	public boolean sendPushUser(String tilte, String alert, Map<String, String> extras,String... alias){
@@ -71,11 +64,6 @@ public class JPushServiceImpl implements JPushService{
 	
 	/**
 	 * 极光推送-带参数
-	 * @param tilte
-	 * @param alert
-	 * @param type 0-H5,1-精选文章,2-活动
-	 * @param content 
-	 * @return
 	 */
 	@Override
 	public boolean sendPush(String tilte, String alert, Map<String, String> extras){
@@ -96,25 +84,23 @@ public class JPushServiceImpl implements JPushService{
 	}
 	/**
 	 * 创建定时推送-带参数
-	 * @param name
-	 * @param time
-	 * @param tilte
-	 * @param alert
-	 * @param type 0-H5,1-精选文章,2-活动
-	 * @return
 	 */
 	@Override
-	public boolean createSingleSchedule(String businessId, String businessType, String name, Date time, String tilte, String alert, Map<String, String> extras) {
+	public boolean createSingleSchedule(String businessId, String businessType, String name, Date time, String tilte, String alert, Map<String, String> extras,String... alias) {
 
 		try {
-			
 			PhJpushSchedule schedule = phJpushScheduleService.findByBusinessIdAndBusinessType(businessId, businessType);
 			if(null != schedule){
 				return false;
 			}
-			
-			ScheduleResult scheduleResult = jPushClient.createSingleSchedule(name, DateFormatUtils.format(time, "yyyy-MM-dd HH:mm:ss"),
-					buildPushAll(tilte, alert, extras));
+			ScheduleResult scheduleResult;
+			if (alias != null && alias.length != 0) {
+				scheduleResult = jPushClient.createSingleSchedule(name, DateFormatUtils.format(time, "yyyy-MM-dd HH:mm:ss"),
+						buildPushUser(tilte, alert, extras, alias));
+			} else {
+				scheduleResult = jPushClient.createSingleSchedule(name, DateFormatUtils.format(time, "yyyy-MM-dd HH:mm:ss"),
+						buildPushAll(tilte, alert, extras));
+			}
 			String resultJson = JSON.toJSONString(scheduleResult);
 			logger.info("创建极光定时推送相应:{}",resultJson);
 			boolean result = scheduleResult.isResultOK();
@@ -141,15 +127,10 @@ public class JPushServiceImpl implements JPushService{
 	
 	/**
 	 * 更新定时推送
-	 * @param scheduleId
-	 * @param time
-	 * @return
 	 */
 	@Override
 	public boolean updateScheduleTrigger(String businessId, String businessType, Date time) {
-		
 		try {
-			
 			PhJpushSchedule phJpushSchedule = phJpushScheduleService.findByBusinessIdAndBusinessType(businessId, businessType);
 			if(null == phJpushSchedule){
 				return false;
@@ -175,15 +156,10 @@ public class JPushServiceImpl implements JPushService{
 	
 	/**
 	 * 删除定时推送
-	 * @param scheduleId
-	 * @param time
-	 * @return
 	 */
 	@Override
 	public void deleteSchedule(String businessId, String businessType) {
-		
 		try {
-			
 			PhJpushSchedule phJpushSchedule = phJpushScheduleService.findByBusinessIdAndBusinessType(businessId, businessType);
 			if(null != phJpushSchedule){
 				jPushClient.deleteSchedule(phJpushSchedule.getScheduleId());
@@ -199,12 +175,9 @@ public class JPushServiceImpl implements JPushService{
 
 	/**
 	 * 带参数推送所有用户
-	 * 
-	 * @param content
-	 * @param extras
-	 * @return
+	 *
 	 */
-	public  PushPayload buildPushAll(String tilte, String alert, Map<String, String> extras) {
+	private PushPayload buildPushAll(String tilte, String alert, Map<String, String> extras) {
 
 		Notification notification = Notification.newBuilder()
 				.addPlatformNotification(
@@ -225,12 +198,9 @@ public class JPushServiceImpl implements JPushService{
 	
 	/**
 	 * 带参数推送指定用户
-	 * 
-	 * @param content
-	 * @param extras
-	 * @return
+	 *
 	 */
-	public  PushPayload buildPushUser(String tilte, String alert, Map<String, String> extras,String... alias) {
+	private PushPayload buildPushUser(String tilte, String alert, Map<String, String> extras,String... alias) {
 
 		Notification notification = Notification.newBuilder()
 				.addPlatformNotification(

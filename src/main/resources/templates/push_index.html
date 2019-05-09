@@ -52,14 +52,16 @@
 								<input type="text" name="content" class="form-control" style="height:35px" placeholder="推送内容"/>
 							</div>
 							<div class="input-group">
-								<select name="type" class="form-control" style="height:35px" placeholder="推送类别">
-									<option value="">全部</option>
-									<option value="0">跳转URL</option>
-									<option value="1">品牌</option>
-									<option value="2">商品</option>
-									<option value="3">明星同款</option>
-									<option value="4">OFFWAY优选</option>
-								</select>
+                                <select name="type" class="form-control" style="height:35px" placeholder="推送类别">
+                                    <option value="">全部</option>
+                                    <option value="0">跳转URL</option>
+                                    <option value="1">单品</option>
+                                    <option value="2">品牌首页</option>
+                                    <option value="3">活动首页</option>
+                                    <option value="4">明星同款详情页</option>
+                                    <option value="5">单篇资讯</option>
+                                    <option value="6">免费抽</option>
+                                </select>
 							</div>
 							<div class="input-group">
 								<input id="beginTime" type="text" name="sTime" class="form-control" style="height:35px" placeholder="开始时间"/>
@@ -124,16 +126,35 @@
 								</div>
 							</div>
 						</div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label">推送用户</label>
+                                    <label><input name="pushAll" class="notMe" type="radio" checked="checked" value="0"/>全部用户 </label>
+                                    <label><input name="pushAll" class="notMe" type="radio" value="1"/>指定用户 </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group userIdStr" style="display: none">
+                                    <label class="control-label">用户ID,逗号隔开</label>
+                                    <input type="text" class="form-control" name="userIdStr" placeholder="用户ID,逗号隔开"/>
+                                </div>
+                            </div>
+                        </div>
 						<div class="row">
 							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">跳转方式</label>
-									<label><input name="type" class="notMe" type="radio" value="0"/>跳转URL </label>
-									<label><input name="type" class="notMe" type="radio" value="1"/>品牌 </label>
-									<label><input name="type" class="notMe" type="radio" value="2"/>商品 </label>
-									<label><input name="type" class="notMe" type="radio" value="3"/>明星同款 </label>
-									<label><input name="type" class="notMe" type="radio" value="4"/>OFFWAY优选</label>
-								</div>
+                                <div class="form-group">
+                                    <label class="control-label">跳转方式</label>
+                                    <label><input name="type" class="notMe" type="radio" value="0"/>跳转URL </label>
+                                    <label><input name="type" class="notMe" type="radio" value="1"/>单品 </label>
+                                    <label><input name="type" class="notMe" type="radio" value="2"/>品牌首页 </label>
+                                    <label><input name="type" class="notMe" type="radio" value="3"/>活动首页 </label>
+                                    <label><input name="type" class="notMe" type="radio" value="4"/>明星同款详情页</label>
+                                    <label><input name="type" class="notMe" type="radio" value="5"/>单篇资讯</label>
+                                    <label><input name="type" class="notMe" type="radio" value="6"/>免费抽</label>
+                                </div>
 							</div>
 						</div>
 						<div class="row">
@@ -583,10 +604,23 @@
 			return false;
 		});
 
-		$('[name="type"]').click(function () {
-			var value = $(this).val();  //获取选中的radio的值
-			toggle(value);
-		});
+        $('[name="type"]').click(function () {
+            var value = $(this).val();  //获取选中的radio的值
+            toggle(value);
+        });
+
+        $('[name="pushAll"]').click(function () {
+            var value = $(this).val();  //获取选中的radio的值
+            var theId = $(".userIdStr");
+            switch (parseInt(value)) {
+                case 0:
+                    theId.hide();
+                    break;
+                default:
+                    theId.show();
+                    break;
+            }
+        });
 
 		function toggle(value) {
 			var url = $(".url");

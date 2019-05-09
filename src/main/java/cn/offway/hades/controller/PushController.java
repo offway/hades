@@ -78,8 +78,12 @@ public class PushController {
 
     @ResponseBody
     @RequestMapping("/push_save")
-    public boolean save(PhPush push) {
+    public boolean save(PhPush push, String pushAll, String userIdStr) {
         PhPush pushSaved;
+        String[] users = null;
+        if ("1".equals(pushAll) && !"".equals(userIdStr.trim())) {
+            users = userIdStr.split(",");
+        }
         if (push.getId() == null) {
             String uuid = UUID.randomUUID().toString();
             push.setRemark(uuid);
@@ -89,7 +93,7 @@ public class PushController {
             args.put("type", pushSaved.getType());
             args.put("id", String.valueOf(pushSaved.getRedirectId()));
             args.put("url", pushSaved.getUrl());
-            jPushService.createSingleSchedule(uuid, "2", pushSaved.getName(), pushSaved.getPushTime(), pushSaved.getName(), pushSaved.getContent(), args);
+            jPushService.createSingleSchedule(uuid, "2", pushSaved.getName(), pushSaved.getPushTime(), pushSaved.getName(), pushSaved.getContent(), args, users);
         } else {
             pushSaved = pushService.findOne(push.getId());
             pushSaved.setPushTime(push.getPushTime());//只能编辑时间
