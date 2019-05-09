@@ -1,5 +1,7 @@
 package cn.offway.hades.domain;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -36,6 +38,7 @@ public class PhPush implements Serializable {
     private Date createTime;
 
     /** 推送时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date pushTime;
 
     /** 状态[0-待推送,1-推送成功,2-推送失败] **/

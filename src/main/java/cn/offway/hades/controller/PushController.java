@@ -83,6 +83,7 @@ public class PushController {
         if (push.getId() == null) {
             String uuid = UUID.randomUUID().toString();
             push.setRemark(uuid);
+            push.setCreateTime(new Date());
             pushSaved = pushService.save(push);
             Map<String, String> args = new HashMap<>();
             args.put("type", pushSaved.getType());
@@ -97,6 +98,12 @@ public class PushController {
             jPushService.updateScheduleTrigger(uuid, "2", pushSaved.getPushTime());
         }
         return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/push_get")
+    public PhPush get(Long id) {
+        return pushService.findOne(id);
     }
 
     @RequestMapping("/push_del")

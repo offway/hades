@@ -55,7 +55,7 @@ public class PhPushServiceImpl implements PhPushService {
                     params.add(criteriaBuilder.equal(root.get("type"), type));
                 }
                 if (sTime != null && eTime != null) {
-                    params.add(criteriaBuilder.between(root.get("createTime"), sTime, eTime));
+                    params.add(criteriaBuilder.between(root.get("pushTime"), sTime, eTime));
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
