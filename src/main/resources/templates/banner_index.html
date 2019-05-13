@@ -5,7 +5,7 @@
 	<title>Banner管理</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -94,12 +94,16 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-md-12">
+						<div class="col-md-6">
 							<div class="form-group">
-								<label class="control-label">开始时间-截止时间</label>
-								<input type="text" id="daterange" class="form-control daterange" placeholder="开始时间-截止时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
-								<input type="hidden" class="form-control" name="beginTime" />
-								<input type="hidden" class="form-control" name="endTime" />
+								<label class="control-label">开始时间</label>
+								<input type="text" class="form-control" name="beginTime" id="beginTime" placeholder="开始时间" />
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="control-label">截止时间</label>
+								<input type="text" class="form-control" name="endTime" id="endTime" placeholder="截止时间" />
 							</div>
 						</div>
 					</div>
@@ -179,9 +183,7 @@
 	</div>
 	
 	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
@@ -341,6 +343,28 @@
 			toggle(value);
 		});
 
+		jQuery.datetimepicker.setLocale('zh');
+		jQuery('#beginTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#endTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+
 		function toggle(value) {
 			var url = $(".url");
 			var brandId = $(".brandId");
@@ -441,28 +465,19 @@
 			var brandId = form.find("input[name='brandId']").val();
 			var starSameId = form.find("input[name='starSameId']").val();
 			var type = form.find("input[name='type']:checked").val();
-			var daterange = $("#daterange").val();
+			var beginTime = form.find("input[name='beginTime']").val();
+			var endTime = form.find("input[name='endTime']").val();
 			//文件
 			var imageVal = form.find("input[name='imageFile']")[0].value;
 			//已上传的图片地址
 			var imageVals = form.find("input[name='banner']").val();
 
-			if (daterange == '' || (imageVal == '' && imageVals == '') || (url == '' && goodsId == '' && brandId == '' && starSameId == '')) {
+			if (beginTime == '' || endTime == '' || (imageVal == '' && imageVals == '') || (url == '' && goodsId == '' && brandId == '' && starSameId == '')) {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
 				return;
 			}
-
-			if(daterange.indexOf(' - ')!=19 || daterange.length!=41){
-				toastr.error("请输入正确的起止时间", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-			}
-
-			var dates = daterange.split(' - ');
-			form.find("input[name='beginTime']").val(dates[0]);
-			form.find("input[name='endTime']").val(dates[1]);
 
 			var imageFile = '';
 			//上传文件获得文件地址
@@ -547,9 +562,8 @@
 				form.find("input[name='remark']").val(data.remark);
 				form.find("input[name='type']").val([data.type]);
 
-				var beginTimeStr = new Date(data.beginTime).Format('yyyy-MM-dd hh:mm:ss');
-				var endTimeStr = new Date(data.endTime).Format('yyyy-MM-dd hh:mm:ss');
-				$("#daterange").val(beginTimeStr+' - '+endTimeStr);
+				var beginTimeStr = new Date(data["beginTime"]).Format('yyyy-MM-dd hh:mm:ss');
+				var endTimeStr = new Date(data["endTime"]).Format('yyyy-MM-dd hh:mm:ss');
 				form.find("input[name='beginTime']").val(beginTimeStr);
 				form.find("input[name='endTime']").val(endTimeStr);
 
