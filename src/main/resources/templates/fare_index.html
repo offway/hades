@@ -88,6 +88,15 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
+								<label class="control-label">快递方式</label>
+								<label><input name="isSf" class="notMe" type="radio" checked="checked" value="0"/>普通快递</label>
+								<label><input name="isSf" class="notMe" type="radio" value="1"/>顺丰速运</label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
 								<label class="control-label">运费首件数</label>
 								<input type="number" class="form-control" name="fareFirstNum" placeholder="运费首件数"/>
 							</div>
@@ -354,6 +363,14 @@
 				},
 				{
 					targets: 8,
+					data: "isSf",
+					title: "是否顺丰速运",
+					render: function (data, type, row, meta) {
+						return (data == 0 || data == null) ? '否' : '是';
+					}
+				},
+				{
+					targets: 9,
 					data: "createTime",
 					title: "创建时间",
 					render: function (data, type, row, meta) {
@@ -361,12 +378,12 @@
 					}
 				},
 				{
-					targets: 9,
+					targets: 10,
 					data: "remark",
 					title: "备注"
 				},
 				{
-					targets: 10,
+					targets: 11,
 					data: "id",
 					orderable: false,
 					title: "操作",
@@ -409,7 +426,7 @@
 
 		$(".btn.btn-info.add").click(function () {
 			var form = $("#saveForm");
-			form.find("input").val("");
+			form.find("input:not(.notMe)").val("");
 			form.find("img").attr("src","");
 			form.find("img").hide();
 			form.find("input[type='file']").show();
