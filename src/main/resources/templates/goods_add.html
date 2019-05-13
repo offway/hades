@@ -206,16 +206,33 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-6" class="control-label">价格</label>
-												<input type="number" class="form-control" id="field-6" name="price" placeholder="价格" />
+												<label for="field-6" class="control-label">当前价格</label>
+												<input type="number" class="form-control" id="field-6" name="price" placeholder="当前价格" />
 											</div>
 										</div>
 									</div>
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-7" class="control-label">材质</label>
-												<input type="text" class="form-control" id="field-7" name="material" placeholder="材质" />
+												<label class="control-label">是否有优惠</label>
+												<label><input name="isDiscount" class="notMe" type="radio" value="0"/>有</label>
+												<label><input name="isDiscount" class="notMe" type="radio" checked="checked" value="1"/>没有</label>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group originalPrice" style="display: none">
+												<label for="field-6" class="control-label">原价</label>
+												<input type="number" class="form-control" name="originalPrice" placeholder="原价" />
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
+												<label for="field-7" class="control-label">材质(20字以内)</label>
+												<input type="text" class="form-control" id="field-7" name="material" placeholder="材质(20字以内)" />
 											</div>
 										</div>
 									</div>
@@ -911,6 +928,19 @@
 			$(this).blur();
 		});
 
+		$('[name="isDiscount"]').click(function () {
+			var value = $(this).val();  //获取选中的radio的值
+			var theId = $(".originalPrice");
+			switch (parseInt(value)) {
+				case 0:
+					theId.show();
+					break;
+				default:
+					theId.hide();
+					break;
+			}
+		});
+
         switchToCommon();
 
 		function getImgSize(file, cb) {
@@ -968,6 +998,7 @@
 			// var merchant_id = form.find("select[name='merchant_id']").val();
 			var merchant_id = form.find("input[name='merchant_id']").parent().find("li.es-visible").val();
             var price = form.find("input[name='price']").val();
+			var originalPrice = form.find("input[name='originalPrice']").val();
             var material = form.find("input[name='material']").val();
             var remark = form.find("input[name='remark']").val();
             //文件
@@ -1113,21 +1144,22 @@
 						},
 						three: function (callback) {
 							//提交保存
-                            var data = {
-                                "name": name,
+							var data = {
+								"name": name,
 								"code": code,
-                                "image": form.find("input[name='image']").val(),
-                                "brandId": brand_id,
-                                "merchantId": merchant_id,
-                                "type": type,
-                                "category": category,
-                                "price": price,
-                                "material": material,
-                                "remark": remark,
-                                "stocks": JSON.stringify(stockList),
-                                "banners": bannerList.join(","),
-                                "intros": introList.join(",")
-                            };
+								"image": form.find("input[name='image']").val(),
+								"brandId": brand_id,
+								"merchantId": merchant_id,
+								"type": type,
+								"category": category,
+								"price": price,
+								"originalPrice": originalPrice,
+								"material": material,
+								"remark": remark,
+								"stocks": JSON.stringify(stockList),
+								"banners": bannerList.join(","),
+								"intros": introList.join(",")
+							};
 							console.log(data);
 							$.post("/goods_add", data, function (data) {
 								if (data) {
