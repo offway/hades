@@ -273,13 +273,15 @@ public class OrderController {
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         String orderNo = request.getParameter("orderNo");
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        Date sTime = null, eTime = null;
         String sTimeStr = request.getParameter("sTime");
         String eTimeStr = request.getParameter("eTime");
-        Date sTime = null, eTime = null;
-        if (!"".equals(sTimeStr) && !"".equals(eTimeStr)) {
-            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-            sTime = DateTime.parse(sTimeStr, format).toDate();
+        if (!"".equals(eTimeStr)) {
             eTime = DateTime.parse(eTimeStr, format).toDate();
+        }
+        if (!"".equals(sTimeStr)) {
+            sTime = DateTime.parse(sTimeStr, format).toDate();
         }
         String userId = request.getParameter("userId");
         String payMethod = request.getParameter("payMethod");

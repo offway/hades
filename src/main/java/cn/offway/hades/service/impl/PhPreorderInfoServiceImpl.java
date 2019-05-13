@@ -65,6 +65,10 @@ public class PhPreorderInfoServiceImpl implements PhPreorderInfoService {
                 }
                 if (sTime != null && eTime != null) {
                     params.add(criteriaBuilder.between(root.get("createTime"), sTime, eTime));
+                } else if (eTime != null) {
+                    params.add(criteriaBuilder.lessThan(root.get("createTime"), eTime));
+                } else if (sTime != null) {
+                    params.add(criteriaBuilder.greaterThan(root.get("createTime"), sTime));
                 }
                 if (!"".equals(userId)) {
                     params.add(criteriaBuilder.equal(root.get("userId"), userId));
