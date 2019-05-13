@@ -5,7 +5,7 @@
 	<title>订单管理</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+    <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -55,16 +55,16 @@
 								<label for="orderNo" class="control-label">订单号</label>
 								<input id="orderNo" type="text" name="orderNo" class="form-control" style="height:35px" placeholder="订单号"/>
 							</div>
-							<div class="input-group">
-								<label for="sTime" class="control-label">开始时间</label>
-								<input id="sTime" type="text" class="form-control" style="height:35px" placeholder="开始时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss"/>
-                                <input type="hidden" class="form-control" name="sTime" />
-							</div>
-							<div class="input-group">
-								<label for="eTime" class="control-label">结束时间</label>
-								<input id="eTime" type="text" class="form-control" style="height:35px" placeholder="结束时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss"/>
-                                <input type="hidden" class="form-control" name="eTime" />
-							</div>
+                            <div class="input-group">
+                                <label for="sTime" class="control-label">开始时间</label>
+                                <input type="text" class="form-control" name="sTime" id="sTime" style="height:35px"
+                                       placeholder="开始时间"/>
+                            </div>
+                            <div class="input-group">
+                                <label for="eTime" class="control-label">结束时间</label>
+                                <input type="text" class="form-control" name="eTime" id="eTime" style="height:35px"
+                                       placeholder="结束时间"/>
+                            </div>
 							<div class="input-group">
 								<label for="userId" class="control-label">用户</label>
 								<input id="userId" type="text" name="userId" class="form-control" style="height:35px" placeholder="用户"/>
@@ -187,9 +187,7 @@
 	</div>
 	
 	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+    <script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
 	<script th:inline="javascript">
@@ -361,32 +359,27 @@
             form.hide();
             form.find("[name='theId']").val(theId);
         } else {
-            $("#sTime").daterangepicker({
-                singleDatePicker: true,
-                timePicker: true,
-                showDropdowns: true,
-                startDate: moment().startOf('hour'),
-                endDate: moment().startOf('hour').add(32, 'hour'),
-                locale: {
-                    format: 'YYYY-MM-DD HH:mm:ss'
+            jQuery.datetimepicker.setLocale('zh');
+            jQuery('#sTime').datetimepicker(
+                {
+                    "lang": "zh",
+                    "format": "Y-m-d H:i:s",
+                    "timepicker": true,
+                    "datepicker": true,
+                    "defaultDate": new Date(),
+                    "defaultTime": "00:00:00"
                 }
-            }, function (start, end, label) {
-                $("#sTime").val(start.format('YYYY-MM-DD HH:mm:ss'));
-                $('input[name="sTime"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
-            });
-            $("#eTime").daterangepicker({
-                singleDatePicker: true,
-                timePicker: true,
-                showDropdowns: true,
-                startDate: moment().startOf('hour'),
-                endDate: moment().startOf('hour').add(32, 'hour'),
-                locale: {
-                    format: 'YYYY-MM-DD HH:mm:ss'
+            );
+            jQuery('#eTime').datetimepicker(
+                {
+                    "lang": "zh",
+                    "format": "Y-m-d H:i:s",
+                    "timepicker": true,
+                    "datepicker": true,
+                    "defaultDate": new Date(),
+                    "defaultTime": "00:00:00"
                 }
-            }, function (start, end, label) {
-                $("#eTime").val(start.format('YYYY-MM-DD HH:mm:ss'));
-                $('input[name="eTime"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
-            });
+            );
         }
         var oTable;
 
