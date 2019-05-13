@@ -55,7 +55,11 @@ public class PhVoucherProjectServiceImpl implements PhVoucherProjectService {
                     params.add(criteriaBuilder.equal(root.get("merchantId"), merchantId));
                 }
                 if (beginTime != null && endTime != null) {
-                    //
+                    params.add(criteriaBuilder.between(root.get("createTime"), beginTime, endTime));
+                } else if (beginTime != null) {
+                    params.add(criteriaBuilder.greaterThan(root.get("createTime"), beginTime));
+                } else if (endTime != null) {
+                    params.add(criteriaBuilder.lessThan(root.get("createTime"), endTime));
                 }
                 if (!"".equals(remark)) {
                     params.add(criteriaBuilder.like(root.get("remark"), "%" + remark + "%"));

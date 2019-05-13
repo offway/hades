@@ -7,6 +7,9 @@ import cn.offway.hades.service.PhMerchantService;
 import cn.offway.hades.service.PhVoucherInfoService;
 import cn.offway.hades.service.PhVoucherProjectService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.*;
 
 @Controller
@@ -94,21 +95,19 @@ public class CouponController {
         String type = request.getParameter("type");
         String name = request.getParameter("name");
         String merchantId = request.getParameter("merchantId");
-        DateFormat formatter = DateFormat.getDateTimeInstance();
+        String remark = request.getParameter("remark");
+        Sort sort = new Sort("id");
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         String beginTimeStr = request.getParameter("beginTime");
         String endTimeStr = request.getParameter("endTime");
         Date beginTime = null;
-        Date endTime = null;
-        try {
-            if (!"".equals(beginTimeStr) && !"".equals(endTimeStr)) {
-                beginTime = formatter.parse(beginTimeStr);
-                endTime = formatter.parse(endTimeStr);
-            }
-        } catch (ParseException e) {
-            logger.error("error", e);
+        if (!"".equals(beginTimeStr)) {
+            beginTime = DateTime.parse(beginTimeStr, format).toDate();
         }
-        String remark = request.getParameter("remark");
-        Sort sort = new Sort("id");
+        Date endTime = null;
+        if (!"".equals(endTimeStr)) {
+            endTime = DateTime.parse(endTimeStr, format).toDate();
+        }
         Page<PhVoucherProject> pages = voucherProjectService.list(type, name, Long.valueOf(merchantId), beginTime, endTime, remark, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();

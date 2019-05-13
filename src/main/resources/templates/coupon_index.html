@@ -524,7 +524,7 @@
             table_global = oTable;
         });
 
-        jQuery.datetimepicker.setLocale('zh');
+		jQuery.datetimepicker.setLocale('zh');
 		jQuery('#beginTimeAlt').datetimepicker(
 				{
 					"lang": "zh",
@@ -536,6 +536,26 @@
 				}
 		);
 		jQuery('#endTimeAlt').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#beginTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#endTime').datetimepicker(
 				{
 					"lang": "zh",
 					"format": "Y-m-d H:i:s",
