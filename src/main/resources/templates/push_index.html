@@ -54,7 +54,8 @@
 							<div class="input-group">
                                 <select name="type" class="form-control" style="height:35px" placeholder="推送类别">
                                     <option value="">全部</option>
-                                    <option value="0">跳转URL</option>
+                                    <option value="0">跳转URL(带参)</option>
+                                    <option value="7">跳转URL(不带参)</option>
                                     <option value="1">单品</option>
                                     <option value="2">品牌首页</option>
                                     <option value="3">活动首页</option>
@@ -147,7 +148,8 @@
 							<div class="col-md-12">
                                 <div class="form-group">
                                     <label class="control-label">跳转方式</label>
-                                    <label><input name="type" class="notMe" type="radio" value="0"/>跳转URL </label>
+                                    <label><input name="type" class="notMe" type="radio" value="0"/>跳转URL(带参)</label>
+                                    <label><input name="type" class="notMe" type="radio" value="7"/>跳转URL(不带参)</label>
                                     <label><input name="type" class="notMe" type="radio" value="1"/>单品 </label>
                                     <label><input name="type" class="notMe" type="radio" value="2"/>品牌首页 </label>
                                     <label><input name="type" class="notMe" type="radio" value="3"/>活动首页 </label>
@@ -502,11 +504,10 @@
 					targets: 4,
 					data: "type",
 					title: "类别",
-					render: function (data, type, row, meta) {
-						/** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款,4-OFFWAY优选] **/
-						var map = ["跳转URL", "品牌", "商品", "明星同款", "OFFWAY优选"];
-						return map[parseInt(data)];
-					}
+                    render: function (data, type, row, meta) {
+                        var map = ["跳转URL(带参)", "单品", "品牌首页", "活动首页", "明星同款详情页", "单篇资讯", "免费抽", "跳转URL(不带参)"];
+                        return map[parseInt(data)];
+                    }
 				},
 				{
 					targets: 5,
@@ -622,20 +623,21 @@
             }
         });
 
-		function toggle(value) {
-			var url = $(".url");
-			var theId = $(".theId");
-			switch (parseInt(value)) {
-				case 0:
-					url.show();
-					theId.hide();
-					break;
-				default:
-					url.hide();
-					theId.show();
-					break;
-			}
-		}
+        function toggle(value) {
+            var url = $(".url");
+            var theId = $(".theId");
+            switch (parseInt(value)) {
+                case 0:
+                case 7:
+                    url.show();
+                    theId.hide();
+                    break;
+                default:
+                    url.hide();
+                    theId.show();
+                    break;
+            }
+        }
 
 		$(".btn.btn-info.add").click(function () {
 			var form = $("#saveForm");
