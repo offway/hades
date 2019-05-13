@@ -171,7 +171,8 @@
             </div>
         </div>
     </div>
-	
+
+	<input type="hidden" id="configStr" />
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
 	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
@@ -577,6 +578,7 @@
 		});
 
 		$(".btn.btn-info.config").click(function () {
+			var cfg = $("#configStr");
 			$.post("/goodsType_listAll", {}, function (data) {
 				if (data) {
 					var ele = $('#multi-select');
@@ -594,10 +596,35 @@
 							// Add alternative scrollbar to list
 							this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar();
 						},
-						afterSelect: function () {
+						afterSelect: function (v) {
 							// Update scrollbar size
 							this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar('update');
-						}
+							var cfgObj;
+							if (cfg.val() == '') {
+								cfgObj = [];
+							} else {
+								cfgObj = JSON.parse(cfg.val());
+							}
+							cfgObj.push(v[0]);
+							cfg.val(JSON.stringify(cfgObj));
+						},
+						afterDeselect: function (v) {
+							var cfgObj;
+							if (cfg.val() == '') {
+								cfgObj = [];
+							} else {
+								cfgObj = JSON.parse(cfg.val());
+								var n = [];
+								for (var i in cfgObj) {
+									if (cfgObj[i] != v[0]) {
+										n.push(cfgObj[i]);
+									}
+								}
+								cfgObj = n;
+							}
+							cfg.val(JSON.stringify(cfgObj));
+						},
+						"keepOrder": true
 					});
 					ele.multiSelect('refresh');
 					jQuery('#modal-7').modal('show', {backdrop: 'fade'});
@@ -606,8 +633,9 @@
 		});
 
 		$(".btn.btn-info.saveConfig").click(function () {
-			var ele = $('#multi-select');
-			var data = ele.val();
+			// var ele = $('#multi-select');
+			// var data = ele.val();
+			var data = JSON.parse($("#configStr").val());
 			console.log(data);
 			$.post("/goodsType_saveConfig", {"keys": data}, function (data) {
 				if (data) {
