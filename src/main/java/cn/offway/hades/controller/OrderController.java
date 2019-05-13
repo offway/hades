@@ -183,8 +183,10 @@ public class OrderController {
             String eTimeStr = request.getParameter("eTime");
             Date sTime = null, eTime = null;
             DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-            if (!"".equals(sTimeStr) && !"".equals(eTimeStr)) {
+            if (!"".equals(sTimeStr)) {
                 sTime = DateTime.parse(sTimeStr, format).toDate();
+            }
+            if (!"".equals(eTimeStr)) {
                 eTime = DateTime.parse(eTimeStr, format).toDate();
             }
             String userId = request.getParameter("userId");
@@ -236,8 +238,10 @@ public class OrderController {
             DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
             String sTimeStr = request.getParameter("sTime");
             String eTimeStr = request.getParameter("eTime");
-            if (!"".equals(sTimeStr) && !"".equals(eTimeStr)) {
+            if (!"".equals(sTimeStr)) {
                 sTime = DateTime.parse(sTimeStr, format).toDate();
+            }
+            if (!"".equals(eTimeStr)) {
                 eTime = DateTime.parse(eTimeStr, format).toDate();
             }
             list = (List<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, null);
@@ -245,11 +249,12 @@ public class OrderController {
             list = orderInfoService.findAll(theId);
         }
         Map<String, Object> map = new HashMap<>();
-        double amount = 0, price = 0, mailFee = 0, pVoucherAmount = 0;
+        double amount = 0, price = 0, mailFee = 0, pVoucherAmount = 0, mVoucherAmount = 0;
         for (PhOrderInfo item : list) {
             amount += item.getAmount();
 //            price += item.getPrice() * getRatioOfMerchant(item.getMerchantId()) - item.getMVoucherAmount();
-            price += item.getPrice() - item.getMVoucherAmount();
+            price += item.getPrice();
+            mVoucherAmount += item.getMVoucherAmount();
             mailFee += item.getMailFee();
             pVoucherAmount += item.getPVoucherAmount();
         }
@@ -257,6 +262,7 @@ public class OrderController {
         map.put("price", price);
         map.put("mailFee", mailFee);
         map.put("pVoucherAmount", pVoucherAmount);
+        map.put("mVoucherAmount", mVoucherAmount);
         return map;
     }
 

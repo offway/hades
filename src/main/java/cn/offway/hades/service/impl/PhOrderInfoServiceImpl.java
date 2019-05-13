@@ -54,6 +54,10 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
                 }
                 if (sTime != null && eTime != null) {
                     params.add(criteriaBuilder.between(root.get("createTime"), sTime, eTime));
+                } else if (sTime != null) {
+                    params.add(criteriaBuilder.greaterThan(root.get("createTime"), sTime));
+                } else if (eTime != null) {
+                    params.add(criteriaBuilder.lessThan(root.get("createTime"), eTime));
                 }
                 if (!"".equals(userId)) {
                     params.add(criteriaBuilder.equal(root.get("userId"), userId));

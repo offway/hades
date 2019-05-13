@@ -430,7 +430,7 @@
 					{
 						targets: 4,
 						data: "price",
-						title: "订单总价"
+						title: "商品总价"
 					},
 					// {
 					// 	targets: 5,
@@ -582,7 +582,7 @@
                         }, 0);
 					// Update footer part 1
                     $(this).find("#tfoot1").html(
-                        '当页订单价格总计￥' + (total - totalCouponOfMerchant).toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                        '当页订单价格总计￥' + (total - totalCouponOfMerchant).toFixed(2) + '元 == 商品总价￥' + total.toFixed(2) + " 减去 商家优惠总和￥" + totalCouponOfMerchant.toFixed(2) + "&nbsp;&nbsp;&nbsp;" +
                         '当页实付金额总计￥' + totalPay.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
                         '当页平台优惠券金额总计￥' + totalCouponOfPlatform.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
                         '当页运费总计￥' + totalMailFee.toFixed(2) + '元'
@@ -593,9 +593,10 @@
                         var totalPay = parseFloat(data["amount"]);
                         var totalMailFee = parseFloat(data["mailFee"]);
                         var totalCoupon = parseFloat(data["pVoucherAmount"]);
+                        var totalCouponM = parseFloat(data["mVoucherAmount"]);
                         // Update footer part 2
                         $("#tfoot2").html(
-                            '全部订单价格总计￥' + total.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                            '全部订单价格总计￥' + (total - totalCouponM).toFixed(2) + '元 == 商品总价￥' + total.toFixed(2) + " 减去 商家优惠总和￥" + totalCouponM.toFixed(2) + "&nbsp;&nbsp;&nbsp;" +
                             '全部实付金额总计￥' + totalPay.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
                             '全部平台优惠券金额总计￥' + totalCoupon.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
                             '全部运费总计￥' + totalMailFee.toFixed(2) + '元'
@@ -607,7 +608,7 @@
 				// $("#example-1").append(
 				// 		$('<tfoot/>').append($("#example-1 thead tr").clone())
 				// );
-				$("#example-1").append('<tfoot><tr><td id="tfoot1" colspan="10"></td><td id="tfoot2" colspan="6"></td></tr></tfoot>');
+				$("#example-1").append('<tfoot><tr><td id="tfoot1" colspan="9"></td><td id="tfoot2" colspan="7"></td></tr></tfoot>');
 				oTable.fnDraw(); //or fnReloadAjax()
 			}, 500);
 			table_global = oTable;
