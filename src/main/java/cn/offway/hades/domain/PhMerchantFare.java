@@ -40,6 +40,9 @@ public class PhMerchantFare implements Serializable {
 
     /** 备注 **/
     private String remark;
+    
+    /** 是否顺丰速运[0-否,1-是] **/
+    private String isSf;
 
 
     @Id
@@ -125,5 +128,16 @@ public class PhMerchantFare implements Serializable {
     public void setRemark(String remark) {
         this.remark = remark;
     }
+
+    @Column(name = "is_sf", length = 2)
+	public String getIsSf() {
+		return isSf;
+	}
+
+	public void setIsSf(String isSf) {
+		this.isSf = isSf;
+	}
+    
+    
 
 }
