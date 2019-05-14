@@ -263,9 +263,10 @@
 		});
 	}
 
-    function checkSku(id) {
-        window.location.href = '/goods_stock_index.html?id=' + id;
-    }
+	function checkSku(id) {
+		window.open('/goods_stock_index.html?id=' + id, "_blank");
+		// window.location.href = '/goods_stock_index.html?id=' + id;
+	}
 
 	function bindMerchantSelector(data) {
 		var brandStr = "";
@@ -293,10 +294,11 @@
         });
     }
 
-	function upIt(id) {
+	function upIt(id, self) {
 		$.post("/goods_up", {"id": id}, function (data) {
 			if (data) {
-				table_global.fnDraw();
+				//disabled="disabled"
+				$(self).attr("disabled", "disabled");
 				toastr.success("操作已成功！", "温馨提示");
 			} else {
 				toastr.error("操作失败", "温馨提示");
@@ -304,10 +306,10 @@
 		});
 	}
 
-	function downIt(id) {
+	function downIt(id, self) {
 		$.post("/goods_down", {"id": id}, function (data) {
 			if (data) {
-				table_global.fnDraw();
+				$(self).attr("disabled", "disabled");
 				toastr.success("操作已成功！", "温馨提示");
 			} else {
 				toastr.error("操作失败", "温馨提示");
@@ -483,9 +485,9 @@
 						title: "操作",
 						render: function (data, type, full, meta) {
 							if (full["status"] == "0") {
-								return '<input type="button" name="checkIt" onclick="upIt(' + data + ')" value="上架"/>';
+								return '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
 							} else {
-								return '<input type="button" name="checkIt" onclick="downIt(' + data + ')" value="下架"/>';
+								return '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
 							}
 						}
 					}
