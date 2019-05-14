@@ -86,22 +86,22 @@
 			
 		</div>
 		<script th:inline="javascript">
-			/*<![CDATA[*/	
-			
+			/*<![CDATA[*/
 	           (function ($) {
-					 $.post("/resoures",{},function(data){
-						
-						var html = "";
-						data.forEach(function(val,index,arr){
-							html+="<li><a><i class='"+val.icon+"'></i><span >"+val.name+"</span></a>";
-							val.childList.forEach(function(v,index,arr){
-								html+="<ul><li><a href='"+v.link+"'><span class='title'>"+v.name+"</span></a></li></ul>";
-							});
-							html= html+"</li>";
-						});
-						$("#main-menu").html(html);
-					})
-		
+				   $.post("/resoures", {}, function (data) {
+					   var html = "";
+					   data.forEach(function (val, index, arr) {
+						   html += "<li><a><i class='" + val.icon + "'></i><span >" + val.name + "</span></a>";
+						   val.childList.forEach(function (v, index, arr) {
+							   html += "<ul><li><a href='" + v.link + "'><span class='title'>" + v.name + "</span></a></li></ul>";
+						   });
+						   html = html + "</li>";
+					   });
+					   $("#main-menu").html(html);
+					   setup_sidebar_menu();
+				   });
 	           })(jQuery);
 			/*]]>*/
 		</script>
+		<!-- JavaScripts initializations and stuff -->
+		<script src="assets/js/xenon-custom.js"></script>
