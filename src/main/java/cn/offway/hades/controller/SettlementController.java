@@ -98,7 +98,7 @@ public class SettlementController {
                 settlementDetail.setAmount(orderInfo.getAmount());
                 settlementDetail.setCreateTime(new Date());
                 settlementDetail.setCutRate(merchant.getRatio());
-                settlementDetail.setCutAmount(orderInfo.getAmount() * merchant.getRatio());
+                settlementDetail.setCutAmount(orderInfo.getAmount() * merchant.getRatio() / 100);
                 settlementDetail.setMailFee(orderInfo.getMailFee());
                 settlementDetail.setMerchantId(orderInfo.getMerchantId());
                 settlementDetail.setMerchantLogo(orderInfo.getMerchantLogo());
