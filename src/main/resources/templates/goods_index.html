@@ -71,6 +71,22 @@
                                     <option value="0">已下架</option>
                                 </select>
                             </div>
+							<div class="input-group">
+								<label for="type" class="control-box">主分类</label>
+							</div>
+							<div class="input-group">
+								<select id="type" name="type" class="form-control" style="height:35px" onchange="renderCategory(this)">
+									<option value="" selected="selected">全部</option>
+								</select>
+							</div>
+							<div class="input-group">
+								<label for="category" class="control-box">子分类</label>
+							</div>
+							<div class="input-group">
+								<select id="category" name="category" class="form-control" style="height:35px">
+									<option value="" selected="selected">全部</option>
+								</select>
+							</div>
 						</div>
 						<div class="form-group">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
@@ -135,7 +151,7 @@
 			</div>
 		</div>
 	</div>
-	
+	<input type="hidden" id="type_and_category_list"/>
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
 	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
@@ -279,6 +295,37 @@
 			}
 		}
 		$("#merchantId").html(brandStr);
+	}
+
+	function bindTypeSelector(data) {
+		var typeStr = "<option value=\"\" selected=\"selected\">全部</option>";
+		for (var type in data) {
+			type = data[type];
+			typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["name"]).replace("KEY", type["name"]);
+		}
+		$("#type").html(typeStr);
+		bindCategorySelector(data[0]["sub"]);
+	}
+
+	function bindCategorySelector(data) {
+		var categoryStr = "<option value=\"\" selected=\"selected\">全部</option>";
+		for (var category in data) {
+			category = data[category];
+			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
+		}
+		$("#category").html(categoryStr);
+	}
+
+	function renderCategory(self) {
+		var jsonStr = $("#type_and_category_list").val();
+		var list = JSON.parse(jsonStr);
+		var selectedId = $(self).val();
+		for (var type in list) {
+			if (selectedId == list[type]["id"]) {
+				bindCategorySelector(list[type]["sub"]);
+				break;
+			}
+		}
 	}
 
 	var table_global;
@@ -495,7 +542,12 @@
 			});
 			table_global = oTable;
 		});
-		
+
+		$.getJSON("/type_and_category_list", {}, function (data) {
+			$("#type_and_category_list").val(JSON.stringify(data));
+			bindTypeSelector(data);
+		});
+
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);
 			oTable.fnDraw(); //or fnReloadAjax()  

@@ -293,8 +293,10 @@ public class GoodsController {
         String code = request.getParameter("code");
         String status = request.getParameter("status");
         String merchantId = request.getParameter("merchantId");
+        String type = request.getParameter("type");
+        String category = request.getParameter("category");
         Sort sort = new Sort("id");
-        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, Long.valueOf(merchantId), new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, Long.valueOf(merchantId), type, category, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
