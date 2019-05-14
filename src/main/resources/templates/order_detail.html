@@ -417,6 +417,18 @@
 							return "暂无";
 						}
 					}
+				},
+				{
+					targets: 1,
+					data: "message",
+					title: "留言",
+					render: function (data, type, row, meta) {
+						if (data) {
+							return data;
+						} else {
+							return "暂无";
+						}
+					}
 				}
 			]
 		});

@@ -105,6 +105,7 @@ public class OrderController {
             List<Map> remarkInfoList = new ArrayList<>();
             Map<String, Object> remarkInfo = new HashMap<>();
             remarkInfo.put("remark", orderInfo.getRemark());
+            remarkInfo.put("message", orderInfo.getMessage());
             remarkInfoList.add(remarkInfo);
             dataList.put("remarkInfo", remarkInfoList);
             //收货人信息
