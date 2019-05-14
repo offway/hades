@@ -30,14 +30,14 @@ public class UserInfoController {
 
     @ResponseBody
     @RequestMapping("/userInfo_list")
-    public Map<String, Object> usersData(HttpServletRequest request, String phone, String nickname) {
+    public Map<String, Object> usersData(HttpServletRequest request, String phone, String nickname, String sex) {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        Page<PhUserInfo> pages = userInfoService.list(phone, nickname, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Sort.Direction.fromString(sortDir), sortName));
+        Page<PhUserInfo> pages = userInfoService.list(phone, nickname, sex, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Sort.Direction.fromString(sortDir), sortName));
         // 为操作次数加1，必须这样做
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();

@@ -16,5 +16,5 @@ public interface PhUserInfoService {
 
     PhUserInfo findOne(Long id);
 
-    Page<PhUserInfo> list(String phone, String nickname, Pageable pageable);
+    Page<PhUserInfo> list(String phone, String nickname, String sex, Pageable pageable);
 }
