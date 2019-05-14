@@ -5,7 +5,7 @@
 	<title>添加商家</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -140,15 +140,15 @@
 									<div class="col-md-6">
 										<div class="form-group">
 											<label class="control-label">签约日期</label>
-											<input type="text" id="signDate" class="form-control" placeholder="签约日期" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
-											<input type="hidden" class="form-control" name="signDate" />
+											<input type="text" class="form-control" name="signDate" id="signDate"
+												   placeholder="签约日期"/>
 										</div>
 									</div>
 									<div class="col-md-6">
 										<div class="form-group">
 											<label class="control-label">到期日期</label>
-											<input type="text" id="expireDate" class="form-control" placeholder="到期日期" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
-											<input type="hidden" class="form-control" name="expireDate" />
+											<input type="text" class="form-control" name="expireDate" id="expireDate"
+												   placeholder="到期日期"/>
 										</div>
 									</div>
 								</div>
@@ -196,9 +196,7 @@
     </div>
 	
 	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
 	<script src="assets/js/distpicker.js"></script>
@@ -392,33 +390,27 @@
 			}
 		}
 
-		$("#signDate").daterangepicker({
-			singleDatePicker: true,
-			timePicker: true,
-			showDropdowns: true,
-			startDate: moment().startOf('hour'),
-			endDate: moment().startOf('hour').add(32, 'hour'),
-			locale: {
-				format: 'YYYY-MM-DD HH:mm:ss'
-			}
-		}, function(start, end, label) {
-			$("#signDate").val(start.format('YYYY-MM-DD HH:mm:ss'));
-			$('input[name="signDate"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
-		});
-
-		$("#expireDate").daterangepicker({
-			singleDatePicker: true,
-			timePicker: true,
-			showDropdowns: true,
-			startDate: moment().startOf('hour'),
-			endDate: moment().startOf('hour').add(32, 'hour'),
-			locale: {
-				format: 'YYYY-MM-DD HH:mm:ss'
-			}
-		}, function(start, end, label) {
-			$("#expireDate").val(start.format('YYYY-MM-DD HH:mm:ss'));
-			$('input[name="expireDate"]').val(start.format('YYYY-MM-DD HH:mm:ss'));
-		});
+		jQuery.datetimepicker.setLocale('zh');
+		jQuery('#signDate').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#expireDate').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
 
 		//保存
 		$(".btn.btn-info.save").click(function(){
