@@ -128,12 +128,12 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="control-label">跳转方式</label>
-								<label><input name="type" class="notMe" type="radio" value="3" />明星同款 </label>
-                                <label><input name="type" class="notMe" type="radio" value="2" />商品详情 </label>
-                                <!-- <label><input name="type" class="" type="radio" value="4" />商品分类列表 </label> -->
-                                <label><input name="type" class="notMe" type="radio" value="0" />专题 </label>
-                                <label><input name="type" class="notMe" type="radio" value="1" />品牌</label>
+								<label class="control-label">跳转方式</label>
+								<label><input name="type" class="notMe" type="radio" value="3"/>明星同款 </label>
+								<label><input name="type" class="notMe" type="radio" value="2"/>商品详情 </label>
+								<label><input name="type" class="notMe" type="radio" value="0"/>专题 </label>
+								<label><input name="type" class="notMe" type="radio" value="1"/>品牌</label>
+								<label><input name="type" class="notMe" type="radio" value="4"/>OFFWAY优选 </label>
                             </div>
                         </div>
                     </div>
@@ -166,6 +166,14 @@
 							<div class="form-group starSameId" style="display: none">
 								<label class="control-label">明星同款ID</label>
 								<input type="number" class="form-control" name="starSameId" placeholder="明星同款ID"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group pickId" style="display: none">
+								<label class="control-label">优选ID</label>
+								<input type="number" class="form-control" name="pickId" placeholder="优选ID"/>
 							</div>
 						</div>
 					</div>
@@ -255,7 +263,7 @@
 					title: "类型",
 					render: function (data, type, row, meta) {
 						/** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款] **/
-						var map = ["跳转URL", "品牌", "商品", "明星同款"];
+						var map = ["跳转URL", "品牌", "商品", "明星同款", "OFFWAY优选"];
 						return map[parseInt(data)]
 					}
 				},
@@ -370,30 +378,42 @@
 			var brandId = $(".brandId");
 			var goodsId = $(".goodsId");
 			var starSameId = $(".starSameId");
+			var pickId = $(".pickId");
 			switch (parseInt(value)) {
 				case 0:
 					url.show();
 					brandId.hide();
 					goodsId.hide();
 					starSameId.hide();
+					pickId.hide();
 					break;
 				case 1:
 					url.hide();
 					brandId.show();
 					goodsId.hide();
 					starSameId.hide();
+					pickId.hide();
 					break;
 				case 2:
 					url.hide();
 					brandId.hide();
 					goodsId.show();
 					starSameId.hide();
+					pickId.hide();
 					break;
 				case 3:
 					url.hide();
 					brandId.hide();
 					goodsId.hide();
 					starSameId.show();
+					pickId.hide();
+					break;
+				case 4:
+					url.hide();
+					brandId.hide();
+					goodsId.hide();
+					starSameId.hide();
+					pickId.show();
 					break;
 				default:
 					break;
@@ -464,6 +484,7 @@
 			var goodsId = form.find("input[name='goodsId']").val();
 			var brandId = form.find("input[name='brandId']").val();
 			var starSameId = form.find("input[name='starSameId']").val();
+			var pickId = form.find("input[name='pickId']").val();
 			var type = form.find("input[name='type']:checked").val();
 			var beginTime = form.find("input[name='beginTime']").val();
 			var endTime = form.find("input[name='endTime']").val();
@@ -472,7 +493,7 @@
 			//已上传的图片地址
 			var imageVals = form.find("input[name='banner']").val();
 
-			if (beginTime == '' || endTime == '' || (imageVal == '' && imageVals == '') || (url == '' && goodsId == '' && brandId == '' && starSameId == '')) {
+			if (beginTime == '' || endTime == '' || (imageVal == '' && imageVals == '') || (url == '' && goodsId == '' && brandId == '' && starSameId == '' && pickId == '')) {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
@@ -503,13 +524,15 @@
 						}
 						//提交保存
 						var postData = $("#saveForm").serializeArray();
-						/** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款] **/
+						// 类别[0-跳转URL,1-品牌,2-商品,3-明星同款,4-OFFWAY优选]
 						if (type == 1) {
 							postData.push({"name": "redirectId", "value": brandId});//append pid
 						} else if (type == 2) {
 							postData.push({"name": "redirectId", "value": goodsId});//append pid
 						} else if (type == 3) {
 							postData.push({"name": "redirectId", "value": starSameId});//append pid
+						} else if (type == 4) {
+							postData.push({"name": "redirectId", "value": pickId});//append pid
 						}
 						$.post("/banner_save",postData,function(data){
 							if(data){
@@ -553,6 +576,9 @@
 						break;
 					case 3:
 						form.find("input[name='starSameId']").val(data.redirectId);
+						break;
+					case 4:
+						form.find("input[name='pickId']").val(data.redirectId);
 						break;
 				}
 				toggle(data.type);
