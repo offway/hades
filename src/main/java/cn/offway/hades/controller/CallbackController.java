@@ -21,13 +21,17 @@ public class CallbackController {
 
     @RequestMapping("/express")
     @ResponseBody
-    public Map<String, Object> expressUpdate(String param, String uid) {
+    public Map<String, Object> expressUpdate(String param, String uid, String oid) {
         logger.info(param);
         JSONObject jsonObject = JSONObject.parseObject(param);
         //快递单当前签收状态，包括0在途中、1已揽收、2疑难、3已签收、4退签、5同城派送中、6退回、7转单等7个状态
         int state = jsonObject.getJSONObject("destResult").getIntValue("state");
         if (state == 5) {
-            jPushService.sendPushUser("派送中", "准备收货：亲，您购买的商品已经在路上啦，注意签收哦！", null, uid);
+            Map<String, String> args = new HashMap<>();
+            args.put("type", "9");
+            args.put("id", oid);
+            args.put("url", "");
+            jPushService.sendPushUser("派送中", "准备收货：亲，您购买的商品已经在路上啦，注意签收哦！", args, uid);
         }
         Map<String, Object> ret = new HashMap<>();
         ret.put("result", true);

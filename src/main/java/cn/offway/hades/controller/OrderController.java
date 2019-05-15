@@ -407,7 +407,11 @@ public class OrderController {
                 orderInfo.setDeliverTime(new Date());
                 orderInfo.setStatus("2");//已发货
                 orderInfoService.save(orderInfo);
-                jPushService.sendPushUser("已发货", "已发货提醒：亲，您购买的商品已经发货啦！", null, String.valueOf(orderInfo.getUserId()));
+                Map<String, String> args = new HashMap<>();
+                args.put("type", "9");
+                args.put("id", orderInfo.getOrderNo());
+                args.put("url", "");
+                jPushService.sendPushUser("已发货", "已发货提醒：亲，您购买的商品已经发货啦！", args, String.valueOf(orderInfo.getUserId()));
                 subscribeExpressInfo(orderExpressInfo, orderInfo);
             } else {
                 PhOrderExpressInfo orderExpressInfo = orderExpressInfoService.findByPid(orderInfo.getOrderNo(), "0");
@@ -422,7 +426,7 @@ public class OrderController {
     private void subscribeExpressInfo(PhOrderExpressInfo orderExpressInfo, PhOrderInfo orderInfo) {
         String key = "uyUDaSuE5009";
         Map<String, String> innerInnerParam = new HashMap<>();
-        innerInnerParam.put("callbackurl", "https://admin.offway.cn/callback/express?uid=" + orderInfo.getUserId());
+        innerInnerParam.put("callbackurl", "https://admin.offway.cn/callback/express?uid=" + orderInfo.getUserId() + "&oid=" + orderInfo.getOrderNo());
         String innerInnerParamStr = JSON.toJSONString(innerInnerParam);
         Map<String, String> innerParam = new HashMap<>();
         innerParam.put("company", orderExpressInfo.getExpressCode());
@@ -478,7 +482,11 @@ public class OrderController {
                 pool.submit(new Runnable() {
                     @Override
                     public void run() {
-                        jPushService.sendPushUser("未付款", "20分钟后提示：亲，您有一笔订单未支付哦！", null, String.valueOf(orderInfo.getUserId()));
+                        Map<String, String> args = new HashMap<>();
+                        args.put("type", "8");
+                        args.put("id", orderInfo.getPreorderNo());
+                        args.put("url", "");
+                        jPushService.sendPushUser("未付款", "20分钟后提示：亲，您有一笔订单未支付哦！", args, String.valueOf(orderInfo.getUserId()));
                     }
                 });
             }
