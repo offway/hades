@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+	<link rel="stylesheet" href="assets/css/ui-selectbox.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -77,9 +78,7 @@
 		</div>
 	</div>
 	
-	<div th:replace="body-under"></div>
-	
-	<div class="modal fade in" id="modal-6">
+	<div class="modal fade in" id="modal-6" style="z-index: 1000">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 800px;">
 				<div class="modal-header">
@@ -152,7 +151,7 @@
 		</div>
 	</div>
 
-	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;z-index: 1000">
 		<div class="modal-dialog">
 			<div class="modal-content">
 
@@ -173,6 +172,7 @@
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
+	<script src="assets/js/selectbox-min.js"></script>
 	<script src="assets/js/async.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
@@ -256,6 +256,7 @@
 				}
 				preview.html(contentStr);
 				jQuery('#preview').modal('show', {backdrop: 'fade'});
+				$(".modal-backdrop").css("z-index", 999);
 				toastr.success("操作已成功！", "温馨提示");
 			} else {
 				toastr.error("操作失败", "温馨提示");
@@ -393,9 +394,13 @@
 			var str = "";
 			for (var i in data) {
 				var brand = data[i];
-				str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+				str += '<option value="VALUE" data-icon="ICON">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]).replace("ICON", brand["image"]);
 			}
-			$("#goodsSelect").html(str);
+			var ele = $("#goodsSelect");
+			ele.html(str);
+			selectbox(ele, {
+				optionHtml: '<dd class="ui-selectbox-option {{className}}" data-option="{{index}}" tabindex="-1"><img src="{{icon}}" alt="icon" style="width:30px;height:30px;vertical-align:middle" /> {{textContent}}</dd>'
+			});
 		});
 	}
 
@@ -546,6 +551,7 @@
 			form.find("input:not(.notMe)").val("");
 			buildAZBar();
 			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			$(".modal-backdrop").css("z-index", 999);
 		});
 
 		function getImgSize(file, cb) {
@@ -678,6 +684,7 @@
 				}
 				form.find(".btn.image").show();
 				jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+				$(".modal-backdrop").css("z-index", 999);
 			});
 		});
 
