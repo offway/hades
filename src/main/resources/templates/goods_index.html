@@ -321,7 +321,7 @@
 		var list = JSON.parse(jsonStr);
 		var selectedId = $(self).val();
 		for (var type in list) {
-			if (selectedId == list[type]["id"]) {
+			if (selectedId == list[type]["name"]) {
 				bindCategorySelector(list[type]["sub"]);
 				break;
 			}
