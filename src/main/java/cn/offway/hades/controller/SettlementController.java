@@ -107,7 +107,7 @@ public class SettlementController {
                 settlementDetail.setPVoucherAmount(orderInfo.getPVoucherAmount());
                 settlementDetail.setOrderNo(orderInfo.getOrderNo());
                 settlementDetail.setPayChannel(orderInfo.getPayChannel());
-                settlementDetail.setPayFee("");
+                settlementDetail.setPayFee(String.format("%.2f", orderInfo.getAmount() * 0.003));//千分之三的手续费
                 settlementDetail.setPrice(orderInfo.getPrice());
                 settlementDetail.setRemark(orderInfo.getRemark());
                 settlementDetail.setWalletAmount(orderInfo.getWalletAmount());
