@@ -78,7 +78,7 @@ public class PushController {
 
     @ResponseBody
     @RequestMapping("/push_save")
-    public boolean save(PhPush push, String pushAll, String userIdStr) {
+    public boolean save(PhPush push, String pushAll, String userIdStr, String pushNow) {
         PhPush pushSaved;
         String[] users = null;
         if ("1".equals(pushAll) && !"".equals(userIdStr.trim())) {
@@ -88,12 +88,23 @@ public class PushController {
             String uuid = UUID.randomUUID().toString();
             push.setRemark(uuid);
             push.setCreateTime(new Date());
+            if ("1".equals(pushNow)) {
+                push.setPushTime(new Date());
+            }
             pushSaved = pushService.save(push);
             Map<String, String> args = new HashMap<>();
             args.put("type", pushSaved.getType());
             args.put("id", String.valueOf(pushSaved.getRedirectId()));
             args.put("url", pushSaved.getUrl());
-            jPushService.createSingleSchedule(uuid, "2", pushSaved.getName(), pushSaved.getPushTime(), pushSaved.getName(), pushSaved.getContent(), args, users);
+            if ("0".equals(pushNow) && push.getPushTime().compareTo(new Date()) > 0) {
+                jPushService.createSingleSchedule(uuid, "2", pushSaved.getName(), pushSaved.getPushTime(), pushSaved.getName(), pushSaved.getContent(), args, users);
+            } else {
+                if (users != null) {
+                    jPushService.sendPushUser(push.getName(), push.getContent(), args, users);
+                } else {
+                    jPushService.sendPush(push.getName(), push.getContent(), args);
+                }
+            }
         } else {
             pushSaved = pushService.findOne(push.getId());
             pushSaved.setPushTime(push.getPushTime());//只能编辑时间
