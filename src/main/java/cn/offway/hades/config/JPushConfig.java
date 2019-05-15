@@ -25,7 +25,7 @@ public class JPushConfig {
 	@Bean
 	public JPushClient  jpushClient(){
 		ClientConfig config = ClientConfig.getInstance();
-//		config.setApnsProduction(jPushProperties.getApnsProduction());
+		config.setApnsProduction(jPushProperties.getApnsProduction());
 		return new JPushClient(jPushProperties.getMasterSecret(), jPushProperties.getAppKey(), null, config);
 	}
 
