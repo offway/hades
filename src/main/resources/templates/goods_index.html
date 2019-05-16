@@ -721,11 +721,12 @@
 			}
 			$.post("/goods_findOne", {"id": activityId[0].value}, function (data) {
 				if (data) {
-					if (data["status"] == "1") {
-						toastr.error("操作失败,已上架商品不允许编辑", "温馨提示");
-					} else {
-						window.location.href = '/goods_edit.html?id=' + activityId[0].value;
-					}
+                    if (data["status"] == "1") {
+                        toastr.error("操作失败,已上架商品不允许编辑", "温馨提示");
+                    } else {
+                        window.open('/goods_edit.html?id=' + activityId[0].value, "_blank");
+                        // window.location.href = '/goods_edit.html?id=' + activityId[0].value;
+                    }
 				}
 			});
 		});
