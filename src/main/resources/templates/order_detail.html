@@ -39,9 +39,19 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<form role="form" class="form-inline">
-						<div class="form-group" style="margin-left: 0;display: block;">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px" onclick="return gotoList()">返回订单列表
+						<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px"
+									onclick="return gotoList()">返回订单列表
 							</button>
+						</div>
+						<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: none;"
+							 id="deliverOrderBtn">
+							<input class="btn btn-secondary btn-single searchBtn" style="height:35px" type="button"
+								   value="订单发货"/>
+						</div>
+						<div class="form-group" style="margin-left: 0;display: none;" id="editDeliveredOrderBtn">
+							<input class="btn btn-secondary btn-single searchBtn" style="height:35px" type="button"
+								   value="修改订单号"/>
 						</div>
 					</form>
 				</div>
@@ -101,6 +111,62 @@
 	</div>
 	
 	<div th:replace="body-under"></div>
+	<div class="modal fade in" id="modal-6">
+		<div class="modal-dialog">
+			<div class="modal-content" style="width: 800px;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">发货</h4>
+				</div>
+
+				<div class="modal-body">
+					<form role="form" id="saveForm">
+						<input type="hidden" name="id"/>
+						<input type="hidden" name="action"/>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label for="expressCode" class="control-label">配送方式</label>
+									<select id="expressCode" class="form-control" name="expressCode">
+										<option value="yuantong">圆通速递</option>
+										<option value="zhongtong">中通快递</option>
+										<option value="shentong">申通快递</option>
+										<option value="yunda">韵达快递</option>
+										<option value="shunfeng">顺丰速运</option>
+										<option value="youzhengguonei">邮政快递包裹</option>
+										<option value="jd">京东物流</option>
+										<option value="huitongkuaidi">百世快递</option>
+										<option value="ems">EMS</option>
+										<option value="tiantian">天天快递</option>
+										<option value="debangwuliu">德邦</option>
+										<option value="baishiwuliu">百世快运</option>
+										<option value="youshuwuliu">优速物流</option>
+										<option value="pjbest">品骏快递</option>
+										<option value="zhaijisong">宅急送</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label for="mailNo" class="control-label">快递单号</label>
+									<input id="mailNo" type="number" class="form-control" name="mailNo" placeholder="快递单号"/>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info save">保存</button>
+					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
 	<!--
 	<div class="modal fade in" id="modal-6">
 		<div class="modal-dialog">
@@ -322,6 +388,29 @@
 		$("#merchantId").html(brandStr);
 	}
 
+	function deliverOrder(id) {
+		var form = $("#saveForm");
+		form.find("input").val("");
+		form.find("[name='id']").val(id);
+		form.find("[name='action']").val("create");
+		jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+	}
+
+	function editDeliveredOrder(id) {
+		$.post("/order_getDeliveredOrder", {"id": id}, function (data) {
+			if (data != '') {
+				var form = $("#saveForm");
+				form.find("select[name='expressCode']").val(data["expressCode"]);
+				form.find("input[name='mailNo']").val(data["mailNo"]);
+				form.find("[name='id']").val(id);
+				form.find("[name='action']").val("update");
+				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
     jQuery(document).ready(function($)
 	{
 		var jsonStr = [[${jsonStr}]];
@@ -370,6 +459,25 @@
 					render: function (data, type, row, meta) {
 						//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
 						var map = ["已下单", "已付款", "已发货", "已收货", "取消"];
+						if (parseInt(data) == 1) {
+							var ele = $("#deliverOrderBtn").find("input");
+							ele.prop("onclick", null);
+							ele.removeAttr("onclick");
+							ele.off("click");
+							ele.on("click", function () {
+								deliverOrder(row["id"]);
+							});
+							ele.parent().show();
+						} else if (parseInt(data) == 2) {
+							var ele = $("#editDeliveredOrderBtn").find("input");
+							ele.prop("onclick", null);
+							ele.removeAttr("onclick");
+							ele.off("click");
+							ele.on("click", function () {
+								editDeliveredOrder(row["id"]);
+							});
+							ele.parent().show();
+						}
 						return map[parseInt(data)];
 					}
 				},
@@ -558,6 +666,60 @@
 					title: "实付金额"
 				}
 			]
+		});
+
+		//保存
+		$(".btn.btn-info.save").click(function () {
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+			var form = $("#saveForm");
+			var expressCode = form.find("input[name='expressCode']").val();
+			var mailNo = form.find("input[name='mailNo']").val();
+
+			if (expressCode == '' || mailNo == '') {
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return;
+			}
+
+			//获取token
+			$.get("/qiniu/token", {}, function (token) {
+				if (token != '') {
+					async.series({
+						one: function (callback) {
+							callback();
+						},
+						two: function (callback) {
+							callback();
+						},
+						three: function (callback) {
+							//提交保存
+							$.post("/order_deliverOrder", $("#saveForm").serialize(), function (data) {
+								if (data) {
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									jQuery('#modal-6').modal('hide');
+									toastr.success("操作已成功！", "温馨提示");
+									window.location.reload();
+								} else {
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									toastr.error("操作失败", "温馨提示");
+								}
+								callback();
+							});
+						}
+					}, function (err, results) {
+						console.log("OK");
+					});
+				} else {
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					toastr.error("错误，请联系管理员", "温馨提示");
+				}
+			});
 		});
 
 		function getImgSize(file, cb) {
