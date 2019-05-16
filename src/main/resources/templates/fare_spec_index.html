@@ -470,7 +470,7 @@
 				district: '---- 所在区 ----'
 			});
 			$(".imageShow").remove();
-			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 		});
 
 		function getImgSize(file, cb) {
@@ -634,7 +634,7 @@
 					district: data["county"]
 				});
 				form.find(".btn.image").show();
-				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+				jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 			});
 		});
 
