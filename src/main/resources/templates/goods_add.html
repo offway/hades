@@ -95,7 +95,7 @@
 										<div class="col-md-12">
 											<div class="form-group">
 												<label for="field-4" class="control-label">封面图片</label>
-												<input type="file" class="form-control" id="field-4" name="imageFile" placeholder="封面图片" />
+												<input type="file" class="form-control" id="field-4" name="imageFile" placeholder="封面图片" onchange="uploadMainFile(this)"/>
 												<input type="hidden" class="form-control" name="image" />
 												<img alt="" src="" name="imageImg" style="display:none;" />
 											</div>
@@ -104,8 +104,9 @@
 									<div class="row">
 										<div class="col-md-2">
 											<div class="form-group">
-												<label class="control-label">banner 轮播图</label>
-												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+												<label class="control-label">banner 轮播图(主图)</label>
+												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图(主图)" onchange="uploadFile(this)"/>
+												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
 												<input type="hidden" class="form-control" name="banner" />
 												<img alt="" src="" name="bannerImg" style="display:none;" />
 											</div>
@@ -114,6 +115,7 @@
 											<div class="form-group">
 												<label class="control-label">banner 轮播图</label>
 												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
 												<input type="hidden" class="form-control" name="banner" />
 												<img alt="" src="" name="bannerImg" style="display:none;" />
 											</div>
@@ -122,6 +124,7 @@
 											<div class="form-group">
 												<label class="control-label">banner 轮播图</label>
 												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
 												<input type="hidden" class="form-control" name="banner" />
 												<img alt="" src="" name="bannerImg" style="display:none;" />
 											</div>
@@ -130,6 +133,7 @@
 											<div class="form-group">
 												<label class="control-label">banner 轮播图</label>
 												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
 												<input type="hidden" class="form-control" name="banner" />
 												<img alt="" src="" name="bannerImg" style="display:none;" />
 											</div>
@@ -138,6 +142,7 @@
 											<div class="form-group">
 												<label class="control-label">banner 轮播图</label>
 												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
 												<input type="hidden" class="form-control" name="banner" />
 												<img alt="" src="" name="bannerImg" style="display:none;" />
 											</div>
@@ -146,6 +151,7 @@
 											<div class="form-group">
 												<label class="control-label">banner 轮播图</label>
 												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
 												<input type="hidden" class="form-control" name="banner" />
 												<img alt="" src="" name="bannerImg" style="display:none;" />
 											</div>
@@ -321,6 +327,41 @@
 					that.parent().find("[name=bannerImg]").attr("width", "100px");
 					that.parent().find("[name=bannerImg]").attr("height", "100px");
 					that.parent().find("[name=bannerImg]").show();
+					that.parent().find("[name=bannerReset]").show();
+				});
+			});
+		} else {
+			confirm("未选择任何文件!");
+		}
+	}
+
+	function resetImg(self) {
+		var that = $(self);
+		var div = that.parent();
+		div.find("input[name='bannerFile']").val("");
+		div.find("input[name='banner']").val("");
+		div.find("img[name='bannerImg']").hide();
+		div.find("img[name='bannerImg']").attr("src", "");
+		that.hide();
+	}
+
+	function uploadMainFile(self) {
+		var that = $(self);
+		if (self.files.length > 0) {
+			var file = self.files[0];
+			getQNToken(function (token) {
+				this.upload("", token, file, function () {
+					//
+				}, function (err) {
+					console.log("error");
+					console.log(err);
+				}, function (res) {
+					var url = qiniuUrl + "/" + res.key;
+					that.parent().find("[name=image]").val(url);
+					that.parent().find("[name=imageImg]").attr("src", url);
+					that.parent().find("[name=imageImg]").attr("width", "100px");
+					that.parent().find("[name=imageImg]").attr("height", "100px");
+					that.parent().find("[name=imageImg]").show();
 				});
 			});
 		} else {
@@ -1001,18 +1042,11 @@
 			var originalPrice = form.find("input[name='originalPrice']").val();
             var material = form.find("input[name='material']").val();
             var remark = form.find("input[name='remark']").val();
-            //文件
-            var image = form.find("input[name='imageFile']").val();
             //已上传的图片地址
             var imageImg = form.find("input[name='image']").val();
 
-            if (type == '' || category == '' || name == '' || code == ''|| brand_id == '' || price == '' || material == '' || (image == '' && imageImg == '')) {
-                toastr.error("请填写完整数据后提交", "温馨提示");
-                return;
-            }
-
-			var isOK = checkImg([[image, "image"]]);
-			if (typeof isOK == 'boolean') {
+			if (type == '' || category == '' || name == '' || code == '' || brand_id == '' || price == '' || material == '' || imageImg == '') {
+				toastr.error("请填写完整数据后提交", "温馨提示");
 				return;
 			}
 
@@ -1122,25 +1156,7 @@
 							});
 						},
 						two: function (callback) {
-							//上传详情图
-							async.eachSeries(Object.keys(isOK), function (item, cb) {
-								var f = isOK[item];
-								this.upload(item, token, f, function () {
-									//
-								}, function (err) {
-									console.log("上传imageFile异常:" + err);
-									cb(err);
-								}, function (res) {
-									//上传成功
-									if (res != '') {
-										var url = qiniuUrl + "/" + res.key;
-										form.find("input[name='" + res.param + "']").val(url);
-									}
-									cb();
-								});
-							}, function () {
-								callback();
-							});
+							callback();
 						},
 						three: function (callback) {
 							//提交保存
