@@ -730,10 +730,12 @@
 				ids.push(e.value);
 			});
 
-			$.post("/goods_del",{ids:ids},function(data){
-				if(data){
+			$.post("/goods_del", {ids: ids}, function (data) {
+				if (data) {
 					toastr.success("操作已成功！", "温馨提示");
 					oTable.fnDraw();
+				} else {
+					toastr.error("您无权操作！", "温馨提示");
 				}
 			});
 		});

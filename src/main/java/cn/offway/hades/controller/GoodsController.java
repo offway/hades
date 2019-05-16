@@ -352,14 +352,19 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_del")
-    public boolean delete(@RequestParam("ids[]") Long[] ids) {
-        for (Long id : ids) {
-            goodsService.del(id);
-            goodsImageService.delByPid(id);
-            goodsPropertyService.delByPid(id);
-            goodsStockService.delByPid(id);
+    public boolean delete(@RequestParam("ids[]") Long[] ids, @AuthenticationPrincipal PhAdmin admin) {
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            return false;
+        } else {
+            for (Long id : ids) {
+                goodsService.del(id);
+                goodsImageService.delByPid(id);
+                goodsPropertyService.delByPid(id);
+                goodsStockService.delByPid(id);
+            }
+            return true;
         }
-        return true;
     }
 
     @ResponseBody
