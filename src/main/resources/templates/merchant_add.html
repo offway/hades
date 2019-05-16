@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+	<link rel="stylesheet" href="assets/css/selectize.bootstrap3.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -44,13 +45,6 @@
 						<div class="panel-heading">
 							<h3 class="panel-title">添加商家</h3>
 							<div class="panel-options">
-								<!--								<a href="#" data-toggle="panel">-->
-								<!--									<span class="collapse-icon">–</span>-->
-								<!--									<span class="expand-icon">+</span>-->
-								<!--								</a>-->
-								<!--								<a href="#" data-toggle="remove">-->
-								<!--									×-->
-								<!--								</a>-->
 							</div>
 						</div>
 						<div class="panel-body">
@@ -155,12 +149,14 @@
 								<div class="row">
 									<div class="col-md-12">
 										<div class="form-group">
-											<label class="control-label">填写品牌ID</label>
+											<label class="control-label">选择品牌</label>
 											<!--
                                             <input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>
+                                            <input type="button" value="添加" id="addBrandID" onclick="addMoreText(this)"/>
                                             -->
-											<input type="button" value="添加" id="addBrandID" onclick="addMoreText(this)"/>
-											<input type="hidden" class="form-control" name="brandIDStr" value="" />
+											<select class="form-control" name="brandID" id="brandID"
+													multiple="multiple"></select>
+											<input type="hidden" class="form-control" name="brandIDStr" value=""/>
 										</div>
 									</div>
 								</div>
@@ -200,6 +196,7 @@
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
 	<script src="assets/js/distpicker.js"></script>
+	<script src="assets/js/selectize.min.js"></script>
 	<script src="assets/js/jquery.base64.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
@@ -229,6 +226,15 @@
 		brandStr += "<input type='button' value='删除' onclick='delNode(\"UUID\")'/>";
 		brandStr += "</div>";
 		return brandStr.replace(/UUID/g, uuid);
+	}
+
+	function bindBrandSelectorNew(data) {
+		var brandStr = "";
+		for (var brand in data) {
+			brand = data[brand];
+			brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+		}
+		return brandStr;
 	}
 
 	function addMoreText(self, v) {
@@ -442,15 +448,7 @@
 				return;
 			}
 			//收集品牌ID列表
-			var goodsIDList = form.find("select[name='brandID']");
-			var gidArr = [];
-			for (var gid in goodsIDList) {
-				if (isNaN(gid)) {
-					continue;
-				}
-				gidArr.push(goodsIDList[gid].value);
-			}
-			form.find("input[name='brandIDStr']").val(gidArr.join(","));
+			form.find("input[name='brandIDStr']").val($("#brandID").val().join(","));
 
 			var isOK = checkImg([[logo, "logo"]]);
 			if (typeof isOK == 'boolean') {
@@ -580,9 +578,27 @@
 					form.find("img[name='" + i + "Img']").show();
 				}
 				//品牌
-				for (var i in brandList) {
-					addMoreText("#addBrandID", brandList[i]["brandId"]);
-				}
+				$.getJSON("/brand_list_all_merchant", {}, function (data) {
+					var arr = [];
+					for (var i in brandList) {
+						arr.push(brandList[i]["brandId"]);
+					}
+					var contentStr = bindBrandSelectorNew(data);
+					var that = $("#brandID");
+					that.html(contentStr);
+					that.selectize({
+						// "plugins": ['drag_drop', 'remove_button'],
+						"items": arr,
+						"persist": false,
+						"create": false,
+						"maxItems": null,
+						"delimiter": ",",
+						"hideSelected": true,
+						"sortField": "text",
+						"searchField": ['text'],
+						"placeholder": "选择品牌"
+					});
+				});
 				//资料
 				var list = [];
 				for (var i in fileList) {
@@ -596,6 +612,23 @@
 				form.find("input[name='address_send_jsonStr']").val(address["remark"]);
 				form.find(".btn.image").show();
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			});
+		} else {
+			$.getJSON("/brand_list_all_merchant", {}, function (data) {
+				var contentStr = bindBrandSelectorNew(data);
+				var that = $("#brandID");
+				that.html(contentStr);
+				that.selectize({
+					// "plugins": ['drag_drop', 'remove_button'],
+					"persist": false,
+					"create": false,
+					"maxItems": null,
+					"delimiter": ",",
+					"hideSelected": true,
+					"sortField": "text",
+					"searchField": ['text'],
+					"placeholder": "选择品牌"
+				});
 			});
 		}
 	});
