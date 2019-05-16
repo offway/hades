@@ -344,8 +344,15 @@
 	function upIt(id, self) {
 		$.post("/goods_up", {"id": id}, function (data) {
 			if (data) {
-				//disabled="disabled"
-				$(self).attr("disabled", "disabled");
+				$(self).val("下架");
+				//remove old handler
+				$(self).prop("onclick", null);
+				$(self).removeAttr("onclick");
+				$(self).off("click");
+				//bind new
+				$(self).on("click", function () {
+					downIt(id, self);
+				});
 				toastr.success("操作已成功！", "温馨提示");
 			} else {
 				toastr.error("操作失败", "温馨提示");
@@ -356,7 +363,15 @@
 	function downIt(id, self) {
 		$.post("/goods_down", {"id": id}, function (data) {
 			if (data) {
-				$(self).attr("disabled", "disabled");
+				$(self).val("上架");
+				//remove old handler
+				$(self).prop("onclick", null);
+				$(self).removeAttr("onclick");
+				$(self).off("click");
+				//bind new
+				$(self).on("click", function () {
+					upIt(id, self);
+				});
 				toastr.success("操作已成功！", "温馨提示");
 			} else {
 				toastr.error("操作失败", "温馨提示");
