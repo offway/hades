@@ -90,6 +90,7 @@ public class OrderController {
             List<Map> basicInfoList = new ArrayList<>();
             Map<String, Object> basicInfo = new HashMap<>();
             basicInfo.put("orderNo", orderInfo.getOrderNo());
+            basicInfo.put("preOrderNo", orderInfo.getPreorderNo());
             basicInfo.put("createTime", orderInfo.getCreateTime());
             basicInfo.put("userId", orderInfo.getUserId());
             basicInfo.put("payChannel", orderInfo.getPayChannel());
