@@ -297,8 +297,20 @@ public class GoodsController {
         String merchantId = request.getParameter("merchantId");
         String type = request.getParameter("type");
         String category = request.getParameter("category");
+        String special = request.getParameter("special");
+        Long[] gids = null;
+        boolean inOrNot = true;
+        if (!"".equals(special)) {
+            List<PhGoodsSpecial> l = specialService.findAll();
+            List<Long> tmpArr = new ArrayList<>();
+            for (PhGoodsSpecial i : l) {
+                tmpArr.add(i.getGoodsId());
+            }
+            gids = tmpArr.toArray(new Long[0]);
+            inOrNot = "1".equals(special);
+        }
         Sort sort = new Sort("id");
-        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, Long.valueOf(merchantId), type, category, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, Long.valueOf(merchantId), type, category, gids, inOrNot, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         ObjectMapper objectMapper = new ObjectMapper();
         List<Map> arr = new ArrayList<>();
         for (PhGoods goods : pages.getContent()) {

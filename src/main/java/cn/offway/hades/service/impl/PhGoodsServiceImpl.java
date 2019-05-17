@@ -60,13 +60,24 @@ public class PhGoodsServiceImpl implements PhGoodsService {
     }
 
     @Override
-    public Page<PhGoods> findAll(String name, Long id, String code, String status, Long merchantId, String type, String category, Pageable pageable) {
+    public Page<PhGoods> findAll(String name, Long id, String code, String status, Long merchantId, String type, String category, Long[] gidArr, boolean inOrNot, Pageable pageable) {
         return phGoodsRepository.findAll(new Specification<PhGoods>() {
             @Override
             public Predicate toPredicate(Root<PhGoods> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
                 params.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
                 params.add(criteriaBuilder.like(root.get("code"), "%" + code + "%"));
+                if (gidArr != null && gidArr.length > 0) {
+                    CriteriaBuilder.In<Long> in = criteriaBuilder.in(root.get("id"));
+                    for (long id : gidArr) {
+                        in.value(id);
+                    }
+                    if (inOrNot) {
+                        params.add(in);
+                    } else {
+                        params.add(in.not());
+                    }
+                }
                 if (!"".equals(status)) {
                     params.add(criteriaBuilder.equal(root.get("status"), status));
                 }

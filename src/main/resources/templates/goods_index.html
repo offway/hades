@@ -44,7 +44,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<form role="form" class="form-inline">
-						<div class="form-group ">
+                        <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
 							<div class="input-group">
 								<label for="merchantId" class="control-label">商户</label>
 							</div>
@@ -71,40 +71,48 @@
                                     <option value="0">已下架</option>
                                 </select>
                             </div>
-							<div class="input-group">
-								<label for="type" class="control-box">主分类</label>
-							</div>
-							<div class="input-group">
-								<select id="type" name="type" class="form-control" style="height:35px" onchange="renderCategory(this)">
-									<option value="" selected="selected">全部</option>
-								</select>
-							</div>
-							<div class="input-group">
-								<label for="category" class="control-box">子分类</label>
-							</div>
-							<div class="input-group">
-								<select id="category" name="category" class="form-control" style="height:35px">
-									<option value="" selected="selected">全部</option>
-								</select>
-							</div>
 						</div>
-						<div class="form-group">
+                        <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+                            <div class="input-group">
+                                <label for="type" class="control-box">主分类</label>
+                            </div>
+                            <div class="input-group">
+                                <select id="type" name="type" class="form-control" style="height:35px" onchange="renderCategory(this)">
+                                    <option value="" selected="selected">全部</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="category" class="control-box">子分类</label>
+                            </div>
+                            <div class="input-group">
+                                <select id="category" name="category" class="form-control" style="height:35px">
+                                    <option value="" selected="selected">全部</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="special" class="control-box">是否特殊商品</label>
+                            </div>
+                            <div class="input-group">
+                                <select id="special" name="special" class="form-control" style="height:35px">
+                                    <option value="" selected="selected">全部</option>
+                                    <option value="1">是</option>
+                                    <option value="0">否</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
 						</div>
-						
 					</form>
 				</div>
 				<div class="panel-body">
 					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
 					</table>
-					
 				</div>
 				<button class="btn btn-info add" >添加</button>
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
 			</div>
-			
-					
 			<footer th:replace="footer"></footer>
 		</div>
 	</div>
