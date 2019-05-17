@@ -107,10 +107,29 @@ public class PushController {
             }
         } else {
             pushSaved = pushService.findOne(push.getId());
-            pushSaved.setPushTime(push.getPushTime());//只能编辑时间
-            pushService.save(pushSaved);
-            String uuid = pushSaved.getRemark();
-            jPushService.updateScheduleTrigger(uuid, "2", pushSaved.getPushTime());
+            //已经推送过的不能编辑
+            if ("0".equals(pushNow) && pushSaved.getPushTime().compareTo(new Date()) > 0) {
+                pushSaved.setPushTime(push.getPushTime());//定时器只能编辑未来时间
+                pushService.save(pushSaved);
+                String uuid = pushSaved.getRemark();
+                jPushService.updateScheduleTrigger(uuid, "2", pushSaved.getPushTime());
+            } else if ("1".equals(pushNow)) {
+                push.setId(pushSaved.getId());
+                push.setPushTime(new Date());
+                push.setCreateTime(pushSaved.getCreateTime());
+                pushService.save(push);
+                Map<String, String> args = new HashMap<>();
+                args.put("type", push.getType());
+                args.put("id", String.valueOf(push.getRedirectId()));
+                args.put("url", push.getUrl());
+                if (users != null) {
+                    jPushService.sendPushUser(push.getName(), push.getContent(), args, users);
+                } else {
+                    jPushService.sendPush(push.getName(), push.getContent(), args);
+                }
+            } else {
+                return false;
+            }
         }
         return true;
     }
