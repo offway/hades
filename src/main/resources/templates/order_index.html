@@ -44,7 +44,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<form role="form" class="form-inline" id="queryForm">
-						<div class="form-group ">
+                        <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
                             <input type="hidden" name="theId"/>
 							<div class="input-group">
 								<label for="merchantId" class="control-label">商户</label>
@@ -69,27 +69,29 @@
 								<label for="userId" class="control-label">用户</label>
 								<input id="userId" type="text" name="userId" class="form-control" style="height:35px" placeholder="用户"/>
 							</div>
-							<div class="input-group">
-								<label for="payMethod" class="control-label">支付渠道</label>
-								<select id="payMethod" name="payMethod" class="form-control" style="height:35px">
-									<option value="" selected="selected">全部</option>
-									<option value="wxpay">微信</option>
-									<option value="alipay">支付宝</option>
-								</select>
-							</div>
-							<div class="input-group">
-								<label for="status" class="control-label">状态</label>
-								<select id="status" name="status[]" class="form-control js-example-basic-multiple" style="height:35px" multiple="multiple">
-									<option value="" selected="selected">全部</option>
-									<option value="0">已下单</option>
-									<option value="1">已付款</option>
-									<option value="2">已发货</option>
-									<option value="3">已收货</option>
-									<option value="4">取消</option>
-								</select>
-							</div>
 						</div>
-						<div class="form-group">
+                        <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+                            <div class="input-group">
+                                <label for="payMethod" class="control-label">支付渠道</label>
+                                <select id="payMethod" name="payMethod" class="form-control" style="height:35px">
+                                    <option value="" selected="selected">全部</option>
+                                    <option value="wxpay">微信</option>
+                                    <option value="alipay">支付宝</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="status" class="control-label">状态</label>
+                                <select id="status" name="status[]" class="form-control js-example-basic-multiple" style="height:35px" multiple="multiple">
+                                    <option value="" selected="selected">全部</option>
+                                    <option value="0">已下单</option>
+                                    <option value="1">已付款</option>
+                                    <option value="2">已发货</option>
+                                    <option value="3">已收货</option>
+                                    <option value="4">取消</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
 						</div>
 					</form>
@@ -528,20 +530,20 @@
 						render: function (data, type, full, meta) {
                             var str = "";
                             //状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
-							var status = parseInt(full["status"]);
-							if (status == 0) {
-								str += '<input type="button" onclick="closeOrder(' + data + ')" value="关闭订单"/>';
-							}
-							if (status == 1) {
-								str += '<input type="button" onclick="deliverOrder(' + data + ')" value="订单发货"/>';
-							}
-							if (status == 1 || status == 3) {
-								str += '<input type="button" onclick="cancelOrder(' + data + ')" value="紧急退款"/>';
-							}
-							if (status == 2) {
-								str += '<input type="button" onclick="trackOrder(' + data + ')" value="订单跟踪"/>';
-								str += '<input type="button" onclick="editDeliveredOrder(' + data + ')" value="修改订单号"/>';
-							}
+                            var status = parseInt(full["status"]);
+                            if (status == 0) {
+                                str += '<input type="button" onclick="closeOrder(' + data + ')" value="关闭订单"/>';
+                            }
+                            if (status == 1) {
+                                str += '<input type="button" onclick="deliverOrder(' + data + ')" value="订单发货"/>';
+                            }
+                            if (status == 1 || status == 2 || status == 3) {
+                                str += '<input type="button" onclick="cancelOrder(' + data + ')" value="紧急退款"/>';
+                            }
+                            if (status == 2) {
+                                str += '<input type="button" onclick="trackOrder(' + data + ')" value="订单跟踪"/>';
+                                str += '<input type="button" onclick="editDeliveredOrder(' + data + ')" value="修改订单号"/>';
+                            }
                             return str;
 						}
 					}
