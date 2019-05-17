@@ -57,6 +57,8 @@ public class GoodsController {
     private PhMerchantFareService merchantFareService;
     @Autowired
     private PhMerchantFareSpecialService merchantFareSpecialService;
+    @Autowired
+    private PhGoodsSpecialService specialService;
 
     @RequestMapping("/goods.html")
     public String index(ModelMap map) {
@@ -297,12 +299,23 @@ public class GoodsController {
         String category = request.getParameter("category");
         Sort sort = new Sort("id");
         Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, Long.valueOf(merchantId), type, category, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Map> arr = new ArrayList<>();
+        for (PhGoods goods : pages.getContent()) {
+            Map m = objectMapper.convertValue(goods, Map.class);
+            if (specialService.isSpecial(goods.getId())) {
+                m.put("isSpecial", 1);
+            } else {
+                m.put("isSpecial", 0);
+            }
+            arr.add(m);
+        }
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
         map.put("iTotalRecords", pages.getTotalElements());//数据总条数
         map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
-        map.put("aData", pages.getContent());//数据集合
+        map.put("aData", arr);//数据集合
         return map;
     }
 
@@ -463,6 +476,35 @@ public class GoodsController {
             goodsService.save(goods);
         }
         return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/goods_special")
+    public boolean goodsSpecial(Long id) {
+        PhGoods goods = goodsService.findOne(id);
+        if (goods != null) {
+            if (!specialService.isSpecial(goods.getId())) {
+                PhGoodsSpecial special = new PhGoodsSpecial();
+                special.setGoodsId(goods.getId());
+                special.setOperator(null);
+                special.setRemark(null);
+                special.setCreateTime(new Date());
+                specialService.save(special);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @ResponseBody
+    @RequestMapping("/goods_unSpecial")
+    public boolean goodsUnSpecial(Long id) {
+        PhGoods goods = goodsService.findOne(id);
+        if (goods != null) {
+            specialService.delete(goods.getId());
+            return true;
+        }
+        return false;
     }
 
     @ResponseBody

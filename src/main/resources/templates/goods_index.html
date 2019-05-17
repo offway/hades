@@ -380,6 +380,44 @@
 		});
 	}
 
+    function specialIt(id, self) {
+        $.post("/goods_special", {"id": id}, function (data) {
+            if (data) {
+                $(self).val("取消特殊");
+                //remove old handler
+                $(self).prop("onclick", null);
+                $(self).removeAttr("onclick");
+                $(self).off("click");
+                //bind new
+                $(self).on("click", function () {
+                    unSpecialIt(id, self);
+                });
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+    function unSpecialIt(id, self) {
+        $.post("/goods_unSpecial", {"id": id}, function (data) {
+            if (data) {
+                $(self).val("设为特殊");
+                //remove old handler
+                $(self).prop("onclick", null);
+                $(self).removeAttr("onclick");
+                $(self).off("click");
+                //bind new
+                $(self).on("click", function () {
+                    specialIt(id, self);
+                });
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
     jQuery(document).ready(function($)
 	{
 		var oTable;
@@ -523,42 +561,50 @@
 							return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
 						}
 					},
-					{
-						targets: 20,
-						data: "remark",
-						title: "备注"
-					},
-					{
-						targets: 21,
-						data: "id",
-						orderable: false,
-						title: "操作",
-						render: function (data, type, full, meta) {
-							return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-						}
-					},
-					{
-						targets: 22,
-						data: "id",
-						orderable: false,
-						title: "操作",
-						render: function (data, type, full, meta) {
-							return '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
-						}
-					},
-					{
-						targets: 23,
-						data: "id",
-						orderable: false,
-						title: "操作",
-						render: function (data, type, full, meta) {
-							if (full["status"] == "0") {
-								return '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
-							} else {
-								return '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
-							}
-						}
-					}
+                    {
+                        targets: 20,
+                        data: "remark",
+                        title: "备注"
+                    },
+                    {
+                        targets: 21,
+                        data: "isSpecial",
+                        title: "特殊商品",
+                        render: function (data, type, row, meta) {
+                            return data == "1" ? "<font color='red'>特殊</font>" : "非特殊";
+                        }
+                    },
+                    {
+                        targets: 22,
+                        data: "id",
+                        orderable: false,
+                        title: "操作",
+                        render: function (data, type, full, meta) {
+                            var str = '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+                            str += '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
+                            return str;
+                        }
+                    },
+                    {
+                        targets: 23,
+                        data: "id",
+                        orderable: false,
+                        title: "操作",
+                        render: function (data, type, full, meta) {
+                            var str = "";
+                            if (full["status"] == "0") {
+                                str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+                            } else {
+                                str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+                            }
+                            if (full["isSpecial"] == "0") {
+                                str += '<input type="button" name="checkIt" onclick="specialIt(' + data + ',this)" value="设为特殊"/>';
+                            } else {
+                                str += '<input type="button" name="checkIt" onclick="unSpecialIt(' + data + ',this)" value="取消特殊"/>';
+                            }
+                            return str;
+                        }
+                    }
 				]
 			});
 			table_global = oTable;
