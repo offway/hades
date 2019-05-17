@@ -149,7 +149,10 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
             public Predicate toPredicate(Root<PhOrderInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
                 /* 状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] */
-                params.add(criteriaBuilder.equal(root.get("status"), "1"));
+                CriteriaBuilder.In<String> in = criteriaBuilder.in(root.get("status"));
+                in.value("1");
+                in.value("3");
+                params.add(in);
                 params.add(criteriaBuilder.equal(root.get("preorderNo"), preOrderNo));
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
