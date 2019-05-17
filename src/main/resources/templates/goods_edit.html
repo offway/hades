@@ -1237,15 +1237,15 @@
                     toastr.error("请填写完整数据后提交", "温馨提示");
                     return;
                 } else {
-                    stockList.push({
-                        "id": m,
-                        "sku": c,
-                        "stock": d,
-                        "price": e,
-                        "remark": f,
-                        "image": n == '' ? skuImage[j].files[0] : n,
-                        "detail": h
-                    });
+					stockList.push({
+						"id": m,
+						"sku": c,
+						"stock": d,
+						"price": e,
+						"remark": f,
+						"image": g == '' ? n : skuImage[j].files[0],
+						"detail": h
+					});
                 }
             }
             //banner 轮播图
