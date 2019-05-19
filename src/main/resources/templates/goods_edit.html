@@ -999,6 +999,11 @@
                     form.find("img[name='" + i + "Img']").attr("length", 200);
                     form.find("img[name='" + i + "Img']").show();
                 }
+                //优惠按钮
+                if (main.hasOwnProperty("originalPrice") && main["originalPrice"] != null) {
+                    form.find("input[name='isDiscount']").val(["0"]);
+                    toggle("0");
+                }
                 //分类
                 $.getJSON("/type_and_category_list", {}, function (data) {
                     $("#type_and_category_list").val(JSON.stringify(data));
@@ -1102,18 +1107,22 @@
 			$(this).blur();
 		});
 
-		$('[name="isDiscount"]').click(function () {
-			var value = $(this).val();  //获取选中的radio的值
-			var theId = $(".originalPrice");
-			switch (parseInt(value)) {
-				case 0:
-					theId.show();
-					break;
-				default:
-					theId.hide();
-					break;
-			}
-		});
+        $('[name="isDiscount"]').click(function () {
+            var value = $(this).val();  //获取选中的radio的值
+            toggle(value);
+        });
+
+        function toggle(value) {
+            var theId = $(".originalPrice");
+            switch (parseInt(value)) {
+                case 0:
+                    theId.show();
+                    break;
+                default:
+                    theId.hide();
+                    break;
+            }
+        }
 
         // switchToCommon();
 
