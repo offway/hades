@@ -1183,6 +1183,7 @@
 			var merchant_id = form.find("input[name='merchant_id']").parent().find("li.es-visible").val();
             var price = form.find("input[name='price']").val();
 			var originalPrice = form.find("input[name='originalPrice']").val();
+            var isDiscount = form.find("input[name='isDiscount']:checked").val();
             var material = form.find("input[name='material']").val();
             var remark = form.find("input[name='remark']").val();
             //文件
@@ -1348,6 +1349,7 @@
 								"category": category,
 								"price": price,
 								"originalPrice": originalPrice,
+                                "isDiscount": isDiscount,
 								"material": material,
 								"remark": remark,
 								"stocks": JSON.stringify(stockList),

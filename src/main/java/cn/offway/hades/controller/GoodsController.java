@@ -521,7 +521,7 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_add")
-    public boolean add(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros) throws UnsupportedEncodingException {
+    public boolean add(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount) throws UnsupportedEncodingException {
         PhBrand brand = brandService.findOne(goods.getBrandId());
         if (brand != null) {
             goods.setBrandName(brand.getName());
@@ -539,6 +539,9 @@ public class GoodsController {
         PhGoodsCategory goodsCategory = goodsCategoryService.findOne(Long.valueOf(goods.getCategory()));
         if (goodsCategory != null) {
             goods.setCategory(goodsCategory.getName());
+        }
+        if ("1".equals(isDiscount)) {
+            goods.setOriginalPrice(null);
         }
         if (goods.getId() == null) {//add
             goods.setCreateTime(new Date());
