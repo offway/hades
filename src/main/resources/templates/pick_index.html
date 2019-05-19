@@ -550,7 +550,7 @@
 			var form = $("#saveForm");
 			form.find("input:not(.notMe)").val("");
 			buildAZBar();
-			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+            jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 			$(".modal-backdrop").css("z-index", 999);
 		});
 
@@ -683,7 +683,7 @@
 					}
 				}
 				form.find(".btn.image").show();
-				jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+                jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 				$(".modal-backdrop").css("z-index", 999);
 			});
 		});
