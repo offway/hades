@@ -172,16 +172,15 @@ public class OrderController {
 
     @ResponseBody
     @RequestMapping("/order_list")
-    public Map<String, Object> getOrderList(HttpServletRequest request, @RequestParam(name = "status[]", required = false, defaultValue = "") String[] status) {
+    public Map<String, Object> getOrderList(HttpServletRequest request, @RequestParam(name = "status[]", required = false, defaultValue = "") String[] status, String theId, String orderNo, String userId, String payMethod, String type, String category) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        String theId = request.getParameter("theId");
         Page<PhOrderInfo> pages = null;
+        List<PhOrderInfo> lists = new ArrayList<>();
         if ("".equals(theId)) {
             String merchantId = request.getParameter("merchantId");
             merchantId = merchantId != null ? merchantId : "0";
-            String orderNo = request.getParameter("orderNo");
             String sTimeStr = request.getParameter("sTime");
             String eTimeStr = request.getParameter("eTime");
             Date sTime = null, eTime = null;
@@ -192,10 +191,13 @@ public class OrderController {
             if (!"".equals(eTimeStr)) {
                 eTime = DateTime.parse(eTimeStr, format).toDate();
             }
-            String userId = request.getParameter("userId");
-            String payMethod = request.getParameter("payMethod");
-            Sort sort = new Sort("id");
-            pages = (Page<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+            if ("".equals(type) && "".equals(category)) {
+                Sort sort = new Sort("id");
+                pages = (Page<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+            } else {
+                List<PhOrderInfo> tmpList = (List<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, null);
+                lists = filter(tmpList, type, category);
+            }
         } else {
             Sort sort = new Sort("id");
             pages = orderInfoService.findAll(theId, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
@@ -203,11 +205,16 @@ public class OrderController {
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
-        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
-        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        if (pages == null) {
+            map.put("iTotalRecords", lists.size());//数据总条数
+            map.put("iTotalDisplayRecords", lists.size());//显示的条数
+        } else {
+            map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+            map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        }
         ObjectMapper objectMapper = new ObjectMapper();
         List<Object> list = new ArrayList<>();
-        for (PhOrderInfo item : pages.getContent()) {
+        for (PhOrderInfo item : pages != null ? pages.getContent() : pageable(lists, iDisplayStart, iDisplayLength)) {
             Map m = objectMapper.convertValue(item, Map.class);
             m.put("sub", orderGoodsService.findAllByPid(item.getOrderNo()));
             m.put("price_alt", item.getPrice() * getRatioOfMerchant(item.getMerchantId()));
@@ -215,6 +222,28 @@ public class OrderController {
         }
         map.put("aData", list);//数据集合
         return map;
+    }
+
+    private List<PhOrderInfo> filter(List<PhOrderInfo> tmpList, String type, String category) {
+        List<PhOrderInfo> lists = new ArrayList<>();
+        for (PhOrderInfo orderInfo : tmpList) {
+            for (PhOrderGoods orderGoods : orderGoodsService.findAllByPid(orderInfo.getOrderNo())) {
+                PhGoods goods = goodsService.findOne(orderGoods.getGoodsId());
+                if (goods != null && (type.equals(goods.getType()) || category.equals(goods.getCategory()))) {
+                    lists.add(orderInfo);
+                    break;
+                }
+            }
+        }
+        return lists;
+    }
+
+    private List<PhOrderInfo> pageable(List<PhOrderInfo> list, int offset, int size) {
+        if (list.size() >= offset + size) {
+            return list.subList(offset, size);
+        } else {
+            return list.subList(offset, list.size());
+        }
     }
 
     private double getRatioOfMerchant(long id) {
@@ -228,15 +257,11 @@ public class OrderController {
 
     @ResponseBody
     @RequestMapping("/order_list_all")
-    public Map<String, Object> getOrderListAll(HttpServletRequest request, @RequestParam(name = "status[]", required = false, defaultValue = "") String[] status) {
-        String theId = request.getParameter("theId");
-        List<PhOrderInfo> list = null;
+    public Map<String, Object> getOrderListAll(HttpServletRequest request, @RequestParam(name = "status[]", required = false, defaultValue = "") String[] status, String theId, String orderNo, String userId, String payMethod, String type, String category) {
+        List<PhOrderInfo> lists = null;
         if ("".equals(theId)) {
             String merchantId = request.getParameter("merchantId");
             merchantId = merchantId != null ? merchantId : "0";
-            String orderNo = request.getParameter("orderNo");
-            String userId = request.getParameter("userId");
-            String payMethod = request.getParameter("payMethod");
             Date sTime = null, eTime = null;
             DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
             String sTimeStr = request.getParameter("sTime");
@@ -247,13 +272,14 @@ public class OrderController {
             if (!"".equals(eTimeStr)) {
                 eTime = DateTime.parse(eTimeStr, format).toDate();
             }
-            list = (List<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, null);
+            List<PhOrderInfo> list = (List<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, null);
+            lists = filter(list, type, category);
         } else {
-            list = orderInfoService.findAll(theId);
+            lists = orderInfoService.findAll(theId);
         }
         Map<String, Object> map = new HashMap<>();
         double amount = 0, price = 0, mailFee = 0, pVoucherAmount = 0, mVoucherAmount = 0;
-        for (PhOrderInfo item : list) {
+        for (PhOrderInfo item : lists) {
             amount += item.getAmount();
 //            price += item.getPrice() * getRatioOfMerchant(item.getMerchantId()) - item.getMVoucherAmount();
             price += item.getPrice();
