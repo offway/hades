@@ -163,6 +163,14 @@
 							</div>
 						</div>
 					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">默认打call数</label>
+								<input type="number" class="form-control" value="0" name="callCount" placeholder="默认打call数"/>
+							</div>
+						</div>
+					</div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -275,6 +283,7 @@
                 contentStr += "明星名称:" + mainObj["starName"] + "<br/>";
                 contentStr += "浏览数:" + mainObj["viewCount"] + "<br/>";
                 contentStr += "点赞数:" + mainObj["praiseCount"] + "<br/>";
+				contentStr += "打call数:" + mainObj["callCount"] + "<br/>";
                 contentStr += "创建时间:" + formatTime(mainObj["createTime"]) + "<br/>";
                 contentStr += "备注:" + mainObj["remark"] + "<br/>";
                 contentStr += "排序:" + mainObj["sort"] + "<br/>";
@@ -394,6 +403,11 @@
             	},
 				{
 					targets: 7,
+					data: "callCount",
+					title: "打call数"
+				},
+				{
+					targets: 8,
 					data: "sort",
 					title: "排序",
 					render: function (data, type, row, meta) {
@@ -401,7 +415,7 @@
 					}
 				},
                 {
-                    targets: 8,
+                    targets: 9,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -409,12 +423,12 @@
                     }
                 },
 				{
-					targets: 9,
+					targets: 10,
 					data: "remark",
 					title: "备注"
 				},
 				{
-					targets: 10,
+					targets: 11,
 					data: "id",
 					orderable: false,
 					title: "操作",
@@ -423,7 +437,7 @@
 					}
 				},
 				{
-					targets: 11,
+					targets: 12,
 					data: "id",
 					orderable: false,
 					title: "操作",
@@ -512,12 +526,13 @@
 			var title = form.find("input[name='title']").val();
 			var praise_count = form.find("input[name='praiseCount']").val();
 			var view_count = form.find("input[name='viewCount']").val();
+			var call_count = form.find("input[name='callCount']").val();
 			//文件
 			var imageVal = form.find("input[name='imageUrlFile']")[0].value;
 			//已上传的图片地址
 			var imageUrl = form.find("input[name='imageUrl']").val();
 
-			if(starName==''|| praise_count==''||view_count==''|| (imageVal=='' && imageUrl=='')){
+			if (starName == '' || praise_count == '' || view_count == '' || call_count == '' || (imageVal == '' && imageUrl == '')) {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
