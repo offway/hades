@@ -617,6 +617,20 @@
 				footer.find(".bg-lg").hide();
 				return;
 			}
+			//检查重复项
+			var arr = form.serializeArray();
+			var list = [];
+			for (var it in arr) {
+				var key = arr[it]["name"] + arr[it]["value"];
+				if (list.indexOf(key) >= 0) {
+					toastr.error("存在重复商品，请检查", "温馨提示");
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					return;
+				} else {
+					list.push(key);
+				}
+			}
 
 			//获取token
 			$.get("/qiniu/token", {}, function (token) {
