@@ -4,6 +4,8 @@ import cn.offway.hades.domain.PhUserInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
+
 /**
  * 用户信息Service接口
  *
@@ -16,5 +18,5 @@ public interface PhUserInfoService {
 
     PhUserInfo findOne(Long id);
 
-    Page<PhUserInfo> list(String phone, String nickname, String sex, Pageable pageable);
+    Page<PhUserInfo> list(String phone, String nickname, String sex, Date sTime, Date eTime, Pageable pageable);
 }

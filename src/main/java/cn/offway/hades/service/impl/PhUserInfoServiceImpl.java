@@ -16,6 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -39,7 +40,7 @@ public class PhUserInfoServiceImpl implements PhUserInfoService {
     }
 
     @Override
-    public Page<PhUserInfo> list(String phone, String nickname, String sex, Pageable pageable) {
+    public Page<PhUserInfo> list(String phone, String nickname, String sex, Date sTime, Date eTime, Pageable pageable) {
         return phUserInfoRepository.findAll(new Specification<PhUserInfo>() {
             @Override
             public Predicate toPredicate(Root<PhUserInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -52,6 +53,9 @@ public class PhUserInfoServiceImpl implements PhUserInfoService {
                 }
                 if (!"".equals(sex)) {
                     params.add(criteriaBuilder.equal(root.get("sex"), sex));
+                }
+                if (sTime != null && eTime != null) {
+                    params.add(criteriaBuilder.between(root.get("birthday"), sTime, eTime));
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
