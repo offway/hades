@@ -6,6 +6,9 @@
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
 	<link rel="stylesheet" href="assets/css/ui-selectbox.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
@@ -171,6 +174,7 @@
 	<input type="hidden" id="IMGHOLDER"/>
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+	<script src="assets/js/jquery-ui.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/selectbox-min.js"></script>
 	<script src="assets/js/async.min.js"></script>
@@ -530,6 +534,9 @@
 					"defaultTime": "00:00:00"
 				}
 		);
+
+		$("#goodsPool").sortable();
+		$("#goodsPool").disableSelection();
 
 		function buildAZBar() {
 			var str = "";
