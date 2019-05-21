@@ -6,6 +6,7 @@ import cn.offway.hades.service.PhPickGoodsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +48,7 @@ public class PhPickGoodsServiceImpl implements PhPickGoodsService {
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
             }
-        });
+        }, new Sort(new Sort.Order(Sort.Direction.ASC, "id")));
     }
 
     @Override
