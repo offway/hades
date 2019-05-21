@@ -28,8 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 @Controller
 @RequestMapping
@@ -226,14 +225,43 @@ public class OrderController {
 
     private List<PhOrderInfo> filter(List<PhOrderInfo> tmpList, String type, String category) {
         List<PhOrderInfo> lists = new ArrayList<>();
+        if (tmpList.isEmpty()) {
+            return lists;
+        }
+        if ("".equals(type) && "".equals(category)) {
+            return tmpList;
+        }
+        List<Future<PhOrderInfo>> futureList = new ArrayList<>();
+        ExecutorService pool = Executors.newFixedThreadPool(tmpList.size());
+        CountDownLatch latch = new CountDownLatch(tmpList.size());
         for (PhOrderInfo orderInfo : tmpList) {
-            for (PhOrderGoods orderGoods : orderGoodsService.findAllByPid(orderInfo.getOrderNo())) {
-                PhGoods goods = goodsService.findOne(orderGoods.getGoodsId());
-                if (goods != null && (type.equals(goods.getType()) || category.equals(goods.getCategory()))) {
-                    lists.add(orderInfo);
-                    break;
+            Future<PhOrderInfo> future = pool.submit(new Callable<PhOrderInfo>() {
+                @Override
+                public PhOrderInfo call() throws Exception {
+                    for (PhOrderGoods orderGoods : orderGoodsService.findAllByPid(orderInfo.getOrderNo())) {
+                        PhGoods goods = goodsService.findOne(orderGoods.getGoodsId());
+                        if (goods != null && ("".equals(category) ? type.equals(goods.getType()) : type.equals(goods.getType()) && category.equals(goods.getCategory()))) {
+                            latch.countDown();
+                            return orderInfo;
+                        }
+                    }
+                    latch.countDown();
+                    return null;
+                }
+            });
+            futureList.add(future);
+        }
+        try {
+            latch.await(5, TimeUnit.SECONDS);
+            for (Future<PhOrderInfo> f : futureList) {
+                if (f.get() != null) {
+                    lists.add(f.get());
                 }
             }
+        } catch (InterruptedException | ExecutionException e) {
+            logger.error("pool error", e);
+        } finally {
+//            pool.awaitTermination(5,TimeUnit.SECONDS);
         }
         return lists;
     }
