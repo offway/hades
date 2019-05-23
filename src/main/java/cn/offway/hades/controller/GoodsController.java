@@ -2,12 +2,17 @@ package cn.offway.hades.controller;
 
 import cn.offway.hades.domain.*;
 import cn.offway.hades.properties.QiniuProperties;
+import cn.offway.hades.runner.InitRunner;
 import cn.offway.hades.service.*;
+import cn.offway.hades.singleton.JobHolder;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qiniu.util.Base64;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 @Controller
 @RequestMapping
@@ -59,6 +65,8 @@ public class GoodsController {
     private PhMerchantFareSpecialService merchantFareSpecialService;
     @Autowired
     private PhGoodsSpecialService specialService;
+    @Autowired
+    private PhConfigService configService;
 
     @RequestMapping("/goods.html")
     public String index(ModelMap map) {
@@ -517,6 +525,84 @@ public class GoodsController {
             return true;
         }
         return false;
+    }
+
+    @ResponseBody
+    @RequestMapping("/goods_discount_add")
+    public boolean discount(@RequestParam("ids[]") String[] ids, String sTimeStr, String eTimeStr, Double discount, @AuthenticationPrincipal PhAdmin admin) {
+        String key = sTimeStr + "_" + eTimeStr + "_" + String.join(",", ids);
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (String id : ids) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("gid", id);
+            map.put("discount", discount);
+            map.put("sTime", sTimeStr);
+            map.put("eTime", eTimeStr);
+            list.add(map);
+        }
+        //save to DB
+        String jsonStr = configService.findContentByName("CRONJOB");
+        JSONObject jsonObject;
+        if (jsonStr == null || "".equals(jsonStr.trim())) {
+            jsonObject = new JSONObject();
+            jsonObject.put(key, list);
+        } else {
+            jsonObject = JSON.parseObject(jsonStr);
+            if (jsonObject.containsKey(key)) {
+                return false;
+            } else {
+                jsonObject.put(key, list);
+            }
+        }
+        PhConfig config = configService.findOne("CRONJOB");
+        config.setContent(jsonObject.toJSONString());
+        configService.save(config);
+        //create the jobs
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        Date sTime = DateTime.parse(sTimeStr, format).toDate();
+        Date eTime = DateTime.parse(eTimeStr, format).toDate();
+        InitRunner.createJob(jsonObject.getJSONArray(key), key, sTime, eTime, new Date());
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/goods_discount_list")
+    public Set<String> discountList() {
+        return JobHolder.getHolder().keySet();
+    }
+
+    @ResponseBody
+    @RequestMapping("/goods_discount_del")
+    public boolean delDiscount(String key) {
+        //clear job
+        String reverseKey = key + "_REVERSE";
+        if (JobHolder.getHolder().containsKey(key)) {
+            ExecutorService service = JobHolder.getHolder().get(key);
+            JobHolder.getHolder().remove(key);
+            List<Runnable> remain = service.shutdownNow();
+            if (remain.isEmpty()) {
+                logger.warn("CRONJOB not clean clearly");
+            }
+        }
+        if (JobHolder.getHolder().containsKey(reverseKey)) {
+            ExecutorService service = JobHolder.getHolder().get(reverseKey);
+            JobHolder.getHolder().remove(reverseKey);
+            List<Runnable> remain = service.shutdownNow();
+            if (remain.isEmpty()) {
+                logger.warn("CRONJOB reverse not clean clearly");
+            }
+        }
+        //clear db
+        PhConfig config = configService.findOne("CRONJOB");
+        String jsonStr = config.getContent();
+        JSONObject jsonObject;
+        if (jsonStr != null && !"".equals(jsonStr.trim())) {
+            jsonObject = JSON.parseObject(jsonStr);
+            jsonObject.remove(key);
+            config.setContent(jsonObject.toJSONString());
+            configService.save(config);
+        }
+        return true;
     }
 
     @ResponseBody

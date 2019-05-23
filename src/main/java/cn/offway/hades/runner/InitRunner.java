@@ -32,9 +32,9 @@ public class InitRunner implements ApplicationRunner {
     @Autowired
     private PhConfigService configService;
     @Autowired
-    private PhGoodsService goodsService;
+    private static PhGoodsService goodsService;
     @Autowired
-    private PhGoodsStockService stockService;
+    private static PhGoodsStockService stockService;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
@@ -43,10 +43,7 @@ public class InitRunner implements ApplicationRunner {
 //        JobDetail job = JobBuilder.newJob().build();
 //        scheduler.addJob(job, true);
 //        scheduler.start();
-        ThreadFactory factory = new ThreadFactoryBuilder()
-                .setDaemon(true)
-                .setNameFormat("Orders-%d")
-                .build();
+
         DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         String jsonStr = configService.findContentByName("CRONJOB");
         if (jsonStr == null || "".equals(jsonStr.trim())) {
@@ -69,73 +66,81 @@ public class InitRunner implements ApplicationRunner {
                     continue;
                 }
                 JSONArray taskList = jsonObject.getJSONArray(key);
-                ScheduledExecutorService pool = Executors.newScheduledThreadPool(taskList.size(), factory);
-                ScheduledExecutorService poolReverse = Executors.newScheduledThreadPool(taskList.size(), factory);
-                for (JSONObject task : taskList.toJavaList(JSONObject.class)) {
-                    //calc the delay in seconds
-                    long delaySeconds = sTime.getTime() - now.getTime();
-                    if (delaySeconds > 0) {
-                        pool.schedule(new Callable<Object>() {
-                            @Override
-                            public Object call() throws Exception {
-                                long gid = task.getLongValue("gid");
-                                double discount = task.getDoubleValue("discount");
-                                PhGoods goods = goodsService.findOne(gid);
-                                if (goods != null) {
-                                    //update goods
-                                    goods.setOriginalPrice(goods.getPrice());
-                                    goods.setPrice(goods.getOriginalPrice() * discount);
-                                    //update stock
-                                    List<Double> priceList = new ArrayList<>();
-                                    for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
-                                        stock.setPrice(stock.getPrice() * discount);
-                                        PhGoodsStock stockSaved = stockService.save(stock);
-                                        priceList.add(stockSaved.getPrice());
-                                    }
-                                    goods.setPriceRange(genPriceRange(priceList));
-                                    goodsService.save(goods);
-                                }
-                                return null;
-                            }
-                        }, delaySeconds, TimeUnit.MILLISECONDS);
-                    }
-                    //reverse job
-                    //calc the delay in seconds
-                    long delaySecondsReverse = eTime.getTime() - now.getTime();
-                    if (delaySecondsReverse > 0) {
-                        poolReverse.schedule(new Callable<Object>() {
-                            @Override
-                            public Object call() throws Exception {
-                                long gid = task.getLongValue("gid");
-                                double discount = task.getDoubleValue("discount");
-                                PhGoods goods = goodsService.findOne(gid);
-                                if (goods != null) {
-                                    //update goods
-                                    goods.setOriginalPrice(null);
-                                    goods.setPrice(goods.getOriginalPrice() / discount);
-                                    //update stock
-                                    List<Double> priceList = new ArrayList<>();
-                                    for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
-                                        stock.setPrice(stock.getPrice() / discount);
-                                        PhGoodsStock stockSaved = stockService.save(stock);
-                                        priceList.add(stockSaved.getPrice());
-                                    }
-                                    goods.setPriceRange(genPriceRange(priceList));
-                                    goodsService.save(goods);
-                                }
-                                return null;
-                            }
-                        }, delaySecondsReverse, TimeUnit.MILLISECONDS);
-                    }
-                }
-                //link to global register
-                JobHolder.getHolder().put(key, pool);
-                JobHolder.getHolder().put(key + "_REVERSE", poolReverse);
+                createJob(taskList, key, sTime, eTime, now);
             }
         }
     }
 
-    private String genPriceRange(List<Double> priceList) {
+    public static void createJob(JSONArray taskList, String key, Date sTime, Date eTime, Date now) {
+        ThreadFactory factory = new ThreadFactoryBuilder()
+                .setDaemon(true)
+                .setNameFormat("Orders-%d")
+                .build();
+        ScheduledExecutorService pool = Executors.newScheduledThreadPool(taskList.size(), factory);
+        ScheduledExecutorService poolReverse = Executors.newScheduledThreadPool(taskList.size(), factory);
+        for (JSONObject task : taskList.toJavaList(JSONObject.class)) {
+            //calc the delay in seconds
+            long delaySeconds = sTime.getTime() - now.getTime();
+            if (delaySeconds > 0) {
+                pool.schedule(new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        long gid = task.getLongValue("gid");
+                        double discount = task.getDoubleValue("discount");
+                        PhGoods goods = goodsService.findOne(gid);
+                        if (goods != null) {
+                            //update goods
+                            goods.setOriginalPrice(goods.getPrice());
+                            goods.setPrice(goods.getOriginalPrice() * discount);
+                            //update stock
+                            List<Double> priceList = new ArrayList<>();
+                            for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
+                                stock.setPrice(stock.getPrice() * discount);
+                                PhGoodsStock stockSaved = stockService.save(stock);
+                                priceList.add(stockSaved.getPrice());
+                            }
+                            goods.setPriceRange(genPriceRange(priceList));
+                            goodsService.save(goods);
+                        }
+                        return null;
+                    }
+                }, delaySeconds, TimeUnit.MILLISECONDS);
+            }
+            //reverse job
+            //calc the delay in seconds
+            long delaySecondsReverse = eTime.getTime() - now.getTime();
+            if (delaySecondsReverse > 0) {
+                poolReverse.schedule(new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        long gid = task.getLongValue("gid");
+                        double discount = task.getDoubleValue("discount");
+                        PhGoods goods = goodsService.findOne(gid);
+                        if (goods != null) {
+                            //update goods
+                            goods.setOriginalPrice(null);
+                            goods.setPrice(goods.getOriginalPrice() / discount);
+                            //update stock
+                            List<Double> priceList = new ArrayList<>();
+                            for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
+                                stock.setPrice(stock.getPrice() / discount);
+                                PhGoodsStock stockSaved = stockService.save(stock);
+                                priceList.add(stockSaved.getPrice());
+                            }
+                            goods.setPriceRange(genPriceRange(priceList));
+                            goodsService.save(goods);
+                        }
+                        return null;
+                    }
+                }, delaySecondsReverse, TimeUnit.MILLISECONDS);
+            }
+        }
+        //link to global register
+        JobHolder.getHolder().put(key, pool);
+        JobHolder.getHolder().put(key + "_REVERSE", poolReverse);
+    }
+
+    private static String genPriceRange(List<Double> priceList) {
         Collections.sort(priceList);
         Double lowest = priceList.get(0);
         Double highest = priceList.get(priceList.size() - 1);
