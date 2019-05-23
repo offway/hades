@@ -49,7 +49,8 @@ public class UserInfoController {
             sTime = DateTime.parse(sTimeStr, format).toDate();
             eTime = DateTime.parse(eTimeStr, format).toDate();
         }
-        Page<PhUserInfo> pages = userInfoService.list(phone, nickname, sex, sTime, eTime, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Sort.Direction.fromString(sortDir), sortName));
+        Sort sort = new Sort(Sort.Direction.DESC, "createTime");
+        Page<PhUserInfo> pages = userInfoService.list(phone, nickname, sex, sTime, eTime, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         // 为操作次数加1，必须这样做
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
