@@ -1,6 +1,10 @@
 package cn.offway.hades.runner;
 
+import cn.offway.hades.domain.PhGoods;
+import cn.offway.hades.domain.PhGoodsStock;
 import cn.offway.hades.service.PhConfigService;
+import cn.offway.hades.service.PhGoodsService;
+import cn.offway.hades.service.PhGoodsStockService;
 import cn.offway.hades.singleton.JobHolder;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -16,7 +20,10 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.*;
 
 @Component
@@ -24,6 +31,10 @@ public class InitRunner implements ApplicationRunner {
 
     @Autowired
     private PhConfigService configService;
+    @Autowired
+    private PhGoodsService goodsService;
+    @Autowired
+    private PhGoodsStockService stockService;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
@@ -67,7 +78,23 @@ public class InitRunner implements ApplicationRunner {
                         pool.schedule(new Callable<Object>() {
                             @Override
                             public Object call() throws Exception {
-                                //TODO
+                                long gid = task.getLongValue("gid");
+                                double discount = task.getDoubleValue("discount");
+                                PhGoods goods = goodsService.findOne(gid);
+                                if (goods != null) {
+                                    //update goods
+                                    goods.setOriginalPrice(goods.getPrice());
+                                    goods.setPrice(goods.getOriginalPrice() * discount);
+                                    //update stock
+                                    List<Double> priceList = new ArrayList<>();
+                                    for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
+                                        stock.setPrice(stock.getPrice() * discount);
+                                        PhGoodsStock stockSaved = stockService.save(stock);
+                                        priceList.add(stockSaved.getPrice());
+                                    }
+                                    goods.setPriceRange(genPriceRange(priceList));
+                                    goodsService.save(goods);
+                                }
                                 return null;
                             }
                         }, delaySeconds, TimeUnit.MILLISECONDS);
@@ -79,7 +106,23 @@ public class InitRunner implements ApplicationRunner {
                         poolReverse.schedule(new Callable<Object>() {
                             @Override
                             public Object call() throws Exception {
-                                //TODO
+                                long gid = task.getLongValue("gid");
+                                double discount = task.getDoubleValue("discount");
+                                PhGoods goods = goodsService.findOne(gid);
+                                if (goods != null) {
+                                    //update goods
+                                    goods.setOriginalPrice(null);
+                                    goods.setPrice(goods.getOriginalPrice() / discount);
+                                    //update stock
+                                    List<Double> priceList = new ArrayList<>();
+                                    for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
+                                        stock.setPrice(stock.getPrice() / discount);
+                                        PhGoodsStock stockSaved = stockService.save(stock);
+                                        priceList.add(stockSaved.getPrice());
+                                    }
+                                    goods.setPriceRange(genPriceRange(priceList));
+                                    goodsService.save(goods);
+                                }
                                 return null;
                             }
                         }, delaySecondsReverse, TimeUnit.MILLISECONDS);
@@ -89,6 +132,17 @@ public class InitRunner implements ApplicationRunner {
                 JobHolder.getHolder().put(key, pool);
                 JobHolder.getHolder().put(key + "_REVERSE", poolReverse);
             }
+        }
+    }
+
+    private String genPriceRange(List<Double> priceList) {
+        Collections.sort(priceList);
+        Double lowest = priceList.get(0);
+        Double highest = priceList.get(priceList.size() - 1);
+        if (Double.compare(lowest, highest) == 0) {
+            return String.format("%.2f", lowest);
+        } else {
+            return String.format("%.2f-%.2f", lowest, highest);
         }
     }
 }
