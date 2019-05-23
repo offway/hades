@@ -97,12 +97,12 @@ public class PushController {
             args.put("id", String.valueOf(pushSaved.getRedirectId()));
             args.put("url", pushSaved.getUrl());
             if ("0".equals(pushNow) && push.getPushTime().compareTo(new Date()) > 0) {
-                jPushService.createSingleSchedule(uuid, "2", pushSaved.getName(), pushSaved.getPushTime(), pushSaved.getName(), pushSaved.getContent(), args, users);
+                return jPushService.createSingleSchedule(uuid, "2", pushSaved.getName(), pushSaved.getPushTime(), pushSaved.getName(), pushSaved.getContent(), args, users);
             } else {
                 if (users != null) {
-                    jPushService.sendPushUser(push.getName(), push.getContent(), args, users);
+                    return jPushService.sendPushUser(push.getName(), push.getContent(), args, users);
                 } else {
-                    jPushService.sendPush(push.getName(), push.getContent(), args);
+                    return jPushService.sendPush(push.getName(), push.getContent(), args);
                 }
             }
         } else {
@@ -112,7 +112,7 @@ public class PushController {
                 pushSaved.setPushTime(push.getPushTime());//定时器只能编辑未来时间
                 pushService.save(pushSaved);
                 String uuid = pushSaved.getRemark();
-                jPushService.updateScheduleTrigger(uuid, "2", pushSaved.getPushTime());
+                return jPushService.updateScheduleTrigger(uuid, "2", pushSaved.getPushTime());
             } else if ("1".equals(pushNow)) {
                 push.setId(pushSaved.getId());
                 push.setPushTime(new Date());
@@ -123,15 +123,14 @@ public class PushController {
                 args.put("id", String.valueOf(push.getRedirectId()));
                 args.put("url", push.getUrl());
                 if (users != null) {
-                    jPushService.sendPushUser(push.getName(), push.getContent(), args, users);
+                    return jPushService.sendPushUser(push.getName(), push.getContent(), args, users);
                 } else {
-                    jPushService.sendPush(push.getName(), push.getContent(), args);
+                    return jPushService.sendPush(push.getName(), push.getContent(), args);
                 }
             } else {
                 return false;
             }
         }
-        return true;
     }
 
     @ResponseBody
