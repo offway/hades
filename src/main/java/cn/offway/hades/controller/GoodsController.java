@@ -529,15 +529,15 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_discount_add")
-    public boolean discount(@RequestParam("ids[]") String[] ids, String sTimeStr, String eTimeStr, Double discount, @AuthenticationPrincipal PhAdmin admin) {
-        String key = sTimeStr + "_" + eTimeStr + "_" + String.join(",", ids);
+    public boolean discount(@RequestParam("ids") String ids, String beginTime, String endTime, Double discount, @AuthenticationPrincipal PhAdmin admin) {
+        String key = beginTime + "_" + endTime + "_" + ids;
         List<Map<String, Object>> list = new ArrayList<>();
-        for (String id : ids) {
+        for (String id : ids.split(",")) {
             HashMap<String, Object> map = new HashMap<>();
             map.put("gid", id);
             map.put("discount", discount);
-            map.put("sTime", sTimeStr);
-            map.put("eTime", eTimeStr);
+            map.put("sTime", beginTime);
+            map.put("eTime", endTime);
             list.add(map);
         }
         //save to DB
@@ -559,8 +559,8 @@ public class GoodsController {
         configService.save(config);
         //create the jobs
         DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        Date sTime = DateTime.parse(sTimeStr, format).toDate();
-        Date eTime = DateTime.parse(eTimeStr, format).toDate();
+        Date sTime = DateTime.parse(beginTime, format).toDate();
+        Date eTime = DateTime.parse(endTime, format).toDate();
         InitRunner.createJob(jsonObject.getJSONArray(key), key, sTime, eTime, new Date());
         return true;
     }

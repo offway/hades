@@ -5,7 +5,7 @@
 	<title>商品管理</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -112,6 +112,8 @@
 				<button class="btn btn-info add" >添加</button>
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
+				<button class="btn btn-info discount">限时打折</button>
+				<button class="btn btn-info discountList">打折清单</button>
 			</div>
 			<footer th:replace="footer"></footer>
 		</div>
@@ -124,11 +126,34 @@
 			<div class="modal-content" style="width: 800px;">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加商品</h4>
+					<h4 class="modal-title">限时打折</h4>
 				</div>
 				
 				<div class="modal-body">
 					<form role="form" id="saveForm">
+						<input type="hidden" name="ids"/>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label">开始时间</label>
+									<input type="text" class="form-control" name="beginTime" id="beginTime" placeholder="开始时间" />
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label">截止时间</label>
+									<input type="text" class="form-control" name="endTime" id="endTime" placeholder="截止时间" />
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">折扣比例，如 0.8,0.5</label>
+									<input type="number" class="form-control" name="discount" placeholder="折扣比例，如 0.8,0.5"/>
+								</div>
+							</div>
+						</div>
 					</form>
 				</div>
 				
@@ -161,9 +186,7 @@
 	</div>
 	<input type="hidden" id="type_and_category_list"/>
 	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
 	<script th:inline="javascript">
@@ -278,6 +301,30 @@
 					contentStr += appendToPreview("sku:", c["sku"]);
 					contentStr += appendToPreview("stock:", c["stock"]);
 					contentStr += appendToPreview("备注:", c["remark"]);
+				}
+				preview.html(contentStr);
+				jQuery('#preview').modal('show', {backdrop: 'fade'});
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	function checkJob() {
+		$.post("/goods_discount_list", {}, function (data) {
+			if (data) {
+				var preview = $("#preview_body");
+				var contentStr = "";
+				for (var key in data) {
+					key = data[key];
+					var list = key.split("_");
+					if (list.length == 3) {
+						contentStr += appendToPreview("开始时间:", list[0]);
+						contentStr += appendToPreview("结束时间:", list[1]);
+						contentStr += appendToPreview("商品ID:", list[2]);
+						contentStr += "<hr/>";
+					}
 				}
 				preview.html(contentStr);
 				jQuery('#preview').modal('show', {backdrop: 'fade'});
@@ -677,39 +724,66 @@
 			 
 		 var qiniuUrl = [[${qiniuUrl}]];
 
+		jQuery.datetimepicker.setLocale('zh');
+		jQuery('#beginTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#endTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+
+		$(".btn.btn-info.discountList").click(function () {
+			checkJob();
+		});
+
+		$(".btn.btn-info.discount").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
+			var form = $("#saveForm");
+			form.find("input:not(.notMe)").val("");
+			form.find("input[name='ids']").val(ids.join(","));
+			form.find("img").attr("src", "");
+			form.find("img").hide();
+			form.find("input[type='file']").show();
+			$(".imageShow").remove();
+			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+		});
+
 		//保存
 		$(".btn.btn-info.save").click(function(){
 			var footer = $(this).parent(".modal-footer");
 			footer.find("button").hide();
 			footer.find(".bg-lg").show();
 			var form = $("#saveForm");
-			// var code = form.find("input[name='code']").val();
-			var name = form.find("input[name='name']").val();
-			var type = form.find("input[name='type']").val();
-			var info = form.find("input[name='info']").val();
-			var remark = form.find("input[name='remark']").val();
-			//文件
-			var logo = form.find("input[name='logoFile']").val();
-			var logoBig = form.find("input[name='logoBigFile']").val();
-			var banner = form.find("input[name='bannerFile']").val();
-			var background = form.find("input[name='backgroundFile']").val();
-			//已上传的图片地址
-			var logoImg = form.find("input[name='logo']").val();
-			var logoBigImg = form.find("input[name='logoBig']").val();
-			var bannerImg = form.find("input[name='banner']").val();
-			var backgroundImg = form.find("input[name='background']").val();
+			var beginTime = form.find("input[name='beginTime']").val();
+			var endTime = form.find("input[name='endTime']").val();
+			var discount = form.find("input[name='discount']").val();
 
-			if(name==''|| type==''||info==''||
-					(logo=='' && logoImg=='')
-			){
+			if (beginTime == '' || endTime == '' || discount == '') {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
-				return ;
-			}
-
-			var isOK = checkImg([[logo, "logo"], [logoBig, "logoBig"], [banner, "banner"], [background, "background"]]);
-			if (typeof isOK == 'boolean') {
 				return;
 			}
 
@@ -718,36 +792,14 @@
 				if(token !=''){
 					async.series({
 						one: function(callback) {
-							if(typeof isOK == 'object'){
-								callback();
-							}else {
-								callback("ERROR");
-							}
+							callback();
 						},
 						two: function(callback){
-							//上传详情图
-							async.eachSeries(Object.keys(isOK), function (item, cb) {
-								var f = isOK[item];
-								upload(item, token, f, function () {
-									//
-								}, function (err) {
-									console.log("上传imageFile异常:" + err);
-									cb(err);
-								}, function (res) {
-									//上传成功
-									if (res != '') {
-										var url = qiniuUrl + "/" + res.key;
-										form.find("input[name='" + res.param + "']").val(url);
-									}
-									cb();
-								});
-							}, function () {
-								callback();
-							});
+							callback();
 						},
 						three: function(callback){
 							//提交保存
-							$.post("/brand_save",$("#saveForm").serialize(),function(data){
+							$.post("/goods_discount_add",$("#saveForm").serialize(),function(data){
 								if(data){
 									footer.find("button").show();
 									footer.find(".bg-lg").hide();
@@ -768,7 +820,7 @@
 				}else{
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
-					toastr.error("上传文件错误，请联系管理员", "温馨提示");
+					toastr.error("错误，请联系管理员", "温馨提示");
 				}
 			});
 		});
