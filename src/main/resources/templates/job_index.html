@@ -280,6 +280,17 @@
 		});
 	}
 
+	function cancelJob(key) {
+		$.post("/goods_discount_del", {"key": key}, function (data) {
+			if (data) {
+				table_global.fnDraw();
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
 	function goToDetail(id) {
 		window.location.href = '/order_detail.html?id=' + id;
 	}
@@ -498,6 +509,15 @@
 					title: "操作",
 					render: function (data, type, full, meta) {
 						return '<input type="button" name="checkIt" onclick="checkIt(\'KEY\')" value="查看详情"/>'.replace("KEY", data);
+					}
+				},
+				{
+					targets: 6,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						return '<input type="button" name="checkIt" onclick="cancelJob(\'KEY\')" value="删除任务"/>'.replace("KEY", data);
 					}
 				}
 			]
