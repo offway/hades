@@ -593,6 +593,33 @@ public class GoodsController {
     }
 
     @ResponseBody
+    @RequestMapping("/goods_discount_list_detail")
+    public Map<String, Object> discountListDetail(int sEcho) {
+        List<Object> list = new ArrayList<>();
+        //2019-05-24 03:00:01_2019-06-01 03:00:01_59,62
+        for (String key : JobHolder.getHolder().keySet()) {
+            Map<String, Object> m = new HashMap<>();
+            String[] args = key.split("_");
+            m.put("sTime", args[0]);
+            m.put("eTime", args[1]);
+            List<PhGoods> goodsList = new ArrayList<>();
+            String[] gids = args[2].split(",");
+            for (String id : gids) {
+                goodsList.add(goodsService.findOne(Long.valueOf(id)));
+            }
+            m.put("subList", goodsList);
+            list.add(m);
+        }
+        int initEcho = sEcho + 1;
+        Map<String, Object> map = new HashMap<>();
+        map.put("sEcho", initEcho);
+        map.put("iTotalRecords", list.size());//数据总条数
+        map.put("iTotalDisplayRecords", list.size());//显示的条数
+        map.put("aData", list);//数据集合
+        return map;
+    }
+
+    @ResponseBody
     @RequestMapping("/goods_discount_del")
     public boolean delDiscount(String key) {
         //clear job
