@@ -102,6 +102,7 @@ public class InitRunner implements ApplicationRunner {
                             goods.setPriceRange(genPriceRange(priceList));
                             goodsService.save(goods);
                         }
+                        checkAndPurgeTask(key);
                         return null;
                     }
                 }, delaySeconds, TimeUnit.MILLISECONDS);
@@ -130,6 +131,7 @@ public class InitRunner implements ApplicationRunner {
                             goods.setPriceRange(genPriceRange(priceList));
                             goodsService.save(goods);
                         }
+                        checkAndPurgeTask(key + "_REVERSE");
                         return null;
                     }
                 }, delaySecondsReverse, TimeUnit.MILLISECONDS);
@@ -149,5 +151,29 @@ public class InitRunner implements ApplicationRunner {
         } else {
             return String.format("%.2f-%.2f", lowest, highest);
         }
+    }
+
+    private static void checkAndPurgeTask(String key) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(2000);
+                    if (JobHolder.getHolder().containsKey(key)) {
+                        ExecutorService service = JobHolder.getHolder().get(key);
+                        if (service.isShutdown() || service.isTerminated()) {
+                            JobHolder.getHolder().remove(key);
+                        } else {
+                            service.shutdown();
+                            if (service.awaitTermination(5, TimeUnit.SECONDS)) {
+                                JobHolder.getHolder().remove(key);
+                            }
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }
