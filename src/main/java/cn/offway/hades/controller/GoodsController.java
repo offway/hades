@@ -561,7 +561,7 @@ public class GoodsController {
         DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         Date sTime = DateTime.parse(beginTime, format).toDate();
         Date eTime = DateTime.parse(endTime, format).toDate();
-        InitRunner.createJob(jsonObject.getJSONArray(key), key, sTime, eTime, new Date());
+        InitRunner.createJob(jsonObject.getJSONArray(key), key, sTime, eTime, new Date(), goodsService, goodsStockService);
         return true;
     }
 

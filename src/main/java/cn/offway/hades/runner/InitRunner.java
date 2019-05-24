@@ -32,9 +32,9 @@ public class InitRunner implements ApplicationRunner {
     @Autowired
     private PhConfigService configService;
     @Autowired
-    private static PhGoodsService goodsService;
+    private PhGoodsService goodsService;
     @Autowired
-    private static PhGoodsStockService stockService;
+    private PhGoodsStockService stockService;
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
@@ -66,12 +66,12 @@ public class InitRunner implements ApplicationRunner {
                     continue;
                 }
                 JSONArray taskList = jsonObject.getJSONArray(key);
-                createJob(taskList, key, sTime, eTime, now);
+                createJob(taskList, key, sTime, eTime, now, goodsService, stockService);
             }
         }
     }
 
-    public static void createJob(JSONArray taskList, String key, Date sTime, Date eTime, Date now) {
+    public static void createJob(JSONArray taskList, String key, Date sTime, Date eTime, Date now, PhGoodsService goodsService, PhGoodsStockService stockService) {
         ThreadFactory factory = new ThreadFactoryBuilder()
                 .setDaemon(true)
                 .setNameFormat("Orders-%d")
@@ -118,8 +118,8 @@ public class InitRunner implements ApplicationRunner {
                         PhGoods goods = goodsService.findOne(gid);
                         if (goods != null) {
                             //update goods
-                            goods.setOriginalPrice(null);
                             goods.setPrice(goods.getOriginalPrice() / discount);
+                            goods.setOriginalPrice(null);
                             //update stock
                             List<Double> priceList = new ArrayList<>();
                             for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
