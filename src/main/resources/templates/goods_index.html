@@ -132,7 +132,16 @@
 				<div class="modal-body">
 					<form role="form" id="saveForm">
 						<input type="hidden" name="ids"/>
-						<div class="row">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label">是否及时改价</label>
+                                    <label><input name="now" class="notMe" type="radio" value="0"/>否 </label>
+                                    <label><input name="now" class="notMe" type="radio" checked="checked" value="1"/>是</label>
+                                </div>
+                            </div>
+                        </div>
+						<div class="row" id="period" style="display: none;">
 							<div class="col-md-6">
 								<div class="form-group">
 									<label class="control-label">开始时间</label>
@@ -747,6 +756,26 @@
 				}
 		);
 
+        $('[name="now"]').click(function () {
+            var value = $(this).val();  //获取选中的radio的值
+            var beginTime = $("#beginTime");
+            var endTime = $("#endTime");
+            var div = $("#period");
+            switch (parseInt(value)) {
+                case 0:
+                    var pushTimeStr = new Date().Format('yyyy-MM-dd hh:mm:ss');
+                    beginTime.val(pushTimeStr);
+                    endTime.val(pushTimeStr);
+                    div.show();
+                    break;
+                default:
+                    div.hide();
+                    beginTime.val("");
+                    endTime.val("");
+                    break;
+            }
+        });
+
 		$(".btn.btn-info.discountList").click(function () {
 			checkJob();
 		});
@@ -781,12 +810,12 @@
 			var endTime = form.find("input[name='endTime']").val();
 			var discount = form.find("input[name='discount']").val();
 
-			if (beginTime == '' || endTime == '' || discount == '') {
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-				return;
-			}
+            if ((beginTime != '' && endTime == '') || (beginTime == '' && endTime != '') || discount == '') {
+                toastr.error("请填写完整数据后提交", "温馨提示");
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                return;
+            }
 
 			//获取token
 			$.get("/qiniu/token",{},function(token){

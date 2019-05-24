@@ -573,14 +573,14 @@ public class GoodsController {
             //create instant jobs
             String key = "NOW" + "_" + "NONE" + "_" + ids + "_" + discount;
             Date now = new Date();
-            List<Object> list = new ArrayList<>();
+            List<Map<String, Object>> list = new ArrayList<>();
             for (String id : ids.split(",")) {
                 HashMap<String, Object> map = new HashMap<>();
                 map.put("gid", id);
                 map.put("discount", discount);
                 list.add(map);
             }
-            taskList = new JSONArray(list);
+            taskList = JSONArray.parseArray(JSON.toJSONString(list));
             InitRunner.createJob(taskList, key, now, now, now, goodsService, goodsStockService);
         }
         return true;
