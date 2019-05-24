@@ -198,7 +198,7 @@ public class ProductController {
 					if(!phProductInfo.getStatus().equals(status)&& phProductInfo.getBeginTime().after(new Date())){
 						if(status.equals("1")){
 							Map<String, String> extras = new HashMap<>();
-							extras.put("type", "2");//0-H5,1-精选文章,2-活动
+							extras.put("type", "6");//0-H5,1-精选文章,2-活动
 							extras.put("id", null);
 							extras.put("url", null);
 							jPushService.createSingleSchedule(String.valueOf(phProductInfo.getId()), "0", "抽奖通知", phProductInfo.getBeginTime(), "抽奖通知", "【免费送】"+phProductInfo.getShareDesc(), extras);
