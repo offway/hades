@@ -530,38 +530,59 @@ public class GoodsController {
     @ResponseBody
     @RequestMapping("/goods_discount_add")
     public boolean discount(@RequestParam("ids") String ids, String beginTime, String endTime, Double discount, @AuthenticationPrincipal PhAdmin admin) {
-        String key = beginTime + "_" + endTime + "_" + ids;
-        List<Map<String, Object>> list = new ArrayList<>();
-        for (String id : ids.split(",")) {
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("gid", id);
-            map.put("discount", discount);
-            map.put("sTime", beginTime);
-            map.put("eTime", endTime);
-            list.add(map);
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            return false;
         }
-        //save to DB
-        String jsonStr = configService.findContentByName("CRONJOB");
-        JSONObject jsonObject;
-        if (jsonStr == null || "".equals(jsonStr.trim())) {
-            jsonObject = new JSONObject();
-            jsonObject.put(key, list);
-        } else {
-            jsonObject = JSON.parseObject(jsonStr);
-            if (jsonObject.containsKey(key)) {
-                return false;
-            } else {
-                jsonObject.put(key, list);
+        JSONArray taskList;
+        if (!"".equals(beginTime.trim()) && !"".equals(endTime.trim())) {
+            String key = beginTime + "_" + endTime + "_" + ids;
+            List<Map<String, Object>> list = new ArrayList<>();
+            for (String id : ids.split(",")) {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("gid", id);
+                map.put("discount", discount);
+                map.put("sTime", beginTime);
+                map.put("eTime", endTime);
+                list.add(map);
             }
+            //save to DB
+            String jsonStr = configService.findContentByName("CRONJOB");
+            JSONObject jsonObject;
+            if (jsonStr == null || "".equals(jsonStr.trim())) {
+                jsonObject = new JSONObject();
+                jsonObject.put(key, list);
+            } else {
+                jsonObject = JSON.parseObject(jsonStr);
+                if (jsonObject.containsKey(key)) {
+                    return false;
+                } else {
+                    jsonObject.put(key, list);
+                }
+            }
+            PhConfig config = configService.findOne("CRONJOB");
+            config.setContent(jsonObject.toJSONString());
+            configService.save(config);
+            //create the jobs
+            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            Date sTime = DateTime.parse(beginTime, format).toDate();
+            Date eTime = DateTime.parse(endTime, format).toDate();
+            taskList = jsonObject.getJSONArray(key);
+            InitRunner.createJob(taskList, key, sTime, eTime, new Date(), goodsService, goodsStockService);
+        } else {
+            //create instant jobs
+            String key = "NOW" + "_" + "NONE" + "_" + ids;
+            Date now = new Date();
+            List<Object> list = new ArrayList<>();
+            for (String id : ids.split(",")) {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("gid", id);
+                map.put("discount", discount);
+                list.add(map);
+            }
+            taskList = new JSONArray(list);
+            InitRunner.createJob(taskList, key, now, now, now, goodsService, goodsStockService);
         }
-        PhConfig config = configService.findOne("CRONJOB");
-        config.setContent(jsonObject.toJSONString());
-        configService.save(config);
-        //create the jobs
-        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        Date sTime = DateTime.parse(beginTime, format).toDate();
-        Date eTime = DateTime.parse(endTime, format).toDate();
-        InitRunner.createJob(jsonObject.getJSONArray(key), key, sTime, eTime, new Date(), goodsService, goodsStockService);
         return true;
     }
 

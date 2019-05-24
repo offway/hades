@@ -114,7 +114,7 @@ public class InitRunner implements ApplicationRunner {
             //reverse job
             //calc the delay in seconds
             long delaySecondsReverse = eTime.getTime() - now.getTime();
-            if (delaySecondsReverse >= 0) {
+            if (delaySecondsReverse > 0) {
                 poolReverse.schedule(new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
