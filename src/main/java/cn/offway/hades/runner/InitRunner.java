@@ -81,7 +81,7 @@ public class InitRunner implements ApplicationRunner {
         for (JSONObject task : taskList.toJavaList(JSONObject.class)) {
             //calc the delay in seconds
             long delaySeconds = sTime.getTime() - now.getTime();
-            if (delaySeconds > 0) {
+            if (delaySeconds >= 0) {
                 pool.schedule(new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
@@ -90,8 +90,12 @@ public class InitRunner implements ApplicationRunner {
                         PhGoods goods = goodsService.findOne(gid);
                         if (goods != null) {
                             //update goods
-                            goods.setOriginalPrice(goods.getPrice());
-                            goods.setPrice(goods.getOriginalPrice() * discount);
+                            if (discount >= 1) {
+                                goods.setOriginalPrice(null);
+                            } else {
+                                goods.setOriginalPrice(goods.getPrice());
+                            }
+                            goods.setPrice(goods.getPrice() * discount);
                             //update stock
                             List<Double> priceList = new ArrayList<>();
                             for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
@@ -110,7 +114,7 @@ public class InitRunner implements ApplicationRunner {
             //reverse job
             //calc the delay in seconds
             long delaySecondsReverse = eTime.getTime() - now.getTime();
-            if (delaySecondsReverse > 0) {
+            if (delaySecondsReverse >= 0) {
                 poolReverse.schedule(new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
@@ -119,7 +123,7 @@ public class InitRunner implements ApplicationRunner {
                         PhGoods goods = goodsService.findOne(gid);
                         if (goods != null) {
                             //update goods
-                            goods.setPrice(goods.getOriginalPrice() / discount);
+                            goods.setPrice(goods.getPrice() / discount);
                             goods.setOriginalPrice(null);
                             //update stock
                             List<Double> priceList = new ArrayList<>();
