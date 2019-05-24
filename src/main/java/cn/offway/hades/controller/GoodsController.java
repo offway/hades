@@ -529,14 +529,14 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_discount_add")
-    public boolean discount(@RequestParam("ids") String ids, String beginTime, String endTime, Double discount, @AuthenticationPrincipal PhAdmin admin) {
+    public boolean discount(@RequestParam("ids") String ids, String beginTime, String endTime, String discount, @AuthenticationPrincipal PhAdmin admin) {
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
         if (roles.contains(BigInteger.valueOf(8L))) {
             return false;
         }
         JSONArray taskList;
         if (!"".equals(beginTime.trim()) && !"".equals(endTime.trim())) {
-            String key = beginTime + "_" + endTime + "_" + ids;
+            String key = beginTime + "_" + endTime + "_" + ids + "_" + discount;
             List<Map<String, Object>> list = new ArrayList<>();
             for (String id : ids.split(",")) {
                 HashMap<String, Object> map = new HashMap<>();
@@ -571,7 +571,7 @@ public class GoodsController {
             InitRunner.createJob(taskList, key, sTime, eTime, new Date(), goodsService, goodsStockService);
         } else {
             //create instant jobs
-            String key = "NOW" + "_" + "NONE" + "_" + ids;
+            String key = "NOW" + "_" + "NONE" + "_" + ids + "_" + discount;
             Date now = new Date();
             List<Object> list = new ArrayList<>();
             for (String id : ids.split(",")) {
@@ -592,16 +592,26 @@ public class GoodsController {
         return JobHolder.getHolder().keySet();
     }
 
+    @RequestMapping("/job_index.html")
+    public String discountIndex() {
+        return "job_index";
+    }
+
     @ResponseBody
     @RequestMapping("/goods_discount_list_detail")
     public Map<String, Object> discountListDetail(int sEcho) {
         List<Object> list = new ArrayList<>();
         //2019-05-24 03:00:01_2019-06-01 03:00:01_59,62
         for (String key : JobHolder.getHolder().keySet()) {
+            if (key.endsWith("REVERSE")) {
+                continue;
+            }
             Map<String, Object> m = new HashMap<>();
             String[] args = key.split("_");
+            m.put("id", key);
             m.put("sTime", args[0]);
             m.put("eTime", args[1]);
+            m.put("discount", args[3]);
             List<PhGoods> goodsList = new ArrayList<>();
             String[] gids = args[2].split(",");
             for (String id : gids) {

@@ -319,10 +319,11 @@
 				for (var key in data) {
 					key = data[key];
 					var list = key.split("_");
-					if (list.length == 3) {
+					if (list.length == 4) {
 						contentStr += appendToPreview("开始时间:", list[0]);
 						contentStr += appendToPreview("结束时间:", list[1]);
 						contentStr += appendToPreview("商品ID:", list[2]);
+						contentStr += appendToPreview("折扣:", list[3]);
 						contentStr += "<hr/>";
 					}
 				}
