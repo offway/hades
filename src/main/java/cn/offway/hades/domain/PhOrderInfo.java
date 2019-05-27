@@ -50,15 +50,21 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
     private Long mVoucherId;
 
     /** 店铺优惠券金额 **/
-    @ExcelProperty(value = "店铺优惠券金额",index = 7)
     private Double mVoucherAmount;
+
+    /** 店铺优惠券金额别名字段 **/
+    @ExcelProperty(value = "店铺优惠券金额",index = 7)
+    private Double voucherAmountMerchant;
 
     /** 平台优惠券ID **/
     private Long pVoucherId;
 
     /** 平台优惠券金额 **/
-    @ExcelProperty(value = "平台优惠券金额",index = 6)
     private Double pVoucherAmount;
+
+    /** 平台优惠券金额别名字段 **/
+    @ExcelProperty(value = "平台优惠券金额",index = 6)
+    private Double voucherAmountPlatform;
 
     /** 钱包金额 **/
     private Double walletAmount;
@@ -192,6 +198,7 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
 
     public void setMVoucherAmount(Double mVoucherAmount) {
         this.mVoucherAmount = mVoucherAmount;
+        this.voucherAmountMerchant = mVoucherAmount;
     }
 
     @Column(name = "p_voucher_id", length = 11)
@@ -210,6 +217,7 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
 
     public void setPVoucherAmount(Double pVoucherAmount) {
         this.pVoucherAmount = pVoucherAmount;
+        this.voucherAmountPlatform = pVoucherAmount;
     }
 
     @Column(name = "wallet_amount", precision = 15, scale = 2)
@@ -350,7 +358,23 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
 	public void setReceiptTime(Date receiptTime) {
 		this.receiptTime = receiptTime;
 	}
-    
-    
+
+    @Transient
+    public Double getVoucherAmountMerchant() {
+        return voucherAmountMerchant;
+    }
+
+    public void setVoucherAmountMerchant(Double voucherAmountMerchant) {
+        this.voucherAmountMerchant = voucherAmountMerchant;
+    }
+
+    @Transient
+    public Double getVoucherAmountPlatform() {
+        return voucherAmountPlatform;
+    }
+
+    public void setVoucherAmountPlatform(Double voucherAmountPlatform) {
+        this.voucherAmountPlatform = voucherAmountPlatform;
+    }
 
 }
