@@ -1,5 +1,8 @@
 package cn.offway.hades.domain;
 
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.metadata.BaseRowModel;
+
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -14,48 +17,58 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "ph_order_info")
-public class PhOrderInfo implements Serializable {
+public class PhOrderInfo extends BaseRowModel implements Serializable {
 
     /** ID **/
+    @ExcelProperty(value = "序号",index = 0)
     private Long id;
 
     /** 预生成订单号 **/
+    @ExcelProperty(value = "预生成订单号",index = 10)
     private String preorderNo;
 
     /** 订单号 **/
+    @ExcelProperty(value = "订单号",index = 1)
     private String orderNo;
 
     /** 用户ID **/
+    @ExcelProperty(value = "用户ID",index = 2)
     private Long userId;
 
     /** 地址ID **/
     private Long addrId;
 
     /** 订单总价 **/
+    @ExcelProperty(value = "订单总价",index = 3)
     private Double price;
 
     /** 实付金额 **/
+    @ExcelProperty(value = "实付金额",index = 4)
     private Double amount;
 
     /** 店铺优惠券ID **/
     private Long mVoucherId;
 
     /** 店铺优惠券金额 **/
+    @ExcelProperty(value = "店铺优惠券金额",index = 7)
     private Double mVoucherAmount;
 
     /** 平台优惠券ID **/
     private Long pVoucherId;
 
     /** 平台优惠券金额 **/
+    @ExcelProperty(value = "平台优惠券金额",index = 6)
     private Double pVoucherAmount;
 
     /** 钱包金额 **/
     private Double walletAmount;
 
     /** 运费 **/
+    @ExcelProperty(value = "运费",index = 5)
     private Double mailFee;
 
     /** 状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
+    @ExcelProperty(value = "状态",index = 8)
     private String status;
 
     /** 发货人 **/
@@ -68,9 +81,11 @@ public class PhOrderInfo implements Serializable {
     private String message;
 
     /** 创建时间 **/
+    @ExcelProperty(value = "创建时间",index = 11)
     private Date createTime;
 
     /** 备注 **/
+    @ExcelProperty(value = "备注",index = 12)
     private String remark;
 
     /** 版本号 **/
@@ -86,6 +101,7 @@ public class PhOrderInfo implements Serializable {
     private String merchantName;
     
     /** 支付渠道[wxpay,alipay] **/
+    @ExcelProperty(value = "支付渠道",index = 9)
     private String payChannel;
     
     /** 是否隐藏[0-否，1-是] **/

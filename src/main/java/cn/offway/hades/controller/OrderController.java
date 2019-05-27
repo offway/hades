@@ -4,6 +4,9 @@ import cn.offway.hades.domain.*;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
 import cn.offway.hades.utils.HttpClientUtil;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.metadata.Sheet;
+import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -25,8 +28,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -321,6 +329,44 @@ public class OrderController {
         map.put("pVoucherAmount", pVoucherAmount);
         map.put("mVoucherAmount", mVoucherAmount);
         return map;
+    }
+
+    @RequestMapping("/order_list_export.html")
+    public void exportOrderAsExcel(HttpServletResponse response, @RequestParam(name = "status[]", required = false, defaultValue = "") String[] status, String theId, String orderNo, String userId, String payMethod, String type, String category, String merchantId, @RequestParam(name = "sTime") String sTimeStr, @RequestParam(name = "eTime") String eTimeStr) {
+        List<PhOrderInfo> lists = null;
+        if ("".equals(theId)) {
+            merchantId = merchantId != null ? merchantId : "0";
+            Date sTime = null, eTime = null;
+            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            if (!"".equals(sTimeStr)) {
+                sTime = DateTime.parse(sTimeStr, format).toDate();
+            }
+            if (!"".equals(eTimeStr)) {
+                eTime = DateTime.parse(eTimeStr, format).toDate();
+            }
+            List<PhOrderInfo> list = (List<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, null);
+            lists = filter(list, type, category);
+        } else {
+            lists = orderInfoService.findAll(theId);
+        }
+        try {
+            ServletOutputStream outputStream = response.getOutputStream();
+            response.setContentType("multipart/form-data");
+            response.setCharacterEncoding("utf-8");
+            String fileName = new String(("OrderList_" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
+                    .getBytes(), StandardCharsets.UTF_8);
+            response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+            ExcelWriter writer = new ExcelWriter(outputStream, ExcelTypeEnum.XLSX);
+            Sheet sheet = new Sheet(1, 0, PhOrderInfo.class);
+            sheet.setSheetName("Order");
+            sheet.setAutoWidth(true);
+            writer.write(lists, sheet);
+            writer.finish();
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e) {
+            logger.error("IO ERROR", e);
+        }
     }
 
     @ResponseBody
