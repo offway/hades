@@ -5,11 +5,14 @@ import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
 import cn.offway.hades.utils.HttpClientUtil;
 import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.event.WriteHandler;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -356,7 +359,42 @@ public class OrderController {
             String fileName = new String(("OrderList_" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
                     .getBytes(), StandardCharsets.UTF_8);
             response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
-            ExcelWriter writer = new ExcelWriter(outputStream, ExcelTypeEnum.XLSX);
+            ExcelWriter writer = new ExcelWriter(null, outputStream, ExcelTypeEnum.XLSX, true, new WriteHandler() {
+                @Override
+                public void sheet(int i, org.apache.poi.ss.usermodel.Sheet sheet) {
+                    //nothing
+                }
+
+                @Override
+                public void row(int i, Row row) {
+                    //nothing
+                }
+
+                @Override
+                public void cell(int i, Cell cell) {
+                    if (cell.getRowIndex() == 0) {
+                        return;
+                    }
+                    switch (i) {
+                        case 8:
+                            /* 状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
+                            String[] arr = new String[]{"已下单", "已付款", "已发货", "已收货", "取消"};
+                            cell.setCellValue(arr[Integer.valueOf(cell.getStringCellValue())]);
+                            break;
+                        case 9:
+                            if ("alipay".equals(cell.getStringCellValue())) {
+                                cell.setCellValue("支付宝");
+                            } else if ("wxpay".equals(cell.getStringCellValue())) {
+                                cell.setCellValue("微信支付");
+                            } else {
+                                cell.setCellValue("未知");
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
             Sheet sheet = new Sheet(1, 0, PhOrderInfo.class);
             sheet.setSheetName("Order");
             sheet.setAutoWidth(true);
