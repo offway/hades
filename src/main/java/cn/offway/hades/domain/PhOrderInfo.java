@@ -31,6 +31,10 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
     @ExcelProperty(value = "订单号",index = 1)
     private String orderNo;
 
+    /** 订单号副本 for 商品明细 **/
+    @ExcelProperty(value = "商品明细",index = 13)
+    private String orderNoCopy;
+
     /** 用户ID **/
     @ExcelProperty(value = "用户ID",index = 2)
     private Long userId;
@@ -144,6 +148,7 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
+        this.orderNoCopy = orderNo;
     }
 
     @Column(name = "user_id", length = 11)
@@ -375,6 +380,15 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
 
     public void setVoucherAmountPlatform(Double voucherAmountPlatform) {
         this.voucherAmountPlatform = voucherAmountPlatform;
+    }
+
+    @Transient
+    public String getOrderNoCopy() {
+        return orderNoCopy;
+    }
+
+    public void setOrderNoCopy(String orderNoCopy) {
+        this.orderNoCopy = orderNoCopy;
     }
 
 }

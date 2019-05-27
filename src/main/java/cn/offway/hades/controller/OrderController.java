@@ -390,6 +390,20 @@ public class OrderController {
                                 cell.setCellValue("未知");
                             }
                             break;
+                        case 13:
+                            String orderNo = cell.getStringCellValue();
+                            StringBuilder sb = new StringBuilder();
+                            for (PhOrderGoods goods : orderGoodsService.findAllByPid(orderNo)) {
+                                sb.append("ID:");
+                                sb.append(goods.getGoodsId());
+                                sb.append("名称:");
+                                sb.append(goods.getGoodsName());
+                                sb.append("数量:");
+                                sb.append(goods.getGoodsCount());
+                                sb.append("\r\n");
+                            }
+                            cell.setCellValue(sb.toString());
+                            break;
                         default:
                             break;
                     }
