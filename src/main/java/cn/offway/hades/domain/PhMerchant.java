@@ -35,6 +35,9 @@ public class PhMerchant implements Serializable {
     /** 发货地址ID[见ph_address.id] **/
     private Long addrId;
 
+    /** 退货地址ID[见ph_address.id] **/
+    private Long returnAddrId;
+
     /** 联系电话 **/
     private String phone;
 
@@ -65,6 +68,12 @@ public class PhMerchant implements Serializable {
     private String isFreeFare;
 
     private Double ratio;
+
+    /** 商户所在城市[买手店必填] **/
+    private String city;
+
+    /** 商户类型[0-品牌商,1-买手店] **/
+    private String type;
 
     @Column(name = "ratio", precision = 15, scale = 2)
     public Double getRatio() {
@@ -223,7 +232,32 @@ public class PhMerchant implements Serializable {
 	public void setIsFreeFare(String isFreeFare) {
 		this.isFreeFare = isFreeFare;
 	}
-    
-    
+
+    @Column(name = "return_addr_id", length = 11)
+    public Long getReturnAddrId() {
+        return returnAddrId;
+    }
+
+    public void setReturnAddrId(Long returnAddrId) {
+        this.returnAddrId = returnAddrId;
+    }
+
+    @Column(name = "city", length = 100)
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    @Column(name = "type", length = 2)
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
 }
