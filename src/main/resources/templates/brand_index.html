@@ -673,12 +673,12 @@
 			var bannerBig = form.find("input[name='bannerBig']").val();
 			var background = form.find("input[name='background']").val();
 
-			if (name == '' || type == '' || info == '' || (logo == '' && logoFile == '')) {
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-				return;
-			}
+            if (name == '' || type == '' || info == '' || (logo == '' && logoFile == '') || (logoBig == '' && logoBigFile == '')) {
+                toastr.error("请填写完整数据后提交", "温馨提示");
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                return;
+            }
 
 			var isOK = checkImg([[logoFile, "logo"], [logoBigFile, "logoBig"], [logoIndexFile, "logoIndex"], [bannerFile, "banner"], [bannerBigFile, "bannerBig"], [backgroundFile, "background"]]);
 			if (typeof isOK == 'boolean') {
