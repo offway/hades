@@ -102,12 +102,14 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
     private Long version;
 
     /** 商户ID **/
+    @ExcelProperty(value = "商户ID",index = 14)
     private Long merchantId;
 
     /** 商户LOGO **/
     private String merchantLogo;
 
     /** 商户名称 **/
+    @ExcelProperty(value = "商户名称",index = 15)
     private String merchantName;
     
     /** 支付渠道[wxpay,alipay] **/
