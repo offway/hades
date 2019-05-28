@@ -686,6 +686,13 @@
 			return false;
 		});
 
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='activityId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
+        });
+
 		$(".btn.btn-info.add").click(function () {
 			window.location.href = '/goods_add.html';
 		});

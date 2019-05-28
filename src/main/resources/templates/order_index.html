@@ -680,6 +680,13 @@
 			return false;
 		});
 
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='activityId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
+        });
+
 		$(".exportBtn").click(function () {
 			var searchArray = $(".form-inline").serialize();
 			window.open('/order_list_export.html?' + searchArray, "_blank");
