@@ -412,12 +412,8 @@
 				},
 				{
 					targets: 18,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-					}
+					data: "channel",
+					title: "渠道"
 				},
 				{
 					targets: 19,
@@ -425,7 +421,7 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="操作"/>';
+						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
 					}
 				}
 			]

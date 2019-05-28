@@ -68,6 +68,8 @@ public class PhUserInfo implements Serializable {
     /** 备注 **/
     private String remark;
 
+    /** 渠道[HY-欢阅传媒] **/
+    private String channel;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -235,4 +237,12 @@ public class PhUserInfo implements Serializable {
         this.remark = remark;
     }
 
+    @Column(name = "channel", length = 20)
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
 }
