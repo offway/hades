@@ -80,8 +80,21 @@
 											<input type="text" class="form-control" name="company" placeholder="公司名称"/>
 										</div>
 									</div>
-									<div class="col-md-8">
+									<div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">商户类型</label>
+                                            <select class="form-control" name="type" placeholder="商户类型" onchange="showCityOrNot(this)">
+                                                <option value="0">品牌商</option>
+                                                <option value="1">买手店</option>
+                                            </select>
+                                        </div>
 									</div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">商户所在城市</label>
+                                            <input type="text" class="form-control" name="city" id="city" disabled="disabled" placeholder="商户所在城市"/>
+                                        </div>
+                                    </div>
 								</div>
 								<div class="row">
 									<div class="col-md-6">
@@ -375,6 +388,17 @@
 		preview.show();
 	}
 
+    function showCityOrNot(self) {
+        var that = $(self);
+        var ele = $("#city");
+        if (that.val() == "0") {
+            ele.val("");
+            ele.attr("disabled", "disabled")
+        } else {
+            ele.removeAttr("disabled");
+        }
+    }
+
     jQuery(document).ready(function($)
 	{
         var qiniuUrl = [[${qiniuUrl}]];
@@ -604,6 +628,9 @@
 					form.find("img[name='" + i + "Img']").attr("width", 200);
 					form.find("img[name='" + i + "Img']").attr("length", 200);
 					form.find("img[name='" + i + "Img']").show();
+					//try select
+					form.find("select[name='" + i + "']").val(main[i]);
+					showCityOrNot("select[name='" + i + "']");
 				}
 				//品牌
 				$.getJSON("/brand_list_all_merchant", {}, function (data) {
