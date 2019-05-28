@@ -731,8 +731,10 @@
 				})
 			}
 		}
-			 
-		 var qiniuUrl = [[${qiniuUrl}]];
+
+        var qiniuUrl = [[${qiniuUrl}]];
+
+        var isAdmin = [[${isAdmin}]];
 
 		jQuery.datetimepicker.setLocale('zh');
 		jQuery('#beginTime').datetimepicker(
@@ -776,29 +778,33 @@
             }
         });
 
-		$(".btn.btn-info.discountList").click(function () {
-			checkJob();
-		});
-
-		$(".btn.btn-info.discount").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
-			var ids = [];
-			activityId.each(function (i, e) {
-				ids.push(e.value);
-			});
-			var form = $("#saveForm");
-			form.find("input:not(.notMe)").val("");
-			form.find("input[name='ids']").val(ids.join(","));
-			form.find("img").attr("src", "");
-			form.find("img").hide();
-			form.find("input[type='file']").show();
-			$(".imageShow").remove();
-			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-		});
+        if (isAdmin == "1") {
+            $(".btn.btn-info.discountList").click(function () {
+                checkJob();
+            });
+            $(".btn.btn-info.discount").click(function () {
+                var activityId = $("input[name='activityId']:checked");
+                if (activityId.length < 1) {
+                    toastr.error("请至少选择一条数据操作", "温馨提示");
+                    return;
+                }
+                var ids = [];
+                activityId.each(function (i, e) {
+                    ids.push(e.value);
+                });
+                var form = $("#saveForm");
+                form.find("input:not(.notMe)").val("");
+                form.find("input[name='ids']").val(ids.join(","));
+                form.find("img").attr("src", "");
+                form.find("img").hide();
+                form.find("input[type='file']").show();
+                $(".imageShow").remove();
+                jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+            });
+        } else {
+            $(".btn.btn-info.discountList").hide();
+            $(".btn.btn-info.discount").hide();
+        }
 
 		//保存
 		$(".btn.btn-info.save").click(function(){
