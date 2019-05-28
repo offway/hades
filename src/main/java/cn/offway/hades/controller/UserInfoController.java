@@ -1,6 +1,9 @@
 package cn.offway.hades.controller;
 
+import cn.offway.hades.domain.PhAdmin;
 import cn.offway.hades.domain.PhUserInfo;
+import cn.offway.hades.service.PhAdminService;
+import cn.offway.hades.service.PhRoleadminService;
 import cn.offway.hades.service.PhUserInfoService;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -11,13 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -26,6 +32,10 @@ public class UserInfoController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private PhUserInfoService userInfoService;
+    @Autowired
+    private PhRoleadminService roleadminService;
+    @Autowired
+    private PhAdminService adminService;
 
     @RequestMapping("/userInfo.html")
     public String list() {
@@ -59,5 +69,26 @@ public class UserInfoController {
         map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
         map.put("aData", pages.getContent());//数据集合
         return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/channel_list")
+    public Map<String, String> get(@AuthenticationPrincipal PhAdmin admin) {
+        Map<String, String> ret = new HashMap<>();
+        long channelRoleId = 9;
+        long adminRoleId = 1;
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(adminRoleId))) {
+            ret.put("", "全部");
+            for (Object uid : roleadminService.findAdminIdByRoleId(channelRoleId)) {
+                PhAdmin obj = adminService.findOne(((BigInteger) uid).longValue());
+                if (obj != null && !ret.containsKey(obj.getUsername())) {
+                    ret.put(obj.getUsername(), obj.getNickname());
+                }
+            }
+        } else if (roles.contains(BigInteger.valueOf(channelRoleId))) {
+            ret.put(admin.getUsername(), admin.getNickname());
+        }
+        return ret;
     }
 }

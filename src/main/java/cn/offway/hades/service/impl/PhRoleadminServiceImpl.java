@@ -1,15 +1,14 @@
 package cn.offway.hades.service.impl;
 
-import java.util.List;
-
+import cn.offway.hades.domain.PhRoleadmin;
+import cn.offway.hades.repository.PhRoleadminRepository;
+import cn.offway.hades.service.PhRoleadminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cn.offway.hades.domain.PhRoleadmin;
-import cn.offway.hades.repository.PhRoleadminRepository;
-import cn.offway.hades.service.PhRoleadminService;
+import java.util.List;
 
 
 /**
@@ -21,23 +20,28 @@ import cn.offway.hades.service.PhRoleadminService;
 @Service
 public class PhRoleadminServiceImpl implements PhRoleadminService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private PhRoleadminRepository phRoleadminRepository;
-	
-	@Override
-	public PhRoleadmin save(PhRoleadmin phRoleadmin){
-		return phRoleadminRepository.save(phRoleadmin);
-	}
-	
-	@Override
-	public PhRoleadmin findOne(Long id){
-		return phRoleadminRepository.findOne(id);
-	}
-	
-	@Override
-	public List<Long> findRoleIdByAdminId(Long adminId){
-		return phRoleadminRepository.findRoleIdByAdminId(adminId);
-	}
+    @Autowired
+    private PhRoleadminRepository phRoleadminRepository;
+
+    @Override
+    public PhRoleadmin save(PhRoleadmin phRoleadmin) {
+        return phRoleadminRepository.save(phRoleadmin);
+    }
+
+    @Override
+    public PhRoleadmin findOne(Long id) {
+        return phRoleadminRepository.findOne(id);
+    }
+
+    @Override
+    public List<Long> findAdminIdByRoleId(Long roleId) {
+        return phRoleadminRepository.findAdminIdByRoleId(roleId);
+    }
+
+    @Override
+    public List<Long> findRoleIdByAdminId(Long adminId) {
+        return phRoleadminRepository.findRoleIdByAdminId(adminId);
+    }
 }
