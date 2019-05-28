@@ -81,11 +81,23 @@
 										</div>
 									</div>
 									<div class="col-md-8">
-										<div class="form-group" onclick="checkIt()">
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group" onclick="checkIt(false)">
 											<label class="control-label">发货地址</label>
 											<input type="text" class="form-control" readonly="readonly" name="address_send" placeholder="发货地址"/>
 											<input type="hidden" class="form-control" name="address_send_jsonStr"/>
 											<input type="hidden" class="form-control" name="addrId"/>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group" onclick="checkIt(true)">
+											<label class="control-label">退货地址</label>
+											<input type="text" class="form-control" readonly="readonly" name="address_back" placeholder="退货地址"/>
+											<input type="hidden" class="form-control" name="address_back_jsonStr"/>
+											<input type="hidden" class="form-control" name="returnAddrId"/>
 										</div>
 									</div>
 								</div>
@@ -260,7 +272,7 @@
 		that.remove();
 	}
 
-	function closeAndSaveIt() {
+	function closeAndSaveIt(isBack) {
 		var that = $("#preview");
 		var p = that.find("select[name='p']").val();
 		var c = that.find("select[name='c']").val();
@@ -276,8 +288,13 @@
 			"county": d,
 			"content": location
 		};
-		$("input[name='address_send_jsonStr']").val(JSON.stringify(json));
-		$("input[name='address_send']").val(p + "" + c + "" + d + "" + location);
+		if (isBack) {
+			$("input[name='address_back_jsonStr']").val(JSON.stringify(json));
+			$("input[name='address_back']").val(p + "" + c + "" + d + "" + location);
+		} else {
+			$("input[name='address_send_jsonStr']").val(JSON.stringify(json));
+			$("input[name='address_send']").val(p + "" + c + "" + d + "" + location);
+		}
 		that.hide();
 	}
 
@@ -314,7 +331,7 @@
 		return returnList;
 	}
 
-	function checkIt() {
+	function checkIt(isBack) {
 		var preview = $("#preview");
 		var contentStr = "\t<div id=\"distpicker\">\n" +
 				"\t\t<select name='p' ></select>\n" +
@@ -324,11 +341,20 @@
 				"\t\t<input type=\"number\" name='telephone' placeholder='手机号'/>\n" +
 				"\t\t<input type=\"text\" name='real_name' placeholder='发件人'/>\n" +
 				"\t</div>";
-		contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt()" />';
+		if (isBack) {
+			contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt(true)" />';
+		} else {
+			contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt(false)" />';
+		}
 		contentStr += '<input type="button" value="关闭" onclick="closeIt()" />';
 		preview.html(contentStr);
 		//render
-		var jsonStr = $("input[name='address_send_jsonStr']").val();
+		var jsonStr = "";
+		if (isBack) {
+			jsonStr = $("input[name='address_back_jsonStr']").val();
+		} else {
+			jsonStr = $("input[name='address_send_jsonStr']").val();
+		}
 		if (jsonStr != '') {
 			var jsonObj = JSON.parse(jsonStr);
 			preview.find("input[name='location']").val(jsonObj["content"]);
@@ -430,6 +456,7 @@
 			var company = form.find("input[name='company']").val();
 			var admin_name = form.find("input[name='admin_name']").val();
 			var address_send_jsonStr = form.find("input[name='address_send_jsonStr']").val();
+			var address_back_jsonStr = form.find("input[name='address_back_jsonStr']").val();
 			var phone = form.find("input[name='phone']").val();
 			var contractNo = form.find("input[name='contractNo']").val();
 			var signDate = form.find("input[name='signDate']").val();
@@ -439,7 +466,7 @@
 			//已上传的图片地址
 			var logoImg = form.find("input[name='logo']").val();
 
-			if (name == '' || address == '' || phone == '' || contractNo == '' || signDate == '' || expireDate == '' || company == '' || admin_name == '' || address_send_jsonStr == '' ||
+			if (name == '' || address == '' || phone == '' || contractNo == '' || signDate == '' || expireDate == '' || company == '' || admin_name == '' || address_send_jsonStr == '' || address_back_jsonStr == '' ||
 					(logo == '' && logoImg == '')
 			) {
 				toastr.error("请填写完整数据后提交", "温馨提示");
@@ -554,6 +581,7 @@
 				var brandList = data["brandList"];
 				var fileList = data["fileList"];
 				var address = data["address"];
+				var addressBack = data["addressBack"];
 				var admin = data["admin"];
 				//后台用户
 				form.find("input[name='admin_name']").val(admin["username"]);
@@ -607,9 +635,12 @@
 				}
 				var newValue = JSON.stringify(list);
 				form.find("input[name='imagesJSONStr']").val(window.btoa(newValue));
-				//地址
+				//发货地址
 				form.find("input[name='address_send']").val(address["province"] + "" + address["city"] + "" + address["county"] + "" + address["content"]);
 				form.find("input[name='address_send_jsonStr']").val(address["remark"]);
+				//退货地址
+				form.find("input[name='address_back']").val(addressBack["province"] + "" + addressBack["city"] + "" + addressBack["county"] + "" + addressBack["content"]);
+				form.find("input[name='address_back_jsonStr']").val(addressBack["remark"]);
 				form.find(".btn.image").show();
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 			});

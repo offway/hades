@@ -131,7 +131,7 @@ public class MerchantController {
 
     @ResponseBody
     @PostMapping("/merchant_save")
-    public boolean save(PhMerchant merchant, String brandIDStr, String imagesJSONStr, String address_send_jsonStr, String admin_name) {
+    public boolean save(PhMerchant merchant, String brandIDStr, String imagesJSONStr, String address_send_jsonStr, String address_back_jsonStr, String admin_name) {
         merchant.setCreateTime(new Date());
         merchant.setStatus("0");
         PhMerchant merchantObj = merchantService.save(merchant);
@@ -174,22 +174,12 @@ public class MerchantController {
         //purge first
         merchantFileService.delByPid(merchantObj.getId());
         //rebuild
-        PhAddress address = new PhAddress();
-        JSONObject addrObj = JSON.parseObject(address_send_jsonStr);
-        address.setProvince(addrObj.getString("province"));
-        address.setCity(addrObj.getString("city"));
-        address.setCounty(addrObj.getString("county"));
-        address.setContent(addrObj.getString("content"));
-        address.setRealName(addrObj.getString("realName"));
-        address.setPhone(addrObj.getString("phone"));
-        address.setRemark(address_send_jsonStr);
-        if (merchantObj.getAddrId() != null) {
-            address.setId(merchantObj.getAddrId());
-        } else {
-            address.setCreateTime(new Date());
-        }
-        PhAddress addressObj = addressService.save(address);
+        //发货地址
+        PhAddress addressObj = saveAddress(address_send_jsonStr, merchantObj.getAddrId());
         merchantObj.setAddrId(addressObj.getId());
+        //退货地址
+        PhAddress addressObjBack = saveAddress(address_back_jsonStr, merchantObj.getReturnAddrId());
+        merchantObj.setReturnAddrId(addressObjBack.getId());
         merchantService.save(merchantObj);
         String text = new String(com.qiniu.util.Base64.decode(imagesJSONStr.getBytes(), Base64.DEFAULT));
         JSONArray jsonArray = JSON.parseArray(text);
@@ -211,6 +201,24 @@ public class MerchantController {
         return true;
     }
 
+    private PhAddress saveAddress(String address_jsonStr, Long addrId) {
+        PhAddress address = new PhAddress();
+        JSONObject addrObj = JSON.parseObject(address_jsonStr);
+        address.setProvince(addrObj.getString("province"));
+        address.setCity(addrObj.getString("city"));
+        address.setCounty(addrObj.getString("county"));
+        address.setContent(addrObj.getString("content"));
+        address.setRealName(addrObj.getString("realName"));
+        address.setPhone(addrObj.getString("phone"));
+        address.setRemark(address_jsonStr);
+        if (addrId != null) {
+            address.setId(addrId);
+        } else {
+            address.setCreateTime(new Date());
+        }
+        return addressService.save(address);
+    }
+
     @ResponseBody
     @RequestMapping("/merchant_find")
     public Map<String, Object> find(Long id) {
@@ -225,6 +233,12 @@ public class MerchantController {
             } else {
                 address = addressService.findOne(merchant.getAddrId());
             }
+            PhAddress addressBack;
+            if (merchant.getReturnAddrId() == null) {
+                addressBack = new PhAddress();
+            } else {
+                addressBack = addressService.findOne(merchant.getReturnAddrId());
+            }
             PhAdmin admin;
             if (merchant.getAdminId() == null) {
                 admin = new PhAdmin();
@@ -235,6 +249,7 @@ public class MerchantController {
             map.put("brandList", brandList);
             map.put("fileList", fileList);
             map.put("address", address);
+            map.put("addressBack", addressBack);
             map.put("admin", admin);
         }
         return map;
