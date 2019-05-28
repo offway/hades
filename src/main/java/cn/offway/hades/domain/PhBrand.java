@@ -29,8 +29,14 @@ public class PhBrand implements Serializable {
     /** 品牌LOGO(大) **/
     private String logoBig;
 
+    /** 品牌LOGO(推荐到首页) **/
+    private String logoIndex;
+
     /** 品牌banner **/
     private String banner;
+
+    /** 品牌banner(高街潮流推荐) **/
+    private String bannerBig;
 
     /** 类型[0-国内品牌，1-国际品牌] **/
     private String type;
@@ -174,4 +180,21 @@ public class PhBrand implements Serializable {
         this.remark = remark;
     }
 
+    @Column(name = "logo_index", length = 200)
+    public String getLogoIndex() {
+        return logoIndex;
+    }
+
+    public void setLogoIndex(String logoIndex) {
+        this.logoIndex = logoIndex;
+    }
+
+    @Column(name = "banner_big", length = 100)
+    public String getBannerBig() {
+        return bannerBig;
+    }
+
+    public void setBannerBig(String bannerBig) {
+        this.bannerBig = bannerBig;
+    }
 }

@@ -42,8 +42,9 @@ public class BrandController {
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         String name = request.getParameter("name");
+        String type = request.getParameter("type");
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "isRecommend"), new Sort.Order(Sort.Direction.ASC, "sort"));
-        Page<PhBrand> pages = brandService.findAll(name, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhBrand> pages = brandService.findAll(name, type, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
@@ -67,6 +68,9 @@ public class BrandController {
     public boolean save(PhBrand brand) {
         if ("".equals(brand.getBanner().trim())) {
             brand.setBanner(null);
+        }
+        if ("".equals(brand.getBannerBig().trim())) {
+            brand.setBannerBig(null);
         }
         brand.setCreateTime(new Date());
         brandService.save(brand);
