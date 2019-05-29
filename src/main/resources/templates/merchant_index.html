@@ -233,16 +233,23 @@
 		</div>
 	</div>
 
-    <div id="preview" style="display: none;
-    position: fixed;
-    top: 190px;
-    left: 650px;
-    background: white;
-    overflow: scroll;
-    border: solid; width: 700px; height: 600px;
-    z-index: 9999;" onclick="closeIt(this)">
+	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+		<div class="modal-dialog">
+			<div class="modal-content">
 
-    </div>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">查看详情</h4>
+				</div>
+
+				<div class="modal-body" id="preview_body"></div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
@@ -305,58 +312,69 @@
 		window.location.href = '/fare_index.html?id=' + id;
 	}
 
-    function checkIt(id) {
-        $.post("/merchant_find", {"id": id}, function (data) {
-            if (data) {
-                var preview = $("#preview");
-                var contentStr = "";
-                var mainObj = data["main"];
-                contentStr += "编号:" + mainObj["id"] + "<br/>";
-                contentStr += "商户名称:" + mainObj["name"] + "<br/>";
-                contentStr += "商户LOGO:" + buildImg(mainObj["logo"]) + "<br/>";
-                contentStr += "商户地址:" + mainObj["address"] + "<br/>";
-                contentStr += "联系电话:" + mainObj["phone"] + "<br/>";
-                contentStr += "商户邮箱:" + mainObj["email"] + "<br/>";
-                contentStr += "合同编号:" + mainObj["contractNo"] + "<br/>";
-                contentStr += "签约日期:" + formatTime(mainObj["signDate"]) + "<br/>";
-                contentStr += "到期日期:" + formatTime(mainObj["expireDate"]) + "<br/>";
-                contentStr += "状态:" + mainObj["status"] + "<br/>";
-                contentStr += "创建时间:" + formatTime(mainObj["createTime"]) + "<br/>";
-                contentStr += "备注:" + mainObj["remark"] + "<br/>";
-                contentStr += "*************<br/>";
+	function appendToPreview(key, value) {
+		return '<div class="row">' +
+				'<div class="col-md-2">' +
+				key +
+				'</div>' +
+				'<div class="col-md-10">' +
+				value +
+				'</div>' +
+				'</div>';
+	}
 
-                for (var brand in data["brandList"]) {
-                    brand = data["brandList"][brand];
-                    contentStr += "品牌id:" + brand["brandId"] + "<br/>";
-                    contentStr += "品牌Logo:" + buildImg(brand["brandLogo"]) + "<br/>";
-                    contentStr += "品牌名:" + brand["brandName"] + "<br/>";
-                    contentStr += "创建时间:" + formatTime(brand["createTime"]) + "<br/>";
-                    contentStr += "商户ID:" + brand["merchantId"] + "<br/>";
-                    contentStr += "商户LOGO:" + buildImg(brand["merchantLogo"]) + "<br/>";
-                    contentStr += "商户名称:" + brand["merchantName"] + "<br/>";
-                    contentStr += "编号:" + brand["id"] + "<br/>";
-                    contentStr += "备注:" + brand["remark"] + "<br/>";
-                }
-                contentStr += "*********************<br/>";
+	function checkIt(id) {
+		$.post("/merchant_find", {"id": id}, function (data) {
+			if (data) {
+				var preview = $("#preview_body");
+				var contentStr = "";
+				var mainObj = data["main"];
+				contentStr += appendToPreview("编号", mainObj["id"]);
+				contentStr += appendToPreview("商户名称", mainObj["name"]);
+				contentStr += appendToPreview("商户LOGO", buildImg(mainObj["logo"]));
+				contentStr += appendToPreview("商户地址", mainObj["address"]);
+				contentStr += appendToPreview("联系电话", mainObj["phone"]);
+				contentStr += appendToPreview("商户邮箱", mainObj["email"]);
+				contentStr += appendToPreview("合同编号", mainObj["contractNo"]);
+				contentStr += appendToPreview("签约日期", formatTime(mainObj["signDate"]));
+				contentStr += appendToPreview("到期日期", formatTime(mainObj["expireDate"]));
+				contentStr += appendToPreview("状态", mainObj["status"]);
+				contentStr += appendToPreview("创建时间", formatTime(mainObj["createTime"]));
+				contentStr += appendToPreview("备注", mainObj["remark"]);
+				contentStr += "<hr/>";
 
-                for (var file in data["fileList"]) {
-                    file = data["fileList"][file];
-                    contentStr += "附件URL:" + buildImg(file["fileUrl"]) + "<br/>";
-                    contentStr += "商户LOGO:" + buildImg(file["logo"]) + "<br/>";
-                    contentStr += "创建时间:" + formatTime(file["createTime"]) + "<br/>";
-                    contentStr += "商户ID:" + file["merchantId"] + "<br/>";
-                    contentStr += "商户名称:" + file["name"] + "<br/>";
-                    contentStr += "编号:" + file["id"] + "<br/>";
-                    contentStr += "备注:" + file["remark"] + "<br/>";
-                }
-                preview.html(contentStr);
-                preview.show();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
+				for (var brand in data["brandList"]) {
+					brand = data["brandList"][brand];
+					contentStr += appendToPreview("品牌id", brand["brandId"]);
+					contentStr += appendToPreview("品牌Logo", buildImg(brand["brandLogo"]));
+					contentStr += appendToPreview("品牌名", brand["brandName"]);
+					contentStr += appendToPreview("创建时间", formatTime(brand["createTime"]));
+					contentStr += appendToPreview("商户ID", brand["merchantId"]);
+					contentStr += appendToPreview("商户LOGO", buildImg(brand["merchantLogo"]));
+					contentStr += appendToPreview("商户名称", brand["merchantName"]);
+					contentStr += appendToPreview("编号", brand["id"]);
+					contentStr += appendToPreview("备注", brand["remark"]);
+				}
+				contentStr += "<hr/>";
+
+				for (var file in data["fileList"]) {
+					file = data["fileList"][file];
+					contentStr += appendToPreview("附件URL", buildImg(file["fileUrl"]));
+					contentStr += appendToPreview("商户LOGO", buildImg(file["logo"]));
+					contentStr += appendToPreview("创建时间", formatTime(file["createTime"]));
+					contentStr += appendToPreview("商户ID", file["merchantId"]);
+					contentStr += appendToPreview("商户名称", file["name"]);
+					contentStr += appendToPreview("编号", file["id"]);
+					contentStr += appendToPreview("备注", file["remark"]);
+				}
+				preview.html(contentStr);
+				jQuery('#preview').modal('show', {backdrop: 'fade'});
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
 
 	var table_global;
 
