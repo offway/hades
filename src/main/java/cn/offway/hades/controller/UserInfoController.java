@@ -75,7 +75,7 @@ public class UserInfoController {
     @RequestMapping("/channel_list")
     public Map<String, String> get(@AuthenticationPrincipal PhAdmin admin) {
         Map<String, String> ret = new HashMap<>();
-        long channelRoleId = 9;
+        long channelRoleId = 12;
         long adminRoleId = 1;
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
         if (roles.contains(BigInteger.valueOf(adminRoleId))) {
