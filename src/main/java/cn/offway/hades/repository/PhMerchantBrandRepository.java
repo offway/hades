@@ -18,4 +18,14 @@ public interface PhMerchantBrandRepository extends JpaRepository<PhMerchantBrand
     @Modifying
     @Query(nativeQuery = true, value = "DELETE FROM `ph_merchant_brand` WHERE (`merchant_id` = ?1)")
     void deleteByPid(Long pid);
+
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true, value = "UPDATE `ph_merchant_brand` SET `merchant_logo` = ?2 , `merchant_name` = ?3 WHERE (`merchant_id` = ?1)")
+    void updateMerchantInfo(Long mid, String mLogo, String mName);
+
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true, value = "UPDATE `ph_merchant_brand` SET `brand_logo` = ?2 , `brand_name` = ?3 WHERE (`brand_id` = ?1)")
+    void updateBrandInfo(Long bid, String bLogo, String bName);
 }

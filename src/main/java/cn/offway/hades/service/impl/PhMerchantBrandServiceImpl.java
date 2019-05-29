@@ -1,5 +1,7 @@
 package cn.offway.hades.service.impl;
 
+import cn.offway.hades.domain.PhBrand;
+import cn.offway.hades.domain.PhMerchant;
 import cn.offway.hades.domain.PhMerchantBrand;
 import cn.offway.hades.repository.PhMerchantBrandRepository;
 import cn.offway.hades.service.PhMerchantBrandService;
@@ -48,6 +50,16 @@ public class PhMerchantBrandServiceImpl implements PhMerchantBrandService {
                 return null;
             }
         });
+    }
+
+    @Override
+    public void updateMerchantInfo(PhMerchant merchant) {
+        phMerchantBrandRepository.updateMerchantInfo(merchant.getId(), merchant.getLogo(), merchant.getName());
+    }
+
+    @Override
+    public void updateBrandInfo(PhBrand brand) {
+        phMerchantBrandRepository.updateBrandInfo(brand.getId(), brand.getLogo(), brand.getName());
     }
 
     @Override

@@ -143,6 +143,7 @@ public class MerchantController {
             //更新关联数据表
             goodsService.updateMerchantInfo(merchant);
             goodsStockService.updateMerchantInfo(merchant);
+            merchantBrandService.updateMerchantInfo(merchant);
         }
         if (merchantObj.getAdminId() == null) {
             PhAdmin admin = new PhAdmin();

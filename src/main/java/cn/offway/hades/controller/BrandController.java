@@ -5,6 +5,7 @@ import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhBrandService;
 import cn.offway.hades.service.PhGoodsService;
 import cn.offway.hades.service.PhGoodsStockService;
+import cn.offway.hades.service.PhMerchantBrandService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,8 @@ public class BrandController {
     private PhGoodsService goodsService;
     @Autowired
     private PhGoodsStockService goodsStockService;
+    @Autowired
+    private PhMerchantBrandService merchantBrandService;
 
     @RequestMapping("/brand.html")
     public String index(ModelMap map) {
@@ -83,6 +86,7 @@ public class BrandController {
         if (brand.getId() != null) {
             goodsService.updateBrandInfo(brand);
             goodsStockService.updateBrandInfo(brand);
+            merchantBrandService.updateBrandInfo(brand);
         }
         return true;
     }

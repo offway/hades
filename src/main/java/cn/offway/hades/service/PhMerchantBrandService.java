@@ -1,5 +1,7 @@
 package cn.offway.hades.service;
 
+import cn.offway.hades.domain.PhBrand;
+import cn.offway.hades.domain.PhMerchant;
 import cn.offway.hades.domain.PhMerchantBrand;
 
 import java.util.List;
@@ -21,4 +23,8 @@ public interface PhMerchantBrandService {
     void del(Long id);
 
     void delByPid(Long pid);
+
+    void updateMerchantInfo(PhMerchant merchant);
+
+    void updateBrandInfo(PhBrand brand);
 }
