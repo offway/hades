@@ -91,11 +91,33 @@
 									</div>
                                     <div class="col-md-4">
                                         <div class="form-group">
+                                        </div>
+                                    </div>
+								</div>
+                                <div class="row" id="div" style="display: none;">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">商户banner</label>
+                                            <input type="file" class="form-control" name="bannerFile" placeholder="商户banner"/>
+                                            <input type="hidden" class="form-control" id="banner" disabled="disabled" name="banner" />
+                                            <img alt="" src="" name="bannerImg" style="display:none;"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">商户背景图</label>
+                                            <input type="file" class="form-control" name="backgroundFile" placeholder="商户背景图"/>
+                                            <input type="hidden" class="form-control" id="background" disabled="disabled" name="background" />
+                                            <img alt="" src="" name="backgroundImg" style="display:none;"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
                                             <label class="control-label">商户所在城市</label>
                                             <input type="text" class="form-control" name="city" id="city" disabled="disabled" placeholder="商户所在城市"/>
                                         </div>
                                     </div>
-								</div>
+                                </div>
 								<div class="row">
 									<div class="col-md-6">
 										<div class="form-group" onclick="checkIt(false)">
@@ -390,12 +412,23 @@
 
     function showCityOrNot(self) {
         var that = $(self);
-        var ele = $("#city");
+        var banner = $("#banner");
+        var background = $("#background");
+        var city = $("#city");
+        var div = $("#div");
         if (that.val() == "0") {
-            ele.val("");
-            ele.attr("disabled", "disabled")
+            div.hide();
+            banner.val("");
+            background.val("");
+            city.val("");
+            banner.attr("disabled", "disabled")
+            background.attr("disabled", "disabled")
+            city.attr("disabled", "disabled")
         } else {
-            ele.removeAttr("disabled");
+            banner.removeAttr("disabled");
+            background.removeAttr("disabled");
+            city.removeAttr("disabled");
+            div.show();
         }
     }
 
@@ -486,12 +519,16 @@
 			var signDate = form.find("input[name='signDate']").val();
 			var expireDate = form.find("input[name='expireDate']").val();
 			//文件
-			var logo = form.find("input[name='logoFile']").val();
+			var logoFile = form.find("input[name='logoFile']").val();
+            var bannerFile = form.find("input[name='bannerFile']").val();
+            var backgroundFile = form.find("input[name='backgroundFile']").val();
 			//已上传的图片地址
-			var logoImg = form.find("input[name='logo']").val();
+			var logo = form.find("input[name='logo']").val();
+            var banner = form.find("input[name='banner']").val();
+            var background = form.find("input[name='background']").val();
 
 			if (name == '' || address == '' || phone == '' || contractNo == '' || signDate == '' || expireDate == '' || company == '' || admin_name == '' || address_send_jsonStr == '' || address_back_jsonStr == '' ||
-					(logo == '' && logoImg == '')
+					(logo == '' && logoFile == '')
 			) {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
@@ -501,7 +538,7 @@
 			//收集品牌ID列表
 			form.find("input[name='brandIDStr']").val($("#brandID").val().join(","));
 
-			var isOK = checkImg([[logo, "logo"]]);
+            var isOK = checkImg([[logoFile, "logo"], [bannerFile, "banner"], [backgroundFile, "background"]]);
 			if (typeof isOK == 'boolean') {
 				return;
 			}
