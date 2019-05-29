@@ -374,7 +374,7 @@
 				"\t\t<select name='d' ></select>\n" +
 				"\t\t<input type=\"text\" name='location' placeholder='详细地址'/><br/>\n" +
 				"\t\t<input type=\"number\" name='telephone' placeholder='手机号'/>\n" +
-				"\t\t<input type=\"text\" name='real_name' placeholder='发件人'/>\n" +
+				"\t\t<input type=\"text\" name='real_name' placeholder='XXX'/>\n".replace("XXX", isBack ? "收件人" : "发件人") +
 				"\t</div>";
 		if (isBack) {
 			contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt(true)" />';
