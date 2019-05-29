@@ -1,6 +1,8 @@
 package cn.offway.hades.service.impl;
 
+import cn.offway.hades.domain.PhBrand;
 import cn.offway.hades.domain.PhGoods;
+import cn.offway.hades.domain.PhMerchant;
 import cn.offway.hades.repository.PhGoodsRepository;
 import cn.offway.hades.service.PhGoodsService;
 import org.slf4j.Logger;
@@ -123,6 +125,16 @@ public class PhGoodsServiceImpl implements PhGoodsService {
         } else {
             return 0L;
         }
+    }
+
+    @Override
+    public void updateMerchantInfo(PhMerchant merchant) {
+        phGoodsRepository.updateMerchantInfo(merchant.getId(), merchant.getLogo(), merchant.getName());
+    }
+
+    @Override
+    public void updateBrandInfo(PhBrand brand) {
+        phGoodsRepository.updateBrandInfo(brand.getId(), brand.getLogo(), brand.getName());
     }
 
     @Override

@@ -1,6 +1,8 @@
 package cn.offway.hades.service.impl;
 
+import cn.offway.hades.domain.PhBrand;
 import cn.offway.hades.domain.PhGoodsStock;
+import cn.offway.hades.domain.PhMerchant;
 import cn.offway.hades.repository.PhGoodsStockRepository;
 import cn.offway.hades.service.PhGoodsStockService;
 import org.slf4j.Logger;
@@ -45,7 +47,11 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 
     @Override
     public Page<PhGoodsStock> findAll(String goodsId, Pageable pageable) {
-        return phGoodsStockRepository.findAll(new Specification<PhGoodsStock>() {
+        return phGoodsStockRepository.findAll(getFilter(goodsId), pageable);
+    }
+
+    private Specification<PhGoodsStock> getFilter(Object goodsId) {
+        return new Specification<PhGoodsStock>() {
             @Override
             public Predicate toPredicate(Root<PhGoodsStock> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
@@ -54,7 +60,7 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
             }
-        }, pageable);
+        };
     }
 
     @Override
@@ -74,16 +80,17 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 
     @Override
     public List<PhGoodsStock> findByPid(Long pid) {
-        return phGoodsStockRepository.findAll(new Specification<PhGoodsStock>() {
-            @Override
-            public Predicate toPredicate(Root<PhGoodsStock> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                List<Predicate> params = new ArrayList<Predicate>();
-                params.add(criteriaBuilder.equal(root.get("goodsId"), pid));
-                Predicate[] predicates = new Predicate[params.size()];
-                criteriaQuery.where(params.toArray(predicates));
-                return null;
-            }
-        });
+        return phGoodsStockRepository.findAll(getFilter(pid));
+    }
+
+    @Override
+    public void updateMerchantInfo(PhMerchant merchant) {
+        phGoodsStockRepository.updateMerchantInfo(merchant.getId(), merchant.getLogo(), merchant.getName());
+    }
+
+    @Override
+    public void updateBrandInfo(PhBrand brand) {
+        phGoodsStockRepository.updateBrandInfo(brand.getId(), brand.getLogo(), brand.getName());
     }
 
     @Override

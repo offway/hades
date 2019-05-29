@@ -49,6 +49,10 @@ public class MerchantController {
     private PhRoleadminService roleadminService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PhGoodsService goodsService;
+    @Autowired
+    private PhGoodsStockService goodsStockService;
 
     @RequestMapping("/merchant.html")
     public String index(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
@@ -135,6 +139,11 @@ public class MerchantController {
         merchant.setCreateTime(new Date());
         merchant.setStatus("0");
         PhMerchant merchantObj = merchantService.save(merchant);
+        if (merchant.getId() != null) {
+            //更新关联数据表
+            goodsService.updateMerchantInfo(merchant);
+            goodsStockService.updateMerchantInfo(merchant);
+        }
         if (merchantObj.getAdminId() == null) {
             PhAdmin admin = new PhAdmin();
             admin.setUsername(admin_name);

@@ -3,6 +3,8 @@ package cn.offway.hades.controller;
 import cn.offway.hades.domain.PhBrand;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhBrandService;
+import cn.offway.hades.service.PhGoodsService;
+import cn.offway.hades.service.PhGoodsStockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,10 @@ public class BrandController {
     private QiniuProperties qiniuProperties;
     @Autowired
     private PhBrandService brandService;
+    @Autowired
+    private PhGoodsService goodsService;
+    @Autowired
+    private PhGoodsStockService goodsStockService;
 
     @RequestMapping("/brand.html")
     public String index(ModelMap map) {
@@ -74,6 +80,10 @@ public class BrandController {
         }
         brand.setCreateTime(new Date());
         brandService.save(brand);
+        if (brand.getId() != null) {
+            goodsService.updateBrandInfo(brand);
+            goodsStockService.updateBrandInfo(brand);
+        }
         return true;
     }
 
