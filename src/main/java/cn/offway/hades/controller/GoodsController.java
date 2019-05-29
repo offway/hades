@@ -159,6 +159,12 @@ public class GoodsController {
     }
 
     @ResponseBody
+    @RequestMapping("/merchant_brand_list")
+    public List<?> getMerchantBrand(Long id) {
+        return merchantBrandService.findByPid(id);
+    }
+
+    @ResponseBody
     @RequestMapping("/fare_list")
     public List<PhMerchantFare> getFareList(Long pid) {
         return merchantFareService.getByPid(pid);
@@ -309,6 +315,7 @@ public class GoodsController {
         String code = request.getParameter("code");
         String status = request.getParameter("status");
         String merchantId = request.getParameter("merchantId");
+        String merchantBrandId = request.getParameter("merchantBrandId");
         String type = request.getParameter("type");
         String category = request.getParameter("category");
         String special = request.getParameter("special");
@@ -324,7 +331,7 @@ public class GoodsController {
             inOrNot = "1".equals(special);
         }
         Sort sort = new Sort("id");
-        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, Long.valueOf(merchantId), type, category, gids, inOrNot, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, Long.valueOf(merchantId), merchantBrandId, type, category, gids, inOrNot, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         ObjectMapper objectMapper = new ObjectMapper();
         List<Map> arr = new ArrayList<>();
         for (PhGoods goods : pages.getContent()) {

@@ -24,7 +24,7 @@ public interface PhGoodsService {
 
     Page<PhGoods> findAll(String name, String code, Pageable pageable);
 
-    Page<PhGoods> findAll(String name, Long id, String code, String status, Long merchantId, String type, String category, Long[] gidArr, boolean inOrNot, Pageable pageable);
+    Page<PhGoods> findAll(String name, Long id, String code, String status, Long merchantId, String merchantBrandId, String type, String category, Long[] gidArr, boolean inOrNot, Pageable pageable);
 
     void del(Long id);
 

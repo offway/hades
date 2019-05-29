@@ -49,7 +49,15 @@
 								<label for="merchantId" class="control-label">商户</label>
 							</div>
 							<div class="input-group">
-								<select id="merchantId" name="merchantId" class="form-control" style="height:35px">
+								<select id="merchantId" name="merchantId" class="form-control" style="height:35px" onchange="renderBrand(this)">
+								</select>
+							</div>
+							<div class="input-group">
+								<label for="merchantBrandId" class="control-label">商户品牌</label>
+							</div>
+							<div class="input-group">
+								<select id="merchantBrandId" name="merchantBrandId" class="form-control" style="height:35px">
+									<option value="" selected="selected">全部</option>
 								</select>
 							</div>
 							<div class="input-group">
@@ -382,6 +390,15 @@
 		$("#category").html(categoryStr);
 	}
 
+	function bindBrandSelector(data) {
+		var categoryStr = "<option value=\"\" selected=\"selected\">全部</option>";
+		for (var category in data) {
+			category = data[category];
+			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["brandId"]).replace("KEY", category["brandName"]);
+		}
+		$("#merchantBrandId").html(categoryStr);
+	}
+
 	function renderCategory(self) {
 		var jsonStr = $("#type_and_category_list").val();
 		var list = JSON.parse(jsonStr);
@@ -392,6 +409,13 @@
 				break;
 			}
 		}
+	}
+
+	function renderBrand(self) {
+		var selectedId = $(self).val();
+		$.getJSON("/merchant_brand_list", {"id": selectedId}, function (data) {
+			bindBrandSelector(data);
+		});
 	}
 
 	var table_global;
