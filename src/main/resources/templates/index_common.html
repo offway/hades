@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title></title>
+	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
+	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<style type="text/css">
+	.form-group img{
+		max-width:400px;
+		max-height:300px;
+	}
+	</style>
+</head>
+<body class="page-body">
+
+	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+			
+		<div th:replace="sidebar-menu"></div>
+		<div class="main-content">
+			<!-- User Info, Notifications and activity Bar -->
+			<nav th:replace="navbar"></nav>
+			<div class="page-title">
+				
+				<div class="title-env">
+					<h1 class="title"></h1>
+					<p class="activityDescription"></p>
+				</div>
+
+				<div class="breadcrumb-env">
+
+					<ol class="breadcrumb bc-1">
+						<li><a href="/"><i class="fa-home"></i>Home</a></li>
+						<li><a>系统管理</a></li>
+						<li class="active"><strong></strong></li>
+					</ol>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title"></h3>
+							<div class="panel-options">
+							</div>
+						</div>
+						<div class="panel-body">
+							<form role="form" id="saveForm" class="form-horizontal">
+								<input type="hidden" name="id" value=''/>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="control-label">图片</label>
+											<input type="file" class="form-control" name="logoFile" onchange="uploadFile(this)"/>
+											<input type="hidden" class="form-control" name="logo" />
+											<img alt="" src='' name="logoImg" style="display:none;"/>
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-info save">保存</button>
+									<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<footer th:replace="footer"></footer>
+		</div>
+	</div>
+	
+	<div th:replace="body-under"></div>
+	
+	<script src="assets/js/moment.min.js"></script>
+	<script src="assets/js/select2/select2.min.js"></script>
+	<script src="assets/js/async.min.js"></script>
+	<script src="assets/js/distpicker.js"></script>
+	<script src="assets/js/jquery.base64.js"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+
+    function addMoreImg(self, v) {
+        var that = $(self);
+        if (v == undefined) {
+        	//
+        } else {
+            that.before("<a target='_blank' href='" + v + "'>" + buildImg(v) + "</a>")
+        }
+    }
+
+	function bindBrandSelector(data, v) {
+		var uuid = UUID.randomUUID();
+		var brandStr = "<div id='UUID'><select disabled='disabled' class=\"form-control\" style='display: inline-block;width: 200px;' name=\"brandID\" >";
+		for (var brand in data) {
+			brand = data[brand];
+			if (brand["id"] == v) {
+				brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			} else {
+				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			}
+		}
+		brandStr += "</select>";
+		brandStr += "</div>";
+		return brandStr.replace(/UUID/g, uuid);
+	}
+
+	function addMoreText(self, v) {
+		$.getJSON("/brand_list_all_merchant", {}, function (data) {
+			var contentStr = bindBrandSelector(data, v);
+			var that = $(self);
+			that.before(contentStr);
+			// if (v == undefined) {
+			// 	that.before('<input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>')
+			// } else {
+			// 	that.before('<input type="number" class="form-control" name="brandID" value="' + v + '" placeholder="填写品牌ID"/>')
+			// }
+		});
+	}
+
+	function closeIt() {
+		var that = $("#preview");
+		that.hide();
+	}
+
+	function delNode(id) {
+		var that = $("#" + id);
+		that.remove();
+	}
+
+	function closeAndSaveIt() {
+		var that = $("#preview");
+		var p = that.find("select[name='p']").val();
+		var c = that.find("select[name='c']").val();
+		var d = that.find("select[name='d']").val();
+		var location = that.find("input[name='location']").val();
+		var telephone = that.find("input[name='telephone']").val();
+		var real_name = that.find("input[name='real_name']").val();
+		var json = {
+			"realName": real_name,
+			"phone": telephone,
+			"province": p,
+			"city": c,
+			"county": d,
+			"content": location
+		};
+		$("input[name='address_send_jsonStr']").val(JSON.stringify(json));
+		$("input[name='address_send']").val(p + "" + c + "" + d + "" + location);
+		that.hide();
+	}
+
+    function formatTime(time) {
+        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+    }
+
+    function buildImg(url) {
+        return "<img width='100px' height='100px' src='#' />".replace("#", url);
+    }
+
+	function checkImg(list) {
+		var returnList = {};
+		for (var i in list) {
+			i = list[i];
+			var v = i[0];
+			var name = i[1];
+			var form = $("#saveForm");
+			var footer = $(this).parent(".modal-footer");
+			var imageFile = '';
+			//上传文件获得文件地址
+			if (v != '') {
+				imageFile = form.find("input[name='" + name + "File']")[0].files[0];
+				if (imageFile != '' && imageFile.size / 1024 > 500) {
+					toastr.error("封面图片大小超过500K,请压缩处理后上传", "温馨提示");
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					return false;
+				} else {
+					returnList[name] = imageFile;
+				}
+			}
+		}
+		return returnList;
+	}
+
+	function checkIt() {
+		var preview = $("#preview");
+		var contentStr = "\t<div id=\"distpicker\">\n" +
+				"\t\t<select name='p' ></select>\n" +
+				"\t\t<select name='c' ></select>\n" +
+				"\t\t<select name='d' ></select>\n" +
+				"\t\t<input type=\"text\" name='location' placeholder='详细地址'/><br/>\n" +
+				"\t\t<input type=\"number\" name='telephone' placeholder='手机号'/>\n" +
+				"\t\t<input type=\"text\" name='real_name' placeholder='发件人'/>\n" +
+				"\t</div>";
+		contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt()" />';
+		contentStr += '<input type="button" value="关闭" onclick="closeIt()" />';
+		preview.html(contentStr);
+		//render
+		var jsonStr = $("input[name='address_send_jsonStr']").val();
+		if (jsonStr != '') {
+			var jsonObj = JSON.parse(jsonStr);
+			preview.find("input[name='location']").val(jsonObj["content"]);
+			preview.find("input[name='real_name']").val(jsonObj["realName"]);
+			preview.find("input[name='telephone']").val(jsonObj["phone"]);
+			$("#distpicker").distpicker({
+				province: jsonObj["province"],
+				city: jsonObj["city"],
+				district: jsonObj["county"]
+			});
+		} else {
+			$("#distpicker").distpicker({
+				province: '---- 所在省 ----',
+				city: '---- 所在市 ----',
+				district: '---- 所在区 ----'
+			});
+		}
+		preview.show();
+	}
+
+	function uploadFile(self) {
+		var that = $(self);
+		if (self.files.length > 0) {
+			var file = self.files[0];
+			getQNToken(function (token) {
+				this.upload("", token, file, function () {
+					//
+				}, function (err) {
+					console.log("error");
+					console.log(err);
+				}, function (res) {
+					var url = qiniuUrl + "/" + res.key;
+					that.parent().find("[name=logo]").val(url);
+					that.parent().find("[name=logoImg]").attr("src", url);
+					that.parent().find("[name=logoImg]").attr("width", "100px");
+					that.parent().find("[name=logoImg]").attr("height", "100px");
+					that.parent().find("[name=logoImg]").show();
+				});
+			});
+		} else {
+			confirm("未选择任何文件!");
+		}
+	}
+
+    jQuery(document).ready(function($)
+	{
+		var qiniuUrl = [[${qiniuUrl}]];
+		var image = [[${image}]];
+		var type = [[${type}]];
+		var value = [[${value}]];
+
+		$("title").html(value);
+		$(".activityDescription").html(value);
+		$(".active strong").html(value);
+		$(".panel-title").html(value);
+		$(".title").html(value);
+
+		var form = $("#saveForm");
+		form.find("input[name='id']").val(type);
+		form.find("input[name='logo']").val(image);
+		form.find("img[name='logoImg']").attr("src", image);
+		if (image != '') {
+			form.find("img[name='logoImg']").show();
+		}
+
+		function getImgSize(file, cb) {
+			var f = file;//input.files[0];
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				var data = e.target.result;
+				//加载图片获取图片真实宽度和高度
+				var image = new Image();
+				image.onload = function () {
+					var width = image.width;
+					var height = image.height;
+					cb(width, height);
+				};
+				image.src = data;
+			};
+			reader.readAsDataURL(f);
+		}
+
+		window.upload = function upload(param, token, file, next, error, complete) {
+			if (file == '') {
+				complete('');
+			} else {
+				getImgSize(file, function (w, h) {
+					var filename = file.name;
+					var postf = filename.substring(filename.lastIndexOf("."));
+					var config = {
+						useCdnDomain: true,
+						region: qiniu.region.z0
+					};
+					var putExtra = {
+						fname: "",
+						params: {"x:param": param},
+						mimeType: ["image/png", "image/jpeg", "image/gif"] || null
+					};
+					var newFileName = "image/wx/#W#/#H#/" + UUID.randomUUID() + postf;
+					newFileName = newFileName.replace("#W#", w).replace("#H#", h);
+					var observable = qiniu.upload(file, newFileName, token,
+							putExtra, config);
+					var subscription = observable.subscribe(next, error, complete);
+				})
+			}
+		};
+
+		//保存
+		$(".btn.btn-info.save").click(function(){
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+			var form = $("#saveForm");
+			//已上传的图片地址
+			var logo = form.find("input[name='logo']").val();
+
+			if (logo == '') {
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return;
+			}
+
+			//获取token
+			$.get("/qiniu/token",{},function(token){
+				if(token !=''){
+					async.series({
+						one: function (callback) {
+							callback();
+						},
+						two: function (callback) {
+							callback();
+						},
+						three: function (callback) {
+							//提交保存
+							var data = $("#saveForm").serializeArray();
+							$.post("/merchant_save", data, function (data) {
+								if (data) {
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									jQuery('#modal-6').modal('hide');
+									toastr.success("操作已成功！", "温馨提示");
+								} else {
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									toastr.error("操作失败", "温馨提示");
+								}
+								callback();
+							});
+						}
+					}, function(err, results) {
+						console.log("OK");
+					});
+				}else{
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					toastr.error("上传文件错误，请联系管理员", "温馨提示");
+				}
+			});
+		});
+	});
+	/*]]>*/
+	</script>
+</body>
+
+</html>
