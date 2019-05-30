@@ -48,6 +48,7 @@
 						<div class="panel-body">
 							<form role="form" id="saveForm" class="form-horizontal">
 								<input type="hidden" name="id" value=''/>
+								<input type="hidden" name="value" value=''/>
 								<div class="row">
 									<div class="col-md-12">
 										<div class="form-group">
@@ -232,8 +233,8 @@
 					var url = qiniuUrl + "/" + res.key;
 					that.parent().find("[name=logo]").val(url);
 					that.parent().find("[name=logoImg]").attr("src", url);
-					that.parent().find("[name=logoImg]").attr("width", "100px");
-					that.parent().find("[name=logoImg]").attr("height", "100px");
+					that.parent().find("[name=logoImg]").attr("width", "300px");
+					that.parent().find("[name=logoImg]").attr("height", "300px");
 					that.parent().find("[name=logoImg]").show();
 				});
 			});
@@ -242,13 +243,19 @@
 		}
 	}
 
+	function getQNToken(cb) {
+		$.get("/qiniu/token", {}, function (token) {
+			cb(token);
+		});
+	}
+
+	var qiniuUrl = [[${qiniuUrl}]];
+	var image = [[${image}]];
+	var type = [[${type}]];
+	var value = [[${value}]];
+
     jQuery(document).ready(function($)
 	{
-		var qiniuUrl = [[${qiniuUrl}]];
-		var image = [[${image}]];
-		var type = [[${type}]];
-		var value = [[${value}]];
-
 		$("title").html(value);
 		$(".activityDescription").html(value);
 		$(".active strong").html(value);
@@ -257,6 +264,7 @@
 
 		var form = $("#saveForm");
 		form.find("input[name='id']").val(type);
+		form.find("input[name='value']").val(value);
 		form.find("input[name='logo']").val(image);
 		form.find("img[name='logoImg']").attr("src", image);
 		if (image != '') {
@@ -334,7 +342,7 @@
 						three: function (callback) {
 							//提交保存
 							var data = $("#saveForm").serializeArray();
-							$.post("/merchant_save", data, function (data) {
+							$.post("/index_save", data, function (data) {
 								if (data) {
 									footer.find("button").show();
 									footer.find(".bg-lg").hide();

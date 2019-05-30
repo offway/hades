@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.*;
 
 @RequestMapping
 @Controller
@@ -45,6 +48,44 @@ public class IndexManagerController {
         } else {
             return "";
         }
+    }
+
+    @ResponseBody
+    @RequestMapping("/index_save")
+    public boolean save(String id, String logo, String value) {
+        if (jsonArray == null) {
+            List<Object> list = new ArrayList<>();
+            Map<String, String> map = new HashMap<>();
+            map.put("type", id);
+            map.put("value", value);
+            map.put("image", logo);
+            list.add(map);
+            jsonArray = new JSONArray(list);
+        } else {
+            Object it = null;
+            for (Object o : jsonArray) {
+                JSONObject obj = (JSONObject) o;
+                if (id.equals(obj.getString("type"))) {
+                    it = obj;
+                }
+            }
+            if (it != null) {
+                jsonArray.remove(it);
+            }
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("type", id);
+            jsonObject.put("value", value);
+            jsonObject.put("image", logo);
+            jsonArray.add(jsonObject);
+        }
+        if (phConfig == null) {
+            phConfig = new PhConfig();
+            phConfig.setName("INDEX_IMAGES");
+            phConfig.setCreateTime(new Date());
+        }
+        phConfig.setContent(jsonArray.toJSONString());
+        configService.save(phConfig);
+        return true;
     }
 
     @RequestMapping("/index_zgll.html")
