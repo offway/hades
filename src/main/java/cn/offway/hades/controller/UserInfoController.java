@@ -88,6 +88,8 @@ public class UserInfoController {
             }
         } else if (roles.contains(BigInteger.valueOf(channelRoleId))) {
             ret.put(admin.getUsername(), admin.getNickname());
+        } else {
+            ret.put("", "全部");
         }
         return ret;
     }
