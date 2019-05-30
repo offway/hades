@@ -72,7 +72,7 @@ public class GoodsTypeController {
 
     @ResponseBody
     @RequestMapping("/goodsType_saveConfig")
-    public boolean saveConfig(@RequestParam(value = "keys[]") String[] keys) {
+    public boolean saveConfig(@RequestParam(value = "keys[]") String[] keys, int isBottom) {
         List<Map<String, String>> list = new ArrayList<>();
         for (String key : keys) {
             Map<String, String> item = new HashMap<>();
@@ -84,13 +84,22 @@ public class GoodsTypeController {
                 item.put("name", "category");
             }
             item.put("value", key.split("_")[0].substring(1));
+            if (isBottom == 1) {
+                item.put("image", key.split("_")[2]);
+            }
             list.add(item);
         }
-        PhConfig config = configService.findOne("INDEX_CATEGORY");
+        String name = isBottom == 0 ? "INDEX_CATEGORY" : "INDEX_CATEGORY_IMG";
+        PhConfig config = configService.findOne(name);
         if (config != null) {
             config.setContent(JSON.toJSONString(list));
-            configService.save(config);
+        } else {
+            config = new PhConfig();
+            config.setName(name);
+            config.setCreateTime(new Date());
+            config.setContent(JSON.toJSONString(list));
         }
+        configService.save(config);
         return true;
     }
 

@@ -64,7 +64,8 @@
 				<button class="btn btn-info add" >添加</button>
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
-				<button class="btn btn-info config">导航栏配置</button>
+				<button class="btn btn-info config">顶部导航栏配置</button>
+				<button class="btn btn-info configBottom">底部导航栏配置</button>
 			</div>
 			
 					
@@ -133,6 +134,7 @@
 				</div>
 				<div class="modal-body">
 					<form role="form" id="saveForm7">
+						<input type="hidden" name="isBottom" id="isBottom"/>
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
@@ -578,6 +580,16 @@
 		});
 
 		$(".btn.btn-info.config").click(function () {
+			prepareSelectUI(false);
+			$("#isBottom").val(0);
+		});
+
+		$(".btn.btn-info.configBottom").click(function () {
+			prepareSelectUI(true);
+			$("#isBottom").val(1);
+		});
+
+		function prepareSelectUI(isBottom) {
 			var cfg = $("#configStr");
 			//置空
 			cfg.val("");
@@ -585,28 +597,35 @@
 				if (data) {
 					var ele = $('#multi-select');
 					ele.empty();
-					ele.append("<option value='T全部_" + UUID.randomUUID() + "'>全部</option>");
+					ele.append("<option value='T全部_" + UUID.randomUUID() + "_ALL" + "'>全部</option>");
 					$.each(data, function (i, e) {
-                        if (e.hasOwnProperty("goodsType")) {
-                            ele.append("<option value='C" + e["name"].trim() + "_" + UUID.randomUUID() + "'>" + e["goodsTypeName"] + "-" + e["name"] + "</option>");
-                        } else {
-                            ele.append("<option value='T" + e["name"].trim() + "_" + UUID.randomUUID() + "'>" + e["name"] + "</option>");
-                        }
+						var image = e["image"] == '' ? "NONE" : e["image"];
+						if (e.hasOwnProperty("goodsType")) {
+							ele.append("<option value='C" + e["name"].trim() + "_" + UUID.randomUUID() + "_" + image + "'>" + e["goodsTypeName"] + "-" + e["name"] + "</option>");
+						} else {
+							ele.append("<option value='T" + e["name"].trim() + "_" + UUID.randomUUID() + "_" + image + "'>" + e["name"] + "</option>");
+						}
 					});
+					ele.multiSelect('destroy');
 					ele.multiSelect({
 						afterInit: function () {
 							// Add alternative scrollbar to list
 							this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar();
 						},
 						afterSelect: function (v) {
-							// Update scrollbar size
-							this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar('update');
 							var cfgObj;
 							if (cfg.val() == '') {
 								cfgObj = [];
 							} else {
 								cfgObj = JSON.parse(cfg.val());
 							}
+							if (isBottom && cfgObj.length >= 7) {
+								ele.multiSelect('deselect', v);
+								toastr.error("最多只能7条！", "温馨提示");
+								return;
+							}
+							// Update scrollbar size
+							this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar('update');
 							cfgObj.push(v[0]);
 							cfg.val(JSON.stringify(cfgObj));
 						},
@@ -632,14 +651,14 @@
 					jQuery('#modal-7').modal('show', {backdrop: 'fade'});
 				}
 			})
-		});
+		}
 
 		$(".btn.btn-info.saveConfig").click(function () {
 			// var ele = $('#multi-select');
 			// var data = ele.val();
 			var data = JSON.parse($("#configStr").val());
 			console.log(data);
-			$.post("/goodsType_saveConfig", {"keys": data}, function (data) {
+			$.post("/goodsType_saveConfig", {"keys": data, "isBottom": $("#isBottom").val()}, function (data) {
 				if (data) {
 					jQuery('#modal-7').modal('hide');
 					toastr.success("操作已成功！", "温馨提示");
