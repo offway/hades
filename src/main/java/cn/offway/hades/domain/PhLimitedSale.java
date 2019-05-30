@@ -35,7 +35,7 @@ public class PhLimitedSale implements Serializable {
     /** 截止时间 **/
     private Date endTime;
 
-    /** 状态[0-未助力,1-已助力] **/
+    /** 状态[0-未上架,1-已上架] **/
     private String status;
 
     /** 创建时间 **/
