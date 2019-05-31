@@ -20,9 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping
@@ -134,7 +132,7 @@ public class BrandController {
 
     @ResponseBody
     @RequestMapping("/brand_untop")
-    public boolean untop(Long id) {
+    public boolean unTop(Long id) {
         PhBrand brand = brandService.findOne(id);
         if (brand != null) {
             brand.setIsRecommend("0");
@@ -167,6 +165,45 @@ public class BrandController {
             jsonArray.add(jsonObject);
         }
         PhConfig config = configService.findOne(key);
+        if (config == null) {
+            config = new PhConfig();
+            config.setName(key);
+            config.setCreateTime(new Date());
+        }
+        config.setContent(jsonArray.toJSONString());
+        configService.save(config);
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/brand_pin_list")
+    public List<PhBrand> pinList(String to) {
+        String key = "logo".equals(to) ? "INDEX_BRAND_LOGO" : "INDEX_BRAND_GOODS";
+        String jsonStr = configService.findContentByName(key);
+        JSONArray jsonArray = new JSONArray();
+        if (jsonStr != null && !"".equals(jsonStr)) {
+            jsonArray = JSON.parseArray(jsonStr);
+        }
+        List<PhBrand> list = new ArrayList<>();
+        for (Object o : jsonArray) {
+            JSONObject object = (JSONObject) o;
+            list.add(brandService.findOne(object.getLongValue("id")));
+        }
+        return list;
+    }
+
+    @ResponseBody
+    @RequestMapping("/brand_pin_save")
+    public boolean pinSave(@RequestParam("ids[]") String[] ids, @RequestParam("images[]") String[] images, boolean isLogo) {
+        String key = isLogo ? "INDEX_BRAND_LOGO" : "INDEX_BRAND_GOODS";
+        PhConfig config = configService.findOne(key);
+        JSONArray jsonArray = new JSONArray();
+        for (int i = 0; i < ids.length; i++) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", ids[i]);
+            jsonObject.put("image", images[i]);
+            jsonArray.add(jsonObject);
+        }
         if (config == null) {
             config = new PhConfig();
             config.setName(key);

@@ -66,11 +66,13 @@
 					</table>
 					
 				</div>
-				<button class="btn btn-info add" >添加</button>
-				<button class="btn btn-info edit">修改</button>
-				<button class="btn btn-info del">删除</button>
-				<button class="btn btn-info pinToLogo">推荐至首页LOGO</button>
-				<button class="btn btn-info pinToBanner">推荐至首页Banner</button>
+                <button class="btn btn-info add">添加</button>
+                <button class="btn btn-info edit">修改</button>
+                <button class="btn btn-info del">删除</button>
+                <button class="btn btn-info pinToLogo">推荐至首页LOGO</button>
+                <button class="btn btn-info pinToBanner">推荐至首页Banner</button>
+                <button class="btn btn-info pinLogoList">首页LOGO推荐列表</button>
+                <button class="btn btn-info pinBannerList">首页Banner推荐列表</button>
 			</div>
 			
 					
@@ -273,6 +275,7 @@
 				<div class="modal-body" id="preview_body"></div>
 
 				<div class="modal-footer">
+                    <button type="button" class="btn btn-white save" id="savePin" data-dismiss="modal">保存</button>
 					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 				</div>
 			</div>
@@ -304,13 +307,17 @@
         return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
     }
 
-	function buildImg(url) {
-		if (url == null || url == '') {
-			return "";
-		} else {
-			return "<img width='375px' height='223px' src='#' />".replace("#", url);
-		}
-	}
+    function buildImg(url, h, w) {
+        if (url == null || url == '') {
+            return "";
+        } else {
+            if (h != null && w != null) {
+                return "<img width='WWWpx' height='HHHpx' src='#' />".replace("#", url).replace("WWW", w).replace("HHH", h);
+            } else {
+                return "<img width='375px' height='223px' src='#' />".replace("#", url);
+            }
+        }
+    }
 
 	function checkImg(list) {
 		var returnList = {};
@@ -348,33 +355,99 @@
 				'</div>';
 	}
 
-	function checkIt(id) {
-		$.post("/brand_get", {"id": id}, function (data) {
-			if (data) {
-				var preview = $("#preview_body");
-				var contentStr = "";
-				var mainObj = data;
-				contentStr += appendToPreview("编号:", mainObj["id"]);
-				contentStr += appendToPreview("品牌名称:", mainObj["name"]);
-				contentStr += appendToPreview("简介:", mainObj["info"]);
-				contentStr += appendToPreview("类型[0-国内品牌，1-国际品牌]:", mainObj["type"]);
-				contentStr += appendToPreview("是否推荐[0-否，1-是]:", mainObj["isRecommend"]);
-				contentStr += appendToPreview("品牌LOGO:", buildImg(mainObj["logo"]));
-				contentStr += appendToPreview("品牌LOGO(大):", buildImg(mainObj["logoBig"]));
-				contentStr += appendToPreview("品牌banner:", buildImg(mainObj["banner"]));
-				contentStr += appendToPreview("背景图:", buildImg(mainObj["background"]));
-				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
-				contentStr += appendToPreview("备注:", mainObj["remark"]);
-				contentStr += appendToPreview("排序:", mainObj["sort"]);
-				contentStr += "<hr/>";
-				preview.html(contentStr);
-				jQuery('#preview').modal('show', {backdrop: 'fade'});
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function appendToPreviewList(one, two, three, four, five, six) {
+        return '<div class="row">' +
+            '<div class="col-md-2">' +
+            one +
+            '</div>' +
+            '<div class="col-md-2">' +
+            two +
+            '</div>' +
+            '<div class="col-md-2">' +
+            three +
+            '</div>' +
+            '<div class="col-md-2">' +
+            four +
+            '</div>' +
+            '<div class="col-md-2">' +
+            five +
+            '</div>' +
+            '<div class="col-md-2">' +
+            six +
+            '</div>' +
+            '</div>';
+    }
+
+    function checkIt(id) {
+        $.post("/brand_get", {"id": id}, function (data) {
+            if (data) {
+                var preview = $("#preview_body");
+                var contentStr = "";
+                var mainObj = data;
+                contentStr += appendToPreview("编号:", mainObj["id"]);
+                contentStr += appendToPreview("品牌名称:", mainObj["name"]);
+                contentStr += appendToPreview("简介:", mainObj["info"]);
+                contentStr += appendToPreview("类型[0-国内品牌，1-国际品牌]:", mainObj["type"]);
+                contentStr += appendToPreview("是否推荐[0-否，1-是]:", mainObj["isRecommend"]);
+                contentStr += appendToPreview("品牌LOGO:", buildImg(mainObj["logo"]));
+                contentStr += appendToPreview("品牌LOGO(大):", buildImg(mainObj["logoBig"]));
+                contentStr += appendToPreview("品牌banner:", buildImg(mainObj["banner"]));
+                contentStr += appendToPreview("背景图:", buildImg(mainObj["background"]));
+                contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
+                contentStr += appendToPreview("备注:", mainObj["remark"]);
+                contentStr += appendToPreview("排序:", mainObj["sort"]);
+                contentStr += "<hr/>";
+                preview.html(contentStr);
+                $("#savePin").hide();
+                jQuery('#preview').modal('show', {backdrop: 'fade'});
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+    function delNode(self) {
+        var that = $(self);
+        that.parent().parent().remove();
+    }
+
+    function listIt(data, isLogo) {
+        var preview = $("#preview_body");
+        var contentStr = "";
+        var mainObj = data;
+        for (var i in mainObj) {
+            var item = mainObj[i];
+            var imgUrl = isLogo ? item["logoIndex"] : item["bannerBig"];
+            var idHidden = "<input type='hidden' name='id' value='VALUE' />".replace("VALUE", item["id"]);
+            var imgHidden = "<input type='hidden' name='image' value='VALUE' />".replace("VALUE", imgUrl == null ? "NONE" : imgUrl);
+            var delButton = "<input type='button' name='delete' value='删除' onclick='delNode(this)' />";
+            contentStr += appendToPreviewList(item["id"], item["name"], buildImg(item["logo"], 100, 100), buildImg(imgUrl, 100, 100), delButton, idHidden + imgHidden);
+        }
+        preview.html(contentStr);
+        var submit = $("#savePin");
+        submit.show();
+        submit.off("click");
+        submit.click(function () {
+            var id = preview.find("input[name='id']");
+            var image = preview.find("input[name='image']");
+            var ids = [];
+            id.each(function (i, e) {
+                ids.push(e.value);
+            });
+            var images = [];
+            image.each(function (i, e) {
+                images.push(e.value);
+            });
+            $.post("/brand_pin_save", {"ids": ids, "images": images, "isLogo": isLogo}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                }
+            });
+        });
+        jQuery('#preview').modal('show', {backdrop: 'fade'});
+        toastr.success("操作已成功！", "温馨提示");
+    }
 
 	var table_global;
 
@@ -821,7 +894,7 @@
 					toastr.success("操作已成功！", "温馨提示");
 					oTable.fnDraw();
 				}
-			})
+			});
 		});
 
 		$(".btn.btn-info.pinToLogo").click(function () {
@@ -839,7 +912,7 @@
 				if (data) {
 					toastr.success("操作已成功！", "温馨提示");
 				}
-			})
+			});
 		});
 
 		$(".btn.btn-info.pinToBanner").click(function () {
@@ -857,8 +930,26 @@
 				if (data) {
 					toastr.success("操作已成功！", "温馨提示");
 				}
-			})
+			});
 		});
+
+        $(".btn.btn-info.pinLogoList").click(function () {
+            $.post("/brand_pin_list", {"to": "logo"}, function (data) {
+                if (data) {
+                    listIt(data, true);
+                    toastr.success("操作已成功！", "温馨提示");
+                }
+            });
+        });
+
+        $(".btn.btn-info.pinBannerList").click(function () {
+            $.post("/brand_pin_list", {"to": "banner"}, function (data) {
+                if (data) {
+                    listIt(data, false);
+                    toastr.success("操作已成功！", "温馨提示");
+                }
+            });
+        });
 
         $(".btn.btn-info.up").click(function(){
             var activityId = $("input[name='activityId']:checked");
