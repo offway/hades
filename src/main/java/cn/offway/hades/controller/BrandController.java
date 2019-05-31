@@ -1,11 +1,12 @@
 package cn.offway.hades.controller;
 
 import cn.offway.hades.domain.PhBrand;
+import cn.offway.hades.domain.PhConfig;
 import cn.offway.hades.properties.QiniuProperties;
-import cn.offway.hades.service.PhBrandService;
-import cn.offway.hades.service.PhGoodsService;
-import cn.offway.hades.service.PhGoodsStockService;
-import cn.offway.hades.service.PhMerchantBrandService;
+import cn.offway.hades.service.*;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,8 @@ public class BrandController {
     private PhGoodsStockService goodsStockService;
     @Autowired
     private PhMerchantBrandService merchantBrandService;
+    @Autowired
+    private PhConfigService configService;
 
     @RequestMapping("/brand.html")
     public String index(ModelMap map) {
@@ -139,5 +142,38 @@ public class BrandController {
             return true;
         }
         return false;
+    }
+
+    @ResponseBody
+    @RequestMapping("/brand_pin")
+    public boolean pin(@RequestParam("ids[]") Long[] ids, String to) {
+        String key = "logo".equals(to) ? "INDEX_BRAND_LOGO" : "INDEX_BRAND_GOODS";
+        String jsonStr = configService.findContentByName(key);
+        JSONArray jsonArray;
+        if (jsonStr != null && !"".equals(jsonStr)) {
+            jsonArray = JSON.parseArray(jsonStr);
+        } else {
+            jsonArray = new JSONArray();
+        }
+        for (Long id : ids) {
+            PhBrand brand = brandService.findOne(id);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", brand.getId());
+            if ("logo".equals(to)) {
+                jsonObject.put("image", brand.getLogoIndex() == null ? "NONE" : brand.getLogoIndex());
+            } else {
+                jsonObject.put("image", brand.getBannerBig() == null ? "NONE" : brand.getBannerBig());
+            }
+            jsonArray.add(jsonObject);
+        }
+        PhConfig config = configService.findOne(key);
+        if (config == null) {
+            config = new PhConfig();
+            config.setName(key);
+            config.setCreateTime(new Date());
+        }
+        config.setContent(jsonArray.toJSONString());
+        configService.save(config);
+        return true;
     }
 }

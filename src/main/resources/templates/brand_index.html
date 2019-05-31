@@ -69,6 +69,8 @@
 				<button class="btn btn-info add" >添加</button>
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
+				<button class="btn btn-info pinToLogo">推荐至首页LOGO</button>
+				<button class="btn btn-info pinToBanner">推荐至首页Banner</button>
 			</div>
 			
 					
@@ -587,11 +589,18 @@
 		});
 
 		table_global = oTable;
-		
-		$(".searchBtn").click(function(){
+
+		$(".searchBtn").click(function () {
 			$("#checkbox-all").attr("checked", false);
 			oTable.fnDraw(); //or fnReloadAjax()  
 			return false;
+		});
+
+		$('#example-1').on('click', "#checkbox-all", function () {
+			var obj = $(this);
+			$("input[name='activityPrizeId']").each(function (i, e) {
+				this.checked = obj[0].checked;
+			});
 		});
 
 		$(".btn.btn-info.add").click(function () {
@@ -811,6 +820,42 @@
 				if(data){
 					toastr.success("操作已成功！", "温馨提示");
 					oTable.fnDraw();
+				}
+			})
+		});
+
+		$(".btn.btn-info.pinToLogo").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
+
+			$.post("/brand_pin", {"ids": ids, "to": "logo"}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+				}
+			})
+		});
+
+		$(".btn.btn-info.pinToBanner").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
+
+			$.post("/brand_pin", {"ids": ids, "to": "banner"}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
 				}
 			})
 		});
