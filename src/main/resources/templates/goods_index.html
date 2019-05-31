@@ -512,6 +512,7 @@
 		var oTable;
 		$.getJSON("/merchant_list_all", {}, function (data) {
 			bindMerchantSelector(data);
+			renderBrand("#merchantId");
 			oTable = $("#example-1").dataTable({
 				language: {
 					url: "../assets/Chinese.txt"
@@ -650,50 +651,50 @@
 							return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
 						}
 					},
-                    {
-                        targets: 20,
-                        data: "remark",
-                        title: "备注"
-                    },
-                    {
-                        targets: 21,
-                        data: "isSpecial",
-                        title: "特殊商品",
-                        render: function (data, type, row, meta) {
-                            return data == "1" ? "<font color='red'>特殊</font>" : "非特殊";
-                        }
-                    },
-                    {
-                        targets: 22,
-                        data: "id",
-                        orderable: false,
-                        title: "操作",
-                        render: function (data, type, full, meta) {
-                            var str = '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-                            str += '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
-                            return str;
-                        }
-                    },
-                    {
-                        targets: 23,
-                        data: "id",
-                        orderable: false,
-                        title: "操作",
-                        render: function (data, type, full, meta) {
-                            var str = "";
-                            if (full["status"] == "0") {
-                                str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
-                            } else {
-                                str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
-                            }
-                            if (full["isSpecial"] == "0") {
-                                str += '<input type="button" name="checkIt" onclick="specialIt(' + data + ',this)" value="设为特殊"/>';
-                            } else {
-                                str += '<input type="button" name="checkIt" onclick="unSpecialIt(' + data + ',this)" value="取消特殊"/>';
-                            }
-                            return str;
-                        }
-                    }
+					{
+						targets: 20,
+						data: "remark",
+						title: "备注"
+					},
+					{
+						targets: 21,
+						data: "isSpecial",
+						title: "特殊商品",
+						render: function (data, type, row, meta) {
+							return data == "1" ? "<font color='red'>特殊</font>" : "非特殊";
+						}
+					},
+					{
+						targets: 22,
+						data: "id",
+						orderable: false,
+						title: "操作",
+						render: function (data, type, full, meta) {
+							var str = '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+							str += '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
+							return str;
+						}
+					},
+					{
+						targets: 23,
+						data: "id",
+						orderable: false,
+						title: "操作",
+						render: function (data, type, full, meta) {
+							var str = "";
+							if (full["status"] == "0") {
+								str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+							} else {
+								str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+							}
+							if (full["isSpecial"] == "0") {
+								str += '<input type="button" name="checkIt" onclick="specialIt(' + data + ',this)" value="设为特殊"/>';
+							} else {
+								str += '<input type="button" name="checkIt" onclick="unSpecialIt(' + data + ',this)" value="取消特殊"/>';
+							}
+							return str;
+						}
+					}
 				]
 			});
 			table_global = oTable;
