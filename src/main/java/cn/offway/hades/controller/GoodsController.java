@@ -81,15 +81,27 @@ public class GoodsController {
     }
 
     @RequestMapping("/goods_add.html")
-    public String add(ModelMap map) {
+    public String add(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            map.addAttribute("isAdmin", "0");
+        } else {
+            map.addAttribute("isAdmin", "1");
+        }
         return "goods_add";
     }
 
     @RequestMapping("/goods_edit.html")
-    public String edit(ModelMap map, Long id) {
+    public String edit(ModelMap map, Long id, @AuthenticationPrincipal PhAdmin admin) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("theId", id);
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            map.addAttribute("isAdmin", "0");
+        } else {
+            map.addAttribute("isAdmin", "1");
+        }
         return "goods_edit";
     }
 
@@ -157,6 +169,13 @@ public class GoodsController {
             return brandService.findAll();
         }
     }
+
+    @ResponseBody
+    @RequestMapping("/merchant_list_brand")
+    public List<PhMerchantBrand> getMerchantOfBrand(long id) {
+        return merchantBrandService.findByBid(id);
+    }
+
 
     @ResponseBody
     @RequestMapping("/fare_list")
