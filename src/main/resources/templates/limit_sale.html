@@ -70,7 +70,7 @@
 
 				<div class="modal-body">
 					<form role="form" id="saveForm">
-						<input type="hidden" name="ids"/>
+						<input type="hidden" name="id"/>
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
@@ -126,7 +126,7 @@
 
 				<div class="modal-footer">
 				 	<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info save">保存</button>
+					<button type="button" class="btn btn-info save">保存并添加商品</button>
 					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 				</div>
 
@@ -157,6 +157,7 @@
 	<script src="assets/js/async.min.js"></script>
 	<script src="assets/kindeditor-4.1.12/kindeditor-all-min.js"></script>
 	<script src="assets/kindeditor-4.1.12/lang/zh-CN.js"></script>
+    <script src="assets/js/jquery.base64.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -504,6 +505,8 @@
 
     jQuery(document).ready(function($)
 	{
+        $.base64.utf8encode = true;
+        $.base64.utf8decode = true;
 		var oTable;
 		// oTable = $("#example-1").dataTable({
 		// 	language: {
@@ -796,57 +799,61 @@
 
 		//保存
 		$(".btn.btn-info.save").click(function(){
-			var footer = $(this).parent(".modal-footer");
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var form = $("#saveForm");
-			var beginTime = form.find("input[name='beginTime']").val();
-			var endTime = form.find("input[name='endTime']").val();
-			var discount = form.find("input[name='discount']").val();
+            var footer = $(this).parent(".modal-footer");
+            footer.find("button").hide();
+            footer.find(".bg-lg").show();
+            var form = $("#saveForm");
+            var beginTime = form.find("input[name='beginTime']").val();
+            var endTime = form.find("input[name='endTime']").val();
+            var name = form.find("input[name='name']").val();
+            var image = form.find("input[name='image']").val();
+            var status = form.find("input[name='status']:checked").val();
+            var info = editor.html();
 
-            if ((beginTime != '' && endTime == '') || (beginTime == '' && endTime != '') || discount == '') {
+            if (beginTime == '' || endTime == '' || name == '' || image == '' || status == '' || info == '') {
                 toastr.error("请填写完整数据后提交", "温馨提示");
                 footer.find("button").show();
                 footer.find(".bg-lg").hide();
                 return;
             }
 
-			//获取token
-			$.get("/qiniu/token",{},function(token){
-				if(token !=''){
-					async.series({
-						one: function(callback) {
-							callback();
-						},
-						two: function(callback){
-							callback();
-						},
-						three: function(callback){
-							//提交保存
-							$.post("/goods_discount_add",$("#saveForm").serialize(),function(data){
-								if(data){
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									jQuery('#modal-6').modal('hide');
-									toastr.success("操作已成功！", "温馨提示");
-									oTable.fnDraw();
-								}else{
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败", "温馨提示");
-								}
-								callback();
-							});
-						}
-					}, function(err, results) {
-						console.log("OK");
-					});
-				}else{
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					toastr.error("错误，请联系管理员", "温馨提示");
-				}
-			});
+            //获取token
+            $.get("/qiniu/token", {}, function (token) {
+                if (token != '') {
+                    var args = "";
+                    async.series({
+                        one: function (callback) {
+                            callback();
+                        },
+                        two: function (callback) {
+                            callback();
+                        },
+                        three: function (callback) {
+                            //提交保存
+                            var map = $("#saveForm").serializeArray();
+                            var newMap = {};
+                            for (var i in map) {
+                                if (map[i]["name"] == 'info') {
+                                    newMap["info"] = $.base64.btoa(info);
+                                } else {
+                                    newMap[map[i]["name"]] = map[i]["value"];
+                                }
+                            }
+                            args = $.base64.btoa(JSON.stringify(newMap));
+                            callback();
+                        }
+                    }, function (err, results) {
+                        footer.find("button").show();
+                        footer.find(".bg-lg").hide();
+                        jQuery('#modal-6').modal('hide');
+                        window.open('/limit_sale_add.html?args=' + args, "_blank");
+                    });
+                } else {
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                    toastr.error("错误，请联系管理员", "温馨提示");
+                }
+            });
 		});
 
 		$(".btn.btn-info.edit").click(function () {

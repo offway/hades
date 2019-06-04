@@ -25,8 +25,9 @@ public class LimitSaleController {
     }
 
     @RequestMapping("/limit_sale_add.html")
-    public String add(ModelMap map) {
+    public String add(ModelMap map, String args) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("args", args);
         return "limit_sale_add";
     }
 }

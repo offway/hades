@@ -67,6 +67,8 @@ public class GoodsController {
     private PhGoodsSpecialService specialService;
     @Autowired
     private PhConfigService configService;
+    @Autowired
+    private PhLimitedSaleService limitedSaleService;
 
     @RequestMapping("/goods.html")
     public String index(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
@@ -677,8 +679,32 @@ public class GoodsController {
     }
 
     @ResponseBody
+    @RequestMapping("/goods_add_limit_sale")
+    public boolean addLimitSale(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount, String args) throws UnsupportedEncodingException {
+        PhGoods goodsSaved = null;
+        Object object = add(goods, stocks, banners, intros, isDiscount, true);
+        if (object instanceof PhGoods) {
+            goodsSaved = (PhGoods) object;
+        }
+        byte[] jsonStr = Base64.decode(args, Base64.DEFAULT);
+        JSONObject jsonObject = JSON.parseObject(new String(jsonStr));
+        byte[] jsonStrInfo = Base64.decode(jsonObject.getString("info"), Base64.DEFAULT);
+        PhLimitedSale limitedSale = jsonObject.toJavaObject(PhLimitedSale.class);
+        limitedSale.setCreateTime(new Date());
+        limitedSale.setGoodsId(goodsSaved.getId());
+        limitedSale.setInfo(new String(jsonStrInfo));
+        limitedSale.setPrice(goodsSaved.getPrice());
+        if ("1".equals(limitedSale.getStatus())) {
+            goodsSaved.setStatus("1");
+            goodsService.save(goodsSaved);
+        }
+        limitedSaleService.save(limitedSale);
+        return true;
+    }
+
+    @ResponseBody
     @RequestMapping("/goods_add")
-    public boolean add(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount) throws UnsupportedEncodingException {
+    public Object add(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount, Boolean fromInner) throws UnsupportedEncodingException {
         PhBrand brand = brandService.findOne(goods.getBrandId());
         if (brand != null) {
             goods.setBrandName(brand.getName());
@@ -812,6 +838,10 @@ public class GoodsController {
         }
         goodsSaved.setPriceRange(priceRange);
         goodsService.save(goodsSaved);
-        return true;
+        if (fromInner == null) {
+            return true;
+        } else {
+            return goodsSaved;
+        }
     }
 }
