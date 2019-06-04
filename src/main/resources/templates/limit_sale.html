@@ -71,6 +71,8 @@
 				<div class="modal-body">
 					<form role="form" id="saveForm">
 						<input type="hidden" name="id"/>
+						<input type="hidden" name="goodsId"/>
+						<input type="hidden" name="action"/>
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
@@ -647,10 +649,11 @@
         $(".btn.btn-info.add").click(function () {
             editor.html("");
             var form = $("#saveForm");
-            form.find("input").val("");
+			form.find("input:not(.notMe)").val("");
             form.find("img").attr("src", "");
             form.find("img").hide();
             form.find("input[type='file']").show();
+			form.find("input[name='action']").val("add");
             jQuery('#modal-6').modal('show', {backdrop: 'fade'});
             // window.location.href = '/goods_add.html';
         });
@@ -744,13 +747,14 @@
             var footer = $(this).parent(".modal-footer");
             footer.find("button").hide();
             footer.find(".bg-lg").show();
-            var form = $("#saveForm");
-            var beginTime = form.find("input[name='beginTime']").val();
-            var endTime = form.find("input[name='endTime']").val();
-            var name = form.find("input[name='name']").val();
-            var image = form.find("input[name='image']").val();
-            var status = form.find("input[name='status']:checked").val();
-            var info = editor.html();
+			var form = $("#saveForm");
+			var action = form.find("input[name='action']").val();
+			var beginTime = form.find("input[name='beginTime']").val();
+			var endTime = form.find("input[name='endTime']").val();
+			var name = form.find("input[name='name']").val();
+			var image = form.find("input[name='image']").val();
+			var status = form.find("input[name='status']:checked").val();
+			var info = editor.html();
 
             if (beginTime == '' || endTime == '' || name == '' || image == '' || status == '' || info == '') {
                 toastr.error("请填写完整数据后提交", "温馨提示");
@@ -785,10 +789,14 @@
                             callback();
                         }
                     }, function (err, results) {
-                        footer.find("button").show();
-                        footer.find(".bg-lg").hide();
-                        jQuery('#modal-6').modal('hide');
-                        window.open('/limit_sale_add.html?args=' + args, "_blank");
+						footer.find("button").show();
+						footer.find(".bg-lg").hide();
+						jQuery('#modal-6').modal('hide');
+						if (action == 'edit') {
+							window.open('/limit_sale_edit.html?args=' + args, "_blank");
+						} else {
+							window.open('/limit_sale_add.html?args=' + args, "_blank");
+						}
                     });
                 } else {
                     footer.find("button").show();
@@ -804,14 +812,38 @@
 				toastr.error("请选择一条数据操作", "温馨提示");
 				return;
 			}
-			$.post("/goods_findOne", {"id": activityId[0].value}, function (data) {
+			$.post("/limit_sale_get", {"id": activityId[0].value}, function (data) {
 				if (data) {
-                    if (data["status"] == "1") {
-                        toastr.error("操作失败,已上架商品不允许编辑", "温馨提示");
-                    } else {
-                        window.open('/goods_edit.html?id=' + activityId[0].value, "_blank");
-                        // window.location.href = '/goods_edit.html?id=' + activityId[0].value;
-                    }
+					if (data["status"] == "1") {
+						toastr.error("操作失败,已上架商品不允许编辑", "温馨提示");
+					} else {
+						var form = $("#saveForm");
+						//商家
+						for (var i in data) {
+							var ele = form.find("input[name='" + i + "']");
+							switch (ele.attr("type")) {
+								case "radio":
+									ele.val([data[i]]);
+									break;
+								default:
+									if (data[i] != undefined && !isNaN(data[i]) && String(data[i]).length == 13) {
+										ele.val(formatTime(data[i]));
+										$("#" + i).val(formatTime(data[i]));
+									} else {
+										ele.val(data[i]);
+									}
+							}
+							form.find("img[name='" + i + "Img']").attr("src", data[i]);
+							form.find("img[name='" + i + "Img']").attr("width", 200);
+							form.find("img[name='" + i + "Img']").attr("length", 200);
+							form.find("img[name='" + i + "Img']").show();
+						}
+						editor.html(data["info"]);
+						form.find(".btn.image").show();
+						form.find("input[name='action']").val("edit");
+						jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+						// window.open('/goods_edit.html?id=' + activityId[0].value, "_blank");
+					}
 				}
 			});
 		});

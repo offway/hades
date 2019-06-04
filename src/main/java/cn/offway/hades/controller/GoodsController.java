@@ -690,8 +690,13 @@ public class GoodsController {
         JSONObject jsonObject = JSON.parseObject(new String(jsonStr));
         byte[] jsonStrInfo = Base64.decode(jsonObject.getString("info"), Base64.DEFAULT);
         PhLimitedSale limitedSale = jsonObject.toJavaObject(PhLimitedSale.class);
-        limitedSale.setCreateTime(new Date());
-        limitedSale.setGoodsId(goodsSaved.getId());
+        if (limitedSale.getId() == null) {
+            limitedSale.setCreateTime(new Date());
+            limitedSale.setGoodsId(goodsSaved.getId());
+        } else {
+            PhLimitedSale limitedSaleSaved = limitedSaleService.findOne(limitedSale.getId());
+            limitedSale.setCreateTime(limitedSaleSaved.getCreateTime());
+        }
         limitedSale.setInfo(new String(jsonStrInfo));
         limitedSale.setPrice(goodsSaved.getPrice());
         if ("1".equals(limitedSale.getStatus())) {

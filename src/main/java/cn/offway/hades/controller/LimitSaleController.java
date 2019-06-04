@@ -50,6 +50,13 @@ public class LimitSaleController {
         return "limit_sale_add";
     }
 
+    @RequestMapping("/limit_sale_edit.html")
+    public String edit(ModelMap map, String args) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("args", args);
+        return "limit_sale_edit";
+    }
+
     @ResponseBody
     @RequestMapping("/limit_sale_list")
     public Map<String, Object> getList(HttpServletRequest request) {
@@ -82,5 +89,11 @@ public class LimitSaleController {
             }
         }
         return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/limit_sale_get")
+    public PhLimitedSale get(Long id) {
+        return limitedSaleService.findOne(id);
     }
 }
