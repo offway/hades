@@ -508,190 +508,127 @@
         $.base64.utf8encode = true;
         $.base64.utf8decode = true;
 		var oTable;
-		// oTable = $("#example-1").dataTable({
-		// 	language: {
-		// 		url: "../assets/Chinese.txt"
-		// 	},
-		// 	aLengthactivity: [
-		// 		[10, 25, 50, 100], [10, 25, 50, 100]
-		// 	],
-		// 	bFilter: false,
-		// 	bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
-		// 	sAjaxDataProp: "aData",//是服务器分页的标志，必须有
-		// 	sAjaxSource: "/goods_list",//通过ajax实现分页的url路径。
-		// 	fnServerParams: function (aData) {
-		// 		var searchArray = $(".form-inline").serializeArray();
-		// 		$.merge(aData, searchArray);
-		// 	},
-		// 	order: [[6, "desc"]],
-		// 	columnDefs: [
-		// 		{
-		// 			targets: 0,
-		// 			data: "id",
-		// 			width: "5%",
-		// 			orderable: false,
-		// 			className: 'select-checkbox',
-		// 			title: '<input type="checkbox" id="checkbox-all"/>',
-		// 			render: function (data, type, full, meta) {
-		// 				return '<input type="checkbox" name="activityId" value="' + data + '" />';
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 1,
-		// 			data: "id",
-		// 			title: "序号"
-		// 		},
-		// 		{
-		// 			targets: 2,
-		// 			data: "name",
-		// 			title: "名称"
-		// 		},
-		// 		{
-		// 			targets: 3,
-		// 			data: "image",
-		// 			title: "封面图片",
-		// 			render: function (data, type, row, meta) {
-		// 				return buildImg(data);
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 4,
-		// 			data: "merchantId",
-		// 			title: "商户ID"
-		// 		},
-		// 		{
-		// 			targets: 5,
-		// 			data: "merchantLogo",
-		// 			title: "商户LOGO",
-		// 			render: function (data, type, row, meta) {
-		// 				return buildImg(data);
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 6,
-		// 			data: "merchantName",
-		// 			title: "商户名称"
-		// 		},
-		// 		{
-		// 			targets: 7,
-		// 			data: "brandId",
-		// 			title: "品牌ID"
-		// 		},
-		// 		{
-		// 			targets: 8,
-		// 			data: "brandName",
-		// 			title: "品牌名称"
-		// 		},
-		// 		{
-		// 			targets: 9,
-		// 			data: "brandLogo",
-		// 			title: "品牌LOGO",
-		// 			render: function (data, type, row, meta) {
-		// 				return buildImg(data);
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 10,
-		// 			data: "type",
-		// 			title: "类别"
-		// 		},
-		// 		{
-		// 			targets: 11,
-		// 			data: "category",
-		// 			title: "类目"
-		// 		},
-		// 		{
-		// 			targets: 12,
-		// 			data: "price",
-		// 			title: "发售价"
-		// 		},
-		// 		{
-		// 			targets: 13,
-		// 			data: "originalPrice",
-		// 			title: "原价"
-		// 		},
-		// 		{
-		// 			targets: 14,
-		// 			data: "priceRange",
-		// 			title: "价格范围"
-		// 		},
-		// 		{
-		// 			targets: 15,
-		// 			data: "material",
-		// 			title: "材质"
-		// 		},
-		// 		{
-		// 			targets: 16,
-		// 			data: "status",
-		// 			title: "状态",
-		// 			render: function (data, type, row, meta) {
-		// 				return (data == "0" || data == undefined) ? "<font color='red'>未上架</font>" : "已上架";
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 17,
-		// 			data: "viewCount",
-		// 			title: "浏览数"
-		// 		},
-		// 		{
-		// 			targets: 18,
-		// 			data: "saleCount",
-		// 			title: "销量"
-		// 		},
-		// 		{
-		// 			targets: 19,
-		// 			data: "createTime",
-		// 			title: "创建时间",
-		// 			render: function (data, type, row, meta) {
-		// 				return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 20,
-		// 			data: "remark",
-		// 			title: "备注"
-		// 		},
-		// 		{
-		// 			targets: 21,
-		// 			data: "isSpecial",
-		// 			title: "特殊商品",
-		// 			render: function (data, type, row, meta) {
-		// 				return data == "1" ? "<font color='red'>特殊</font>" : "非特殊";
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 22,
-		// 			data: "id",
-		// 			orderable: false,
-		// 			title: "操作",
-		// 			render: function (data, type, full, meta) {
-		// 				var str = '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-		// 				str += '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
-		// 				return str;
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 23,
-		// 			data: "id",
-		// 			orderable: false,
-		// 			title: "操作",
-		// 			render: function (data, type, full, meta) {
-		// 				var str = "";
-		// 				if (full["status"] == "0") {
-		// 					str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
-		// 				} else {
-		// 					str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
-		// 				}
-		// 				if (full["isSpecial"] == "0") {
-		// 					str += '<input type="button" name="checkIt" onclick="specialIt(' + data + ',this)" value="设为特殊"/>';
-		// 				} else {
-		// 					str += '<input type="button" name="checkIt" onclick="unSpecialIt(' + data + ',this)" value="取消特殊"/>';
-		// 				}
-		// 				return str;
-		// 			}
-		// 		}
-		// 	]
-		// });
+        oTable = $("#example-1").dataTable({
+            language: {
+                url: "../assets/Chinese.txt"
+            },
+            aLengthactivity: [
+                [10, 25, 50, 100], [10, 25, 50, 100]
+            ],
+            bFilter: false,
+            bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+            sAjaxSource: "/limit_sale_list",//通过ajax实现分页的url路径。
+            fnServerParams: function (aData) {
+                var searchArray = $(".form-inline").serializeArray();
+                $.merge(aData, searchArray);
+            },
+            order: [[6, "desc"]],
+            columnDefs: [
+                {
+                    targets: 0,
+                    data: "id",
+                    width: "5%",
+                    orderable: false,
+                    className: 'select-checkbox',
+                    title: '<input type="checkbox" id="checkbox-all"/>',
+                    render: function (data, type, full, meta) {
+                        return '<input type="checkbox" name="activityId" value="' + data + '" />';
+                    }
+                },
+                {
+                    targets: 1,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+                    targets: 2,
+                    data: "name",
+                    title: "名称"
+                },
+                {
+                    targets: 3,
+                    data: "image",
+                    title: "封面图片",
+                    render: function (data, type, row, meta) {
+                        return buildImg(data);
+                    }
+                },
+                {
+                    targets: 4,
+                    data: "price",
+                    title: "售价"
+                },
+                {
+                    targets: 5,
+                    data: "goodsId",
+                    title: "商品ID"
+                },
+                {
+                    targets: 6,
+                    data: "beginTime",
+                    title: "开始时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                },
+                {
+                    targets: 7,
+                    data: "endTime",
+                    title: "截止时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                },
+                {
+                    targets: 8,
+                    data: "status",
+                    title: "状态",
+                    render: function (data, type, row, meta) {
+                        return (data == "0" || data == undefined) ? "<font color='red'>未上架</font>" : "已上架";
+                    }
+                },
+                {
+                    targets: 9,
+                    data: "info",
+                    title: "发售详情"
+                },
+                {
+                    targets: 10,
+                    data: "createTime",
+                    title: "创建时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                },
+                {
+                    targets: 11,
+                    data: "goodsId",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        var str = '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+                        str += '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
+                        return str;
+                    }
+                },
+                {
+                    targets: 12,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        var str = "";
+                        if (full["status"] == "0") {
+                            str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+                        } else {
+                            str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+                        }
+                        return str;
+                    }
+                }
+            ]
+        });
 		table_global = oTable;
 
 		$(".searchBtn").click(function(){
@@ -707,11 +644,16 @@
             });
         });
 
-		$(".btn.btn-info.add").click(function () {
-			editor.html("");
-			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-			// window.location.href = '/goods_add.html';
-		});
+        $(".btn.btn-info.add").click(function () {
+            editor.html("");
+            var form = $("#saveForm");
+            form.find("input").val("");
+            form.find("img").attr("src", "");
+            form.find("img").hide();
+            form.find("input[type='file']").show();
+            jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+            // window.location.href = '/goods_add.html';
+        });
 
 		function getImgSize(file, cb) {
 			var f = file;//input.files[0];
@@ -874,30 +816,30 @@
 			});
 		});
 
-		$(".btn.btn-info.del").click(function(){
-			var activityId = $("input[name='activityId']:checked");
-			if(activityId.length < 1){
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return ;
-			}
-			var confirm = window.confirm("你确定要这么做？");
-			if (confirm == false) {
-				return;
-			}
-			var ids = [];
-			activityId.each(function(i,e){
-				ids.push(e.value);
-			});
+        $(".btn.btn-info.del").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            var confirm = window.confirm("你确定要这么做？");
+            if (confirm == false) {
+                return;
+            }
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
 
-			$.post("/goods_del", {ids: ids}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				} else {
-					toastr.error("您无权操作！", "温馨提示");
-				}
-			});
-		});
+            $.post("/limit_sale_del", {ids: ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                } else {
+                    toastr.error("您无权操作！", "温馨提示");
+                }
+            });
+        });
 
         $(".btn.btn-info.up").click(function(){
             var activityId = $("input[name='activityId']:checked");
