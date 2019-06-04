@@ -688,6 +688,7 @@ public class GoodsController {
         if (merchant != null) {
             goods.setMerchantName(merchant.getName());
             goods.setMerchantLogo(merchant.getLogo());
+            goods.setMerchantType(merchant.getType());
         }
         PhGoodsType goodsType = goodsTypeService.findOne(Long.valueOf(goods.getType()));
         if (goodsType != null) {
