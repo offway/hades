@@ -1,7 +1,15 @@
 package cn.offway.hades.service;
 
-import java.io.IOException;
-
+import cn.offway.hades.properties.QiniuProperties;
+import cn.offway.hades.utils.Auth;
+import com.google.gson.Gson;
+import com.qiniu.common.QiniuException;
+import com.qiniu.common.Zone;
+import com.qiniu.http.Response;
+import com.qiniu.storage.Configuration;
+import com.qiniu.storage.UploadManager;
+import com.qiniu.storage.model.DefaultPutRet;
+import com.qiniu.util.UrlSafeBase64;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -15,10 +23,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.qiniu.util.UrlSafeBase64;
-
-import cn.offway.hades.properties.QiniuProperties;
-import cn.offway.hades.utils.Auth;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Service
 public class QiniuService {
@@ -82,6 +88,22 @@ public class QiniuService {
 			logger.error("七牛资源删除异常",e);
 			return false;
 		}
+	}
+
+	public String qiniuUpload(InputStream file) {
+		Configuration cfg = new Configuration(Zone.autoZone());
+		UploadManager manager = new UploadManager(cfg);
+		com.qiniu.util.Auth auth = com.qiniu.util.Auth.create(qiniuProperties.getAccessKey(), qiniuProperties.getSecretKey());
+		String token = auth.uploadToken(qiniuProperties.getBucket());
+		try {
+			Response response = manager.put(file, null, token, null, null);
+			//解析上传成功的结果
+			DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
+			return qiniuProperties.getUrl() + "/" + putRet.key;
+		} catch (QiniuException e) {
+			logger.error("QINIU UPLOAD ERROR", e);
+		}
+		return null;
 	}
 	
 }

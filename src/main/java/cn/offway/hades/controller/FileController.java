@@ -1,25 +1,27 @@
 package cn.offway.hades.controller;
 
 
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-
+import cn.offway.hades.service.QiniuService;
+import com.alibaba.fastjson.JSONObject;
 import org.aspectj.util.FileUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/file")
@@ -31,6 +33,9 @@ public class FileController {
 	
 	@Value("${ph.file.server}")
 	private String FILE_SERVER;
+
+	@Autowired
+	private QiniuService qiniuService;
 	
 	@ResponseBody
 	@RequestMapping("/upload")
@@ -58,6 +63,27 @@ public class FileController {
 			return null;
 		}
 
+	}
+
+	@ResponseBody
+	@RequestMapping("/upload_qn")
+	public String uploadToQN(MultipartFile imgFile, HttpServletResponse response) {
+		response.setHeader("X-Frame-Options", "SAMEORIGIN");
+//		response.setHeader("Content-Type", "text/html; charset=UTF-8");
+		JSONObject object = new JSONObject();
+		try {
+			String url = qiniuService.qiniuUpload(imgFile.getInputStream());
+			if (url == null) {
+				object.put("error", 1);
+				object.put("message", "error");
+			} else {
+				object.put("error", 0);
+				object.put("url", url);
+			}
+		} catch (Exception e) {
+			//
+		}
+		return object.toJSONString();
 	}
 
 	@RequestMapping("/download")
