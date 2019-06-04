@@ -32,6 +32,9 @@ public class PhGoods implements Serializable {
     /** 商户名称 **/
     private String merchantName;
 
+    /** 商户类型[0-品牌商,1-买手店] **/
+    private String merchantType;
+
     /** 品牌ID **/
     private Long brandId;
 
@@ -283,4 +286,12 @@ public class PhGoods implements Serializable {
         this.upTime = upTime;
     }
 
+    @Column(name = "merchant_type", length = 2)
+    public String getMerchantType() {
+        return merchantType;
+    }
+
+    public void setMerchantType(String merchantType) {
+        this.merchantType = merchantType;
+    }
 }
