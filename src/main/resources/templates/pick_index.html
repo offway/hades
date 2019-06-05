@@ -484,12 +484,13 @@
 					data: "sub",
 					title: "优选商品",
 					render: function (data, type, row, meta) {
-						var str = "";
-						for (var i in data) {
-							var it = data[i];
-							str += "<p>" + it["name"] + "&nbsp;" + it["type"] + "&nbsp;" + it["category"] + "</p>";
-						}
-						return str;
+						return "共" + data.length + "件商品";
+						// var str = "";
+						// for (var i in data) {
+						// 	var it = data[i];
+						// 	str += "<p>" + it["name"] + "&nbsp;" + it["type"] + "&nbsp;" + it["category"] + "</p>";
+						// }
+						// return str;
 					}
 				},
 				{
