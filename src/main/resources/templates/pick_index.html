@@ -135,9 +135,32 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
+									<label class="control-label">选择方式</label>
+									<label><input name="method" class="notMe" type="radio" checked="checked" value="0"/>品牌首字母索引</label>
+									<label><input name="method" class="notMe" type="radio" value="1"/>按分类索引</label>
+								</div>
+							</div>
+						</div>
+						<div class="row" id="azBarDiv">
+							<div class="col-md-12">
+								<div class="form-group">
 									<label class="control-label">品牌首字母索引</label>
 									<select class="form-control" id="brandSelect" onchange="renderGoodsSelect(this)"></select>
 									<div id="azBar"></div>
+								</div>
+							</div>
+						</div>
+						<div class="row" id="typeAndCategoryDiv" style="display: none">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label">一级分类</label>
+									<select class="form-control" id="typeSelect" onchange="renderCategory(this)"></select>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label">二级分类</label>
+									<select class="form-control" id="categorySelect" onchange="renderGoods(this)"></select>
 								</div>
 							</div>
 						</div>
@@ -172,6 +195,7 @@
 		</div>
 	</div>
 	<input type="hidden" id="IMGHOLDER"/>
+	<input type="hidden" id="type_and_category_list"/>
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/jquery-ui.min.js"></script>
@@ -388,30 +412,34 @@
 		that.remove();
 	}
 
-    function renderGoodsSelect(self, id) {
-        var theId;
-        if (self == null) {
-            theId = id;
-        } else {
-            var that = $(self);
-            theId = that.val();
-        }
-        $.post("/pick_getGoods", {"pid": theId}, function (data) {
-            var str = "";
-            var imgList = {};
-            for (var i in data) {
-                var brand = data[i];
-                str += '<option value="VALUE" data-icon="ICON">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]).replace("ICON", brand["image"]);
-                imgList[brand["id"]] = brand["image"];
-            }
-            var ele = $("#goodsSelect");
-            ele.html(str);
-            $("#IMGHOLDER").val(JSON.stringify(imgList));
-            selectbox(ele, {
-                optionHtml: '<dd class="ui-selectbox-option {{className}}" data-option="{{index}}" tabindex="-1"><img src="{{icon}}" alt="icon" style="width:30px;height:30px;vertical-align:middle" /> {{textContent}}</dd>'
-            });
-        });
-    }
+	function renderGoodsSelect(self, id) {
+		var theId;
+		if (self == null) {
+			theId = id;
+		} else {
+			var that = $(self);
+			theId = that.val();
+		}
+		$.post("/pick_getGoods", {"value": theId, "type": 0}, function (data) {
+			bindGoods(data);
+		});
+	}
+
+	function bindGoods(data) {
+		var str = "";
+		var imgList = {};
+		for (var i in data) {
+			var brand = data[i];
+			str += '<option value="VALUE" data-icon="ICON" data-goodsNo="CODE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]).replace("ICON", brand["image"]).replace("CODE", brand["code"]);
+			imgList[brand["id"]] = brand["image"];
+		}
+		var ele = $("#goodsSelect");
+		ele.html(str);
+		$("#IMGHOLDER").val(JSON.stringify(imgList));
+		selectbox(ele, {
+			optionHtml: '<dd class="ui-selectbox-option {{className}}" data-option="{{index}}" tabindex="-1"><label>{{goodsno}}-</label><img src="{{icon}}" alt="icon" style="width:30px;height:30px;vertical-align:middle" /> {{textContent}}</dd>'
+		});
+	}
 
 	function renderBrandSelect(key) {
 		$("#goodsSelect").html("");
@@ -425,6 +453,49 @@
 				str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
 			}
 			$("#brandSelect").html(str);
+		});
+	}
+
+	function bindTypeSelector(data) {
+		var typeStr = "<option value=\"\" selected=\"selected\">请选择</option>";
+		for (var type in data) {
+			type = data[type];
+			typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["name"]).replace("KEY", type["name"]);
+		}
+		$("#typeSelect").html(typeStr);
+		// bindCategorySelector(data[0]["sub"]);
+	}
+
+	function bindCategorySelector(data) {
+		var categoryStr = "<option value=\"\" selected=\"selected\">请选择</option>";
+		for (var category in data) {
+			category = data[category];
+			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
+		}
+		$("#categorySelect").html(categoryStr);
+	}
+
+	function renderCategory(self) {
+		var jsonStr = $("#type_and_category_list").val();
+		var list = JSON.parse(jsonStr);
+		var selectedId = $(self).val();
+		for (var type in list) {
+			if (selectedId == list[type]["name"]) {
+				bindCategorySelector(list[type]["sub"]);
+				break;
+			}
+		}
+		//update goods list
+		$.post("/pick_getGoods", {"value": selectedId, "type": 1}, function (data) {
+			bindGoods(data);
+		});
+	}
+
+	function renderGoods(self) {
+		//update goods list
+		var selectedId = $(self).val();
+		$.post("/pick_getGoods", {"value": selectedId, "type": 2}, function (data) {
+			bindGoods(data);
 		});
 	}
 
@@ -514,6 +585,11 @@
 		});
 		table_global = oTable;
 
+		$.getJSON("/type_and_category_list", {}, function (data) {
+			$("#type_and_category_list").val(JSON.stringify(data));
+			bindTypeSelector(data);
+		});
+
         jQuery.datetimepicker.setLocale('zh');
 		jQuery('#beginTime').datetimepicker(
 				{
@@ -557,6 +633,22 @@
 			$("#checkbox-all").attr("checked", false);
 			oTable.fnDraw(); //or fnReloadAjax()  
 			return false;
+		});
+
+		$('[name="method"]').click(function () {
+			var value = $(this).val();  //获取选中的radio的值
+			var azBarDiv = $("#azBarDiv");
+			var typeAndCategoryDiv = $("#typeAndCategoryDiv");
+			switch (parseInt(value)) {
+				case 0:
+					azBarDiv.show();
+					typeAndCategoryDiv.hide();
+					break;
+				default:
+					azBarDiv.hide();
+					typeAndCategoryDiv.show();
+					break;
+			}
 		});
 
 		$(".btn.btn-info.add").click(function () {

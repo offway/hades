@@ -101,8 +101,17 @@ public class PickController {
 
     @RequestMapping("/pick_getGoods")
     @ResponseBody
-    public List<PhGoods> getGoodsList(Long pid) {
-        return goodsService.findAll(pid);
+    public List<PhGoods> getGoodsList(int type, String value) {
+        switch (type) {
+            case 0:
+                return goodsService.findAll("brandId", value);
+            case 1:
+                return goodsService.findAll("type", value);
+            case 2:
+                return goodsService.findAll("category", value);
+            default:
+                return null;
+        }
     }
 
     @RequestMapping("/pick_get")

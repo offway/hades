@@ -101,13 +101,13 @@ public class PhGoodsServiceImpl implements PhGoodsService {
     }
 
     @Override
-    public List<PhGoods> findAll(Long pid) {
+    public List<PhGoods> findAll(String name, Object value) {
         return phGoodsRepository.findAll(new Specification<PhGoods>() {
             @Override
             public Predicate toPredicate(Root<PhGoods> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
                 params.add(criteriaBuilder.equal(root.get("status"), "1"));
-                params.add(criteriaBuilder.equal(root.get("brandId"), pid));
+                params.add(criteriaBuilder.equal(root.get(name), value));
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
