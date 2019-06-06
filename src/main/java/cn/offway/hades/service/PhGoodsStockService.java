@@ -28,5 +28,7 @@ public interface PhGoodsStockService {
 
     void delByPid(Long id);
 
+    void updateByPid(Long id, Double value);
+
     List<PhGoodsStock> findByPid(Long pid);
 }

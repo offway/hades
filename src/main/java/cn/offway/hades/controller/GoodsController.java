@@ -426,6 +426,26 @@ public class GoodsController {
     }
 
     @ResponseBody
+    @RequestMapping("/goods_restore_price")
+    public boolean restorePrice(@RequestParam("ids[]") Long[] ids, @AuthenticationPrincipal PhAdmin admin) {
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            return false;
+        } else {
+            for (Long id : ids) {
+                PhGoods goods = goodsService.findOne(id);
+                if (goods != null && goods.getOriginalPrice() != null) {
+                    goods.setPrice(goods.getOriginalPrice());
+                    goods.setOriginalPrice(null);
+                    goodsService.save(goods);
+                    goodsStockService.updateByPid(goods.getId(), goods.getPrice());
+                }
+            }
+            return true;
+        }
+    }
+
+    @ResponseBody
     @RequestMapping("/goods_stock_del")
     public boolean deleteStock(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {

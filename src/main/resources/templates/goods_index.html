@@ -114,6 +114,7 @@
 				<button class="btn btn-info del">删除</button>
 				<button class="btn btn-info discount">限时打折</button>
 				<button class="btn btn-info discountList">打折清单</button>
+				<button class="btn btn-info restorePrice">恢复原价</button>
 			</div>
 			<footer th:replace="footer"></footer>
 		</div>
@@ -808,9 +809,29 @@
                 $(".imageShow").remove();
                 jQuery('#modal-6').modal('show', {backdrop: 'fade'});
             });
+			$(".btn.btn-info.restorePrice").click(function () {
+				var activityId = $("input[name='activityId']:checked");
+				if (activityId.length < 1) {
+					toastr.error("请至少选择一条数据操作", "温馨提示");
+					return;
+				}
+				var ids = [];
+				activityId.each(function (i, e) {
+					ids.push(e.value);
+				});
+				$.post("/goods_restore_price", {ids: ids}, function (data) {
+					if (data) {
+						toastr.success("操作已成功！", "温馨提示");
+						oTable.fnDraw();
+					} else {
+						toastr.error("您无权操作！", "温馨提示");
+					}
+				});
+			});
         } else {
-            $(".btn.btn-info.discountList").hide();
-            $(".btn.btn-info.discount").hide();
+			$(".btn.btn-info.discountList").hide();
+			$(".btn.btn-info.discount").hide();
+			$(".btn.btn-info.restorePrice").hide();
         }
 
 		//保存

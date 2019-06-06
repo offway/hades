@@ -45,16 +45,7 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
 
     @Override
     public Page<PhGoodsStock> findAll(String goodsId, Pageable pageable) {
-        return phGoodsStockRepository.findAll(new Specification<PhGoodsStock>() {
-            @Override
-            public Predicate toPredicate(Root<PhGoodsStock> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                List<Predicate> params = new ArrayList<Predicate>();
-                params.add(criteriaBuilder.equal(root.get("goodsId"), goodsId));
-                Predicate[] predicates = new Predicate[params.size()];
-                criteriaQuery.where(params.toArray(predicates));
-                return null;
-            }
-        }, pageable);
+        return phGoodsStockRepository.findAll(getFilter(goodsId), pageable);
     }
 
     @Override
@@ -72,18 +63,27 @@ public class PhGoodsStockServiceImpl implements PhGoodsStockService {
         }, pageable);
     }
 
-    @Override
-    public List<PhGoodsStock> findByPid(Long pid) {
-        return phGoodsStockRepository.findAll(new Specification<PhGoodsStock>() {
+    private Specification<PhGoodsStock> getFilter(Object id) {
+        return new Specification<PhGoodsStock>() {
             @Override
             public Predicate toPredicate(Root<PhGoodsStock> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
-                params.add(criteriaBuilder.equal(root.get("goodsId"), pid));
+                params.add(criteriaBuilder.equal(root.get("goodsId"), id));
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
             }
-        });
+        };
+    }
+
+    @Override
+    public List<PhGoodsStock> findByPid(Long pid) {
+        return phGoodsStockRepository.findAll(getFilter(pid));
+    }
+
+    @Override
+    public void updateByPid(Long id, Double value) {
+        phGoodsStockRepository.updateByPid(id, value);
     }
 
     @Override

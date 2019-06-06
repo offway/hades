@@ -18,4 +18,9 @@ public interface PhGoodsStockRepository extends JpaRepository<PhGoodsStock, Long
     @Modifying
     @Query(nativeQuery = true, value = "DELETE FROM `ph_goods_stock` WHERE (`goods_id` = ?1)")
     void deleteByPid(Long pid);
+
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true, value = "UPDATE `ph_goods_stock` SET `price` = ?2 WHERE (`goods_id` = ?1)")
+    void updateByPid(Long pid, Double value);
 }
