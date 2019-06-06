@@ -40,7 +40,7 @@ public class PhUserInfoServiceImpl implements PhUserInfoService {
     }
 
     @Override
-    public Page<PhUserInfo> list(String phone, String nickname, String sex, Date sTime, Date eTime, String channel, Pageable pageable) {
+    public Page<PhUserInfo> list(String phone, String nickname, String sex, Date sTime, Date eTime, String channel, Date sTimeReg, Date eTimeReg, Pageable pageable) {
         return phUserInfoRepository.findAll(new Specification<PhUserInfo>() {
             @Override
             public Predicate toPredicate(Root<PhUserInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -56,6 +56,13 @@ public class PhUserInfoServiceImpl implements PhUserInfoService {
                 }
                 if (sTime != null && eTime != null) {
                     params.add(criteriaBuilder.between(root.get("birthday"), sTime, eTime));
+                }
+                if (sTimeReg != null && eTimeReg != null) {
+                    params.add(criteriaBuilder.between(root.get("createTime"), sTimeReg, eTimeReg));
+                } else if (sTimeReg != null) {
+                    params.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createTime"), sTimeReg));
+                } else if (eTimeReg != null) {
+                    params.add(criteriaBuilder.lessThanOrEqualTo(root.get("createTime"), eTimeReg));
                 }
                 if (!"".equals(channel)) {
                     params.add(criteriaBuilder.equal(root.get("channel"), channel));
