@@ -105,6 +105,7 @@ public class OrderController {
             basicInfo.put("userId", orderInfo.getUserId());
             basicInfo.put("payChannel", orderInfo.getPayChannel());
             basicInfo.put("status", orderInfo.getStatus());
+            basicInfo.put("merchantName", orderInfo.getMerchantName());
             basicInfo.put("id", orderInfo.getId());
             PhOrderExpressInfo orderExpressInfo = orderExpressInfoService.findByPid(orderInfo.getOrderNo(), "0");//类型[0-寄,1-退]
             if (orderExpressInfo != null) {
