@@ -465,9 +465,9 @@
 			var form = $("#saveForm");
 			var name = form.find("input[name='name']").val();
 			//文件
-			var image = form.find("input[name='imageFile']").val();
+			var imageFile = form.find("input[name='imageFile']").val();
 			//已上传的图片地址
-			var imageImg = form.find("input[name='image']").val();
+			var image = form.find("input[name='image']").val();
 
 			if (name == '') {
 				toastr.error("请填写完整数据后提交", "温馨提示");
@@ -476,8 +476,8 @@
 				return;
 			}
 			var isOK = [];
-			if (image == '' && imageImg == '') {
-				isOK = checkImg([[image, "image"]]);
+			if (image != '' || imageFile != '') {
+				isOK = checkImg([[imageFile, "image"]]);
 				if (typeof isOK == 'boolean') {
 					return;
 				}
