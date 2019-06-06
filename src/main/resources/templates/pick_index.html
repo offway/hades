@@ -119,18 +119,24 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-md-9">
+							<div class="col-md-8">
 								<div class="form-group">
 									<label class="control-label">查询商品</label>
 									<select class="form-control" id="goodsSelect"></select>
 								</div>
 							</div>
-							<div class="col-md-3">
+							<div class="col-md-2">
 								<div class="form-group">
 									<label class="control-label"></label>
-									<input type="button" class="notMe form-control" value="添加商品至活动" onclick="addTheGoods()" />
+									<input type="button" class="notMe form-control" value="添加商品" onclick="addTheGoods(false)" />
 								</div>
 							</div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="control-label"></label>
+                                    <input type="button" class="notMe form-control" value="添加全部商品" onclick="addTheGoods(true)" />
+                                </div>
+                            </div>
 						</div>
 						<div class="row">
 							<div class="col-md-12">
@@ -387,12 +393,20 @@
 		}
 	}
 
-    function addTheGoods() {
+    function addTheGoods(all) {
         var ele = $("#goodsSelect");
-        var id = ele.val();
-        var text = $("#goodsSelect option:selected").text();
         var imgList = JSON.parse($("#IMGHOLDER").val());
-        addMoreGoodsDisplay(id, text, imgList[id]);
+        if (all) {
+            ele.children().each(function () {
+                var id = $(this).val();
+                var text = $(this).text();
+                addMoreGoodsDisplay(id, text, imgList[id]);
+            });
+        } else {
+            var id = ele.val();
+            var text = $("#goodsSelect option:selected").text();
+            addMoreGoodsDisplay(id, text, imgList[id]);
+        }
     }
 
     function addMoreGoodsDisplay(id, text, src) {
