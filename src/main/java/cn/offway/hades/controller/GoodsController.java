@@ -436,6 +436,8 @@ public class GoodsController {
                 PhGoods goods = goodsService.findOne(id);
                 if (goods != null && goods.getOriginalPrice() != null) {
                     goods.setPrice(goods.getOriginalPrice());
+                    String priceRange = String.format("%.2f", goods.getPrice());
+                    goods.setPriceRange(priceRange);
                     goods.setOriginalPrice(null);
                     goodsService.save(goods);
                     goodsStockService.updateByPid(goods.getId(), goods.getPrice());
