@@ -409,7 +409,14 @@
         }
     }
 
+    var PICKED_LIST = [];
+
     function addMoreGoodsDisplay(id, text, src) {
+        if (PICKED_LIST.indexOf(id) >= 0) {
+            console.log("重复商品id:" + id);
+            return;
+        }
+        PICKED_LIST.push(id);
         var uuid = UUID.randomUUID();
         var that = $("#goodsPool");
         var str = '<div id="UUID" class="toDel">'.replace("UUID", uuid);
@@ -666,6 +673,7 @@
 		});
 
 		$(".btn.btn-info.add").click(function () {
+		    PICKED_LIST = [];
 			var form = $("#saveForm");
 			form.find("input:not(.notMe)").val("");
 			buildAZBar();
@@ -785,6 +793,7 @@
 		});
 
 		$(".btn.btn-info.edit").click(function () {
+		    PICKED_LIST = [];
 			var activityId = $("input[name='activityId']:checked");
 			if (activityId.length != 1) {
 				toastr.error("请选择一条数据操作", "温馨提示");
