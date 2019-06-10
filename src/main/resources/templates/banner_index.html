@@ -217,13 +217,15 @@
 	           
 	jQuery(document).ready(function($)
 	{
-		if (parseInt(position) == 1) {
-			$("title").html($("title").html() + "底部");
-			$("h1.title").html($("h1.title").html() + "底部");
-		} else {
-			$("title").html($("title").html() + "顶部");
-			$("h1.title").html($("h1.title").html() + "顶部");
-		}
+        var titleEle = $("title");
+        var subTitleEle = $("h1.title");
+        if (parseInt(position) == 1) {
+            titleEle.html(titleEle.html() + "底部");
+            subTitleEle.html(subTitleEle.html() + "底部");
+        } else {
+            titleEle.html(titleEle.html() + "顶部");
+            subTitleEle.html(subTitleEle.html() + "顶部");
+        }
 
 		var oTable = $("#example-1").dataTable({
 			language: {
