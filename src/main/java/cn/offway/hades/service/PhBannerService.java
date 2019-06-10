@@ -9,11 +9,11 @@ public interface PhBannerService {
 
     PhBanner findOne(Long id);
 
-    Page<PhBanner> findAll(Pageable pageable);
+    Page<PhBanner> findAll(String position, Pageable pageable);
 
     void delete(Long id);
 
-    void resort(Long sort);
+    void resort(String position, Long sort);
 
-    Long getMaxSort();
+    Long getMaxSort(String position);
 }

@@ -46,11 +46,10 @@
 					<form role="form" class="form-inline">
 						<div class="form-group ">
 							<div class="input-group">
-								<input type="text" name="name" class="form-control" style="height:35px" placeholder="活动名"/>
 							</div>
 						</div>
 						<div class="form-group">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+<!--							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>-->
 						</div>
 						
 					</form>
@@ -58,7 +57,6 @@
 				<div class="panel-body">
 					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
 					</table>
-					
 				</div>
 				<button class="btn btn-info add" >添加</button>
 				<button class="btn btn-info edit">修改</button>
@@ -203,7 +201,7 @@
 		if (isNaN(num) || num == null) {
 			alert("请输入数字！");
 		} else {
-			$.post("/banner_top", {"id": id, "sort": num}, function (data) {
+			$.post("/banner_top", {"id": id, "sort": num, "position": position}, function (data) {
 				if (data) {
 					table_global.fnDraw();
 					toastr.success("操作已成功！", "温馨提示");
@@ -213,9 +211,20 @@
 			});
 		}
 	}
+
+	var qiniuUrl = [[${qiniuUrl}]];
+	var position = [[${position}]];
 	           
 	jQuery(document).ready(function($)
 	{
+		if (parseInt(position) == 1) {
+			$("title").html($("title").html() + "底部");
+			$("h1.title").html($("h1.title").html() + "底部");
+		} else {
+			$("title").html($("title").html() + "顶部");
+			$("h1.title").html($("h1.title").html() + "顶部");
+		}
+
 		var oTable = $("#example-1").dataTable({
 			language: {
                 url: "../assets/Chinese.txt"
@@ -230,7 +239,8 @@
             fnServerParams : function(aData){
                 var searchArray = $(".form-inline").serializeArray();
                 $.merge(aData, searchArray);
-            },
+				aData.push({"name": "position", "value": position});//append position
+			},
             order: [[ 6, "desc" ]],
             columnDefs: [
 				{	
@@ -471,8 +481,6 @@
 				})
 			}
 		}
-			 
-		var qiniuUrl = [[${qiniuUrl}]];
 
 		//保存
 		$(".btn.btn-info.save").click(function(){
@@ -513,14 +521,15 @@
 			}
 
 			//获取token
-			$.get("/qiniu/token",{},function(token){
-				if(token !=''){
-					upload("banner",token,imageFile,function(res){},function(err){
-						console.log("上传imageFile异常:"+err);
-					},function(res){
+			$.get("/qiniu/token", {}, function (token) {
+				if (token != '') {
+					upload("banner", token, imageFile, function (res) {
+					}, function (err) {
+						console.log("上传imageFile异常:" + err);
+					}, function (res) {
 						//上传成功
-						if(res!=''){
-							form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+						if (res != '') {
+							form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
 						}
 						//提交保存
 						var postData = $("#saveForm").serializeArray();
@@ -534,21 +543,22 @@
 						} else if (type == 4) {
 							postData.push({"name": "redirectId", "value": pickId});//append pid
 						}
-						$.post("/banner_save",postData,function(data){
-							if(data){
+						postData.push({"name": "position", "value": position});//append position
+						$.post("/banner_save", postData, function (data) {
+							if (data) {
 								footer.find("button").show();
 								footer.find(".bg-lg").hide();
 								jQuery('#modal-6').modal('hide');
 								toastr.success("操作已成功！", "温馨提示");
 								oTable.fnDraw();
-							}else{
+							} else {
 								footer.find("button").show();
 								footer.find(".bg-lg").hide();
 								toastr.error("操作失败", "温馨提示");
 							}
 						});
 					});
-				}else{
+				} else {
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
 					toastr.error("上传文件错误，请联系管理员", "温馨提示");
@@ -556,14 +566,14 @@
 			});
 		});
 
-		$(".btn.btn-info.edit").click(function(){
+		$(".btn.btn-info.edit").click(function () {
 			var activityId = $("input[name='activityId']:checked");
 			if (activityId.length != 1) {
 				toastr.error("请选择一条数据操作", "温馨提示");
 				return;
 			}
 
-			$.post("/banner_get", {id: activityId.val()}, function (data) {
+			$.post("/banner_get", {"id": activityId.val()}, function (data) {
 				var form = $("#saveForm");
 				form.find("input[name='id']").val(data.id);
 				/** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款] **/
@@ -593,9 +603,9 @@
 				form.find("input[name='beginTime']").val(beginTimeStr);
 				form.find("input[name='endTime']").val(endTimeStr);
 
-				if(''!=data.image){
+				if ('' != data.image) {
 					form.find("input[name='banner']").val(data.banner);
-					form.find("img[name='imageImage']").attr("src",data.banner);
+					form.find("img[name='imageImage']").attr("src", data.banner);
 					form.find("img[name='imageImage']").show();
 					form.find(".btn.image").show();
 				}
@@ -603,65 +613,65 @@
 			});
 		});
 
-		$(".btn.btn-info.del").click(function(){
+		$(".btn.btn-info.del").click(function () {
 			var activityId = $("input[name='activityId']:checked");
-			if(activityId.length < 1){
+			if (activityId.length < 1) {
 				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return ;
+				return;
 			}
 
 			var ids = [];
-			activityId.each(function(i,e){
+			activityId.each(function (i, e) {
 				ids.push(e.value);
 			});
 
-			$.post("/banner_del",{ids:ids},function(data){
-				if(data){
+			$.post("/banner_del", {"ids": ids}, function (data) {
+				if (data) {
 					toastr.success("操作已成功！", "温馨提示");
 					oTable.fnDraw();
 				}
-			})
+			});
 		});
 
-        $(".btn.btn-info.up").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
+		$(".btn.btn-info.up").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
 
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
 
-            $.post("/banner_up",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
+			$.post("/banner_up", {"ids": ids, "position": position}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			});
+		});
 
-        $(".btn.btn-info.down").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
+		$(".btn.btn-info.down").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
 
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
 
-            $.post("/banner_down",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
+			$.post("/banner_down", {"ids": ids}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			});
+		});
 	});
 	/*]]>*/
 	</script>
