@@ -83,15 +83,27 @@ public class GoodsController {
     }
 
     @RequestMapping("/goods_add.html")
-    public String add(ModelMap map) {
+    public String add(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            map.addAttribute("isAdmin", "0");
+        } else {
+            map.addAttribute("isAdmin", "1");
+        }
         return "goods_add";
     }
 
     @RequestMapping("/goods_edit.html")
-    public String edit(ModelMap map, Long id) {
+    public String edit(ModelMap map, Long id, @AuthenticationPrincipal PhAdmin admin) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("theId", id);
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            map.addAttribute("isAdmin", "0");
+        } else {
+            map.addAttribute("isAdmin", "1");
+        }
         return "goods_edit";
     }
 
@@ -158,6 +170,12 @@ public class GoodsController {
         } else {
             return brandService.findAll();
         }
+    }
+
+    @ResponseBody
+    @RequestMapping("/merchant_list_brand")
+    public List<PhMerchantBrand> getMerchantOfBrand(long id) {
+        return merchantBrandService.findByBid(id);
     }
 
     @ResponseBody
@@ -410,6 +428,28 @@ public class GoodsController {
                 goodsImageService.delByPid(id);
                 goodsPropertyService.delByPid(id);
                 goodsStockService.delByPid(id);
+            }
+            return true;
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping("/goods_restore_price")
+    public boolean restorePrice(@RequestParam("ids[]") Long[] ids, @AuthenticationPrincipal PhAdmin admin) {
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            return false;
+        } else {
+            for (Long id : ids) {
+                PhGoods goods = goodsService.findOne(id);
+                if (goods != null && goods.getOriginalPrice() != null) {
+                    goods.setPrice(goods.getOriginalPrice());
+                    String priceRange = String.format("%.2f", goods.getPrice());
+                    goods.setPriceRange(priceRange);
+                    goods.setOriginalPrice(null);
+                    goodsService.save(goods);
+                    goodsStockService.updateByPid(goods.getId(), goods.getPrice());
+                }
             }
             return true;
         }

@@ -18,9 +18,9 @@ import java.util.Optional;
 public interface PhBannerRepository extends JpaRepository<PhBanner, Long>, JpaSpecificationExecutor<PhBanner> {
     @Transactional
     @Modifying
-    @Query(nativeQuery = true, value = "update `ph_banner` set `sort` = `sort` + 1 where `sort` >= ?1 and `status` = 1")
-    void resort(Long sort);
+    @Query(nativeQuery = true, value = "update `ph_banner` set `sort` = `sort` + 1 where `sort` >= ?2 AND `status` = 1 AND `position` = ?1")
+    void resort(String position, Long sort);
 
-    @Query(nativeQuery = true, value = "SELECT max(sort) as a FROM ph_banner where status = 1")
-    Optional<String> getMaxSort();
+    @Query(nativeQuery = true, value = "SELECT max(sort) as a FROM ph_banner where status = 1 AND position = ?1")
+    Optional<String> getMaxSort(String position);
 }

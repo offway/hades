@@ -63,6 +63,20 @@ public class PhMerchantBrandServiceImpl implements PhMerchantBrandService {
     }
 
     @Override
+    public List<PhMerchantBrand> findByBid(Long bid) {
+        return phMerchantBrandRepository.findAll(new Specification<PhMerchantBrand>() {
+            @Override
+            public Predicate toPredicate(Root<PhMerchantBrand> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(criteriaBuilder.equal(root.get("brandId"), bid));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        });
+    }
+
+    @Override
     public void del(Long id) {
         phMerchantBrandRepository.delete(id);
     }

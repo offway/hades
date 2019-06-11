@@ -28,4 +28,9 @@ public interface PhGoodsStockRepository extends JpaRepository<PhGoodsStock, Long
     @Modifying
     @Query(nativeQuery = true, value = "UPDATE `ph_goods_stock` SET `brand_logo` = ?2 , `brand_name` = ?3 WHERE (`brand_id` = ?1)")
     void updateBrandInfo(Long bid, String bLogo, String bName);
+
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true, value = "UPDATE `ph_goods_stock` SET `price` = ?2 WHERE (`goods_id` = ?1)")
+    void updateByPid(Long pid, Double value);
 }

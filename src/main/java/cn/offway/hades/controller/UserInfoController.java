@@ -44,23 +44,29 @@ public class UserInfoController {
 
     @ResponseBody
     @RequestMapping("/userInfo_list")
-    public Map<String, Object> usersData(HttpServletRequest request, String phone, String nickname, String sex, String year, String channel) {
+    public Map<String, Object> usersData(HttpServletRequest request, String phone, String nickname, String sex, String year, String channel, String sTimeReg, String eTimeReg) {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        Date sTime = null, eTime = null;
+        Date sTime = null, eTime = null, sTimeRegObj = null, eTimeRegObj = null;
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         if (!"".equals(year)) {
             String sTimeStr = year + "-01-01 00:00:00";
             String eTimeStr = year + "-12-31 23:59:59";
-            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
             sTime = DateTime.parse(sTimeStr, format).toDate();
             eTime = DateTime.parse(eTimeStr, format).toDate();
         }
+        if (sTimeReg != null && !"".equals(sTimeReg)) {
+            sTimeRegObj = DateTime.parse(sTimeReg, format).toDate();
+        }
+        if (eTimeReg != null && !"".equals(eTimeReg)) {
+            eTimeRegObj = DateTime.parse(eTimeReg, format).toDate();
+        }
         Sort sort = new Sort(Sort.Direction.DESC, "createTime");
-        Page<PhUserInfo> pages = userInfoService.list(phone, nickname, sex, sTime, eTime, channel, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhUserInfo> pages = userInfoService.list(phone, nickname, sex, sTime, eTime, channel, sTimeRegObj, eTimeRegObj, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         // 为操作次数加1，必须这样做
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();

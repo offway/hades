@@ -306,7 +306,7 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 		if(BitUtil.has(channel.intValue(), BitUtil.APP)){
 			//开奖推送
 			Map<String, String> extras = new HashMap<>();
-			extras.put("type", "2");//0-H5,1-精选文章,2-活动
+			extras.put("type", "6");//0-H5,1-精选文章,2-活动
 			extras.put("id", null);
 			extras.put("url", null);
 			jPushService.sendPush("开奖通知", "【免费抽"+phProductInfo.getName()+"】活动已开奖，幸运儿是你吗？点击查看>>", extras);

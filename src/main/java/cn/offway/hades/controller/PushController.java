@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping
@@ -76,6 +78,13 @@ public class PushController {
         return map;
     }
 
+    private String purgeString(String str) {
+        String regs = "([^\\u4e00-\\u9fa5\\w])+?";
+        Pattern pattern = Pattern.compile(regs);
+        Matcher matcher = pattern.matcher(str);
+        return matcher.replaceAll("");
+    }
+
     @ResponseBody
     @RequestMapping("/push_save")
     public boolean save(PhPush push, String pushAll, String userIdStr, String pushNow) {
@@ -97,7 +106,7 @@ public class PushController {
             args.put("id", String.valueOf(pushSaved.getRedirectId()));
             args.put("url", pushSaved.getUrl());
             if ("0".equals(pushNow) && push.getPushTime().compareTo(new Date()) > 0) {
-                return jPushService.createSingleSchedule(uuid, "2", pushSaved.getName(), pushSaved.getPushTime(), pushSaved.getName(), pushSaved.getContent(), args, users);
+                return jPushService.createSingleSchedule(uuid, "2", purgeString(pushSaved.getName()), pushSaved.getPushTime(), pushSaved.getName(), pushSaved.getContent(), args, users);
             } else {
                 if (users != null) {
                     return jPushService.sendPushUser(push.getName(), push.getContent(), args, users);

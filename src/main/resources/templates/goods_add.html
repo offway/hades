@@ -946,6 +946,8 @@
 
 	var qiniuUrl = [[${qiniuUrl}]];
 
+	var isAdmin = [[${isAdmin}]];
+
 	jQuery(document).ready(function ($) {
         $.base64.utf8encode = true;
         $.base64.utf8decode = true;
@@ -957,7 +959,21 @@
 
 		$.getJSON("/brand_list_all", {}, function (data) {
 			bindBrandSelector(data);
-			$('#field-5').editableSelect();
+			$('#field-5').editableSelect().on('select.editable-select', function (e, li) {
+				if (isAdmin == "1") {
+					$('#field-9').editableSelect("destroy");
+					console.log(li.val() + '. ' + li.text());
+					var id = li.val();//$('#field-5').parent().find("li.es-visible").val();
+					$.getJSON("/merchant_list_brand", {"id": id}, function (data) {
+						for (var i in data) {
+							data[i]["id"] = data[i]["merchantId"];
+							data[i]["name"] = data[i]["merchantName"];
+						}
+						bindMerchantSelector(data);
+						$('#field-9').editableSelect();
+					});
+				}
+			});
 		});
 
 		$.getJSON("/merchant_list_all", {}, function (data) {

@@ -30,7 +30,7 @@ public interface PhGoodsService {
 
     Long getCountByPid(Long merchantId);
 
-    List<PhGoods> findAll(Long pid);
+    List<PhGoods> findAll(String name, Object value);
 
     void updateMerchantInfo(PhMerchant merchant);
 

@@ -13,6 +13,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /*
@@ -35,18 +37,22 @@ public class PhBannerServiceImpl implements PhBannerService {
     }
 
     @Override
-    public Page<PhBanner> findAll(Pageable pageable) {
+    public Page<PhBanner> findAll(String position, Pageable pageable) {
         return bannerRepository.findAll(new Specification<PhBanner>() {
             @Override
             public Predicate toPredicate(Root<PhBanner> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(criteriaBuilder.equal(root.get("position"), position));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
                 return null;
             }
         }, pageable);
     }
 
     @Override
-    public Long getMaxSort() {
-        Optional<String> res = bannerRepository.getMaxSort();
+    public Long getMaxSort(String position) {
+        Optional<String> res = bannerRepository.getMaxSort(position);
         if (res.isPresent()) {
             return Long.valueOf(String.valueOf(res.get()));
         } else {
@@ -55,8 +61,8 @@ public class PhBannerServiceImpl implements PhBannerService {
     }
 
     @Override
-    public void resort(Long sort) {
-        bannerRepository.resort(sort);
+    public void resort(String position, Long sort) {
+        bannerRepository.resort(position, sort);
     }
 
     @Override

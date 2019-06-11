@@ -9,7 +9,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,15 +27,23 @@ public class BannerController {
     @Autowired
     private QiniuProperties qiniuProperties;
 
-    @GetMapping("/banner.html")
+    @RequestMapping("/banner.html")
     public String index(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("position", 0);
+        return "banner_index";
+    }
+
+    @RequestMapping("/banner_alt.html")
+    public String indexAlt(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("position", 1);
         return "banner_index";
     }
 
     @RequestMapping("/banner_list")
     @ResponseBody
-    public Map<String, Object> getAll(HttpServletRequest request) {
+    public Map<String, Object> getAll(HttpServletRequest request, String position) {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
@@ -44,7 +51,7 @@ public class BannerController {
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "status"), new Sort.Order("sort"));
-        Page<PhBanner> pages = bannerService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhBanner> pages = bannerService.findAll(position, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
@@ -86,10 +93,10 @@ public class BannerController {
 
     @ResponseBody
     @RequestMapping("/banner_top")
-    public boolean top(Long id, Long sort) {
+    public boolean top(Long id, Long sort, String position) {
         PhBanner banner = bannerService.findOne(id);
         if (banner != null) {
-            bannerService.resort(sort);
+            bannerService.resort(position, sort);
             banner.setSort(sort);
             bannerService.save(banner);
         }
@@ -98,10 +105,10 @@ public class BannerController {
 
     @RequestMapping("/banner_up")
     @ResponseBody
-    public boolean up(@RequestParam("ids[]") Long[] ids) {
+    public boolean up(@RequestParam("ids[]") Long[] ids, String position) {
         for (long id : ids) {
             PhBanner banner = bannerService.findOne(id);
-            long latest = bannerService.getMaxSort();
+            long latest = bannerService.getMaxSort(position);
             banner.setStatus("1");
             banner.setSort(latest + 1);
             bannerService.save(banner);

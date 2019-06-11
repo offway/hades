@@ -20,6 +20,8 @@ public interface PhMerchantBrandService {
 
     List<PhMerchantBrand> findByPid(Long pid);
 
+    List<PhMerchantBrand> findByBid(Long bid);
+
     void del(Long id);
 
     void delByPid(Long pid);

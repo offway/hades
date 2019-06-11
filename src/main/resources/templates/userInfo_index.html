@@ -5,6 +5,7 @@
 	<title>APP用户</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -76,6 +77,17 @@
                                 <select name="channel" id="channel" class="form-control" style="height:35px">
                                 </select>
                             </div>
+							<div class="input-group">
+								<label class="control-box">注册日期</label>
+							</div>
+							<div class="input-group">
+								<input type="text" class="form-control" name="sTimeReg" id="sTime" style="height:35px"
+									   placeholder="开始时间"/>
+							</div>
+							<div class="input-group">
+								<input type="text" class="form-control" name="eTimeReg" id="eTime" style="height:35px"
+									   placeholder="结束时间"/>
+							</div>
 						</div>
 						<div class="form-group">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
@@ -142,6 +154,7 @@
     </div>
 	
 	<script src="assets/js/moment.min.js"></script>
+	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
 	<script th:inline="javascript">
@@ -290,6 +303,28 @@
     jQuery(document).ready(function($)
 	{
 		var qiniuUrl = [[${qiniuUrl}]];
+
+		jQuery.datetimepicker.setLocale('zh');
+		jQuery('#sTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#eTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
 
         var oTable;
         $.getJSON("/channel_list", {}, function (data) {
