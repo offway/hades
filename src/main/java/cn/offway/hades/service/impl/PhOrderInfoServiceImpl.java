@@ -163,6 +163,20 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
     }
 
     @Override
+    public PhOrderInfo findOne(String orderNo) {
+        return phOrderInfoRepository.findOne(new Specification<PhOrderInfo>() {
+            @Override
+            public Predicate toPredicate(Root<PhOrderInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(criteriaBuilder.equal(root.get("orderNo"), orderNo));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        });
+    }
+
+    @Override
     public PhOrderInfo findOne(Long id) {
         return phOrderInfoRepository.findOne(id);
     }

@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title>退换货详情</title>
+	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
+	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<style type="text/css">
+	.form-group img{
+		max-width:400px;
+		max-height:300px;
+	}
+	</style>
+</head>
+<body class="page-body">
+
+	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+			
+		<div th:replace="sidebar-menu"></div>
+		<div class="main-content">
+			<!-- User Info, Notifications and activity Bar -->
+			<nav th:replace="navbar"></nav>
+			<div class="page-title">
+				<div class="title-env">
+					<h1 class="title">退换货详情</h1>
+					<p class="activityDescription"></p>
+				</div>
+				<div class="breadcrumb-env">
+					<ol class="breadcrumb bc-1">
+						<li><a href="/"><i class="fa-home"></i>Home</a></li>
+						<li><a>系统管理</a></li>
+						<li class="active"><strong>退换货详情</strong></li>
+					</ol>
+				</div>
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<form role="form" class="form-inline">
+					</form>
+				</div>
+				<div class="panel-body panel-border">
+					<div class="row">
+						<div class="col-sm-12">
+							<!-- Table Model 2 -->
+							<strong>商品信息</strong>
+							<table id="goodsInfo" class="table table-bordered table-striped table-condensed table-hover">
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body panel-border">
+					<div class="row">
+						<div class="col-sm-12">
+							<!-- Table Model 2 -->
+							<strong>费用信息</strong>
+							<table id="feeInfo" class="table table-bordered table-striped table-condensed table-hover">
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body panel-border">
+					<div class="row">
+						<div class="col-sm-12">
+							<!-- Table Model 2 -->
+							<strong>订单收货人信息</strong>
+							<table id="receiverInfo" class="table table-bordered table-striped table-condensed table-hover">
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body panel-border">
+					<div class="row">
+						<div class="col-sm-12">
+							<!-- Table Model 2 -->
+							<strong>售后单信息</strong>
+							<table id="refundInfo" class="table table-bordered table-striped table-condensed table-hover">
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body panel-border">
+					<div class="row">
+						<div class="col-sm-12">
+							<!-- Table Model 2 -->
+							<strong>售后单处理信息</strong>
+							<table id="refundResultInfo" class="table table-bordered table-striped table-condensed table-hover">
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body panel-border">
+					<div class="row">
+						<div class="col-sm-12">
+							<!-- Table Model 2 -->
+							<strong>问题描述信息</strong>
+							<table id="contentInfo" class="table table-bordered table-striped table-condensed table-hover">
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body panel-border">
+					<div class="row">
+						<div class="col-sm-12">
+							<!-- Table Model 2 -->
+							<strong>凭证图片信息</strong>
+							<table id="imgInfo" class="table table-bordered table-striped table-condensed table-hover">
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body panel-border">
+					<div class="row">
+						<div class="col-sm-12">
+							<!-- Table Model 2 -->
+							<strong>处理备注信息</strong>
+							<table id="remarkInfo" class="table table-bordered table-striped table-condensed table-hover">
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body panel-border">
+					<div class="row">
+						<div class="col-sm-12">
+							<!-- Table Model 2 -->
+							<strong>操作信息</strong>
+							<table id="operateInfo" class="table table-bordered table-striped table-condensed table-hover">
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<footer th:replace="footer"></footer>
+		</div>
+	</div>
+	
+	<div th:replace="body-under"></div>
+	<div class="modal fade in" id="modal-6">
+		<div class="modal-dialog">
+			<div class="modal-content" style="width: 800px;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">发货</h4>
+				</div>
+
+				<div class="modal-body">
+					<form role="form" id="saveForm">
+						<input type="hidden" name="id"/>
+						<input type="hidden" name="action"/>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label for="expressCode" class="control-label">配送方式</label>
+									<select id="expressCode" class="form-control" name="expressCode">
+										<option value="yuantong">圆通速递</option>
+										<option value="zhongtong">中通快递</option>
+										<option value="shentong">申通快递</option>
+										<option value="yunda">韵达快递</option>
+										<option value="shunfeng">顺丰速运</option>
+										<option value="youzhengguonei">邮政快递包裹</option>
+										<option value="jd">京东物流</option>
+										<option value="huitongkuaidi">百世快递</option>
+										<option value="ems">EMS</option>
+										<option value="tiantian">天天快递</option>
+										<option value="debangwuliu">德邦</option>
+										<option value="baishiwuliu">百世快运</option>
+										<option value="youshuwuliu">优速物流</option>
+										<option value="pjbest">品骏快递</option>
+										<option value="zhaijisong">宅急送</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label for="mailNo" class="control-label">快递单号</label>
+									<input id="mailNo" type="number" class="form-control" name="mailNo" placeholder="快递单号"/>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info save">保存</button>
+					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<!--
+	<div class="modal fade in" id="modal-6">
+		<div class="modal-dialog">
+			<div class="modal-content" style="width: 800px;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">添加商品</h4>
+				</div>
+				
+				<div class="modal-body">
+					<form role="form" id="saveForm">
+					</form>
+				</div>
+				
+				<div class="modal-footer">
+				 	<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info save">保存</button>
+					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">查看详情</h4>
+				</div>
+
+				<div class="modal-body" id="preview_body"></div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	-->
+	<script src="assets/js/moment.min.js"></script>
+	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
+	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
+	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+	<script src="assets/js/select2/select2.min.js"></script>
+	<script src="assets/js/async.min.js"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+
+    function addMoreImg(self) {
+        var that = $(self);
+        that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
+    }
+
+    function addMoreText(self) {
+        var that = $(self);
+        that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
+    }
+
+    function closeIt(self) {
+        var that = $(self);
+        that.hide();
+    }
+
+    function formatTime(time) {
+        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+    }
+
+    function buildImg(url) {
+        return "<img width='100px' height='100px' src='#' />".replace("#", url);
+    }
+
+	function checkImg(list) {
+		var returnList = {};
+		for (var i in list) {
+			i = list[i];
+			var v = i[0];
+			var name = i[1];
+			var form = $("#saveForm");
+			var footer = $(this).parent(".modal-footer");
+			var imageFile = '';
+			//上传文件获得文件地址
+			if (v != '') {
+				imageFile = form.find("input[name='" + name + "File']")[0].files[0];
+				if (imageFile != '' && imageFile.size / 1024 > 1024) {
+					toastr.error("封面图片大小超过1M,请压缩处理后上传", "温馨提示");
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					return false;
+				} else {
+					returnList[name] = imageFile;
+				}
+			}
+		}
+		return returnList;
+	}
+
+	function appendToPreview(key, value) {
+		return '<div class="row">' +
+				'<div class="col-md-2">' +
+				key +
+				'</div>' +
+				'<div class="col-md-10">' +
+				value +
+				'</div>' +
+				'</div>';
+	}
+
+	function checkIt(id) {
+		$.post("/goods_find", {"id": id}, function (data) {
+			if (data) {
+				var preview = $("#preview_body");
+				var contentStr = "";
+				var mainObj = data["main"];
+				contentStr += appendToPreview("编号:", mainObj["id"]);
+				contentStr += appendToPreview("名称:", mainObj["name"]);
+				contentStr += appendToPreview("一级分类:", mainObj["type"]);
+				contentStr += appendToPreview("二级分类:", mainObj["category"]);
+				contentStr += appendToPreview("商品编码:", mainObj["code"]);
+				contentStr += appendToPreview("材质:", mainObj["material"]);
+				contentStr += appendToPreview("价格:", mainObj["price"]);
+				contentStr += appendToPreview("价格区间:", mainObj["priceRange"]);
+				contentStr += appendToPreview("销售数量:", mainObj["saleCount"]);
+				contentStr += appendToPreview("查看数量:", mainObj["viewCount"]);
+				contentStr += appendToPreview("品牌id:", mainObj["brandId"]);
+				contentStr += appendToPreview("品牌名:", mainObj["brandName"]);
+				contentStr += appendToPreview("品牌logo:", buildImg(mainObj["brandLogo"]));
+				contentStr += appendToPreview("商家id:", mainObj["merchantId"]);
+				contentStr += appendToPreview("商家名:", mainObj["merchantName"]);
+				contentStr += appendToPreview("商家logo:", buildImg(mainObj["merchantLogo"]));
+				contentStr += appendToPreview("图片:", buildImg(mainObj["image"]));
+				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
+				contentStr += appendToPreview("备注:", mainObj["remark"]);
+				contentStr += "<hr/>";
+				for (var a in data["propertyList"]) {
+					a = data["propertyList"][a];
+					contentStr += appendToPreview("商品规格名称:", a["name"]);
+					contentStr += appendToPreview("商品属性值:", a["value"]);
+					contentStr += appendToPreview("备注:", a["remark"]);
+					contentStr += appendToPreview("排序:", a["sort"]);
+				}
+				contentStr += "<hr/>";
+				for (var b in data["imageList"]) {
+					b = data["imageList"][b];
+					contentStr += appendToPreview("商品图片:", buildImg(b["imageUrl"]));
+					contentStr += appendToPreview("图片类型:", b["type"]);
+					contentStr += appendToPreview("备注:", b["remark"]);
+					contentStr += appendToPreview("排序:", b["sort"]);
+				}
+				contentStr += "<hr/>";
+				for (var c in data["stockList"]) {
+					c = data["stockList"][c];
+					contentStr += appendToPreview("图片:", buildImg(c["image"]));
+					contentStr += appendToPreview("价格:", c["price"]);
+					contentStr += appendToPreview("sku:", c["sku"]);
+					contentStr += appendToPreview("stock:", c["stock"]);
+					contentStr += appendToPreview("备注:", c["remark"]);
+				}
+				preview.html(contentStr);
+				jQuery('#preview').modal('show', {backdrop: 'fade'});
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	function checkSku(id) {
+		window.location.href = '/goods_stock_index.html?id=' + id;
+	}
+
+	function gotoList() {
+		window.location.href = '/order.html';
+		return false;
+	}
+
+	var table_global;
+
+    function toggleTopIt(id) {
+        $.post("/brand_toggleTop", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+    function topIt(id) {
+        $.post("/brand_top", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+    function unTopIt(id) {
+        $.post("/brand_untop", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+	function bindMerchantSelector(data) {
+		var brandStr = "";
+		for (var brand in data) {
+			brand = data[brand];
+			brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+		}
+		$("#merchantId").html(brandStr);
+	}
+
+	function deliverOrder(id) {
+		var form = $("#saveForm");
+		form.find("input").val("");
+		form.find("[name='id']").val(id);
+		form.find("[name='action']").val("create");
+		jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+	}
+
+	function editDeliveredOrder(id) {
+		$.post("/order_getDeliveredOrder", {"id": id}, function (data) {
+			if (data != '') {
+				var form = $("#saveForm");
+				form.find("select[name='expressCode']").val(data["expressCode"]);
+				form.find("input[name='mailNo']").val(data["mailNo"]);
+				form.find("[name='id']").val(id);
+				form.find("[name='action']").val("update");
+				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+    jQuery(document).ready(function($)
+	{
+		var jsonStr = [[${jsonStr}]];
+		console.log(jsonStr);
+		var jsonObj = JSON.parse(jsonStr);
+		console.log(jsonObj);
+		//商品信息
+		$("#goodsInfo").dataTable({
+			data: jsonObj["goodsInfo"],
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "SKU",
+					title: "商品SKU"
+				},
+				{
+					targets: 1,
+					data: "goodsId",
+					title: "商品ID"
+				},
+				{
+					targets: 2,
+					data: "goodsName",
+					title: "商品名称"
+				},
+				{
+					targets: 3,
+					data: "code",
+					title: "货号"
+				},
+				{
+					targets: 4,
+					data: "price",
+					title: "价格"
+				},
+				{
+					targets: 5,
+					data: "brandName",
+					title: "商品品牌"
+				},
+				{
+					targets: 6,
+					data: "type",
+					title: "平台分类"
+				},
+				{
+					targets: 7,
+					data: "merchantName",
+					title: "商家"
+				},
+				{
+					targets: 8,
+					data: "goodsProperty",
+					title: "规格"
+				},
+				{
+					targets: 9,
+					data: "goodsCount",
+					title: "数量"
+				}
+			]
+		});
+		//费用信息
+		$("#feeInfo").dataTable({
+			data: jsonObj["feeInfo"],
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "price",
+					title: "费用合计"
+				},
+				{
+					targets: 1,
+					data: "voucherAmount",
+					title: "优惠码"
+				},
+				{
+					targets: 2,
+					data: "walletAmount",
+					title: "礼品卡"
+				},
+				{
+					targets: 3,
+					data: "mailFee",
+					title: "运费"
+				},
+				{
+					targets: 4,
+					data: "tax",
+					title: "税费"
+				},
+				{
+					targets: 5,
+					data: "amount",
+					title: "实付款金额"
+				},
+				{
+					targets: 6,
+					data: "refundAmount",
+					title: "申请退款金额"
+				}
+			]
+		});
+		//订单收货人信息
+		$("#receiverInfo").dataTable({
+			data: jsonObj["receiverInfo"],
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "userId",
+					title: "用户账号"
+				},
+				{
+					targets: 1,
+					data: "realName",
+					title: "收货人"
+				},
+				{
+					targets: 2,
+					data: "phone",
+					title: "手机号码"
+				},
+				{
+					targets: 3,
+					data: "zipCode",
+					title: "邮政编码"
+				},
+				{
+					targets: 4,
+					data: "location",
+					title: "收货地址"
+				}
+			]
+		});
+		//售后单信息
+		$("#refundInfo").dataTable({
+			data: jsonObj["refundInfo"],
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "id",
+					title: "售后单编号"
+				},
+				{
+					targets: 1,
+					data: "createTime",
+					title: "申请时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 2,
+					data: "userId",
+					title: "用户账号"
+				},
+				{
+					targets: 3,
+					data: "type",
+					title: "售后类型",
+					render: function (data, type, row, meta) {
+						/** 类型[0-仅退款,1-退货退款,2-换货] **/
+						var map = ["仅退款", "退货退款", "换货"];
+						return map[parseInt(data)];
+					}
+				},
+				{
+					targets: 4,
+					data: "amount",
+					title: "退款金额"
+				},
+				{
+					targets: 5,
+					data: "payChannel",
+					title: "支付渠道",
+					render: function (data, type, row, meta) {
+						//支付渠道[wxpay,alipay]
+						var map = {"wxpay": "微信支付", "alipay": "支付宝"};
+						return map.hasOwnProperty(data) ? map[data] : "未知";
+					}
+				},
+				{
+					targets: 6,
+					data: "status",
+					title: "申请时订单状态",
+					render: function (data, type, row, meta) {
+						//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
+						var map = ["已下单", "已付款", "已发货", "已收货", "取消"];
+						return map[parseInt(data)];
+					}
+				},
+				{
+					targets: 7,
+					data: "orderNo",
+					title: "订单编号"
+				},
+				{
+					targets: 8,
+					data: "reason",
+					title: "售后原因"
+				}
+			]
+		});
+		//售后单处理信息
+		$("#refundResultInfo").dataTable({
+			data: jsonObj["refundResultInfo"],
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "reason",
+					title: "处理结果"
+				},
+				{
+					targets: 1,
+					data: "realName",
+					title: "退货联系人"
+				},
+				{
+					targets: 2,
+					data: "location",
+					title: "退货地址"
+				},
+				{
+					targets: 3,
+					data: "phone",
+					title: "退货联系方式"
+				},
+				{
+					targets: 4,
+					data: "expressCode",
+					title: "配送方式"
+				},
+				{
+					targets: 5,
+					data: "mailNo",
+					title: "物流单号"
+				},
+				{
+					targets: 6,
+					data: "status",
+					title: "退货状态"
+				},
+				{
+					targets: 7,
+					data: "status",
+					title: "申请状态"
+				}
+			]
+		});
+		//问题描述信息
+		$("#contentInfo").dataTable({
+			data: jsonObj["contentInfo"],
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "content",
+					title: "问题描述"
+				}
+			]
+		});
+		//凭证图片信息
+		$("#imgInfo").dataTable({
+			data: jsonObj["imgInfo"],
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "image",
+					title: "凭证照片",
+					render: function (data, type, row, meta) {
+						if (data == '') {
+							return "";
+						} else {
+							var str = "";
+							var list = data.split(",");
+							for (var i in list) {
+								str += buildImg(list[i]);
+							}
+							return str;
+						}
+					}
+				}
+			]
+		});
+		//处理备注信息
+		$("#remarkInfo").dataTable({
+			data: jsonObj["remarkInfo"],
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "remark",
+					title: "处理备注"
+				}
+			]
+		});
+		//操作信息
+		$("#operateInfo").dataTable({
+			data: jsonObj["operateInfo"],
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "checkName",
+					title: "操作者ID"
+				},
+				{
+					targets: 1,
+					data: "checkTime",
+					title: "操作时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				}
+			]
+		});
+
+		//保存
+		$(".btn.btn-info.save").click(function () {
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+			var form = $("#saveForm");
+			var expressCode = form.find("input[name='expressCode']").val();
+			var mailNo = form.find("input[name='mailNo']").val();
+
+			if (expressCode == '' || mailNo == '') {
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return;
+			}
+
+			//获取token
+			$.get("/qiniu/token", {}, function (token) {
+				if (token != '') {
+					async.series({
+						one: function (callback) {
+							callback();
+						},
+						two: function (callback) {
+							callback();
+						},
+						three: function (callback) {
+							//提交保存
+							$.post("/order_deliverOrder", $("#saveForm").serialize(), function (data) {
+								if (data) {
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									jQuery('#modal-6').modal('hide');
+									toastr.success("操作已成功！", "温馨提示");
+									window.location.reload();
+								} else {
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									toastr.error("操作失败", "温馨提示");
+								}
+								callback();
+							});
+						}
+					}, function (err, results) {
+						console.log("OK");
+					});
+				} else {
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					toastr.error("错误，请联系管理员", "温馨提示");
+				}
+			});
+		});
+
+		function getImgSize(file, cb) {
+			var f = file;//input.files[0];
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				var data = e.target.result;
+				//加载图片获取图片真实宽度和高度
+				var image = new Image();
+				image.onload = function () {
+					var width = image.width;
+					var height = image.height;
+					cb(width, height);
+				};
+				image.src = data;
+			};
+			reader.readAsDataURL(f);
+		}
+
+		function upload(param, token, file, next, error, complete) {
+			if (file == '') {
+				complete('');
+			} else {
+				getImgSize(file, function (w, h) {
+					var filename = file.name;
+					var postf = filename.substring(filename.lastIndexOf("."));
+					var config = {
+						useCdnDomain: true,
+						region: qiniu.region.z0
+					};
+					var putExtra = {
+						fname: "",
+						params: {"x:param": param},
+						mimeType: ["image/png", "image/jpeg", "image/gif"] || null
+					};
+                    var newFileName = "image/wx/#W#/#H#/" + UUID.randomUUID() + postf;
+					newFileName = newFileName.replace("#W#", w).replace("#H#", h);
+					var observable = qiniu.upload(file, newFileName, token,
+							putExtra, config);
+					var subscription = observable.subscribe(next, error, complete);
+				})
+			}
+		}
+	});
+	/*]]>*/
+	</script>
+</body>
+
+</html>

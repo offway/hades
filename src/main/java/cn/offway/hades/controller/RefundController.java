@@ -1,15 +1,13 @@
 package cn.offway.hades.controller;
 
-import cn.offway.hades.domain.PhAdmin;
-import cn.offway.hades.domain.PhRefund;
+import cn.offway.hades.domain.*;
 import cn.offway.hades.properties.QiniuProperties;
-import cn.offway.hades.service.PhRefundGoodsService;
-import cn.offway.hades.service.PhRefundService;
-import cn.offway.hades.service.PhRoleadminService;
+import cn.offway.hades.service.*;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.event.WriteHandler;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
+import com.alibaba.fastjson.JSON;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.joda.time.DateTime;
@@ -33,10 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping
@@ -50,6 +45,18 @@ public class RefundController {
     private PhRefundService refundService;
     @Autowired
     private PhRefundGoodsService refundGoodsService;
+    @Autowired
+    private PhOrderInfoService orderInfoService;
+    @Autowired
+    private PhOrderGoodsService orderGoodsService;
+    @Autowired
+    private PhGoodsService goodsService;
+    @Autowired
+    private PhGoodsPropertyService goodsPropertyService;
+    @Autowired
+    private PhAddressService addressService;
+    @Autowired
+    private PhMerchantService merchantService;
 
     @RequestMapping("/refund.html")
     public String index(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
@@ -149,5 +156,130 @@ public class RefundController {
         } catch (IOException e) {
             logger.error("IO ERROR", e);
         }
+    }
+
+    @RequestMapping("/refund_detail.html")
+    public String orderDetail(ModelMap map, Long id) {
+        Map<String, Object> dataList = new HashMap<>();
+        PhRefund refund = refundService.findOne(id);
+        if (refund != null) {
+            List<PhRefundGoods> refundGoodsList = refundGoodsService.listByPid(refund.getId());
+            PhOrderInfo orderInfo = orderInfoService.findOne(refund.getOrderNo());
+            List<PhOrderGoods> orderGoodsList = orderGoodsService.findAllByPid(orderInfo.getOrderNo());
+            //商品信息
+            List<Map> goodsInfoList = new ArrayList<>();
+            for (PhRefundGoods refundGoods : refundGoodsList) {
+                Map<String, Object> goodsInfo = new HashMap<>();
+                for (PhOrderGoods orderGoods : orderGoodsList) {
+                    if (Long.compare(orderGoods.getGoodsId(), refundGoods.getOrderGoodsId()) == 0) {
+                        PhGoods goods = goodsService.findOne(orderGoods.getGoodsId());
+                        List<PhGoodsProperty> propertyList = goodsPropertyService.findByStockId(orderGoods.getGoodsStockId());
+                        goodsInfo.put("SKU", orderGoods.getGoodsStockId());
+                        goodsInfo.put("goodsId", orderGoods.getGoodsId());
+                        goodsInfo.put("goodsName", orderGoods.getGoodsName());
+                        goodsInfo.put("code", goods.getCode());
+                        goodsInfo.put("price", goods.getPrice());
+                        goodsInfo.put("brandName", goods.getBrandName());
+                        goodsInfo.put("type", goods.getType() + goods.getCategory());
+                        goodsInfo.put("merchantName", goods.getMerchantName());
+                        StringBuilder sb = new StringBuilder();
+                        for (PhGoodsProperty p : propertyList) {
+                            sb.append(p.getName());
+                            sb.append(":");
+                            sb.append(p.getValue());
+                            sb.append(";");
+                        }
+                        goodsInfo.put("goodsProperty", sb.toString());
+                        goodsInfo.put("goodsCount", refundGoods.getGoodsCount());
+                    }
+                }
+                goodsInfoList.add(goodsInfo);
+            }
+            dataList.put("goodsInfo", goodsInfoList);
+            //费用信息
+            List<Map> feeInfoList = new ArrayList<>();
+            Map<String, Object> feeInfo = new HashMap<>();
+            feeInfo.put("price", orderInfo.getPrice());
+            feeInfo.put("voucherAmount", orderInfo.getMVoucherAmount() + orderInfo.getPVoucherAmount());
+            feeInfo.put("walletAmount", orderInfo.getWalletAmount());
+            feeInfo.put("mailFee", orderInfo.getMailFee());
+            feeInfo.put("tax", 0);
+            feeInfo.put("amount", orderInfo.getAmount());
+            feeInfo.put("refundAmount", refund.getAmount());
+            feeInfoList.add(feeInfo);
+            dataList.put("feeInfo", feeInfoList);
+            //订单收货人信息
+            List<Map> receiverInfoList = new ArrayList<>();
+            Map<String, Object> receiverInfo = new HashMap<>();
+            PhAddress address = addressService.findOne(orderInfo.getAddrId());
+            if (address != null) {
+                receiverInfo.put("userId", address.getUserId());
+                receiverInfo.put("realName", address.getRealName());
+                receiverInfo.put("phone", address.getPhone());
+                receiverInfo.put("zipCode", "");
+                receiverInfo.put("location", address.getProvince() + address.getCity() + address.getCounty() + address.getContent());
+            }
+            receiverInfoList.add(receiverInfo);
+            dataList.put("receiverInfo", receiverInfoList);
+            //售后单信息
+            List<Map> refundInfoList = new ArrayList<>();
+            Map<String, Object> refundInfo = new HashMap<>();
+            refundInfo.put("id", refund.getOrderNo());
+            refundInfo.put("createTime", refund.getCreateTime());
+            refundInfo.put("userId", refund.getUserId());
+            refundInfo.put("type", refund.getType());
+            refundInfo.put("amount", refund.getAmount());
+            refundInfo.put("payChannel", orderInfo.getPayChannel());
+            refundInfo.put("status", orderInfo.getStatus());
+            refundInfo.put("orderNo", orderInfo.getOrderNo());
+            refundInfo.put("reason", refund.getReason());
+            refundInfoList.add(refundInfo);
+            dataList.put("refundInfo", refundInfoList);
+            //售后单处理信息
+            if (refund.getMailNo() != null && "".equals(refund.getMailNo())) {
+                List<Map> refundResultInfoList = new ArrayList<>();
+                Map<String, Object> refundResultInfo = new HashMap<>();
+                PhMerchant merchant = merchantService.findOne(orderInfo.getMerchantId());
+                PhAddress backAddress = addressService.findOne(merchant.getReturnAddrId());
+                refundResultInfo.put("reason", refund.getReason());
+                if (backAddress != null) {
+                    refundResultInfo.put("realName", backAddress.getRealName());
+                    refundResultInfo.put("location", backAddress.getProvince() + address.getCity() + address.getCounty() + address.getContent());
+                    refundResultInfo.put("phone", backAddress.getPhone());
+                }
+                refundResultInfo.put("expressCode", "");
+                refundResultInfo.put("mailNo", refund.getMailNo());
+                refundResultInfo.put("status", refund.getStatus());
+                refundResultInfoList.add(refundResultInfo);
+                dataList.put("refundResultInfo", refundResultInfoList);
+            }
+            //问题描述信息
+            List<Map> contentInfoList = new ArrayList<>();
+            Map<String, Object> contentInfo = new HashMap<>();
+            contentInfo.put("content", refund.getContent());
+            contentInfoList.add(contentInfo);
+            dataList.put("contentInfo", contentInfoList);
+            //凭证图片信息
+            List<Map> imgInfoList = new ArrayList<>();
+            Map<String, Object> imgInfo = new HashMap<>();
+            imgInfo.put("image", refund.getImage());
+            imgInfoList.add(imgInfo);
+            dataList.put("imgInfo", imgInfoList);
+            //操作信息
+            List<Map> operateInfoList = new ArrayList<>();
+            Map<String, Object> operateInfo = new HashMap<>();
+            operateInfo.put("checkName", refund.getCheckName());
+            operateInfo.put("checkTime", refund.getCheckTime());
+            operateInfoList.add(operateInfo);
+            dataList.put("operateInfo", operateInfoList);
+            //处理备注信息
+            List<Map> remarkInfoList = new ArrayList<>();
+            Map<String, Object> remarkInfo = new HashMap<>();
+            remarkInfo.put("remark", refund.getRemark());
+            remarkInfoList.add(remarkInfo);
+            dataList.put("remarkInfo", remarkInfoList);
+        }
+        map.addAttribute("jsonStr", JSON.toJSONString(dataList));
+        return "refund_detail";
     }
 }
