@@ -1,5 +1,8 @@
 package cn.offway.hades.domain;
 
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.metadata.BaseRowModel;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -12,45 +15,57 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "ph_refund")
-public class PhRefund implements Serializable {
+public class PhRefund extends BaseRowModel implements Serializable {
 
     /** ID **/
+    @ExcelProperty(value = "序号",index = 0)
     private Long id;
 
     /** 购买订单号 **/
+    @ExcelProperty(value = "购买订单号",index = 1)
     private String orderNo;
 
     /** 用户ID **/
+    @ExcelProperty(value = "用户ID",index = 2)
     private Long userId;
 
     /** 退款金额 **/
+    @ExcelProperty(value = "退款金额",index = 3)
     private Double amount;
 
     /** 快递运单号 **/
+    @ExcelProperty(value = "快递运单号",index = 4)
     private String mailNo;
 
     /** 类型[0-仅退款,1-退货退款,2-换货] **/
+    @ExcelProperty(value = "类型",index = 5)
     private String type;
 
     /** 状态[0-审核中,1-待退货,2-退货中,3-退款中,4-退款成功,5-退款取消,6-审核失败] **/
+    @ExcelProperty(value = "状态",index = 6)
     private String status;
 
     /** 退款原因 **/
+    @ExcelProperty(value = "退款原因",index = 7)
     private String reason;
 
     /** 退款说明 **/
+    @ExcelProperty(value = "退款说明",index = 8)
     private String content;
 
     /** 退款图片[多个,隔开] **/
     private String image;
 
     /** 审核人 **/
+    @ExcelProperty(value = "审核人",index = 9)
     private String checkName;
 
     /** 审核时间 **/
+    @ExcelProperty(value = "审核时间",index = 10)
     private Date checkTime;
 
     /** 拒绝原因 **/
+    @ExcelProperty(value = "拒绝原因",index = 11)
     private String checkReason;
 
     /** 创建时间 **/
@@ -63,9 +78,11 @@ public class PhRefund implements Serializable {
     private Long version;
 
     /** 是否整单退款[0-否,1-是] **/
+    @ExcelProperty(value = "是否整单退款",index = 12)
     private String isComplete;
 
     /** 退款商品件数 **/
+    @ExcelProperty(value = "退款商品件数",index = 13)
     private Long goodsCount;
 
 
