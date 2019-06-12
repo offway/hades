@@ -276,9 +276,9 @@
         jQuery('#preview').modal('show', {backdrop: 'fade'});
     }
 
-	function goToDetail(id) {
-		window.open('/refund_detail.html?id=' + id, "_blank");
-	}
+    function goToDetail(id, readOnly) {
+        window.open('/refund_detail.html?id=' + id + '&readOnly=' + readOnly, "_blank");
+    }
 
 	function checkSku(id) {
 		window.location.href = '/goods_stock_index.html?id=' + id;
@@ -573,30 +573,25 @@
 						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
 					}
 				},
-				{
-					targets: 17,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						var str = '<input type="button" name="checkIt" onclick="goToDetail(' + data + ')" value="查看详情"/>';
-						var status = "";//parseInt(full["status"]);
-						if (status == 0) {
-							str += '<input type="button" onclick="closeOrder(' + data + ')" value="关闭订单"/>';
-						}
-						if (status == 1) {
-							str += '<input type="button" onclick="deliverOrder(' + data + ')" value="订单发货"/>';
-						}
-						if (status == 1 || status == 2 || status == 3) {
-							str += '<input type="button" onclick="cancelOrder(' + data + ')" value="紧急退款"/>';
-						}
-						if (status == 2) {
-							str += '<input type="button" onclick="trackOrder(' + data + ')" value="订单跟踪"/>';
-							str += '<input type="button" onclick="editDeliveredOrder(' + data + ')" value="修改订单号"/>';
-						}
-						return str;
-					}
-				}
+                {
+                    targets: 17,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        var str = '<input type="button" name="checkIt" onclick="goToDetail(' + data + ',1)" value="查看详情"/>';
+                        //状态[0-审核中,1-待退货,2-退货中,3-退款中,4-退款成功,5-退款取消,6-审核失败]
+                        var status = parseInt(full["status"]);
+                        if (status == 0) {
+                            str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="退货审核"/>';
+                        } else if (status == 2) {
+                            str += '<input type="button" onclick="trackOrder(' + data + ')" value="退货追踪"/>';
+                        } else if (status == 3) {
+                            str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="退款审核"/>';
+                        }
+                        return str;
+                    }
+                }
 			]
 		});
 		table_global = oTable;

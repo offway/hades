@@ -131,6 +131,15 @@
 						</div>
 					</div>
 				</div>
+				<div class="panel-footer panel-border">
+					<div class="row">
+						<div class="col-sm-12">
+							<button class="btn btn-info confirm" style="display: none">确定</button>
+							<button class="btn btn-info agree" style="display: none">同意</button>
+							<button class="btn btn-info reject" style="display: none">拒绝</button>
+						</div>
+					</div>
+				</div>
 			</div>
 			<footer th:replace="footer"></footer>
 		</div>
@@ -441,9 +450,38 @@
 	console.log(jsonStr);
 	var jsonObj = JSON.parse(jsonStr);
 	console.log(jsonObj);
+	var readOnly = [[${readOnly}]];
+	var action = [[${action}]];
 
     jQuery(document).ready(function($)
 	{
+		var confirmEle = $(".btn.btn-info.confirm");
+		var agreeEle = $(".btn.btn-info.agree");
+		var rejectEle = $(".btn.btn-info.reject");
+		if (parseInt(readOnly) == 1) {
+			confirmEle.show();
+			confirmEle.click(function () {
+				window.close();
+			});
+		} else {
+			agreeEle.show();
+			agreeEle.click(function () {
+				var confirm = window.confirm("你确定要这么做？");
+				if (confirm == false) {
+					return;
+				}
+				console.log("去同意")
+			});
+			rejectEle.show();
+			rejectEle.click(function () {
+				var reason = prompt("输入拒绝理由", "");
+				if (reason == "") {
+					alert("输入为空!");
+					return;
+				}
+				console.log("去拒绝")
+			});
+		}
 		//商品信息
 		$("#goodsInfo").dataTable({
 			data: jsonObj["goodsInfo"],

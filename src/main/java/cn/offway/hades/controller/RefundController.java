@@ -159,10 +159,16 @@ public class RefundController {
     }
 
     @RequestMapping("/refund_detail.html")
-    public String orderDetail(ModelMap map, Long id) {
+    public String orderDetail(ModelMap map, Long id, String readOnly) {
         Map<String, Object> dataList = new HashMap<>();
         PhRefund refund = refundService.findOne(id);
+        String action = "";
         if (refund != null) {
+            if ("0".equals(refund.getStatus())) {
+                action = "goods";
+            } else if ("3".equals(refund.getStatus())) {
+                action = "money";
+            }
             List<PhRefundGoods> refundGoodsList = refundGoodsService.listByPid(refund.getId());
             PhOrderInfo orderInfo = orderInfoService.findOne(refund.getOrderNo());
             List<PhOrderGoods> orderGoodsList = orderGoodsService.findAllByPid(orderInfo.getOrderNo());
@@ -280,6 +286,8 @@ public class RefundController {
             dataList.put("remarkInfo", remarkInfoList);
         }
         map.addAttribute("jsonStr", JSON.toJSONString(dataList));
+        map.addAttribute("readOnly", readOnly);
+        map.addAttribute("action", action);
         return "refund_detail";
     }
 }
