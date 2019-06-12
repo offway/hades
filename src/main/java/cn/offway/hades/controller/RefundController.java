@@ -268,14 +268,14 @@ public class RefundController {
             //操作信息
             List<Map> operateInfoList = new ArrayList<>();
             Map<String, Object> operateInfo = new HashMap<>();
-            operateInfo.put("checkName", refund.getCheckName());
-            operateInfo.put("checkTime", refund.getCheckTime());
+            operateInfo.put("checkName", refund.getCheckName() == null ? "无" : refund.getCheckName());
+            operateInfo.put("checkTime", refund.getCheckTime() == null ? "" : refund.getCheckTime());
             operateInfoList.add(operateInfo);
             dataList.put("operateInfo", operateInfoList);
             //处理备注信息
             List<Map> remarkInfoList = new ArrayList<>();
             Map<String, Object> remarkInfo = new HashMap<>();
-            remarkInfo.put("remark", refund.getRemark());
+            remarkInfo.put("remark", refund.getRemark() == null ? "无" : refund.getRemark());
             remarkInfoList.add(remarkInfo);
             dataList.put("remarkInfo", remarkInfoList);
         }

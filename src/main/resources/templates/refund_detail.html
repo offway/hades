@@ -437,15 +437,19 @@
 		});
 	}
 
+	var jsonStr = [[${jsonStr}]];
+	console.log(jsonStr);
+	var jsonObj = JSON.parse(jsonStr);
+	console.log(jsonObj);
+
     jQuery(document).ready(function($)
 	{
-		var jsonStr = [[${jsonStr}]];
-		console.log(jsonStr);
-		var jsonObj = JSON.parse(jsonStr);
-		console.log(jsonObj);
 		//商品信息
 		$("#goodsInfo").dataTable({
 			data: jsonObj["goodsInfo"],
+			searching: false,
+			lengthChange: false,
+			paging: false,
 			language: {
 				url: "../assets/Chinese.txt"
 			},
@@ -505,6 +509,9 @@
 		//费用信息
 		$("#feeInfo").dataTable({
 			data: jsonObj["feeInfo"],
+			searching: false,
+			lengthChange: false,
+			paging: false,
 			language: {
 				url: "../assets/Chinese.txt"
 			},
@@ -549,6 +556,9 @@
 		//订单收货人信息
 		$("#receiverInfo").dataTable({
 			data: jsonObj["receiverInfo"],
+			searching: false,
+			lengthChange: false,
+			paging: false,
 			language: {
 				url: "../assets/Chinese.txt"
 			},
@@ -583,6 +593,9 @@
 		//售后单信息
 		$("#refundInfo").dataTable({
 			data: jsonObj["refundInfo"],
+			searching: false,
+			lengthChange: false,
+			paging: false,
 			language: {
 				url: "../assets/Chinese.txt"
 			},
@@ -653,57 +666,67 @@
 			]
 		});
 		//售后单处理信息
-		$("#refundResultInfo").dataTable({
-			data: jsonObj["refundResultInfo"],
-			language: {
-				url: "../assets/Chinese.txt"
-			},
-			columnDefs: [
-				{
-					targets: 0,
-					data: "reason",
-					title: "处理结果"
+		if (jsonObj.hasOwnProperty("refundResultInfo")) {
+			$("#refundResultInfo").dataTable({
+				data: jsonObj["refundResultInfo"],
+				searching: false,
+				lengthChange: false,
+				paging: false,
+				language: {
+					url: "../assets/Chinese.txt"
 				},
-				{
-					targets: 1,
-					data: "realName",
-					title: "退货联系人"
-				},
-				{
-					targets: 2,
-					data: "location",
-					title: "退货地址"
-				},
-				{
-					targets: 3,
-					data: "phone",
-					title: "退货联系方式"
-				},
-				{
-					targets: 4,
-					data: "expressCode",
-					title: "配送方式"
-				},
-				{
-					targets: 5,
-					data: "mailNo",
-					title: "物流单号"
-				},
-				{
-					targets: 6,
-					data: "status",
-					title: "退货状态"
-				},
-				{
-					targets: 7,
-					data: "status",
-					title: "申请状态"
-				}
-			]
-		});
+				columnDefs: [
+					{
+						targets: 0,
+						data: "reason",
+						title: "处理结果"
+					},
+					{
+						targets: 1,
+						data: "realName",
+						title: "退货联系人"
+					},
+					{
+						targets: 2,
+						data: "location",
+						title: "退货地址"
+					},
+					{
+						targets: 3,
+						data: "phone",
+						title: "退货联系方式"
+					},
+					{
+						targets: 4,
+						data: "expressCode",
+						title: "配送方式"
+					},
+					{
+						targets: 5,
+						data: "mailNo",
+						title: "物流单号"
+					},
+					{
+						targets: 6,
+						data: "status",
+						title: "退货状态"
+					},
+					{
+						targets: 7,
+						data: "status",
+						title: "申请状态"
+					}
+				]
+			});
+		} else {
+			$("#refundResultInfo").parent().hide();
+		}
 		//问题描述信息
 		$("#contentInfo").dataTable({
 			data: jsonObj["contentInfo"],
+			searching: false,
+			lengthChange: false,
+			paging: false,
 			language: {
 				url: "../assets/Chinese.txt"
 			},
@@ -718,6 +741,9 @@
 		//凭证图片信息
 		$("#imgInfo").dataTable({
 			data: jsonObj["imgInfo"],
+			searching: false,
+			lengthChange: false,
+			paging: false,
 			language: {
 				url: "../assets/Chinese.txt"
 			},
@@ -744,6 +770,9 @@
 		//处理备注信息
 		$("#remarkInfo").dataTable({
 			data: jsonObj["remarkInfo"],
+			searching: false,
+			lengthChange: false,
+			paging: false,
 			language: {
 				url: "../assets/Chinese.txt"
 			},
@@ -758,6 +787,9 @@
 		//操作信息
 		$("#operateInfo").dataTable({
 			data: jsonObj["operateInfo"],
+			searching: false,
+			lengthChange: false,
+			paging: false,
 			language: {
 				url: "../assets/Chinese.txt"
 			},
@@ -772,7 +804,7 @@
 					data: "checkTime",
 					title: "操作时间",
 					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+						return data == '' ? "无" : new Date(data).Format("yyyy-MM-dd hh:mm:ss");
 					}
 				}
 			]

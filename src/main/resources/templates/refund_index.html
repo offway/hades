@@ -277,7 +277,7 @@
     }
 
 	function goToDetail(id) {
-		window.open('/order_detail.html?id=' + id, "_blank");
+		window.open('/refund_detail.html?id=' + id, "_blank");
 	}
 
 	function checkSku(id) {
@@ -579,16 +579,7 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="goToDetail(' + data + ')" value="查看详情"/>';
-					}
-				},
-				{
-					targets: 18,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						var str = "";
+						var str = '<input type="button" name="checkIt" onclick="goToDetail(' + data + ')" value="查看详情"/>';
 						var status = "";//parseInt(full["status"]);
 						if (status == 0) {
 							str += '<input type="button" onclick="closeOrder(' + data + ')" value="关闭订单"/>';
