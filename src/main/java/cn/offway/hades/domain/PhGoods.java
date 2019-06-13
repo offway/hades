@@ -1,5 +1,8 @@
 package cn.offway.hades.domain;
 
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.metadata.BaseRowModel;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -12,69 +15,90 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "ph_goods")
-public class PhGoods implements Serializable {
+public class PhGoods extends BaseRowModel implements Serializable {
 
     /** ID **/
+    @ExcelProperty(value = "序号",index = 0)
     private Long id;
 
     /** 名称 **/
+    @ExcelProperty(value = "名称",index = 1)
     private String name;
 
     /** 封面图片 **/
+    @ExcelProperty(value = "封面图片",index = 2)
     private String image;
 
     /** 商户ID **/
+    @ExcelProperty(value = "商户ID",index = 3)
     private Long merchantId;
 
     /** 商户LOGO **/
+    @ExcelProperty(value = "商户LOGO",index = 4)
     private String merchantLogo;
 
     /** 商户名称 **/
+    @ExcelProperty(value = "商户名称",index = 5)
     private String merchantName;
 
     /** 品牌ID **/
+    @ExcelProperty(value = "品牌ID",index = 6)
     private Long brandId;
 
     /** 品牌名称 **/
+    @ExcelProperty(value = "品牌名称",index = 7)
     private String brandName;
 
     /** 品牌LOGO **/
+    @ExcelProperty(value = "品牌LOGO",index = 8)
     private String brandLogo;
 
     /** 类别 **/
+    @ExcelProperty(value = "类别",index = 9)
     private String type;
 
     /** 类目 **/
+    @ExcelProperty(value = "类目",index = 10)
     private String category;
 
     /** 发售价 **/
+    @ExcelProperty(value = "发售价",index = 11)
     private Double price;
     
     /** 原价 **/
+    @ExcelProperty(value = "原价",index = 12)
     private Double originalPrice;
 
     /** 价格范围[添加库存的时候更新] **/
+    @ExcelProperty(value = "价格范围",index = 13)
     private String priceRange;
 
     /** 材质 **/
+    @ExcelProperty(value = "材质",index = 14)
     private String material;
 
     /** 状态[0-未上架,1-已上架] **/
+    @ExcelProperty(value = "状态",index = 15)
     private String status;
 
     /** 浏览数 **/
+    @ExcelProperty(value = "浏览数",index = 16)
     private Long viewCount;
 
     /** 销量 **/
+    @ExcelProperty(value = "销量",index = 17)
     private Long saleCount;
 
     /** 创建时间 **/
+    @ExcelProperty(value = "创建时间",index = 18)
     private Date createTime;
 
     /** 备注 **/
+    @ExcelProperty(value = "备注",index = 19)
     private String remark;
 
     /** 货号 **/
+    @ExcelProperty(value = "货号",index = 20)
     private String code;
 
     /** 上架时间 **/

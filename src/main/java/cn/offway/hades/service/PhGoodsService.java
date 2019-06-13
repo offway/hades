@@ -29,4 +29,6 @@ public interface PhGoodsService {
     Long getCountByPid(Long merchantId);
 
     List<PhGoods> findAll(String name, Object value);
+
+    List<PhGoods> findByIds(Long[] ids);
 }

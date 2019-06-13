@@ -131,6 +131,26 @@ public class PhGoodsServiceImpl implements PhGoodsService {
     }
 
     @Override
+    public List<PhGoods> findByIds(Long[] ids) {
+        return phGoodsRepository.findAll(new Specification<PhGoods>() {
+            @Override
+            public Predicate toPredicate(Root<PhGoods> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                if (ids != null && ids.length > 0) {
+                    CriteriaBuilder.In<Long> in = criteriaBuilder.in(root.get("id"));
+                    for (long id : ids) {
+                        in.value(id);
+                    }
+                    params.add(in);
+                }
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        });
+    }
+
+    @Override
     public PhGoods findOne(Long id) {
         return phGoodsRepository.findOne(id);
     }

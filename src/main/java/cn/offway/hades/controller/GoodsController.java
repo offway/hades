@@ -5,11 +5,17 @@ import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.runner.InitRunner;
 import cn.offway.hades.service.*;
 import cn.offway.hades.singleton.JobHolder;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.event.WriteHandler;
+import com.alibaba.excel.metadata.Sheet;
+import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qiniu.util.Base64;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -26,10 +32,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 
@@ -444,6 +454,55 @@ public class GoodsController {
                 }
             }
             return true;
+        }
+    }
+
+    @RequestMapping("/goods_export.html")
+    public void export(HttpServletResponse response, @RequestParam("ids[]") Long[] ids, @AuthenticationPrincipal PhAdmin admin) {
+        List<PhGoods> list = goodsService.findByIds(ids);
+        try {
+            ServletOutputStream outputStream = response.getOutputStream();
+            response.setContentType("multipart/form-data");
+            response.setCharacterEncoding("utf-8");
+            String fileName = new String(("GoodsList_" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
+                    .getBytes(), StandardCharsets.UTF_8);
+            response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+            ExcelWriter writer = new ExcelWriter(null, outputStream, ExcelTypeEnum.XLSX, true, new WriteHandler() {
+                @Override
+                public void sheet(int i, org.apache.poi.ss.usermodel.Sheet sheet) {
+                    //nothing
+                }
+
+                @Override
+                public void row(int i, Row row) {
+                    //nothing
+                }
+
+                @Override
+                public void cell(int i, Cell cell) {
+                    if (cell.getRowIndex() == 0) {
+                        return;
+                    }
+                    switch (i) {
+                        case 15:
+                            /* 状态[0-未上架,1-已上架] **/
+                            String[] arr = new String[]{"未上架", "已上架"};
+                            cell.setCellValue(arr[Integer.valueOf(cell.getStringCellValue())]);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
+            Sheet sheet = new Sheet(1, 0, PhGoods.class);
+            sheet.setSheetName("Goods");
+            sheet.setAutoWidth(true);
+            writer.write(list, sheet);
+            writer.finish();
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e) {
+            logger.error("IO ERROR", e);
         }
     }
 
