@@ -775,7 +775,8 @@
 			for (var it in arr) {
 				var key = arr[it]["name"] + arr[it]["value"];
 				if (list.indexOf(key) >= 0) {
-					toastr.error("存在重复商品，请检查", "温馨提示");
+					toastr.error("存在重复商品，请检查" + arr[it]["value"], "温馨提示");
+					console.log(key);
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
 					return;
