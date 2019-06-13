@@ -119,7 +119,7 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-md-8">
+							<div class="col-md-6">
 								<div class="form-group">
 									<label class="control-label">查询商品</label>
 									<select class="form-control" id="goodsSelect"></select>
@@ -134,9 +134,15 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label class="control-label"></label>
-                                    <input type="button" class="notMe form-control" value="添加全部商品" onclick="addTheGoods(true)" />
+                                    <input type="button" class="notMe form-control" value="添加全部" onclick="addTheGoods(true)" />
                                 </div>
                             </div>
+							<div class="col-md-2">
+								<div class="form-group">
+									<label class="control-label"></label>
+									<input type="button" class="notMe form-control" value="打乱" onclick="shuffle()" />
+								</div>
+							</div>
 						</div>
 						<div class="row">
 							<div class="col-md-12">
@@ -392,6 +398,30 @@
 			confirm("未选择任何文件!");
 		}
 	}
+
+	function shuffle() {
+		$('#goodsPool div').shuffle();
+	}
+
+	//https://j11y.io/javascript/shuffling-the-dom/
+	(function ($) {
+		$.fn.shuffle = function () {
+			var allElems = this.get(),
+					getRandom = function (max) {
+						return Math.floor(Math.random() * max);
+					},
+					shuffled = $.map(allElems, function () {
+						var random = getRandom(allElems.length),
+								randEl = $(allElems[random]).clone(true)[0];
+						allElems.splice(random, 1);
+						return randEl;
+					});
+			this.each(function (i) {
+				$(this).replaceWith($(shuffled[i]));
+			});
+			return $(shuffled);
+		};
+	})(jQuery);
 
     function addTheGoods(all) {
         var ele = $("#goodsSelect");
