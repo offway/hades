@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.concurrent.*;
 
 @Controller
 @RequestMapping
@@ -82,11 +83,11 @@ public class PickController {
         for (PhPick item : pages.getContent()) {
             Map m = objectMapper.convertValue(item, Map.class);
             List<PhPickGoods> l = pickGoodsService.findByPid(item.getId());
-            List<PhGoods> goodsList = new ArrayList<>();
-            for (PhPickGoods i : l) {
-                goodsList.add(goodsService.findOne(i.getGoodsId()));
-            }
-            m.put("sub", goodsList);
+//            List<PhGoods> goodsList = new ArrayList<>();
+//            for (PhPickGoods i : l) {
+//                goodsList.add(goodsService.findOne(i.getGoodsId()));
+//            }
+            m.put("sub", l);
             list.add(m);
         }
         map.put("aData", list);//数据集合
@@ -116,25 +117,43 @@ public class PickController {
 
     @RequestMapping("/pick_get")
     @ResponseBody
-    public Map<String, Object> get(Long id) {
+    public Map<String, Object> get(Long id) throws InterruptedException, ExecutionException {
         ObjectMapper objectMapper = new ObjectMapper();
         PhPick pick = pickService.findOne(id);
         if (pick != null) {
             Map m = objectMapper.convertValue(pick, Map.class);
-            List<Map> list = new ArrayList<>();
-            for (PhPickGoods pickGoods : pickGoodsService.findByPid(pick.getId())) {
-                Map<String, Object> obj = new HashMap<>();
-                PhGoods goods = goodsService.findOne(pickGoods.getGoodsId());
-                obj.put("id", pickGoods.getGoodsId());
-                if (goods != null) {
-                    obj.put("name", goods.getName());
-                    obj.put("img", goods.getImage());
-                } else {
-                    obj.put("name", "未知");
-                    obj.put("img", "");
-                }
-                list.add(obj);
+            LinkedList<Map> list = new LinkedList<>();
+            List<PhPickGoods> pickGoodsList = pickGoodsService.findByPid(pick.getId());
+            ExecutorService pool = Executors.newFixedThreadPool(pickGoodsList.size());
+            List<Future<Map>> returnList = new ArrayList<>();
+            for (PhPickGoods pickGoods : pickGoodsList) {
+                Future<Map> future = pool.submit(new Callable<Map>() {
+                    @Override
+                    public Map call() throws Exception {
+                        Map<String, Object> obj = new HashMap<>();
+                        PhGoods goods = goodsService.findOne(pickGoods.getGoodsId());
+                        obj.put("id", pickGoods.getGoodsId());
+                        if (goods != null) {
+                            obj.put("name", goods.getName());
+                            obj.put("img", goods.getImage());
+                        } else {
+                            obj.put("name", "未知");
+                            obj.put("img", "");
+                        }
+                        return obj;
+                    }
+                });
+                returnList.add(future);
             }
+            int timeout = returnList.size() / 100;
+            timeout = timeout == 0 ? 1 : timeout;
+            pool.awaitTermination(timeout, TimeUnit.SECONDS);
+            for (Future<Map> f : returnList) {
+                if (f.isDone()) {
+                    list.add(f.get());
+                }
+            }
+            pool.shutdown();
             m.put("sub", list);
             return m;
         }
