@@ -32,6 +32,8 @@ public interface PhGoodsService {
 
     List<PhGoods> findAll(String name, Object value);
 
+    List<PhGoods> findByIds(Long[] ids);
+
     void updateMerchantInfo(PhMerchant merchant);
 
     void updateBrandInfo(PhBrand brand);

@@ -123,6 +123,7 @@
 				<button class="btn btn-info discount">限时打折</button>
 				<button class="btn btn-info discountList">打折清单</button>
 				<button class="btn btn-info restorePrice">恢复原价</button>
+				<button class="btn btn-info export">导出商品</button>
 			</div>
 			<footer th:replace="footer"></footer>
 		</div>
@@ -858,6 +859,21 @@
 			$(".btn.btn-info.discount").hide();
 			$(".btn.btn-info.restorePrice").hide();
         }
+
+		$(".btn.btn-info.export").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
+			var queryString = $.param({"ids": ids});
+			window.open('/goods_export.html?' + queryString, "_blank");
+			return false;
+		});
 
 		//保存
 		$(".btn.btn-info.save").click(function(){
