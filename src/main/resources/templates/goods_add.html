@@ -62,14 +62,14 @@
 									<div class="row">
 										<div class="col-md-6">
 											<div class="form-group">
-												<label for="field-1" class="control-label">商品类别</label>
+												<label for="field-1" class="control-label">*商品类别</label>
 												<select class="form-control" id="field-1" name="type" placeholder="商品类别" onchange="renderCategory(this)">
 												</select>
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-												<label for="field-2" class="control-label">商品子类别</label>
+												<label for="field-2" class="control-label">*商品子类别</label>
 												<select class="form-control" id="field-2" name="category" placeholder="商品子类别">
 												</select>
 											</div>
@@ -78,7 +78,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-3" class="control-label">名称</label>
+												<label for="field-3" class="control-label">*名称</label>
 												<input type="text" class="form-control" id="field-3" name="name" placeholder="名称" />
 											</div>
 										</div>
@@ -86,7 +86,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-10" class="control-label">货号</label>
+												<label for="field-10" class="control-label">*货号</label>
 												<input type="text" class="form-control" id="field-10" name="code" placeholder="货号" />
 											</div>
 										</div>
@@ -94,7 +94,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-4" class="control-label">封面图片</label>
+												<label for="field-4" class="control-label">*封面图片</label>
 												<input type="file" class="form-control" id="field-4" name="imageFile" placeholder="封面图片" onchange="uploadMainFile(this)"/>
 												<input type="hidden" class="form-control" name="image" />
 												<img alt="" src="" name="imageImg" style="display:none;" />
@@ -104,7 +104,7 @@
 									<div class="row">
 										<div class="col-md-2">
 											<div class="form-group">
-												<label class="control-label">banner 轮播图(主图)</label>
+												<label class="control-label">*banner 轮播图(主图)</label>
 												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图(主图)" onchange="uploadFile(this)"/>
 												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
 												<input type="hidden" class="form-control" name="banner" />
@@ -160,7 +160,7 @@
 									<div class="row" id="introDIV">
 										<div class="col-md-2">
 											<div class="form-group">
-												<label class="control-label">商品长图</label>
+												<label class="control-label">*商品长图</label>
 												<input type="file" class="form-control" name="introFile" placeholder="商品长图" onchange="uploadIntroFile(this)"/>
 												<!--<input type="button" class="form-control" value="删除" onclick="delIntroFile(this)"/>-->
 												<input type="hidden" class="form-control" name="intro" />
@@ -176,7 +176,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-5" class="control-label">品牌</label>
+												<label for="field-5" class="control-label">*品牌</label>
 												<select class="form-control" id="field-5" name="brand_id" placeholder="品牌">
 												</select>
 											</div>
@@ -185,7 +185,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-9" class="control-label">商家</label>
+												<label for="field-9" class="control-label">*商家</label>
 												<select class="form-control" id="field-9" name="merchant_id" placeholder="商家"
 														onchange="renderFare(this)">
 												</select>
@@ -212,7 +212,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-6" class="control-label">当前价格(请与SKU价格保持一致)</label>
+												<label for="field-6" class="control-label">*当前价格(请与SKU价格保持一致)</label>
 												<input type="number" class="form-control" id="field-6" name="price" placeholder="当前价格(请与SKU价格保持一致)" />
 											</div>
 										</div>
@@ -220,7 +220,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label class="control-label">是否有优惠</label>
+												<label class="control-label">*是否有优惠</label>
 												<label><input name="isDiscount" class="notMe" type="radio" value="0"/>有</label>
 												<label><input name="isDiscount" class="notMe" type="radio" checked="checked" value="1"/>没有</label>
 											</div>
@@ -237,7 +237,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-7" class="control-label">材质(20字以内)</label>
+												<label for="field-7" class="control-label">*材质(20字以内)</label>
 												<input type="text" class="form-control" id="field-7" name="material" placeholder="材质(20字以内)" />
 											</div>
 										</div>
@@ -253,7 +253,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label class="control-label">商品属性模板</label>
+												<label class="control-label">*商品属性模板</label>
 												<label><input type="radio" class="" name="choice" value="0" checked="checked" onclick="switchToCommon()" />通用模板</label>
 												<label><input type="radio" class="" name="choice" value="1" onclick="switchToCustom()"/>自定义模板</label>
 											</div>
