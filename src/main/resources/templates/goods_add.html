@@ -412,29 +412,29 @@
 		}
 	}
 
-	function uploadSkuImg(self) {
-		var that = $(self);
-		if (self.files.length > 0) {
-			var file = self.files[0];
-			getQNToken(function (token) {
-				this.upload("", token, file, function () {
-					//
-				}, function (err) {
-					console.log("error");
-					console.log(err);
-				}, function (res) {
-					var url = qiniuUrl + "/" + res.key;
-					that.parent().find("[name=skuImg]").val(url);
-					// that.parent().find("[name=introImg]").attr("src", url);
-					// that.parent().find("[name=introImg]").attr("width", "100px");
-					// that.parent().find("[name=introImg]").attr("height", "100px");
-					// that.parent().find("[name=introImg]").show();
-				});
-			});
-		} else {
-			confirm("未选择任何文件!");
-		}
-	}
+    function uploadSkuImg(self) {
+        var that = $(self);
+        if (self.files.length > 0) {
+            var file = self.files[0];
+            getQNToken(function (token) {
+                this.upload("", token, file, function () {
+                    //
+                }, function (err) {
+                    console.log("error");
+                    console.log(err);
+                }, function (res) {
+                    var url = qiniuUrl + "/" + res.key;
+                    that.parent().find("[name=skuImg]").val(url);
+                    that.parent().find("img").attr("src", url);
+                    that.parent().find("img").show();
+                    // that.parent().find("[name=introImg]").attr("width", "100px");
+                    // that.parent().find("[name=introImg]").attr("height", "100px");
+                });
+            });
+        } else {
+            confirm("未选择任何文件!");
+        }
+    }
 
     function initCommonSku() {
 		//添加颜色
@@ -657,6 +657,7 @@
             "\t\t\t\t\t\t\t\t<label for=\"field-5\" class=\"control-label\">图片</label>\n" +
             "\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"skuImgFile\" onchange='uploadSkuImg(this)' placeholder=\"图片\" />\n" +
             "\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"skuImg\" value='FOUR' placeholder=\"图片\" />\n" +
+            "\t\t\t\t\t\t\t\t<img src='FOUR' style='width: 100px;height: 100px;display: none' />\n" +
             "\t\t\t\t\t\t\t</div>\n" +
             "\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
