@@ -262,7 +262,7 @@ public class RefundController {
             //问题描述信息
             List<Map> contentInfoList = new ArrayList<>();
             Map<String, Object> contentInfo = new HashMap<>();
-            contentInfo.put("content", refund.getContent());
+            contentInfo.put("content", refund.getContent() == null ? "无" : refund.getContent());
             contentInfoList.add(contentInfo);
             dataList.put("contentInfo", contentInfoList);
             //凭证图片信息
@@ -288,6 +288,56 @@ public class RefundController {
         map.addAttribute("jsonStr", JSON.toJSONString(dataList));
         map.addAttribute("readOnly", readOnly);
         map.addAttribute("action", action);
+        map.addAttribute("theId", id);
         return "refund_detail";
+    }
+
+    @ResponseBody
+    @RequestMapping("/refund_deny")
+    public boolean deny(Long id) {
+        PhRefund refund = refundService.findOne(id);
+        /* 状态[0-审核中,1-待退货,2-退货中,3-退款中,4-退款成功,5-退款取消,6-审核失败] **/
+        switch (refund.getStatus()) {
+            case "0":
+                refund.setStatus("6");
+                break;
+            case "3":
+                refund.setStatus("5");
+                break;
+            default:
+                break;
+        }
+        //保存状态
+        refundService.save(refund);
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/refund_allow")
+    public boolean allow(Long id) {
+        PhRefund refund = refundService.findOne(id);
+        /* 状态[0-审核中,1-待退货,2-退货中,3-退款中,4-退款成功,5-退款取消,6-审核失败] **/
+        switch (refund.getStatus()) {
+            case "0":
+                /* 类型[0-仅退款,1-退货退款,2-换货] **/
+                switch (refund.getType()) {
+                    case "0":
+                        refund.setStatus("3");
+                        break;
+                    case "1":
+                    case "2":
+                        refund.setStatus("1");
+                        break;
+                }
+                break;
+            case "3":
+                refund.setStatus("4");
+                break;
+            default:
+                break;
+        }
+        //保存状态
+        refundService.save(refund);
+        return true;
     }
 }

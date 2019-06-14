@@ -452,6 +452,7 @@
 	console.log(jsonObj);
 	var readOnly = [[${readOnly}]];
 	var action = [[${action}]];
+	var theId = [[${theId}]];
 
     jQuery(document).ready(function($)
 	{
@@ -470,7 +471,12 @@
 				if (confirm == false) {
 					return;
 				}
-				console.log("去同意")
+				console.log("去同意");
+				$.post("/refund_allow", {"id": theId}, function (data) {
+					if (data) {
+						toastr.success("操作已成功！", "温馨提示");
+					}
+				});
 			});
 			rejectEle.show();
 			rejectEle.click(function () {
@@ -479,7 +485,12 @@
 					alert("输入为空!");
 					return;
 				}
-				console.log("去拒绝")
+				console.log("去拒绝");
+				$.post("/refund_deny", {"id": theId}, function (data) {
+					if (data) {
+						toastr.success("操作已成功！", "温馨提示");
+					}
+				});
 			});
 		}
 		//商品信息

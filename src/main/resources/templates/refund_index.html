@@ -580,16 +580,24 @@
                     orderable: false,
                     title: "操作",
                     render: function (data, type, full, meta) {
-                        var str = '<input type="button" name="checkIt" onclick="goToDetail(' + data + ',1)" value="查看详情"/>';
-                        //状态[0-审核中,1-待退货,2-退货中,3-退款中,4-退款成功,5-退款取消,6-审核失败]
-                        var status = parseInt(full["status"]);
-                        if (status == 0) {
-                            str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="退货审核"/>';
-                        } else if (status == 2) {
-                            str += '<input type="button" onclick="trackOrder(' + data + ')" value="退货追踪"/>';
-                        } else if (status == 3) {
-                            str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="退款审核"/>';
-                        }
+						var str = '<input type="button" name="checkIt" onclick="goToDetail(' + data + ',1)" value="查看详情"/>';
+						//状态[0-审核中,1-待退货,2-退货中,3-退款中,4-退款成功,5-退款取消,6-审核失败]
+						var status = parseInt(full["status"]);
+						/* 类型[0-仅退款,1-退货退款,2-换货] **/
+						var type = parseInt(full["type"]);
+						if (status == 0) {
+							if (type == 0) {
+								str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="退款审核"/>';
+							} else if (type == 1) {
+								str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="退货退款审核"/>';
+							} else {
+								str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="换货审核"/>';
+							}
+						} else if (status == 2) {
+							str += '<input type="button" onclick="trackOrder(' + data + ')" value="退货追踪"/>';
+						} else if (status == 3) {
+							str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="退款审核"/>';
+						}
                         return str;
                     }
                 }
