@@ -281,7 +281,7 @@ public class RefundController {
             //处理备注信息
             List<Map> remarkInfoList = new ArrayList<>();
             Map<String, Object> remarkInfo = new HashMap<>();
-            remarkInfo.put("remark", refund.getRemark() == null ? "无" : refund.getRemark());
+            remarkInfo.put("remark", refund.getCheckReason() == null ? "无" : refund.getCheckReason());
             remarkInfoList.add(remarkInfo);
             dataList.put("remarkInfo", remarkInfoList);
         }
@@ -294,7 +294,7 @@ public class RefundController {
 
     @ResponseBody
     @RequestMapping("/refund_deny")
-    public boolean deny(Long id) {
+    public boolean deny(Long id, String reason, @AuthenticationPrincipal PhAdmin admin) {
         PhRefund refund = refundService.findOne(id);
         /* 状态[0-审核中,1-待退货,2-退货中,3-退款中,4-退款成功,5-退款取消,6-审核失败] **/
         switch (refund.getStatus()) {
@@ -308,13 +308,16 @@ public class RefundController {
                 break;
         }
         //保存状态
+        refund.setCheckName(admin.getNickname());
+        refund.setCheckTime(new Date());
+        refund.setCheckReason(reason);
         refundService.save(refund);
         return true;
     }
 
     @ResponseBody
     @RequestMapping("/refund_allow")
-    public boolean allow(Long id) {
+    public boolean allow(Long id, @AuthenticationPrincipal PhAdmin admin) {
         PhRefund refund = refundService.findOne(id);
         /* 状态[0-审核中,1-待退货,2-退货中,3-退款中,4-退款成功,5-退款取消,6-审核失败] **/
         switch (refund.getStatus()) {
@@ -337,6 +340,9 @@ public class RefundController {
                 break;
         }
         //保存状态
+        refund.setCheckName(admin.getNickname());
+        refund.setCheckTime(new Date());
+        refund.setCheckReason("");
         refundService.save(refund);
         return true;
     }

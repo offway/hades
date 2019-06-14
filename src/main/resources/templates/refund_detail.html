@@ -475,6 +475,9 @@
 				$.post("/refund_allow", {"id": theId}, function (data) {
 					if (data) {
 						toastr.success("操作已成功！", "温馨提示");
+						setTimeout(function () {
+							window.close();
+						}, 2000);
 					}
 				});
 			});
@@ -486,9 +489,12 @@
 					return;
 				}
 				console.log("去拒绝");
-				$.post("/refund_deny", {"id": theId}, function (data) {
+				$.post("/refund_deny", {"id": theId, "reason": reason}, function (data) {
 					if (data) {
 						toastr.success("操作已成功！", "温馨提示");
+						setTimeout(function () {
+							window.close();
+						}, 2000);
 					}
 				});
 			});
