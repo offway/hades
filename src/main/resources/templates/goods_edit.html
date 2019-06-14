@@ -495,7 +495,7 @@
 		var contentStr = "\t\t\t\t\t<div class=\"row NAME\">\n".replace("NAME", uuid) +
 				"\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
 				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-				"\t\t\t\t\t\t\t\t<label class=\"control-label\">规格名称(如颜色、尺寸)</label>\n";
+                "\t\t\t\t\t\t\t\t<label class=\"control-label\">MAIN</label>\n".replace("MAIN", hasImg ? "主规格名称(如颜色、尺寸)" : "规格名称(如颜色、尺寸)");
 		if (readonly) {
 			contentStr += "\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrName\" placeholder=\"规格名称(如颜色、尺寸)\" />\n";
 		} else {
@@ -506,8 +506,8 @@
 					"\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
 					"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t<label class=\"control-label\">详细规格(如红、黄、S、M、L)</label>\n" +
-					"\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrValue\" placeholder=\"详细规格(如红、黄、S、M、L),点击设置\" onclick=\"showAttrWindow('NAME',true)\" />\n".replace("NAME", uuid) +
+					"\t\t\t\t\t\t\t\t<label class=\"control-label\">主规格详细规格(如红、黄、S、M、L)</label>\n" +
+					"\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrValue\" placeholder=\"主规格详细规格(如红、黄、S、M、L),点击设置\" onclick=\"showAttrWindow('NAME',true)\" />\n".replace("NAME", uuid) +
 					"\t\t\t\t\t\t\t\t<input type='hidden' class=\"form-control NAME\" name=\"attrContainer\" value=\"\" />\n".replace("NAME", uuid) +
 					"\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t</div>\n" +
