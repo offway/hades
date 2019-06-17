@@ -1150,6 +1150,16 @@
                     form.find("input[name='isDiscount']").val(["0"]);
                     toggle("0");
                 }
+				//标签
+				if (main.hasOwnProperty("tag") && main["tag"] != null) {
+					var tag = parseInt(main["tag"]);
+					var tagEle = form.find("input[name='tags']");
+					for (var i = 0; i < 4; i++) {
+						if ((tag & 1 << i) != 0) {
+							$(tagEle[i]).prop("checked", "checked");
+						}
+					}
+				}
                 //分类
                 $.getJSON("/type_and_category_list", {}, function (data) {
                     $("#type_and_category_list").val(JSON.stringify(data));
