@@ -220,6 +220,17 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
+												<label class="control-label">*标签</label>
+												<label><input name="tag" class="notMe" type="checkbox" value="0"/>品牌保障</label>
+												<label><input name="tag" class="notMe" type="checkbox" value="1"/>7天退换货</label>
+												<label><input name="tag" class="notMe" type="checkbox" value="2"/>限量商品</label>
+												<label><input name="tag" class="notMe" type="checkbox" value="3"/>特殊商品</label>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-12">
+											<div class="form-group">
 												<label class="control-label">*是否有优惠</label>
 												<label><input name="isDiscount" class="notMe" type="radio" value="0"/>有</label>
 												<label><input name="isDiscount" class="notMe" type="radio" checked="checked" value="1"/>没有</label>
@@ -1191,6 +1202,7 @@
 			var originalPrice = form.find("input[name='originalPrice']").val();
             var material = form.find("input[name='material']").val();
             var remark = form.find("input[name='remark']").val();
+			var tags = form.find("input[name='tag']:checked");
             //已上传的图片地址
             var imageImg = form.find("input[name='image']").val();
 
@@ -1198,6 +1210,11 @@
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				return;
 			}
+
+			var tag = 0;
+			tags.each(function (a, b) {
+				tag = tag | 1 << parseInt(b.value);
+			});
 
             //多个元素 sku 属性
             var attrName = form.find("input[name='attrName']");
@@ -1326,7 +1343,8 @@
 								"remark": remark,
 								"stocks": JSON.stringify(stockList),
 								"banners": bannerList.join(","),
-								"intros": introList.join(",")
+								"intros": introList.join(","),
+								"tag": tag
 							};
 							console.log(data);
 							$.post("/goods_add", data, function (data) {

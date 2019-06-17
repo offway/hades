@@ -107,6 +107,8 @@ public class PhGoods extends BaseRowModel implements Serializable {
     /** 上架时间 **/
     private Date upTime;
 
+    /** 标签,该字段为二进制位运算标识,0否1是,从右到左第一位表示品牌保障,第二位表示7天退换货,第三位表示限量商品,第四位表示特殊商品。 **/
+    private Long tag;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -317,5 +319,14 @@ public class PhGoods extends BaseRowModel implements Serializable {
 
     public void setMerchantType(String merchantType) {
         this.merchantType = merchantType;
+    }
+
+    @Column(name = "tag", length = 1)
+    public Long getTag() {
+        return tag;
+    }
+
+    public void setTag(Long tag) {
+        this.tag = tag;
     }
 }
