@@ -526,10 +526,12 @@
 					title: "退款图片",
 					render: function (data, type, row, meta) {
 						var str = "";
-						var list = data.split(",");
-						for (var i in list) {
-							var url = list[i];
-							str += "<p>" + buildImg(url) + "</p>";
+						if (data != null) {
+							var list = data.split(",");
+							for (var i in list) {
+								var url = list[i];
+								str += "<p>" + buildImg(url) + "</p>";
+							}
 						}
 						return str;
 					}
