@@ -62,14 +62,14 @@
 									<div class="row">
 										<div class="col-md-6">
 											<div class="form-group">
-												<label for="field-1" class="control-label">商品类别</label>
+												<label for="field-1" class="control-label">*商品类别</label>
 												<select class="form-control" id="field-1" name="type" placeholder="商品类别" onchange="renderCategory(this)">
 												</select>
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-												<label for="field-2" class="control-label">商品子类别</label>
+												<label for="field-2" class="control-label">*商品子类别</label>
 												<select class="form-control" id="field-2" name="category" placeholder="商品子类别">
 												</select>
 											</div>
@@ -78,7 +78,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-3" class="control-label">名称</label>
+												<label for="field-3" class="control-label">*名称</label>
 												<input type="text" class="form-control" id="field-3" name="name" placeholder="名称" />
 											</div>
 										</div>
@@ -86,7 +86,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-10" class="control-label">货号</label>
+												<label for="field-10" class="control-label">*货号</label>
 												<input type="text" class="form-control" id="field-10" name="code" placeholder="货号" />
 											</div>
 										</div>
@@ -94,7 +94,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-4" class="control-label">封面图片</label>
+												<label for="field-4" class="control-label">*封面图片</label>
 												<input type="file" class="form-control" id="field-4" name="imageFile" placeholder="封面图片" />
 												<input type="hidden" class="form-control" name="image" />
 												<img alt="" src="" name="imageImg" style="display:none;" />
@@ -176,7 +176,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-5" class="control-label">品牌</label>
+												<label for="field-5" class="control-label">*品牌</label>
 												<select class="form-control" id="field-5" name="brand_id" placeholder="品牌">
 												</select>
 											</div>
@@ -185,7 +185,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-9" class="control-label">商家</label>
+												<label for="field-9" class="control-label">*商家</label>
 												<select class="form-control" id="field-9" name="merchant_id" placeholder="商家"
 														onchange="renderFare(this)">
 												</select>
@@ -204,7 +204,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-6" class="control-label">当前价格(请与SKU价格保持一致)</label>
+												<label for="field-6" class="control-label">*当前价格(请与SKU价格保持一致)</label>
 												<input type="number" class="form-control" id="field-6" name="price" placeholder="当前价格(请与SKU价格保持一致)" />
 											</div>
 										</div>
@@ -212,7 +212,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label class="control-label">是否有优惠</label>
+												<label class="control-label">*是否有优惠</label>
 												<label><input name="isDiscount" class="notMe" type="radio" value="0"/>有</label>
 												<label><input name="isDiscount" class="notMe" type="radio" checked="checked" value="1"/>没有</label>
 											</div>
@@ -229,7 +229,7 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
-												<label for="field-7" class="control-label">材质(20字以内)</label>
+												<label for="field-7" class="control-label">*材质(20字以内)</label>
 												<input type="text" class="form-control" id="field-7" name="material" placeholder="材质(20字以内)" />
 											</div>
 										</div>
@@ -320,6 +320,30 @@
 					that.parent().find("[name=bannerImg]").attr("height", "100px");
 					that.parent().find("[name=bannerImg]").show();
 					that.parent().find("[name=bannerReset]").show();
+				});
+			});
+		} else {
+			confirm("未选择任何文件!");
+		}
+	}
+
+	function uploadSkuImg(self) {
+		var that = $(self);
+		if (self.files.length > 0) {
+			var file = self.files[0];
+			getQNToken(function (token) {
+				this.upload("", token, file, function () {
+					//
+				}, function (err) {
+					console.log("error");
+					console.log(err);
+				}, function (res) {
+					var url = qiniuUrl + "/" + res.key;
+					that.parent().find("[name=skuImg]").val(url);
+					that.parent().find("img").attr("src", url);
+					that.parent().find("img").show();
+					// that.parent().find("[name=introImg]").attr("width", "100px");
+					// that.parent().find("[name=introImg]").attr("height", "100px");
 				});
 			});
 		} else {
@@ -461,33 +485,49 @@
 
 	function addMoreAttr(self, readonly) {
 		var uuid = UUID.randomUUID();
-		var content = buildNewAttr(uuid, readonly);
+		var hasImg = $("#skuProperty .row").length < 1;
+		var content = buildNewAttr(uuid, readonly, hasImg);
 		var that = $(self);
 		that.before(content);
 	}
 
-	function buildNewAttr(uuid, readonly) {
+	function buildNewAttr(uuid, readonly, hasImg) {
 		var contentStr = "\t\t\t\t\t<div class=\"row NAME\">\n".replace("NAME", uuid) +
 				"\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
 				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-				"\t\t\t\t\t\t\t\t<label class=\"control-label\">规格名称(如颜色、尺寸)</label>\n";
+                "\t\t\t\t\t\t\t\t<label class=\"control-label\">MAIN</label>\n".replace("MAIN", hasImg ? "主规格名称(如颜色、尺寸)" : "规格名称(如颜色、尺寸)");
 		if (readonly) {
 			contentStr += "\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrName\" placeholder=\"规格名称(如颜色、尺寸)\" />\n";
 		} else {
 			contentStr += "\t\t\t\t\t\t\t\t<input type='text' class=\"form-control\" name=\"attrName\" placeholder=\"规格名称(如颜色、尺寸)\" />\n";
 		}
-		contentStr += "\t\t\t\t\t\t\t</div>\n" +
-				"\t\t\t\t\t\t</div>\n" +
-				"\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
-				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-				"\t\t\t\t\t\t\t\t<label class=\"control-label\">详细规格(如红、黄、S、M、L)</label>\n" +
-				"\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrValue\" placeholder=\"详细规格(如红、黄、S、M、L),点击设置\" onclick=\"showAttrWindow('NAME')\" />\n".replace("NAME", uuid) +
-				"\t\t\t\t\t\t\t\t<input type='hidden' class=\"form-control NAME\" name=\"attrContainer\" value=\"\" />\n".replace("NAME", uuid) +
-				"\t\t\t\t\t\t\t</div>\n" +
-				"\t\t\t\t\t\t</div>\n" +
-				"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-				"\t\t\t\t\t\t\t\t<label class=\"control-label\">操作</label>\n";
+		if (hasImg) {
+			contentStr += "\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
+					"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+					"\t\t\t\t\t\t\t\t<label class=\"control-label\">主规格详细规格(如红、黄、S、M、L)</label>\n" +
+					"\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrValue\" placeholder=\"主规格详细规格(如红、黄、S、M、L),点击设置\" onclick=\"showAttrWindow('NAME',true)\" />\n".replace("NAME", uuid) +
+					"\t\t\t\t\t\t\t\t<input type='hidden' class=\"form-control NAME\" name=\"attrContainer\" value=\"\" />\n".replace("NAME", uuid) +
+					"\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+					"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+					"\t\t\t\t\t\t\t\t<label class=\"control-label\">操作</label>\n";
+		} else {
+			contentStr += "\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
+					"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+					"\t\t\t\t\t\t\t\t<label class=\"control-label\">详细规格(如红、黄、S、M、L)</label>\n" +
+					"\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrValue\" placeholder=\"详细规格(如红、黄、S、M、L),点击设置\" onclick=\"showAttrWindow('NAME',false)\" />\n".replace("NAME", uuid) +
+					"\t\t\t\t\t\t\t\t<input type='hidden' class=\"form-control NAME\" name=\"attrContainer\" value=\"\" />\n".replace("NAME", uuid) +
+					"\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+					"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+					"\t\t\t\t\t\t\t\t<label class=\"control-label\">操作</label>\n";
+		}
 		if (readonly) {
 			contentStr += "\t\t\t\t\t\t\t\t<input type='button' class=\"form-control NAME\" name=\"NAME\" value=\"删除\" disabled='disabled' onclick=\"delNode(this,true)\" />\n".replace(/NAME/g, uuid);
 		} else {
@@ -513,39 +553,44 @@
         return highestSort;
     }
 
-    function addMoreAttrValue(self) {
-        var uuid = UUID.randomUUID();
-        var newSort = calcHighestSort() + 1;
-        var content = buildNewAttrValue(uuid, null, null, newSort);
-        var that = $(self);
-        that.before(content);
-    }
+	function addMoreAttrValue(self, hasImg) {
+		var uuid = UUID.randomUUID();
+		var newSort = calcHighestSort() + 1;
+		var content = buildNewAttrValue(uuid, null, null, newSort, "", null, hasImg);
+		var that = $(self);
+		that.before(content);
+	}
 
-    function buildNewAttrValue(uuid, one, two, three, five) {
-        var context = ATTR_ELEMENT_BODY;
-        context = context.replace(/UUID/g, uuid);
-        if (one != undefined) {
-            context = context.replace("ONE", one);
-        } else {
-            context = context.replace("ONE", "");
-        }
-        if (two != undefined) {
-            context = context.replace("TWO", two);
-        } else {
-            context = context.replace("TWO", "");
-        }
-        if (three != undefined) {
-            context = context.replace("THREE", three);
-        } else {
-            context = context.replace("THREE", "0");
-        }
-        if (five != undefined) {
-            context = context.replace("DELETE", "disabled='disabled'");
-        } else {
-            context = context.replace("DELETE", "");
-        }
-        return context;
-    }
+	function buildNewAttrValue(uuid, one, two, three, four, five, hasImg) {
+		var context = hasImg ? ATTR_ELEMENT_BODY_IMG : ATTR_ELEMENT_BODY;
+		context = context.replace(/UUID/g, uuid);
+		if (one != undefined) {
+			context = context.replace("ONE", one);
+		} else {
+			context = context.replace("ONE", "");
+		}
+		if (two != undefined) {
+			context = context.replace("TWO", two);
+		} else {
+			context = context.replace("TWO", "");
+		}
+		if (three != undefined) {
+			context = context.replace("THREE", three);
+		} else {
+			context = context.replace("THREE", "0");
+		}
+		if (four != undefined) {
+			context = context.replace("FOUR", four);
+		} else {
+			context = context.replace("FOUR", "");
+		}
+		if (five != undefined) {
+			context = context.replace("DELETE", "disabled='disabled'");
+		} else {
+			context = context.replace("DELETE", "");
+		}
+		return context;
+	}
 
 	var ATTR_ELEMENT_HEADER = "\t\t<div class=\"modal-dialog\">\n" +
 			"\t\t\t<div class=\"modal-content\">\n" +
@@ -590,11 +635,55 @@
 			"\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t</div>\n";
 
+	var ATTR_ELEMENT_BODY_IMG = "\t\t\t\t\t<div class=\"row UUID\">\n" +
+			"\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
+			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+			"\t\t\t\t\t\t\t\t<label for=\"field-4\" class=\"control-label\">商品属性值</label>\n" +
+			"\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"skuValue\" value='ONE' placeholder=\"商品属性值\" />\n" +
+			"\t\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
+			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+			"\t\t\t\t\t\t\t\t<label for=\"field-5\" class=\"control-label\">图片</label>\n" +
+			"\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"skuImgFile\" onchange='uploadSkuImg(this)' placeholder=\"图片\" />\n" +
+			"\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"skuImg\" value='FOUR' placeholder=\"图片\" />\n" +
+			"\t\t\t\t\t\t\t\t<img src='FOUR' style='width: 100px;height: 100px;display: none' />\n" +
+			"\t\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+			"\t\t\t\t\t\t\t\t<label for=\"field-5\" class=\"control-label\">备注</label>\n" +
+			"\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"skuRemark\" value='TWO' placeholder=\"备注\" />\n" +
+			"\t\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t<div style='display: none'>\n" +
+			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+			"\t\t\t\t\t\t\t\t<label for=\"field-6\" class=\"control-label\">排序</label>\n" +
+			"\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"skuSort\" readonly='readonly' value='THREE'  placeholder=\"排序\" />\n" +
+			"\t\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+			"\t\t\t\t\t\t\t\t<label for=\"field-6\" class=\"control-label\">操作</label>\n" +
+			"\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control UUID\" name=\"UUID\" value='删除' DELETE onclick=\"delNode(this,false)\" />\n" +
+			"\t\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t\t</div>\n" +
+			"\t\t\t\t\t</div>\n";
+
 	var ATTR_ELEMENT_FOOTER = "\t\t\t\t\t<input type=\"button\" value=\"添加详细规格(如红、黄、S、M、L)\" onclick=\"addMoreAttrValue(this)\" />\n" +
 			"\t\t\t\t</div>\n" +
 			"\t\t\t\t<div class=\"modal-footer\">\n" +
 			"\t\t\t\t\t<button type=\"button\" class=\"btn btn-white\" data-dismiss=\"modal\">关闭</button>\n" +
 			"\t\t\t\t\t<button type=\"button\" class=\"btn btn-info\" onclick=\"saveAttr('PID')\">保存</button>\n" +
+			"\t\t\t\t</div>\n" +
+			"\t\t\t</div>\n" +
+			"\t\t</div>";
+
+	var ATTR_ELEMENT_FOOTER_IMG = "\t\t\t\t\t<input type=\"button\" value=\"添加详细规格(如红、黄、S、M、L)\" onclick=\"addMoreAttrValue(this,true)\" />\n" +
+			"\t\t\t\t</div>\n" +
+			"\t\t\t\t<div class=\"modal-footer\">\n" +
+			"\t\t\t\t\t<button type=\"button\" class=\"btn btn-white\" data-dismiss=\"modal\">关闭</button>\n" +
+			"\t\t\t\t\t<button type=\"button\" class=\"btn btn-info\" onclick=\"saveAttr('PID',true)\">保存</button>\n" +
 			"\t\t\t\t</div>\n" +
 			"\t\t\t</div>\n" +
 			"\t\t</div>";
@@ -607,29 +696,42 @@
 			"\t\t\t</div>\n" +
 			"\t\t</div>";
 
-	function showAttrWindow(uuid) {
+	function showAttrWindow(uuid, hasImg) {
 		var target = $("." + uuid);
 		var attrJSONStr = target.find("input[name=attrContainer]").val();
 		var contentStr = "";
 		if (attrJSONStr == '') {
 			var innerUUid = UUID.randomUUID();
-            contentStr = (ATTR_ELEMENT_HEADER + ATTR_ELEMENT_BODY + ATTR_ELEMENT_FOOTER).replace("ONE", "").replace("TWO", "").replace("THREE", "0").replace("DELETE", "").replace(/PID/g, uuid).replace(/UUID/g, innerUUid);
+			if (hasImg) {
+				contentStr = (ATTR_ELEMENT_HEADER + ATTR_ELEMENT_BODY_IMG + ATTR_ELEMENT_FOOTER_IMG).replace("ONE", "").replace("TWO", "").replace("THREE", "0").replace("FOUR", "").replace("DELETE", "").replace(/PID/g, uuid).replace(/UUID/g, innerUUid);
+			} else {
+				contentStr = (ATTR_ELEMENT_HEADER + ATTR_ELEMENT_BODY + ATTR_ELEMENT_FOOTER).replace("ONE", "").replace("TWO", "").replace("THREE", "0").replace("DELETE", "").replace(/PID/g, uuid).replace(/UUID/g, innerUUid);
+			}
 		} else {
 			var attrList = JSON.parse(attrJSONStr);
 			contentStr += ATTR_ELEMENT_HEADER;
 			for (var i in attrList) {
 				var innerUUid = UUID.randomUUID();
-                contentStr += buildNewAttrValue(innerUUid, attrList[i]["value"], attrList[i]["remark"], attrList[i]["sort"], true);
+				if (hasImg) {
+					contentStr += buildNewAttrValue(innerUUid, attrList[i]["value"], attrList[i]["remark"], attrList[i]["sort"], attrList[i]["img"], true, true);
+				} else {
+					contentStr += buildNewAttrValue(innerUUid, attrList[i]["value"], attrList[i]["remark"], attrList[i]["sort"], "", true, false);
+				}
 			}
-			contentStr += ATTR_ELEMENT_FOOTER.replace(/PID/g, uuid);
+			if (hasImg) {
+				contentStr += ATTR_ELEMENT_FOOTER_IMG.replace(/PID/g, uuid);
+			} else {
+				contentStr += ATTR_ELEMENT_FOOTER.replace(/PID/g, uuid);
+			}
 		}
 		jQuery('#modal-7').html(contentStr).modal({backdrop: 'static', keyboard: false});
 	}
 
-	function saveAttr(uuid) {
+	function saveAttr(uuid, hasImg) {
 		var form = jQuery('#modal-7');
 		var skuValueList = form.find("input[name=skuValue]");
 		var skuRemarkList = form.find("input[name=skuRemark]");
+		var skuImgList = form.find("input[name=skuImg]");
 		var skuSortList = form.find("input[name=skuSort]");
 		var list = [];
 		var valueList = [];
@@ -641,16 +743,19 @@
 			var remark = skuRemarkList[i].value;
 			var sort = skuSortList[i].value;
 			var item = {"value": value, "remark": remark, "sort": sort};
+			if (hasImg) {
+				item["img"] = skuImgList[i].value;
+			}
 			list.push(item);
 			valueList.push(value);
 		}
 		var target = $("." + uuid);
 		target.find("input[name=attrContainer]").val(JSON.stringify(list));
 		target.find("input[name=attrValue]").val(valueList.join(","));
-        //build SKU
-        generateSKUList();
-        form.modal('toggle');
-    }
+		//build SKU
+		generateSKUList();
+		form.modal('toggle');
+	}
 
     function generateSKUList(stockList) {
 		SkuStockList = [];
@@ -697,11 +802,13 @@
 				console.log(iDStr);
 				var obj = SkuStockSavedList[iDStr];
 				console.log(obj);
-				contentStr += buildSKUItem(SkuStockList[i], SkuStockDetailList[i], obj["id"], obj["sku"], obj["image"], obj["stock"], obj["price"]);
+				var imgUrl = SkuStockDetailList[i][0]["value"].hasOwnProperty("img") && SkuStockDetailList[i][0]["value"]["img"] != "" ? SkuStockDetailList[i][0]["value"]["img"] : obj["image"];
+				contentStr += buildSKUItem(SkuStockList[i], SkuStockDetailList[i], obj["id"], obj["sku"], imgUrl, obj["stock"], obj["price"]);
 			} else {
 				console.log("OUT");
 				console.log(iDStr);
-				contentStr += buildSKUItem(SkuStockList[i], SkuStockDetailList[i]);
+				var imgUrl = SkuStockDetailList[i][0]["value"]["img"];
+				contentStr += buildSKUItem(SkuStockList[i], SkuStockDetailList[i], null, null, imgUrl);
 			}
 		}
 		if (contentStr != '') {
@@ -792,7 +899,7 @@
 				"                                    <label class=\"control-label\">库存图片</label>\n" +
 				"                                    <input type=\"file\" class=\"form-control\" name=\"skuImageFile\" placeholder=\"库存图片\" />\n" +
 				"                                    <input type=\"hidden\" class=\"form-control\" name=\"skuImage\" value='VALUE' />\n".replace("VALUE", skuImage != null ? skuImage : "") +
-				"                                    <img src=\"SRC\" name=\"skuImageImg\" style=\"STYLE;\" />\n".replace("SRC", skuImage != null ? skuImage : "").replace("STYLE", skuImage != null ? "display:block" : "display:none") +
+				"                                    <img src=\"SRC\" name=\"skuImageImg\" style=\"STYLE;\" />\n".replace("SRC", skuImage != null ? skuImage : "").replace("STYLE", skuImage != null ? "display:block;width:200px;height:200px" : "display:none") +
 				"                                </div>\n" +
 				"                            </div>\n" +
 				"                            <div class=\"col-md-2\">\n" +
