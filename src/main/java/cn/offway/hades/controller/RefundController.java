@@ -172,32 +172,45 @@ public class RefundController {
             List<PhRefundGoods> refundGoodsList = refundGoodsService.listByPid(refund.getId());
             PhOrderInfo orderInfo = orderInfoService.findOne(refund.getOrderNo());
             List<PhOrderGoods> orderGoodsList = orderGoodsService.findAllByPid(orderInfo.getOrderNo());
+            boolean needClone = false;
+            if (refundGoodsList.isEmpty() && "1".equals(refund.getIsComplete())) {
+                needClone = true;
+            }
+            WeakHashMap<Long, PhOrderGoods> holder = new WeakHashMap<>();
+            for (PhOrderGoods orderGoods : orderGoodsList) {
+                holder.put(orderGoods.getGoodsId(), orderGoods);
+                if (needClone) {
+                    PhRefundGoods obj = new PhRefundGoods();
+                    obj.setOrderGoodsId(orderGoods.getGoodsId());
+                    obj.setGoodsCount(orderGoods.getGoodsCount());
+                    refundGoodsList.add(obj);
+                }
+            }
             //商品信息
             List<Map> goodsInfoList = new ArrayList<>();
             for (PhRefundGoods refundGoods : refundGoodsList) {
                 Map<String, Object> goodsInfo = new HashMap<>();
-                for (PhOrderGoods orderGoods : orderGoodsList) {
-                    if (Long.compare(orderGoods.getGoodsId(), refundGoods.getOrderGoodsId()) == 0) {
-                        PhGoods goods = goodsService.findOne(orderGoods.getGoodsId());
-                        List<PhGoodsProperty> propertyList = goodsPropertyService.findByStockId(orderGoods.getGoodsStockId());
-                        goodsInfo.put("SKU", orderGoods.getGoodsStockId());
-                        goodsInfo.put("goodsId", orderGoods.getGoodsId());
-                        goodsInfo.put("goodsName", orderGoods.getGoodsName());
-                        goodsInfo.put("code", goods.getCode());
-                        goodsInfo.put("price", goods.getPrice());
-                        goodsInfo.put("brandName", goods.getBrandName());
-                        goodsInfo.put("type", goods.getType() + goods.getCategory());
-                        goodsInfo.put("merchantName", goods.getMerchantName());
-                        StringBuilder sb = new StringBuilder();
-                        for (PhGoodsProperty p : propertyList) {
-                            sb.append(p.getName());
-                            sb.append(":");
-                            sb.append(p.getValue());
-                            sb.append(";");
-                        }
-                        goodsInfo.put("goodsProperty", sb.toString());
-                        goodsInfo.put("goodsCount", refundGoods.getGoodsCount());
+                if (holder.containsKey(refundGoods.getOrderGoodsId())) {
+                    PhOrderGoods orderGoods = holder.get(refundGoods.getOrderGoodsId());
+                    PhGoods goods = goodsService.findOne(orderGoods.getGoodsId());
+                    List<PhGoodsProperty> propertyList = goodsPropertyService.findByStockId(orderGoods.getGoodsStockId());
+                    goodsInfo.put("SKU", orderGoods.getGoodsStockId());
+                    goodsInfo.put("goodsId", orderGoods.getGoodsId());
+                    goodsInfo.put("goodsName", orderGoods.getGoodsName());
+                    goodsInfo.put("code", goods.getCode());
+                    goodsInfo.put("price", goods.getPrice());
+                    goodsInfo.put("brandName", goods.getBrandName());
+                    goodsInfo.put("type", goods.getType() + goods.getCategory());
+                    goodsInfo.put("merchantName", goods.getMerchantName());
+                    StringBuilder sb = new StringBuilder();
+                    for (PhGoodsProperty p : propertyList) {
+                        sb.append(p.getName());
+                        sb.append(":");
+                        sb.append(p.getValue());
+                        sb.append(";");
                     }
+                    goodsInfo.put("goodsProperty", sb.toString());
+                    goodsInfo.put("goodsCount", refundGoods.getGoodsCount());
                 }
                 goodsInfoList.add(goodsInfo);
             }
