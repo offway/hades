@@ -213,10 +213,10 @@
 										<div class="col-md-12">
 											<div class="form-group">
 												<label class="control-label">*标签</label>
-												<label><input name="tag" class="notMe" type="checkbox" value="0"/>品牌保障</label>
-												<label><input name="tag" class="notMe" type="checkbox" value="1"/>7天退换货</label>
-												<label><input name="tag" class="notMe" type="checkbox" value="2"/>限量商品</label>
-												<label><input name="tag" class="notMe" type="checkbox" value="3"/>特殊商品</label>
+												<label><input name="tags" class="notMe" type="checkbox" value="0"/>品牌保障</label>
+												<label><input name="tags" class="notMe" type="checkbox" value="1"/>7天退换货</label>
+												<label><input name="tags" class="notMe" type="checkbox" value="2"/>限量商品</label>
+												<label><input name="tags" class="notMe" type="checkbox" value="3"/>特殊商品</label>
 											</div>
 										</div>
 									</div>
@@ -1346,7 +1346,7 @@
             var isDiscount = form.find("input[name='isDiscount']:checked").val();
             var material = form.find("input[name='material']").val();
             var remark = form.find("input[name='remark']").val();
-			var tags = form.find("input[name='tag']:checked");
+			var tags = form.find("input[name='tags']:checked");
             //文件
             var image = form.find("input[name='imageFile']").val();
             //已上传的图片地址
@@ -1358,8 +1358,10 @@
             }
 
 			var tag = 0;
+			var tagList = [];
 			tags.each(function (a, b) {
 				tag = tag | 1 << parseInt(b.value);
+				tagList.push(parseInt(b.value));
 			});
 
 			var isOK = checkImg([[image, "image"]]);
@@ -1521,7 +1523,7 @@
 								"stocks": JSON.stringify(stockList),
 								"banners": bannerList.join(","),
 								"intros": introList.join(","),
-								"tag": tag
+								"tagList": tagList
 							};
 							console.log(data);
 							$.post("/goods_add", data, function (data) {

@@ -781,7 +781,7 @@ public class GoodsController {
     @RequestMapping("/goods_add_limit_sale")
     public boolean addLimitSale(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount, String args) throws UnsupportedEncodingException {
         PhGoods goodsSaved = null;
-        Object object = add(goods, stocks, banners, intros, isDiscount, true);
+        Object object = add(goods, stocks, banners, intros, isDiscount, true, new Long[]{});
         if (object instanceof PhGoods) {
             goodsSaved = (PhGoods) object;
         }
@@ -808,7 +808,12 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_add")
-    public Object add(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount, Boolean fromInner) throws UnsupportedEncodingException {
+    public Object add(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount, Boolean fromInner, @RequestParam("tagList[]") Long[] tagList) throws UnsupportedEncodingException {
+        long tag = 0;
+        for (Long l : tagList) {
+            tag = tag | 1 << l;
+        }
+        goods.setTag(tag);
         PhBrand brand = brandService.findOne(goods.getBrandId());
         if (brand != null) {
             goods.setBrandName(brand.getName());
