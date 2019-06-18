@@ -34,6 +34,8 @@ public interface PhGoodsStockService {
 
     List<PhGoodsStock> findByPid(Long pid);
 
+    List<PhGoodsStock> findByPids(Long[] ids);
+
     void updateMerchantInfo(PhMerchant merchant);
 
     void updateBrandInfo(PhBrand brand);

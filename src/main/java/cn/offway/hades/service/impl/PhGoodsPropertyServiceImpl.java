@@ -45,7 +45,16 @@ public class PhGoodsPropertyServiceImpl implements PhGoodsPropertyService {
 
     @Override
     public Page<PhGoodsProperty> findAll(String goodsId, Pageable pageable) {
-        return phGoodsPropertyRepository.findAll(new Specification<PhGoodsProperty>() {
+        return phGoodsPropertyRepository.findAll(getFilter(goodsId), pageable);
+    }
+
+    @Override
+    public List<PhGoodsProperty> findByPid(Long pid) {
+        return phGoodsPropertyRepository.findAll(getFilter(pid));
+    }
+
+    private Specification<PhGoodsProperty> getFilter(Object goodsId) {
+        return new Specification<PhGoodsProperty>() {
             @Override
             public Predicate toPredicate(Root<PhGoodsProperty> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
@@ -54,21 +63,7 @@ public class PhGoodsPropertyServiceImpl implements PhGoodsPropertyService {
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
             }
-        }, pageable);
-    }
-
-    @Override
-    public List<PhGoodsProperty> findByPid(Long pid) {
-        return phGoodsPropertyRepository.findAll(new Specification<PhGoodsProperty>() {
-            @Override
-            public Predicate toPredicate(Root<PhGoodsProperty> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                List<Predicate> params = new ArrayList<Predicate>();
-                params.add(criteriaBuilder.equal(root.get("goodsId"), pid));
-                Predicate[] predicates = new Predicate[params.size()];
-                criteriaQuery.where(params.toArray(predicates));
-                return null;
-            }
-        });
+        };
     }
 
     @Override

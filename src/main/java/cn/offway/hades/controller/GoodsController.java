@@ -467,7 +467,7 @@ public class GoodsController {
 
     @RequestMapping("/goods_export.html")
     public void export(HttpServletResponse response, @RequestParam("ids[]") Long[] ids, @AuthenticationPrincipal PhAdmin admin) {
-        List<PhGoods> list = goodsService.findByIds(ids);
+        List<PhGoodsStock> list = goodsStockService.findByPids(ids);
         try {
             ServletOutputStream outputStream = response.getOutputStream();
             response.setContentType("multipart/form-data");
@@ -492,17 +492,22 @@ public class GoodsController {
                         return;
                     }
                     switch (i) {
-                        case 15:
-                            /* 状态[0-未上架,1-已上架] **/
-                            String[] arr = new String[]{"未上架", "已上架"};
-                            cell.setCellValue(arr[Integer.valueOf(cell.getStringCellValue())]);
+                        case 8:
+                            StringBuilder sb = new StringBuilder();
+                            for (PhGoodsProperty property : goodsPropertyService.findByStockId((long) cell.getNumericCellValue())) {
+                                sb.append(property.getName());
+                                sb.append(":");
+                                sb.append(property.getValue());
+                                sb.append("\r\n");
+                            }
+                            cell.setCellValue(sb.toString());
                             break;
                         default:
                             break;
                     }
                 }
             });
-            Sheet sheet = new Sheet(1, 0, PhGoods.class);
+            Sheet sheet = new Sheet(1, 0, PhGoodsStock.class);
             sheet.setSheetName("Goods");
             sheet.setAutoWidth(true);
             writer.write(list, sheet);
