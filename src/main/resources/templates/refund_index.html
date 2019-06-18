@@ -336,7 +336,7 @@
     }
 
     function trackOrder(id) {
-        $.post("/order_trackOrder", {"id": id}, function (data) {
+        $.post("/order_trackRefund", {"id": id}, function (data) {
             console.log(data);
             if (data != '') {
                 checkIt(JSON.parse(data));

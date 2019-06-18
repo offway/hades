@@ -37,6 +37,9 @@ public class PhRefund extends BaseRowModel implements Serializable {
     @ExcelProperty(value = "快递运单号",index = 4)
     private String mailNo;
 
+    /** 快递公司编码 **/
+    private String expressCode;
+
     /** 类型[0-仅退款,1-退货退款,2-换货] **/
     @ExcelProperty(value = "类型",index = 5)
     private String type;
@@ -252,4 +255,12 @@ public class PhRefund extends BaseRowModel implements Serializable {
         this.goodsCount = goodsCount;
     }
 
+    @Column(name = "express_code", length = 50)
+    public String getExpressCode() {
+        return expressCode;
+    }
+
+    public void setExpressCode(String expressCode) {
+        this.expressCode = expressCode;
+    }
 }

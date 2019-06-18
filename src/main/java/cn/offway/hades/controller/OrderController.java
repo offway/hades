@@ -73,6 +73,8 @@ public class OrderController {
     private PhPreorderInfoService phPreorderInfoService;
     @Autowired
     private PhRoleadminService roleadminService;
+    @Autowired
+    private PhRefundService refundService;
 
     @RequestMapping("/order.html")
     public String index(ModelMap map, String theId) {
@@ -599,24 +601,38 @@ public class OrderController {
     @ResponseBody
     @RequestMapping("/order_trackOrder")
     public String trackOrder(Long id) {
-        String key = "uyUDaSuE5009";
-        String customer = "28B3DE9A2485E14FE0DAD40604A8922C";
         PhOrderInfo orderInfo = orderInfoService.findOne(id);
         if (orderInfo != null) {
             PhOrderExpressInfo orderExpressInfo = orderExpressInfoService.findByPid(orderInfo.getOrderNo(), "0");
             if (orderExpressInfo != null) {
-                Map<String, String> innerParam = new HashMap<>();
-                innerParam.put("com", orderExpressInfo.getExpressCode());
-                innerParam.put("num", orderExpressInfo.getMailNo());
-                String innerParamStr = JSON.toJSONString(innerParam);
-                String signStr = innerParamStr + key + customer;
-                String sign = DigestUtils.md5Hex(signStr.getBytes()).toUpperCase();
-                Map<String, String> param = new HashMap<>();
-                param.put("customer", customer);
-                param.put("param", innerParamStr);
-                param.put("sign", sign);
-                return HttpClientUtil.post("https://poll.kuaidi100.com/poll/query.do", param);
+                return queryExpress(orderExpressInfo.getExpressCode(), orderExpressInfo.getMailNo());
             }
+        }
+        return "";
+    }
+
+    private String queryExpress(String expressCode, String mailNo) {
+        String key = "uyUDaSuE5009";
+        String customer = "28B3DE9A2485E14FE0DAD40604A8922C";
+        Map<String, String> innerParam = new HashMap<>();
+        innerParam.put("com", expressCode);
+        innerParam.put("num", mailNo);
+        String innerParamStr = JSON.toJSONString(innerParam);
+        String signStr = innerParamStr + key + customer;
+        String sign = DigestUtils.md5Hex(signStr.getBytes()).toUpperCase();
+        Map<String, String> param = new HashMap<>();
+        param.put("customer", customer);
+        param.put("param", innerParamStr);
+        param.put("sign", sign);
+        return HttpClientUtil.post("https://poll.kuaidi100.com/poll/query.do", param);
+    }
+
+    @ResponseBody
+    @RequestMapping("/order_trackRefund")
+    public String trackRefund(Long id) {
+        PhRefund refund = refundService.findOne(id);
+        if (refund != null) {
+            return queryExpress(refund.getExpressCode(), refund.getMailNo());
         }
         return "";
     }
