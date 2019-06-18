@@ -1,5 +1,8 @@
 package cn.offway.hades.domain;
 
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.metadata.BaseRowModel;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -12,23 +15,27 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "ph_goods_stock")
-public class PhGoodsStock implements Serializable {
+public class PhGoodsStock extends BaseRowModel implements Serializable {
 
     /** ID **/
+    @ExcelProperty(value = "商品规格",index = 8)
     private Long id;
 
     /** 商品ID **/
+    @ExcelProperty(value = "货号",index = 0)
     private Long goodsId;
 
     /** 商品名称 **/
+    @ExcelProperty(value = "商品名称",index = 2)
     private String goodsName;
 
     /** 封面图片 **/
     private String goodsImage;
 
     /** 库存图片 **/
+    @ExcelProperty(value = "库存图片",index = 3)
     private String image;
-    
+
     /** 商户ID **/
     private Long merchantId;
 
@@ -48,18 +55,23 @@ public class PhGoodsStock implements Serializable {
     private String brandLogo;
 
     /** 类别 **/
+    @ExcelProperty(value = "类别",index = 4)
     private String type;
 
     /** 类目 **/
+    @ExcelProperty(value = "类目",index = 5)
     private String category;
 
     /** 库存余量 **/
+    @ExcelProperty(value = "库存余量",index = 7)
     private Long stock;
 
     /** 价格 **/
+    @ExcelProperty(value = "价格",index = 6)
     private Double price;
 
     /** SKU编码 **/
+    @ExcelProperty(value = "SKU编码",index = 1)
     private String sku;
 
     /** 创建时间 **/
@@ -67,7 +79,7 @@ public class PhGoodsStock implements Serializable {
 
     /** 备注 **/
     private String remark;
-    
+
     /** 版本号 **/
     private Long version;
 
@@ -118,7 +130,7 @@ public class PhGoodsStock implements Serializable {
     public void setImage(String image) {
         this.image = image;
     }
-    
+
     @Column(name = "merchant_id", length = 11)
     public Long getMerchantId() {
         return merchantId;
@@ -236,7 +248,7 @@ public class PhGoodsStock implements Serializable {
     public void setRemark(String remark) {
         this.remark = remark;
     }
-    
+
     @Version
     @Column(name = "version", length = 11)
     public Long getVersion() {

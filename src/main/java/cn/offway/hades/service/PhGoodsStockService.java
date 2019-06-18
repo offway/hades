@@ -1,6 +1,8 @@
 package cn.offway.hades.service;
 
+import cn.offway.hades.domain.PhBrand;
 import cn.offway.hades.domain.PhGoodsStock;
+import cn.offway.hades.domain.PhMerchant;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -31,4 +33,10 @@ public interface PhGoodsStockService {
     void updateByPid(Long id, Double value);
 
     List<PhGoodsStock> findByPid(Long pid);
+
+    List<PhGoodsStock> findByPids(Long[] ids);
+
+    void updateMerchantInfo(PhMerchant merchant);
+
+    void updateBrandInfo(PhBrand brand);
 }
