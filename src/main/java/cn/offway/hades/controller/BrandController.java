@@ -158,7 +158,7 @@ public class BrandController {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", brand.getId());
             if ("logo".equals(to)) {
-                jsonObject.put("image", brand.getLogoIndex() == null ? "NONE" : brand.getLogoIndex());
+                jsonObject.put("image", brand.getBannerBig() == null ? "NONE" : brand.getBannerBig());
             } else {
                 jsonObject.put("image", brand.getBannerBig() == null ? "NONE" : brand.getBannerBig());
             }
