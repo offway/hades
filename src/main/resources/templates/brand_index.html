@@ -131,16 +131,16 @@
 							</div>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">品牌LOGO(推荐到首页)</label>
-								<input type="file" class="form-control" name="logoIndexFile" placeholder="品牌LOGO(推荐到首页)"/>
-								<input type="hidden" class="form-control" name="logoIndex" />
-								<img alt="" src="" name="logoIndexImg" style="display:none;"/>
-							</div>
-						</div>
-					</div>
+<!--					<div class="row">-->
+<!--						<div class="col-md-12">-->
+<!--							<div class="form-group">-->
+<!--								<label class="control-label">品牌LOGO(推荐到首页)</label>-->
+<!--								<input type="file" class="form-control" name="logoIndexFile" placeholder="品牌LOGO(推荐到首页)"/>-->
+<!--								<input type="hidden" class="form-control" name="logoIndex" />-->
+<!--								<img alt="" src="" name="logoIndexImg" style="display:none;"/>-->
+<!--							</div>-->
+<!--						</div>-->
+<!--					</div>-->
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
@@ -418,7 +418,7 @@
         var mainObj = data;
         for (var i in mainObj) {
             var item = mainObj[i];
-            var imgUrl = isLogo ? item["logoIndex"] : item["bannerBig"];
+            var imgUrl = isLogo ? item["bannerBig"] : item["bannerBig"];
             var idHidden = "<input type='hidden' name='id' value='VALUE' />".replace("VALUE", item["id"]);
             var imgHidden = "<input type='hidden' name='image' value='VALUE' />".replace("VALUE", imgUrl == null ? "NONE" : imgUrl);
             var delButton = "<input type='button' name='delete' value='删除' onclick='delNode(this)' />";
@@ -552,14 +552,6 @@
 				},
 				{
 					targets: 6,
-					data: "logoIndex",
-					title: "品牌LOGO(推荐到首页)",
-					render: function (data, type, row, meta) {
-						return buildImg(data);
-					}
-				},
-				{
-					targets: 7,
 					data: "banner",
 					title: "品牌banner",
 					render: function (data, type, row, meta) {
@@ -567,7 +559,7 @@
 					}
 				},
 				{
-					targets: 8,
+					targets: 7,
 					data: "bannerBig",
 					title: "品牌banner(高街潮流推荐)",
 					render: function (data, type, row, meta) {
@@ -575,7 +567,7 @@
 					}
 				},
 				{
-					targets: 9,
+					targets: 8,
 					data: "type",
 					title: "类型",
 					render: function (data, type, row, meta) {
@@ -583,7 +575,7 @@
 					}
 				},
                 {
-                    targets: 10,
+                    targets: 9,
                     data: "info",
                     title: "简介",
                     render: function (data, type, row, meta) {
@@ -592,7 +584,7 @@
                     }
                 },
                 {
-                    targets: 11,
+                    targets: 10,
                     data: "background",
                     title: "背景图",
 					render: function (data, type, row, meta) {
@@ -600,7 +592,7 @@
 					}
                 },
                 {
-                    targets: 12,
+                    targets: 11,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -608,12 +600,12 @@
                     }
                 },
 				{
-					targets: 13,
+					targets: 12,
 					data: "remark",
 					title: "备注"
 				},
                 {
-                    targets: 14,
+                    targets: 13,
                     data: "isRecommend",
                     title: "是否推荐",
                     render: function (data, type, row, meta) {
@@ -621,12 +613,12 @@
                     }
                 },
                 {
-                    targets: 15,
+                    targets: 14,
                     data: "sort",
                     title: "排序"
                 },
                 {
-                    targets: 16,
+                    targets: 15,
                     data: "id",
                     orderable: false,
                     title: "操作",
@@ -635,7 +627,7 @@
                     }
                 },
 				{
-					targets: 17,
+					targets: 16,
 					data: "id",
 					orderable: false,
 					title: "操作",
@@ -646,7 +638,7 @@
 					}
 				},
                 {
-                    targets: 18,
+                    targets: 17,
                     data: "id",
                     orderable: false,
                     title: "操作",
@@ -762,14 +754,12 @@
 			//文件
 			var logoFile = form.find("input[name='logoFile']").val();
 			var logoBigFile = form.find("input[name='logoBigFile']").val();
-			var logoIndexFile = form.find("input[name='logoIndexFile']").val();
 			var bannerFile = form.find("input[name='bannerFile']").val();
 			var bannerBigFile = form.find("input[name='bannerBigFile']").val();
 			var backgroundFile = form.find("input[name='backgroundFile']").val();
 			//已上传的图片地址
 			var logo = form.find("input[name='logo']").val();
 			var logoBig = form.find("input[name='logoBig']").val();
-			var logoIndex = form.find("input[name='logoIndex']").val();
 			var banner = form.find("input[name='banner']").val();
 			var bannerBig = form.find("input[name='bannerBig']").val();
 			var background = form.find("input[name='background']").val();
@@ -781,7 +771,7 @@
                 return;
             }
 
-			var isOK = checkImg([[logoFile, "logo"], [logoBigFile, "logoBig"], [logoIndexFile, "logoIndex"], [bannerFile, "banner"], [bannerBigFile, "bannerBig"], [backgroundFile, "background"]]);
+			var isOK = checkImg([[logoFile, "logo"], [logoBigFile, "logoBig"], [bannerFile, "banner"], [bannerBigFile, "bannerBig"], [backgroundFile, "background"]]);
 			if (typeof isOK == 'boolean') {
 				return;
 			}
