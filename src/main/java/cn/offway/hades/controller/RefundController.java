@@ -306,6 +306,17 @@ public class RefundController {
     }
 
     @ResponseBody
+    @RequestMapping("/refund_confirmDelivery")
+    public boolean confirmDelivery(Long id, @AuthenticationPrincipal PhAdmin admin) {
+        PhRefund refund = refundService.findOne(id);
+        /* 状态[0-审核中,1-待退货,2-退货中,3-退款中,4-退款成功,5-退款取消,6-审核失败] **/
+        refund.setStatus("3");
+        //保存状态
+        refundService.save(refund);
+        return true;
+    }
+
+    @ResponseBody
     @RequestMapping("/refund_deny")
     public boolean deny(Long id, String reason, @AuthenticationPrincipal PhAdmin admin) {
         PhRefund refund = refundService.findOne(id);

@@ -53,7 +53,7 @@ public class CallbackController {
         int state = jsonObject.getJSONObject("destResult").getIntValue("state");
         if (state == 3) {
             PhRefund refund = refundService.findOne(id);
-            if (refund != null) {
+            if (refund != null && "2".equals(refund.getStatus())) {
                 /* 状态[0-审核中,1-待退货,2-退货中,3-退款中,4-退款成功,5-退款取消,6-审核失败] **/
                 refund.setStatus("3");
                 refundService.save(refund);

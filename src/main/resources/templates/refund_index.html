@@ -347,6 +347,16 @@
         });
     }
 
+	function confirmDelivery(id) {
+		$.post("/refund_confirmDelivery", {"id": id}, function (data) {
+			if (data) {
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
 	function bindMerchantSelector(data) {
 		var brandStr = "";
 		for (var brand in data) {
@@ -597,6 +607,7 @@
 							}
 						} else if (status == 2) {
 							str += '<input type="button" onclick="trackOrder(' + data + ')" value="退货追踪"/>';
+							str += '<input type="button" onclick="confirmDelivery(' + data + ')" value="确认收货"/>';
 						} else if (status == 3) {
 							str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="确认打款"/>';
 						}
