@@ -632,25 +632,25 @@
 	var ATTR_ELEMENT_BODY = "\t\t\t\t\t<div class=\"row UUID\">\n" +
 			"\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-			"\t\t\t\t\t\t\t\t<label for=\"field-4\" class=\"control-label\">商品属性值</label>\n" +
+			"\t\t\t\t\t\t\t\t<label class=\"control-label\">商品属性值</label>\n" +
 			"\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"skuValue\" value='ONE' placeholder=\"商品属性值\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-			"\t\t\t\t\t\t\t\t<label for=\"field-5\" class=\"control-label\">备注</label>\n" +
+			"\t\t\t\t\t\t\t\t<label class=\"control-label\">备注</label>\n" +
 			"\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"skuRemark\" value='TWO' placeholder=\"备注\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-			"\t\t\t\t\t\t\t\t<label for=\"field-6\" class=\"control-label\">排序</label>\n" +
+			"\t\t\t\t\t\t\t\t<label class=\"control-label\">排序</label>\n" +
 			"\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"skuSort\" readonly='readonly' value='THREE'  placeholder=\"排序\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-			"\t\t\t\t\t\t\t\t<label for=\"field-6\" class=\"control-label\">操作</label>\n" +
+			"\t\t\t\t\t\t\t\t<label class=\"control-label\">操作</label>\n" +
             "\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control UUID\" name=\"UUID\" value='删除' onclick=\"delNode(this,false)\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
@@ -659,13 +659,13 @@
 	var ATTR_ELEMENT_BODY_IMG = "\t\t\t\t\t<div class=\"row UUID\">\n" +
 			"\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-			"\t\t\t\t\t\t\t\t<label for=\"field-4\" class=\"control-label\">商品属性值</label>\n" +
+			"\t\t\t\t\t\t\t\t<label class=\"control-label\">商品属性值</label>\n" +
 			"\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"skuValue\" value='ONE' placeholder=\"商品属性值\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
             "\t\t\t\t\t\t<div class=\"col-md-4\">\n" +
             "\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-            "\t\t\t\t\t\t\t\t<label for=\"field-5\" class=\"control-label\">图片</label>\n" +
+            "\t\t\t\t\t\t\t\t<label class=\"control-label\">图片</label>\n" +
             "\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"skuImgFile\" onchange='uploadSkuImg(this)' placeholder=\"图片\" />\n" +
             "\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"skuImg\" value='FOUR' placeholder=\"图片\" />\n" +
             "\t\t\t\t\t\t\t\t<img src='FOUR' style='width: 100px;height: 100px;display: none' />\n" +
@@ -673,19 +673,19 @@
             "\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-			"\t\t\t\t\t\t\t\t<label for=\"field-5\" class=\"control-label\">备注</label>\n" +
+			"\t\t\t\t\t\t\t\t<label class=\"control-label\">备注</label>\n" +
 			"\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"skuRemark\" value='TWO' placeholder=\"备注\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t<div style='display: none'>\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-			"\t\t\t\t\t\t\t\t<label for=\"field-6\" class=\"control-label\">排序</label>\n" +
+			"\t\t\t\t\t\t\t\t<label class=\"control-label\">排序</label>\n" +
 			"\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"skuSort\" readonly='readonly' value='THREE'  placeholder=\"排序\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-			"\t\t\t\t\t\t\t\t<label for=\"field-6\" class=\"control-label\">操作</label>\n" +
+			"\t\t\t\t\t\t\t\t<label class=\"control-label\">操作</label>\n" +
 			"\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control UUID\" name=\"UUID\" value='删除' onclick=\"delNode(this,false)\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
