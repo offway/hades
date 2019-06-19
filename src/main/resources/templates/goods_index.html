@@ -474,7 +474,7 @@
     function specialIt(id, self) {
         $.post("/goods_special", {"id": id}, function (data) {
             if (data) {
-                $(self).val("取消特殊");
+                $(self).val("取消限量商品");
                 //remove old handler
                 $(self).prop("onclick", null);
                 $(self).removeAttr("onclick");
@@ -493,7 +493,7 @@
     function unSpecialIt(id, self) {
         $.post("/goods_unSpecial", {"id": id}, function (data) {
             if (data) {
-                $(self).val("设为特殊");
+                $(self).val("设为限量商品");
                 //remove old handler
                 $(self).prop("onclick", null);
                 $(self).removeAttr("onclick");
@@ -690,9 +690,9 @@
 								str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
 							}
 							if (full["isSpecial"] == "0") {
-								str += '<input type="button" name="checkIt" onclick="specialIt(' + data + ',this)" value="设为特殊"/>';
+								str += '<input type="button" name="checkIt" onclick="specialIt(' + data + ',this)" value="设为限量商品"/>';
 							} else {
-								str += '<input type="button" name="checkIt" onclick="unSpecialIt(' + data + ',this)" value="取消特殊"/>';
+								str += '<input type="button" name="checkIt" onclick="unSpecialIt(' + data + ',this)" value="取消限量商品"/>';
 							}
 							return str;
 						}

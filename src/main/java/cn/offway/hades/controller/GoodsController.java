@@ -629,6 +629,11 @@ public class GoodsController {
                 special.setRemark(null);
                 special.setCreateTime(new Date());
                 specialService.save(special);
+                //tag
+                long tag = goods.getTag();
+                tag = tag | 1 << 2;
+                goods.setTag(tag);
+                goodsService.save(goods);
                 return true;
             }
         }
@@ -641,6 +646,11 @@ public class GoodsController {
         PhGoods goods = goodsService.findOne(id);
         if (goods != null) {
             specialService.delete(goods.getId());
+            //tag
+            long tag = goods.getTag();
+            tag = tag & ~(1 << 2);
+            goods.setTag(tag);
+            goodsService.save(goods);
             return true;
         }
         return false;
