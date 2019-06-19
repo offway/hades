@@ -124,6 +124,7 @@
 				<button class="btn btn-info discountList">打折清单</button>
 				<button class="btn btn-info restorePrice">恢复原价</button>
 				<button class="btn btn-info export">导出商品</button>
+                <button class="btn btn-info updateSku">修改库存</button>
 			</div>
 			<footer th:replace="footer"></footer>
 		</div>
@@ -258,6 +259,40 @@
 		}
 		return returnList;
 	}
+
+    function appendToPreviewList(one, two, three, four, five, six) {
+        return '<div class="row">' +
+            '<div class="col-md-2">' +
+            one +
+            '</div>' +
+            '<div class="col-md-2">' +
+            two +
+            '</div>' +
+            '<div class="col-md-2">' +
+            three +
+            '</div>' +
+            '<div class="col-md-2">' +
+            four +
+            '</div>' +
+            '<div class="col-md-2">' +
+            five +
+            '</div>' +
+            '<div class="col-md-2">' +
+            six +
+            '</div>' +
+            '</div>';
+    }
+
+    function updateStockBatch() {
+        var form = $("#stockForm");
+        console.log(form.serializeArray());
+        $.post("/goods_stock_update_mix", form.serializeArray(), function (data) {
+            if (data) {
+                toastr.success("操作已成功！", "温馨提示");
+                jQuery('#modal-6').modal('hide');
+            }
+        });
+    }
 
 	function appendToPreview(key, value) {
 		return '<div class="row">' +
@@ -874,6 +909,43 @@
 			window.open('/goods_export.html?' + queryString, "_blank");
 			return false;
 		});
+
+        $(".btn.btn-info.updateSku").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
+            $.post("/goods_stock_list_mix", {"ids": ids}, function (data) {
+                if (data) {
+                    var preview = $("#preview_body");
+                    var contentStr = "<form id='stockForm'>";
+                    contentStr += "<hr/>";
+                    for (var a in data) {
+                        a = data[a];
+                        var idEle = '<input type="hidden" name="id" value="VV" />'.replace("VV", a["id"]);
+                        var imgEle = '<img src="VV" width="100px" height="100px" />'.replace("VV", a["image"]);
+                        var skuEle = 'SKU编码:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["sku"]);
+                        var remarkEle = '备注:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["remark"]);
+                        var stockEle = '库存数:<input type="text" name="stock" value="VV" />'.replace("VV", a["stock"]);
+                        contentStr += appendToPreviewList(idEle, imgEle, skuEle, remarkEle, stockEle, "", "");
+                        contentStr += "<hr/>";
+                    }
+                    var btnEle = '<input type="button" class="btn btn-info" value="保存" onclick="updateStockBatch()" />';
+                    contentStr += appendToPreviewList("", "", "", "", "", btnEle);
+                    preview.html(contentStr + "</form>");
+                    jQuery('#preview').modal({backdrop: 'static', keyboard: false});
+                    toastr.success("操作已成功！", "温馨提示");
+                } else {
+                    toastr.error("操作失败", "温馨提示");
+                }
+            });
+            return false;
+        });
 
 		//保存
 		$(".btn.btn-info.save").click(function(){

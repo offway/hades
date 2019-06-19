@@ -553,6 +553,26 @@ public class GoodsController {
     }
 
     @ResponseBody
+    @RequestMapping("/goods_stock_list_mix")
+    public List<PhGoodsStock> getStockListMix(@RequestParam("ids[]") Long[] ids) {
+        return goodsStockService.findByPids(ids);
+    }
+
+    @ResponseBody
+    @RequestMapping("/goods_stock_update_mix")
+    public boolean updateStockListMix(@RequestParam("id") Long[] ids, @RequestParam("stock") Long[] stocks) {
+        if (ids.length != stocks.length) {
+            return false;
+        }
+        for (int i = 0; i < ids.length; i++) {
+            PhGoodsStock goodsStock = goodsStockService.findOne(ids[i]);
+            goodsStock.setStock(stocks[i]);
+            goodsStockService.save(goodsStock);
+        }
+        return true;
+    }
+
+    @ResponseBody
     @RequestMapping("/fare_del")
     public boolean deleteFare(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {
