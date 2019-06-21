@@ -127,11 +127,8 @@
                         <div class="col-md-12">
                             <div class="form-group">
 								<label class="control-label">跳转方式</label>
-								<label><input name="type" class="notMe" type="radio" value="3"/>明星同款 </label>
-								<label><input name="type" class="notMe" type="radio" value="2"/>商品详情 </label>
-								<label><input name="type" class="notMe" type="radio" value="0"/>专题 </label>
-								<label><input name="type" class="notMe" type="radio" value="1"/>品牌</label>
-								<label><input name="type" class="notMe" type="radio" value="4"/>OFFWAY优选 </label>
+								<div id="radioGroup">
+								</div>
                             </div>
                         </div>
                     </div>
@@ -145,33 +142,9 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							<div class="form-group goodsId" style="display: none">
-								<label class="control-label">商品详情ID</label>
-								<input type="text" class="form-control" name="goodsId" placeholder="商品详情ID"/>
-							</div>	
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group brandId" style="display: none">
-								<label class="control-label">品牌详情ID</label>
-								<input type="number" class="form-control" name="brandId" placeholder="品牌详情ID"/>
-							</div>	
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group starSameId" style="display: none">
-								<label class="control-label">明星同款ID</label>
-								<input type="number" class="form-control" name="starSameId" placeholder="明星同款ID"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group pickId" style="display: none">
-								<label class="control-label">优选ID</label>
-								<input type="number" class="form-control" name="pickId" placeholder="优选ID"/>
+							<div class="form-group redirectId" style="display: none">
+								<label class="control-label">详情ID</label>
+								<input type="text" class="form-control" name="redirectId" placeholder="详情ID"/>
 							</div>
 						</div>
 					</div>
@@ -221,26 +194,61 @@
 		var titleEle = $("title");
 		var subTitleEle = $("h1.title");
 		var tips = $("h4.modal-title");
+		var radioGroup = $("#radioGroup");
 		switch (parseInt(position)) {
 				//展示位置[0-首页顶部,1-首页腹部,2-广告页]
 			case 0:
 				titleEle.html(titleEle.html() + "顶部");
 				subTitleEle.html(subTitleEle.html() + "顶部");
 				tips.html(tips.html() + "顶部");
+				radioGroup.html("" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"3\"/>明星同款 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"2\"/>商品详情 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>专题 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"1\"/>品牌</label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"4\"/>OFFWAY优选 </label>");
 				break;
 			case 1:
 				titleEle.html(titleEle.html() + "底部");
 				subTitleEle.html(subTitleEle.html() + "底部");
 				tips.html(tips.html() + "底部");
+				radioGroup.html("" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"13\"/>买手店首页 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"14\"/>买手店详情页 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"3\"/>明星同款 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"2\"/>商品详情 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>专题 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"1\"/>品牌</label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"4\"/>OFFWAY优选 </label>");
 				break;
 			case 2:
 				titleEle.html("广告");
 				subTitleEle.html("广告");
 				tips.html("广告");
+				radioGroup.html("" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(带参) </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(不带参) </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"2\"/>单品 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"1\"/>品牌首页</label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"4\"/>活动首页</label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"3\"/>明星同款详情页 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"5\"/>单篇资讯 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"6\"/>免费抽 </label>");
 				break;
 			default:
 				break;
 		}
+
+		$(".searchBtn").click(function(){
+			$("#checkbox-all").attr("checked", false);
+			oTable.fnDraw(); //or fnReloadAjax()
+			return false;
+		});
+
+		$('[name="type"]').click(function () {
+			var value = $(this).val();  //获取选中的radio的值
+			toggle(value);
+		});
 
 		var oTable = $("#example-1").dataTable({
 			language: {
@@ -290,7 +298,7 @@
 					title: "类型",
 					render: function (data, type, row, meta) {
 						/** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款] **/
-						var map = ["跳转URL", "品牌", "商品", "明星同款", "OFFWAY优选"];
+						var map = ["跳转URL", "品牌", "商品", "明星同款", "OFFWAY优选", "资讯", "抽奖", "纯h5", "待支付", "待收货", "退货", "中国力量首页", "高街时尚首页", "买手店首页", "买手店详情页"];
 						return map[parseInt(data)]
 					}
 				},
@@ -366,17 +374,6 @@
 		});
 
 		table_global = oTable;
-		
-		$(".searchBtn").click(function(){
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
-			return false;
-		});
-
-		$('[name="type"]').click(function () {
-			var value = $(this).val();  //获取选中的radio的值
-			toggle(value);
-		});
 
 		jQuery.datetimepicker.setLocale('zh');
 		jQuery('#beginTime').datetimepicker(
@@ -402,47 +399,15 @@
 
 		function toggle(value) {
 			var url = $(".url");
-			var brandId = $(".brandId");
-			var goodsId = $(".goodsId");
-			var starSameId = $(".starSameId");
-			var pickId = $(".pickId");
+			var redirectId = $(".redirectId");
 			switch (parseInt(value)) {
 				case 0:
 					url.show();
-					brandId.hide();
-					goodsId.hide();
-					starSameId.hide();
-					pickId.hide();
-					break;
-				case 1:
-					url.hide();
-					brandId.show();
-					goodsId.hide();
-					starSameId.hide();
-					pickId.hide();
-					break;
-				case 2:
-					url.hide();
-					brandId.hide();
-					goodsId.show();
-					starSameId.hide();
-					pickId.hide();
-					break;
-				case 3:
-					url.hide();
-					brandId.hide();
-					goodsId.hide();
-					starSameId.show();
-					pickId.hide();
-					break;
-				case 4:
-					url.hide();
-					brandId.hide();
-					goodsId.hide();
-					starSameId.hide();
-					pickId.show();
+					redirectId.hide();
 					break;
 				default:
+					url.hide();
+					redirectId.show();
 					break;
 			}
 		}
@@ -457,7 +422,6 @@
 			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 		});
 
-		//保存
 		$(".btn.btn-info.save").click(function(){
 			var footer = $(this).parent(".modal-footer");
 			footer.find("button").hide();
@@ -545,22 +509,8 @@
 			$.post("/banner_get", {"id": activityId.val()}, function (data) {
 				var form = $("#saveForm");
 				form.find("input[name='id']").val(data.id);
-				/** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款] **/
-				switch (parseInt(data.type)) {
-					case 1:
-						form.find("input[name='brandId']").val(data.redirectId);
-						break;
-					case 2:
-						form.find("input[name='goodsId']").val(data.redirectId);
-						break;
-					case 3:
-						form.find("input[name='starSameId']").val(data.redirectId);
-						break;
-					case 4:
-						form.find("input[name='pickId']").val(data.redirectId);
-						break;
-				}
 				toggle(data.type);
+				form.find("input[name='redirectId']").val(data.redirectId);
 				form.find("input[name='url']").val(data.url);
 				form.find("input[name='status']").val(data.status);
 				form.find("input[name='sort']").val(data.sort);
