@@ -146,7 +146,7 @@ public class InitRunner implements ApplicationRunner {
         JobHolder.getHolder().put(key + "_REVERSE", poolReverse);
     }
 
-    private static String genPriceRange(List<Double> priceList) {
+    public static String genPriceRange(List<Double> priceList) {
         Collections.sort(priceList);
         Double lowest = priceList.get(0);
         Double highest = priceList.get(priceList.size() - 1);

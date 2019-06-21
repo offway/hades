@@ -7,6 +7,9 @@
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
 	<link rel="stylesheet" href="assets/css/jquery-editable-select.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -101,12 +104,13 @@
 											</div>
 										</div>
 									</div>
-									<div class="row">
+									<div class="row" id="bannerDIV">
 										<div class="col-md-2">
 											<div class="form-group">
 												<label class="control-label"><font color="red">*</font>banner 轮播图(主图)</label>
-												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图(主图)" multiple="multiple" onchange="uploadFile(this)"/>
-												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
+												<input type="file" id="banner1" style="display: none;" class="form-control" name="bannerFile" placeholder="banner 轮播图(主图)" multiple="multiple" accept="image/*" onchange="uploadFile(this)"/>
+												<input type="button" class="form-control notMe btn btn-primary" value="上传图片" onclick="banner1.click()" style="display:block;"/>
+												<input type="button" class="form-control notMe btn btn-danger" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
 												<input type="hidden" class="form-control" name="banner" />
 												<img alt="" src="" name="bannerImg" style="display:none;" />
 											</div>
@@ -114,8 +118,9 @@
 										<div class="col-md-2">
 											<div class="form-group">
 												<label class="control-label">banner 轮播图</label>
-												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
+												<input type="file" id="banner2" style="display: none;" class="form-control" name="bannerFile" placeholder="banner 轮播图" multiple="multiple" accept="image/*" onchange="uploadFile(this)"/>
+												<input type="button" class="form-control notMe btn btn-primary" value="上传图片" onclick="banner2.click()" style="display:block;"/>
+												<input type="button" class="form-control notMe btn btn-danger" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
 												<input type="hidden" class="form-control" name="banner" />
 												<img alt="" src="" name="bannerImg" style="display:none;" />
 											</div>
@@ -123,8 +128,9 @@
 										<div class="col-md-2">
 											<div class="form-group">
 												<label class="control-label">banner 轮播图</label>
-												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
+												<input type="file" id="banner3" style="display: none;" class="form-control" name="bannerFile" placeholder="banner 轮播图" multiple="multiple" accept="image/*" onchange="uploadFile(this)"/>
+												<input type="button" class="form-control notMe btn btn-primary" value="上传图片" onclick="banner3.click()" style="display:block;"/>
+												<input type="button" class="form-control notMe btn btn-danger" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
 												<input type="hidden" class="form-control" name="banner" />
 												<img alt="" src="" name="bannerImg" style="display:none;" />
 											</div>
@@ -132,8 +138,9 @@
 										<div class="col-md-2">
 											<div class="form-group">
 												<label class="control-label">banner 轮播图</label>
-												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
+												<input type="file" id="banner4" style="display: none;" class="form-control" name="bannerFile" placeholder="banner 轮播图" multiple="multiple" accept="image/*" onchange="uploadFile(this)"/>
+												<input type="button" class="form-control notMe btn btn-primary" value="上传图片" onclick="banner4.click()" style="display:block;"/>
+												<input type="button" class="form-control notMe btn btn-danger" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
 												<input type="hidden" class="form-control" name="banner" />
 												<img alt="" src="" name="bannerImg" style="display:none;" />
 											</div>
@@ -141,8 +148,9 @@
 										<div class="col-md-2">
 											<div class="form-group">
 												<label class="control-label">banner 轮播图</label>
-												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
+												<input type="file" id="banner5" style="display: none;" class="form-control" name="bannerFile" placeholder="banner 轮播图" multiple="multiple" accept="image/*" onchange="uploadFile(this)"/>
+												<input type="button" class="form-control notMe btn btn-primary" value="上传图片" onclick="banner5.click()" style="display:block;"/>
+												<input type="button" class="form-control notMe btn btn-danger" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
 												<input type="hidden" class="form-control" name="banner" />
 												<img alt="" src="" name="bannerImg" style="display:none;" />
 											</div>
@@ -150,8 +158,9 @@
 										<div class="col-md-2">
 											<div class="form-group">
 												<label class="control-label">banner 轮播图</label>
-												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
+												<input type="file" id="banner6" style="display: none;" class="form-control" name="bannerFile" placeholder="banner 轮播图" multiple="multiple" accept="image/*" onchange="uploadFile(this)"/>
+												<input type="button" class="form-control notMe btn btn-primary" value="上传图片" onclick="banner6.click()" style="display:block;"/>
+												<input type="button" class="form-control notMe btn btn-danger" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
 												<input type="hidden" class="form-control" name="banner" />
 												<img alt="" src="" name="bannerImg" style="display:none;" />
 											</div>
@@ -161,7 +170,7 @@
 										<div class="col-md-2">
 											<div class="form-group">
 												<label class="control-label"><font color="red">*</font>商品长图</label>
-												<input type="file" class="form-control" name="introFile" placeholder="商品长图" multiple="multiple" onchange="uploadIntroFile(this)"/>
+												<input type="file" class="form-control" name="introFile" placeholder="商品长图" multiple="multiple" accept="image/*" onchange="uploadIntroFile(this)"/>
 												<!--<input type="button" class="form-control" value="删除" onclick="delIntroFile(this)"/>-->
 												<input type="hidden" class="form-control" name="intro" />
 												<img alt="" src="" name="introImg" style="display:none;" />
@@ -303,6 +312,7 @@
     <script src="assets/js/jquery.base64.js"></script>
     <script src="assets/js/distpicker.js"></script>
 	<script src="assets/js/jquery-editable-select.min.js"></script>
+	<script src="assets/js/jquery-ui.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -436,8 +446,8 @@
 		that.parent().parent().before("\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
 				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
 				"\t\t\t\t\t\t\t\t<label class=\"control-label\">商品长图</label>\n" +
-				"\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"introFile\" placeholder=\"商品长图\" onchange=\"uploadIntroFile(this)\"/>\n" +
-				"\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control\" value=\"删除\" onclick=\"delIntroFile(this)\"/>\n" +
+				"\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"introFile\" placeholder=\"商品长图\" multiple=\"multiple\" accept=\"image/*\" onchange=\"uploadIntroFile(this)\"/>\n" +
+				"\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control btn btn-danger\" value=\"删除\" onclick=\"delIntroFile(this)\"/>\n" +
 				"\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"intro\" />\n" +
 				"\t\t\t\t\t\t\t\t<img alt=\"\" src=\"\" name=\"introImg\" style=\"display:none;\" />\n" +
 				"\t\t\t\t\t\t\t</div>\n" +
@@ -449,8 +459,8 @@
 		that.parent().parent().before("\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
 				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
 				"\t\t\t\t\t\t\t\t<label class=\"control-label\">商品长图</label>\n" +
-				"\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"introFile\" placeholder=\"商品长图\" onchange=\"uploadIntroFile(this)\"/>\n" +
-				"\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control\" value=\"删除\" onclick=\"delIntroFile(this)\"/>\n" +
+				"\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"introFile\" placeholder=\"商品长图\" multiple=\"multiple\" accept=\"image/*\" onchange=\"uploadIntroFile(this)\"/>\n" +
+				"\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control btn btn-danger\" value=\"删除\" onclick=\"delIntroFile(this)\"/>\n" +
 				"\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"intro\" value='VV' />\n".replace("VV", url) +
 				"\t\t\t\t\t\t\t\t<img alt=\"\" src=\"SS\" name=\"introImg\" style=\"display:block;\" width='100px' height='100px' />\n".replace("SS", url) +
 				"\t\t\t\t\t\t\t</div>\n" +
@@ -1208,6 +1218,12 @@
 	jQuery(document).ready(function ($) {
         $.base64.utf8encode = true;
         $.base64.utf8decode = true;
+
+		$("#bannerDIV").sortable();
+		$("#bannerDIV").disableSelection();
+
+		$("#introDIV").sortable();
+		$("#introDIV").disableSelection();
 
 		$.getJSON("/type_and_category_list", {}, function (data) {
 			$("#type_and_category_list").val(JSON.stringify(data));

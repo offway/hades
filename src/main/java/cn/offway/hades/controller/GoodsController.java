@@ -573,6 +573,65 @@ public class GoodsController {
     }
 
     @ResponseBody
+    @RequestMapping("/goods_stock_list_mix_tree")
+    public List<Object> getStockListMixTree(@RequestParam("ids[]") Long[] ids) {
+        List<Object> list = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        for (PhGoods goods : goodsService.findByIds(ids)) {
+            Map<String, Object> map = objectMapper.convertValue(goods, HashMap.class);
+            map.put("sub", goodsStockService.findByPids(ids));
+            list.add(map);
+        }
+        return list;
+    }
+
+    @ResponseBody
+    @RequestMapping("/goods_stock_update_mix_tree")
+    public boolean updateStockListMixTree(@RequestParam("sid") Long[] sids, @RequestParam("stockPrice") Double[] stockPrices, @RequestParam("gid") Long[] gids, @RequestParam("price") Double[] prices, @RequestParam("originalPrice") String[] originalPrices, @RequestParam("originalPriceHidden") String[] originalPriceHiddens) {
+        if (sids.length != stockPrices.length || gids.length != prices.length || gids.length != originalPrices.length) {
+            return false;
+        }
+        Map<Long, List<Double>> priceList = new HashMap<>();
+        for (int i = 0; i < sids.length; i++) {
+            PhGoodsStock goodsStock = goodsStockService.findOne(sids[i]);
+            goodsStock.setPrice(stockPrices[i]);
+            goodsStockService.save(goodsStock);
+            if (priceList.containsKey(goodsStock.getGoodsId())) {
+                priceList.get(goodsStock.getGoodsId()).add(goodsStock.getPrice());
+            } else {
+                List<Double> tmpList = new ArrayList<>();
+                tmpList.add(goodsStock.getPrice());
+                priceList.put(goodsStock.getGoodsId(), tmpList);
+            }
+        }
+        for (int i = 0; i < gids.length; i++) {
+            PhGoods goods = goodsService.findOne(gids[i]);
+            goods.setPrice(prices[i]);
+            boolean noChange = originalPriceHiddens[i].equals(originalPrices[i]);
+            if (!"NULL".equals(originalPrices[i])) {
+                goods.setOriginalPrice(Double.valueOf(originalPrices[i]));
+            } else if (!noChange) {
+                goods.setOriginalPrice(null);
+            }
+            String range = InitRunner.genPriceRange(priceList.get(goods.getId()));
+            goods.setPriceRange(range);
+            goodsService.save(goods);
+        }
+        return true;
+    }
+
+//    private String calcPriceRange(List<Double> priceList) {
+//        Collections.sort(priceList);
+//        Double lowest = priceList.get(0);
+//        Double highest = priceList.get(priceList.size() - 1);
+//        if (Double.compare(lowest, highest) == 0) {
+//            return String.format("%.2f", lowest);
+//        } else {
+//            return String.format("%.2f-%.2f", lowest, highest);
+//        }
+//    }
+
+    @ResponseBody
     @RequestMapping("/fare_del")
     public boolean deleteFare(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {
