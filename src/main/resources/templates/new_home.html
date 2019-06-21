@@ -276,8 +276,8 @@
 			//上传文件获得文件地址
 			if (v != '') {
 				imageFile = form.find("input[name='" + name + "File']")[0].files[0];
-				if (imageFile != '' && imageFile.size / 1024 > 500) {
-					toastr.error("封面图片大小超过500K,请压缩处理后上传", "温馨提示");
+				if (imageFile != '' && imageFile.size / 1024/1024 > 2) {
+					toastr.error("封面图片大小超过2M,请压缩处理后上传", "温馨提示");
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
 					return false;

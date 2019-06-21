@@ -51,6 +51,7 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
     private Double amount;
 
     /** 店铺优惠券ID **/
+    @ExcelProperty(value = "店铺优惠卷",index = 16)
     private Long mVoucherId;
 
     /** 店铺优惠券金额 **/
