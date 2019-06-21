@@ -1,14 +1,8 @@
 package cn.offway.hades.controller;
 
-import cn.offway.hades.domain.PhGoods;
-import cn.offway.hades.domain.PhStarsame;
-import cn.offway.hades.domain.PhStarsameGoods;
-import cn.offway.hades.domain.PhStarsameImage;
+import cn.offway.hades.domain.*;
 import cn.offway.hades.properties.QiniuProperties;
-import cn.offway.hades.service.PhGoodsService;
-import cn.offway.hades.service.PhStarsameGoodsService;
-import cn.offway.hades.service.PhStarsameImageService;
-import cn.offway.hades.service.PhStarsameService;
+import cn.offway.hades.service.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -45,6 +39,8 @@ public class StarSameController {
     private PhStarsameImageService starsameImageService;
     @Autowired
     private PhGoodsService goodsService;
+    @Autowired
+    private PhBrandService brandService;
     @Autowired
     private QiniuProperties qiniuProperties;
 
@@ -132,7 +128,7 @@ public class StarSameController {
 
     @ResponseBody
     @PostMapping("/starSame_save")
-    public boolean save(PhStarsame starsame, String goodsIDStr, String imagesJSONStr) {
+    public boolean save(PhStarsame starsame, String goodsIDStr,String goodsIDStrSame, String imagesJSONStr) {
         starsame.setCreateTime(new Date());
         if (starsame.getId() == null) {
             starsame.setSort(999L);
@@ -141,6 +137,27 @@ public class StarSameController {
         //purge first
         starsameGoodsService.deleteByPid(starsameObj.getId());
         String[] goodsList = goodsIDStr.split(",");
+        String[] goodsSameList = goodsIDStrSame.split(",");
+        for (String Sameid : goodsSameList) {
+            if (NumberUtils.isNumber(Sameid)) {
+                PhBrand phBrand= brandService.findOne(Long.valueOf(Sameid));
+                if ((phBrand != null)) {
+                    PhStarsameGoods starsameGoods0 = new PhStarsameGoods();
+                    starsameGoods0.setStarsameId(starsameObj.getId());
+                    starsameGoods0.setStarsameTitle(starsameObj.getTitle());
+                    starsameGoods0.setBrandId(phBrand.getId());
+                    starsameGoods0.setBrandName(phBrand.getName());
+                    starsameGoods0.setBrandLogo(phBrand.getLogo());
+                    starsameGoods0.setRemark(phBrand.getRemark());
+                    starsameGoods0.setCreateTime(new Date());
+                    starsameGoodsService.save(starsameGoods0);
+                } else {
+                    logger.error("goods Same Id 非法");
+                }
+            } else {
+                logger.error("goods Same Id 非法");
+            }
+        }
         for (String gid : goodsList) {
             if (NumberUtils.isNumber(gid)) {
                 PhGoods goods = goodsService.findOne(Long.valueOf(gid));
