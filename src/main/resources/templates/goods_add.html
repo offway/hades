@@ -303,6 +303,7 @@
 	</div>
 
 	<input type="hidden" id="type_and_category_list"/>
+	<script src="js/common.js"></script>
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
 	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
@@ -1289,31 +1290,6 @@
 			};
 			reader.readAsDataURL(f);
 		}
-
-		window.upload = function upload(param, token, file, next, error, complete) {
-			if (file == '') {
-				complete('');
-			} else {
-				getImgSize(file, function (w, h) {
-					var filename = file.name;
-					var postf = filename.substring(filename.lastIndexOf("."));
-					var config = {
-						useCdnDomain: true,
-						region: qiniu.region.z0
-					};
-					var putExtra = {
-						fname: "",
-						params: {"x:param": param},
-						mimeType: ["image/png", "image/jpeg", "image/gif"] || null
-					};
-					var newFileName = "image/wx/#W#/#H#/" + UUID.randomUUID() + postf;
-					newFileName = newFileName.replace("#W#", w).replace("#H#", h);
-					var observable = qiniu.upload(file, newFileName, token,
-							putExtra, config);
-					var subscription = observable.subscribe(next, error, complete);
-				})
-			}
-		};
 
 		//保存
 		$(".btn.btn-info.save").click(function () {

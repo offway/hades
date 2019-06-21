@@ -187,7 +187,8 @@
 			</div>
 		</div>
 	</div>
-	
+
+	<script src="js/common.js"></script>
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
@@ -217,15 +218,29 @@
 	           
 	jQuery(document).ready(function($)
 	{
-        var titleEle = $("title");
-        var subTitleEle = $("h1.title");
-        if (parseInt(position) == 1) {
-            titleEle.html(titleEle.html() + "底部");
-            subTitleEle.html(subTitleEle.html() + "底部");
-        } else {
-            titleEle.html(titleEle.html() + "顶部");
-            subTitleEle.html(subTitleEle.html() + "顶部");
-        }
+		var titleEle = $("title");
+		var subTitleEle = $("h1.title");
+		var tips = $("h4.modal-title");
+		switch (parseInt(position)) {
+				//展示位置[0-首页顶部,1-首页腹部,2-广告页]
+			case 0:
+				titleEle.html(titleEle.html() + "顶部");
+				subTitleEle.html(subTitleEle.html() + "顶部");
+				tips.html(tips.html() + "顶部");
+				break;
+			case 1:
+				titleEle.html(titleEle.html() + "底部");
+				subTitleEle.html(subTitleEle.html() + "底部");
+				tips.html(tips.html() + "底部");
+				break;
+			case 2:
+				titleEle.html("广告");
+				subTitleEle.html("广告");
+				tips.html("广告");
+				break;
+			default:
+				break;
+		}
 
 		var oTable = $("#example-1").dataTable({
 			language: {
@@ -442,48 +457,6 @@
 			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 		});
 
-		function getImgSize(file, cb) {
-			var f = file;//input.files[0];
-			var reader = new FileReader();
-			reader.onload = function (e) {
-				var data = e.target.result;
-				//加载图片获取图片真实宽度和高度
-				var image = new Image();
-				image.onload = function () {
-					var width = image.width;
-					var height = image.height;
-					cb(width, height);
-				};
-				image.src = data;
-			};
-			reader.readAsDataURL(f);
-		}
-
-		function upload(param, token, file, next, error, complete) {
-			if (file == '') {
-				complete('');
-			} else {
-				getImgSize(file, function (w, h) {
-					var filename = file.name;
-					var postf = filename.substring(filename.lastIndexOf("."));
-					var config = {
-						useCdnDomain: true,
-						region: qiniu.region.z0
-					};
-					var putExtra = {
-						fname: "",
-						params: {"x:param": param},
-						mimeType: ["image/png", "image/jpeg", "image/gif"] || null
-					};
-                    var newFileName = "image/wx/#W#/#H#/" + UUID.randomUUID() + postf;
-					newFileName = newFileName.replace("#W#", w).replace("#H#", h);
-					var observable = qiniu.upload(file, newFileName, token,
-							putExtra, config);
-					var subscription = observable.subscribe(next, error, complete);
-				})
-			}
-		}
-
 		//保存
 		$(".btn.btn-info.save").click(function(){
 			var footer = $(this).parent(".modal-footer");
@@ -512,14 +485,8 @@
 
 			var imageFile = '';
 			//上传文件获得文件地址
-			if(imageVal!=''){
+			if (imageVal != '') {
 				imageFile = form.find("input[name='imageFile']")[0].files[0];
-				if(imageFile!='' && imageFile.size/1024>500){
-					toastr.error("封面图片大小超过500K,请压缩处理后上传", "温馨提示");
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					return ;
-				}
 			}
 
 			//获取token
