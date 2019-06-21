@@ -87,11 +87,10 @@ public class MerchantController {
 
     @ResponseBody
     @RequestMapping("/merchant_list")
-    public Map<String, Object> getList(HttpServletRequest request, @AuthenticationPrincipal PhAdmin admin) {
+    public Map<String, Object> getList(HttpServletRequest request, @AuthenticationPrincipal PhAdmin admin, String name, String type) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        String name = request.getParameter("name");
         Sort sort = new Sort("id");
         Page<PhMerchant> pages;
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
@@ -99,7 +98,7 @@ public class MerchantController {
             PhMerchant merchant = merchantService.findByAdminId(admin.getId());
             pages = merchantService.findAll(merchant.getId(), new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         } else {
-            pages = merchantService.findAll(name, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+            pages = merchantService.findAll(name, type, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         }
         List<PhMerchant> list = pages.getContent();
         List<Object> data = new ArrayList<>();

@@ -44,11 +44,14 @@ public class PhMerchantServiceImpl implements PhMerchantService {
     }
 
     @Override
-    public Page<PhMerchant> findAll(String name, Pageable pageable) {
+    public Page<PhMerchant> findAll(String name, String type, Pageable pageable) {
         return phMerchantRepository.findAll(new Specification<PhMerchant>() {
             @Override
             public Predicate toPredicate(Root<PhMerchant> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
+                if (!"".equals(type)) {
+                    params.add(criteriaBuilder.equal(root.get("type"), type));
+                }
                 params.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
@@ -57,9 +60,8 @@ public class PhMerchantServiceImpl implements PhMerchantService {
         }, pageable);
     }
 
-    @Override
-    public Page<PhMerchant> findAll(Long id, Pageable pageable) {
-        return phMerchantRepository.findAll(new Specification<PhMerchant>() {
+    private Specification<PhMerchant> getFilter(Object id) {
+        return new Specification<PhMerchant>() {
             @Override
             public Predicate toPredicate(Root<PhMerchant> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
@@ -68,7 +70,12 @@ public class PhMerchantServiceImpl implements PhMerchantService {
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
             }
-        }, pageable);
+        };
+    }
+
+    @Override
+    public Page<PhMerchant> findAll(Long id, Pageable pageable) {
+        return phMerchantRepository.findAll(getFilter(id), pageable);
     }
 
     @Override
@@ -78,16 +85,7 @@ public class PhMerchantServiceImpl implements PhMerchantService {
 
     @Override
     public List<PhMerchant> findAll(Long id) {
-        return phMerchantRepository.findAll(new Specification<PhMerchant>() {
-            @Override
-            public Predicate toPredicate(Root<PhMerchant> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                List<Predicate> params = new ArrayList<Predicate>();
-                params.add(criteriaBuilder.equal(root.get("id"), id));
-                Predicate[] predicates = new Predicate[params.size()];
-                criteriaQuery.where(params.toArray(predicates));
-                return null;
-            }
-        });
+        return phMerchantRepository.findAll(getFilter(id));
     }
 
     @Override
