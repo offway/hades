@@ -140,7 +140,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
-									<label class="control-label">填写明星同款ID</label>
+									<label class="control-label">填写品牌ID</label>
 									<!--<input type="number" class="form-control initial" name="goodsID" placeholder="填写商品ID"/>-->
 									<input type="button" id="addMoreTextEleSame" class="notMe" value="添加"
 										   onclick="addMoreTextSame(this,null);"/>
@@ -276,9 +276,9 @@
 		var that = $(self);
 		var str = '<div id="UUID" class="toDel">'.replace("UUID", uuid);
 		if (v != null) {
-			str += '<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsIDSame" placeholder="填写明星同款ID"/>'.replace("VALUE", v);
+			str += '<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsIDSame" placeholder="填写品牌ID"/>'.replace("VALUE", v);
 		} else {
-			str += '<input style="display:inline-block;width: 200px;" type="number" class="form-control" name="goodsIDSame" placeholder="填写明星同款ID"/>';
+			str += '<input style="display:inline-block;width: 200px;" type="number" class="form-control" name="goodsIDSame" placeholder="填写品牌ID"/>';
 		}
 		str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
 		str += '</div>';
