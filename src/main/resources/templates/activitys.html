@@ -247,7 +247,8 @@
 			</div>
 		</div>
 	</div>
-	
+
+	<script src="js/common.js"></script>
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
 	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
@@ -415,30 +416,6 @@
 			reader.readAsDataURL(f);
 		}
 
-		function upload(param, token, file, next, error, complete) {
-			if (file == '') {
-				complete('');
-			} else {
-				getImgSize(file, function (w, h) {
-					var filename = file.name;
-					var postf = filename.substring(filename.lastIndexOf("."));
-					var config = {
-						useCdnDomain: true,
-						region: qiniu.region.z0
-					};
-					var putExtra = {
-						fname: "",
-						params: {"x:param": param},
-						mimeType: ["image/png", "image/jpeg", "image/gif"] || null
-					};
-					var newFileName = "image/wx/#W#/#H#/" + UUID.randomUUID() + postf;
-					newFileName = newFileName.replace("#W#", w).replace("#H#", h);
-					var observable = qiniu.upload(file, newFileName, token,
-							putExtra, config);
-					var subscription = observable.subscribe(next, error, complete);
-				})
-			}
-		}
 			 
 			 var qiniuUrl = [[${qiniuUrl}]];
 			//保存
@@ -489,12 +466,7 @@
 				//上传文件获得文件地址
 				if(imageVal!=''){
 					imageFile = form.find("input[name='imageFile']")[0].files[0];
-					if(imageFile!='' && imageFile.size/1024>500){
-						toastr.error("封面图片大小超过500K,请压缩处理后上传", "温馨提示");
-						footer.find("button").show();
-						footer.find(".bg-lg").hide();
-						return ;
-					}
+
 				}
 				
 				var bannerFiles = new Array();

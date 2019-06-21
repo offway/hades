@@ -37,8 +37,7 @@ function checkImgSize(imageFile, MB) {
         MB = 5;
     }
     if (imageFile != '' && imageFile.size / 1024 / 1024 > MB) {
-        toastr.error("封面图片大小超过500K,请压缩处理后上传", "温馨提示");
-        throw new Error("Image File Too Big");
+        toastr.error("封面图片大小超过5M,请压缩处理后上传", "温馨提示");
     }
 }
 
@@ -52,7 +51,7 @@ window.upload = function upload(param, token, file, next, error, complete, sizeL
             var postf = filename.substring(filename.lastIndexOf("."));
             var config = {
                 useCdnDomain: true,
-                region: qiniu.region.z0
+                region: qiniu.region.z0ß
             };
             var putExtra = {
                 fname: "",
