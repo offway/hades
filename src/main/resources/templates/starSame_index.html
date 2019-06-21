@@ -271,6 +271,20 @@
 		that.before(str);
 	}
 
+	function addMoreTextSame(self, v) {
+		var uuid = UUID.randomUUID();
+		var that = $(self);
+		var str = '<div id="UUID" class="toDel">'.replace("UUID", uuid);
+		if (v != null) {
+			str += '<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsIDSame" placeholder="填写明星同款ID"/>'.replace("VALUE", v);
+		} else {
+			str += '<input style="display:inline-block;width: 200px;" type="number" class="form-control" name="goodsIDSame" placeholder="填写明星同款ID"/>';
+		}
+		str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
+		str += '</div>';
+		that.before(str);
+	}
+
     function closeIt(self) {
         var that = $(self);
         that.hide();
@@ -481,6 +495,7 @@
 			form.find("img:not(.initial)").remove();
 			form.find("input[name='detailImageFile']").remove();
 			form.find("input[name='goodsID']").remove();
+			form.find("input[name='goodsIDSame']").remove();
 			form.find("div.toDel").remove();
 			form.find("input[type='file']").show();
 			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
@@ -519,6 +534,16 @@
 				gidArr.push(goodsIDList[gid].value);
 			}
 			form.find("input[name='goodsIDStr']").val(gidArr.join(","));
+
+			var goodsIDListSame = form.find("input[name='goodsIDSame']");
+			var gidArrSame = [];
+			for (var gidSame in goodsIDListSame) {
+				if (isNaN(gidSame)) {
+					continue;
+				}
+				gidArrSame.push(goodsIDListSame[gidSame].value);
+			}
+			form.find("input[name='goodsIDStrSame']").val(gidArrSame.join(","));
 
 			var imageFile = '';
 			//上传文件获得文件地址
