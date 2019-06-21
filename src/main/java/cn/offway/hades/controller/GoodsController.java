@@ -902,10 +902,12 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_add")
-    public Object add(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount, Boolean fromInner, @RequestParam("tagList[]") Long[] tagList) throws UnsupportedEncodingException {
+    public Object add(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount, Boolean fromInner, @RequestParam(name = "tagList[]", required = false) Long[] tagList) throws UnsupportedEncodingException {
         long tag = 0;
-        for (Long l : tagList) {
-            tag = tag | 1 << l;
+        if (tagList != null) {
+            for (Long l : tagList) {
+                tag = tag | 1 << l;
+            }
         }
         goods.setTag(tag);
         PhBrand brand = brandService.findOne(goods.getBrandId());
