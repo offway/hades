@@ -574,6 +574,11 @@
 							var i = 0;
 							async.eachSeries(imageFileList, function (item, cb) {
 								var f = item.files[0];
+								var v = item.value;
+								if(v == ''){
+									cb();
+									return;
+								}
 								upload("imagesJSONStr", token, f, function () {
 									//
 								}, function (err) {
