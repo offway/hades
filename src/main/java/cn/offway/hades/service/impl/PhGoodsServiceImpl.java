@@ -132,7 +132,7 @@ public class PhGoodsServiceImpl implements PhGoodsService {
 
     @Override
     public void updateMerchantInfo(PhMerchant merchant) {
-        phGoodsRepository.updateMerchantInfo(merchant.getId(), merchant.getLogo(), merchant.getName());
+        phGoodsRepository.updateMerchantInfo(merchant.getId(), merchant.getLogo(), merchant.getName(), merchant.getType());
     }
 
     @Override

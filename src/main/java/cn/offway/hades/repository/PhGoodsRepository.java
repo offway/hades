@@ -21,8 +21,8 @@ public interface PhGoodsRepository extends JpaRepository<PhGoods, Long>, JpaSpec
 
     @Transactional
     @Modifying
-    @Query(nativeQuery = true, value = "UPDATE `ph_goods` SET `merchant_logo` = ?2 , `merchant_name` = ?3 WHERE (`merchant_id` = ?1)")
-    void updateMerchantInfo(Long mid, String mLogo, String mName);
+    @Query(nativeQuery = true, value = "UPDATE `ph_goods` SET `merchant_logo` = ?2 , `merchant_name` = ?3 , `merchant_type` = ?4 WHERE (`merchant_id` = ?1)")
+    void updateMerchantInfo(Long mid, String mLogo, String mName, String mType);
 
     @Transactional
     @Modifying
