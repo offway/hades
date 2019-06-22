@@ -194,15 +194,17 @@ public class BrandController {
 
     @ResponseBody
     @RequestMapping("/brand_pin_save")
-    public boolean pinSave(@RequestParam("ids[]") String[] ids, @RequestParam("images[]") String[] images, boolean isLogo) {
+    public boolean pinSave(@RequestParam(name = "ids[]", required = false) String[] ids, @RequestParam(name = "images[]", required = false) String[] images, boolean isLogo) {
         String key = isLogo ? "INDEX_BRAND_LOGO" : "INDEX_BRAND_GOODS";
         PhConfig config = configService.findOne(key);
         JSONArray jsonArray = new JSONArray();
-        for (int i = 0; i < ids.length; i++) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", ids[i]);
-            jsonObject.put("image", images[i]);
-            jsonArray.add(jsonObject);
+        if (ids != null) {
+            for (int i = 0; i < ids.length; i++) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", ids[i]);
+                jsonObject.put("image", images[i]);
+                jsonArray.add(jsonObject);
+            }
         }
         if (config == null) {
             config = new PhConfig();
