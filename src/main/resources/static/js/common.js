@@ -42,7 +42,7 @@ function checkImgSize(imageFile, MB) {
 }
 
 window.upload = function upload(param, token, file, next, error, complete, sizeLimit) {
-    if (file == '') {
+    if (file == '' || file == null) {
         complete('');
     } else {
         checkImgSize(file, sizeLimit);
@@ -68,7 +68,7 @@ window.upload = function upload(param, token, file, next, error, complete, sizeL
 };
 
 function upload(param, token, file, next, error, complete, sizeLimit) {
-    if (file == '') {
+    if (file == '' || file == null) {
         complete('');
     } else {
         checkImgSize(file, sizeLimit);
