@@ -396,14 +396,14 @@
         var preview = $("#preview_body");
         var contentStr = "";
         var mainObj = data;
-        for (var i in mainObj) {
-            var item = mainObj[i];
-            var imgUrl = isLogo ? item["bannerBig"] : item["bannerBig"];
-            var idHidden = "<input type='hidden' name='id' value='VALUE' />".replace("VALUE", item["id"]);
-            var imgHidden = "<input type='hidden' name='image' value='VALUE' />".replace("VALUE", imgUrl == null ? "NONE" : imgUrl);
-            var delButton = "<input type='button' name='delete' value='删除' onclick='delNode(this)' />";
-            contentStr += appendToPreviewList(item["id"], item["name"], buildImg(item["logo"], 100, 100), buildImg(imgUrl, 100, 100), delButton, idHidden + imgHidden);
-        }
+		for (var i in mainObj) {
+			var item = mainObj[i];
+			var imgUrl = isLogo ? item["logoBig"] : item["banner"];
+			var idHidden = "<input type='hidden' name='id' value='VALUE' />".replace("VALUE", item["id"]);
+			var imgHidden = "<input type='hidden' name='image' value='VALUE' />".replace("VALUE", imgUrl == null ? "NONE" : imgUrl);
+			var delButton = "<input type='button' name='delete' value='删除' onclick='delNode(this)' />";
+			contentStr += appendToPreviewList(item["id"], item["name"], buildImg(item["logo"], 100, 100), buildImg(imgUrl, 100, 100), delButton, idHidden + imgHidden);
+		}
         preview.html(contentStr);
 		preview.sortable();
 		preview.disableSelection();
