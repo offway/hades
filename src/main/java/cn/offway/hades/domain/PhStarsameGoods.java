@@ -48,6 +48,9 @@ public class PhStarsameGoods implements Serializable {
     private String remark;
 
 
+    /*类型[0-推荐商品,1-推荐品牌]*/
+    private String type;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -148,6 +151,15 @@ public class PhStarsameGoods implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    @Column(name = "type", length = 2)
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
 }

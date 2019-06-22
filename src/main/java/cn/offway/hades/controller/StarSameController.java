@@ -149,6 +149,7 @@ public class StarSameController {
                     starsameGoods0.setBrandName(phBrand.getName());
                     starsameGoods0.setBrandLogo(phBrand.getLogo());
                     starsameGoods0.setRemark(phBrand.getRemark());
+                    starsameGoods0.setType("1");
                     starsameGoods0.setCreateTime(new Date());
                     starsameGoodsService.save(starsameGoods0);
                 } else {
@@ -172,6 +173,7 @@ public class StarSameController {
                     starsameGoods.setBrandName(goods.getBrandName());
                     starsameGoods.setBrandLogo(goods.getBrandLogo());
                     starsameGoods.setRemark(goods.getRemark());
+                    starsameGoods.setType("0");
                     starsameGoods.setCreateTime(new Date());
                     starsameGoodsService.save(starsameGoods);
                 } else {
