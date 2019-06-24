@@ -67,6 +67,9 @@ jpush:
   apns-production: true
   app-key: 23f3d1476579eda19a0da872
   master-secret: 90f4a69575d4a51c877f5dad
+#美洽客服配置
+meqia:  
+  key:  $2a$12$DH0LKaxq.alh49rSMkOP0eaEfZzcwUb95Wg6cY5DTLRvI.CG6vZNi
 #浏览器环境配置项，参见BrowserProperties
 vinann:
   security: 

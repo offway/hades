@@ -25,6 +25,7 @@ public class RbacAuthorizeConfigProvider implements AuthorizeConfigProvider {
 	public boolean config(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry config) {
 		config
 			.antMatchers(HttpMethod.GET, "/assets/**").permitAll()
+			.antMatchers("/callback/**").permitAll()
 			.antMatchers(HttpMethod.GET, 
 					"/**/*.html",
 					"/resource").authenticated()

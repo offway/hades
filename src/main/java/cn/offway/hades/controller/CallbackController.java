@@ -1,18 +1,27 @@
 package cn.offway.hades.controller;
 
-import cn.offway.hades.domain.PhRefund;
-import cn.offway.hades.service.JPushService;
-import cn.offway.hades.service.PhRefundService;
-import com.alibaba.fastjson.JSONObject;
+import java.security.SignatureException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+import cn.offway.hades.domain.PhRefund;
+import cn.offway.hades.service.JPushService;
+import cn.offway.hades.service.PhRefundService;
+import cn.offway.hades.utils.MeiqiaSigner;
 
 @Controller
 @RequestMapping("/callback")
@@ -22,6 +31,9 @@ public class CallbackController {
     private JPushService jPushService;
     @Autowired
     private PhRefundService refundService;
+    
+    @Value("${meqia.key}")
+    private String meqiaKey;
 
     @RequestMapping("/express")
     @ResponseBody
@@ -65,4 +77,31 @@ public class CallbackController {
         ret.put("message", "接收成功");
         return ret;
     }
+    
+    /**
+     * 美洽服务端发送消息
+     * @param content
+     * @return
+     * @throws SignatureException 
+     */
+    @ResponseBody
+    @PostMapping("/meiqia")
+	public String meiqia(@RequestHeader("authorization") String authorization,  @RequestBody String content) throws SignatureException{
+    	logger.info("美洽服务端发送消息,authorization="+authorization+";content="+content);
+    	//{"contentType": "text", "customizedData": {"avatar": "https://static.runoob.com/images/demo/demo1.jpg", "name": "OFFWAY_739441"}, "messageTime": "2019-06-24T07:46:54.104220", "messageId": 628173038, "clientId": "1N4vhKdSSD5bYIWBVwcY4HWkynE", "content": "1", "customizedId": "14", "fromName": "\u5f88\u6f6e\u5c0f\u52a9\u624b", "deviceOS": "Android", "type": "message", "deviceToken": null}
+    	//验签
+    	MeiqiaSigner signer =  new MeiqiaSigner(meqiaKey);
+        String sign = signer.sign(content);
+        if(authorization.equals(sign)){
+        	JSONObject jsonObject = JSON.parseObject(content);
+        	String msg = jsonObject.getString("content");
+        	String customizedId = jsonObject.getString("customizedId");
+        	Map<String, String> extras = new HashMap<>();
+			extras.put("type", "99");//0-H5,1-精选文章,2-活动
+			extras.put("id", null);
+			extras.put("url", null);
+			jPushService.sendPushUser("客服消息", msg, extras, customizedId);
+        }
+    	return "success";
+	}
 }
