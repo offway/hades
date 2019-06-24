@@ -1289,7 +1289,7 @@
             //已上传的图片地址
             var imageImg = form.find("input[name='image']").val();
 
-			if (type == '' || category == '' || name == '' || code == '' || brand_id == '' || price == '' || material == '' || imageImg == '') {
+			if (type == '' || category == '' || name == '' || code == '' || brand_id == '' || price == '' || material.trim() == '' || imageImg == '') {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				return;
 			}
