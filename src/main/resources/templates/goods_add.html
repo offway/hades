@@ -504,17 +504,26 @@
 							cb();
 						});
 					}, function () {
-						var a = $("input[name='intro']");
-						var b = $("img[name='introImg']");
+						var divList = that.parent().parent().nextAll("div").toArray();
+						//push self DIV to top
+						divList.unshift(that.parent().parent());
+						// var a = $("input[name='intro']");
+						// var b = $("img[name='introImg']");
 						for (var i in imgList) {
-							if (a[i] == null) {
+							if (divList[i] == null) {
 								addIntroFileUploaded("#addIntroFileBtn", imgList[i]);
 							} else {
-								$(a[i]).val(imgList[i]);
-								$(b[i]).attr("src", imgList[i]);
-								$(b[i]).attr("width", "100px");
-								$(b[i]).attr("height", "100px");
-								$(b[i]).show();
+								var a = $(divList[i]).find("input[name='intro']")[0];
+								var b = $(divList[i]).find("img[name='introImg']")[0];
+								if (a == null) {
+									addIntroFileUploaded("#addIntroFileBtn", imgList[i]);
+								} else {
+									$(a).val(imgList[i]);
+									$(b).attr("src", imgList[i]);
+									$(b).attr("width", "100px");
+									$(b).attr("height", "100px");
+									$(b).show();
+								}
 							}
 						}
 					});
