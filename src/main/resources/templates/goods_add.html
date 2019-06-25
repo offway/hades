@@ -240,6 +240,14 @@
 									<div class="row">
 										<div class="col-md-4">
 											<div class="form-group">
+												<label class="control-label"><font color="red">*</font>风格</label>
+												<div id="styleDIV"></div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-4">
+											<div class="form-group">
 												<label class="control-label"><font color="red">*</font>是否有优惠</label>
 												<label><input name="isDiscount" class="notMe" type="radio" value="0"/>有</label>
 												<label><input name="isDiscount" class="notMe" type="radio" checked="checked" value="1"/>没有</label>
@@ -1242,6 +1250,15 @@
 			$('#field-9').editableSelect();
 		});
 
+		$.getJSON("/style_list", {}, function (data) {
+			var str = "";
+			for (var i in data["data"]) {
+				var item = data["data"][i];
+				str += "<label><input name=\"style\" class=\"notMe\" type=\"checkbox\" value=\"NAME\"/>NAME</label>".replace(/NAME/g, item["value"]);
+			}
+			$("#styleDIV").html(str);
+		});
+
 		$(document).on("wheel", "input[type=number]", function (e) {
 			$(this).blur();
 		});
@@ -1295,6 +1312,7 @@
             var material = form.find("input[name='material']").val();
             var remark = form.find("input[name='remark']").val();
 			var tags = form.find("input[name='tags']:checked");
+			var styles = form.find("input[name='style']:checked");
             //已上传的图片地址
             var imageImg = form.find("input[name='image']").val();
 
@@ -1308,6 +1326,11 @@
 			tags.each(function (a, b) {
 				tag = tag | 1 << parseInt(b.value);
 				tagList.push(parseInt(b.value));
+			});
+
+			var styleList = [];
+			styles.each(function (a, b) {
+				styleList.push(b.value);
 			});
 
             //多个元素 sku 属性
@@ -1438,7 +1461,8 @@
 								"stocks": JSON.stringify(stockList),
 								"banners": bannerList.join(","),
 								"intros": introList.join(","),
-								"tagList": tagList
+								"tagList": tagList,
+								"styleList": styleList
 							};
 							console.log(data);
 							$.post("/goods_add", data, function (data) {

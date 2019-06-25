@@ -221,6 +221,14 @@
 										</div>
 									</div>
 									<div class="row">
+										<div class="col-md-4">
+											<div class="form-group">
+												<label class="control-label"><font color="red">*</font>风格</label>
+												<div id="styleDIV"></div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
 										<div class="col-md-12">
 											<div class="form-group">
 												<label class="control-label">*是否有优惠</label>
@@ -1169,6 +1177,19 @@
 						}
 					}
 				}
+				//风格
+				$.getJSON("/style_list", {}, function (data) {
+					var checked = [];
+					if (main.hasOwnProperty("style") && main["style"] != null) {
+						checked = main["style"].split(",");
+					}
+					var str = "";
+					for (var i in data["data"]) {
+						var item = data["data"][i];
+						str += "<label><input name=\"style\" class=\"notMe\" type=\"checkbox\" STATUS value=\"NAME\"/>NAME</label>".replace(/NAME/g, item["value"]).replace("STATUS", checked.indexOf(item["value"]) >= 0 ? "checked='checked'" : "");
+					}
+					$("#styleDIV").html(str);
+				});
                 //分类
                 $.getJSON("/type_and_category_list", {}, function (data) {
                     $("#type_and_category_list").val(JSON.stringify(data));
@@ -1325,6 +1346,7 @@
             var material = form.find("input[name='material']").val();
             var remark = form.find("input[name='remark']").val();
 			var tags = form.find("input[name='tags']:checked");
+			var styles = form.find("input[name='style']:checked");
             //文件
             var image = form.find("input[name='imageFile']").val();
             //已上传的图片地址
@@ -1340,6 +1362,10 @@
 			tags.each(function (a, b) {
 				tag = tag | 1 << parseInt(b.value);
 				tagList.push(parseInt(b.value));
+			});
+			var styleList = [];
+			styles.each(function (a, b) {
+				styleList.push(b.value);
 			});
 
 			var isOK = checkImg([[image, "image"]]);
@@ -1501,7 +1527,8 @@
 								"stocks": JSON.stringify(stockList),
 								"banners": bannerList.join(","),
 								"intros": introList.join(","),
-								"tagList": tagList
+								"tagList": tagList,
+								"styleList": styleList
 							};
 							console.log(data);
 							$.post("/goods_add", data, function (data) {

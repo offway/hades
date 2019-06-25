@@ -875,7 +875,7 @@ public class GoodsController {
     @RequestMapping("/goods_add_limit_sale")
     public boolean addLimitSale(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount, String args) throws UnsupportedEncodingException {
         PhGoods goodsSaved = null;
-        Object object = add(goods, stocks, banners, intros, isDiscount, true, new Long[]{});
+        Object object = add(goods, stocks, banners, intros, isDiscount, true, new Long[]{}, new String[]{});
         if (object instanceof PhGoods) {
             goodsSaved = (PhGoods) object;
         }
@@ -902,7 +902,7 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_add")
-    public Object add(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount, Boolean fromInner, @RequestParam(name = "tagList[]", required = false) Long[] tagList) throws UnsupportedEncodingException {
+    public Object add(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount, Boolean fromInner, @RequestParam(name = "tagList[]", required = false) Long[] tagList, @RequestParam(name = "styleList[]", required = false) String[] styleList) throws UnsupportedEncodingException {
         long tag = 0;
         if (tagList != null) {
             for (Long l : tagList) {
@@ -910,6 +910,11 @@ public class GoodsController {
             }
         }
         goods.setTag(tag);
+        if (styleList != null) {
+            goods.setStyle(String.join(",", styleList));
+        } else {
+            goods.setStyle(null);
+        }
         PhBrand brand = brandService.findOne(goods.getBrandId());
         if (brand != null) {
             goods.setBrandName(brand.getName());
