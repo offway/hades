@@ -7,6 +7,9 @@
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
 	<link rel="stylesheet" href="assets/css/rowReorder.dataTables.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -62,6 +65,7 @@
 				<button class="btn btn-info add" >添加</button>
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
+				<button class="btn btn-info resort">排序</button>
 			</div>
 
 					
@@ -112,11 +116,29 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">查看详情</h4>
+				</div>
+
+				<div class="modal-body" id="preview_body"></div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<script src="js/common.js"></script>
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/dataTables.rowReorder.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
+	<script src="assets/js/jquery-ui.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -153,6 +175,40 @@
 	function getQNToken(cb) {
 		$.get("/qiniu/token", {}, function (token) {
 			cb(token);
+		});
+	}
+
+	function appendToPreviewList(one, two, three, four, five, six) {
+		return '<div class="row">' +
+				'<div class="col-md-2">' +
+				one +
+				'</div>' +
+				'<div class="col-md-2">' +
+				two +
+				'</div>' +
+				'<div class="col-md-2">' +
+				three +
+				'</div>' +
+				'<div class="col-md-2">' +
+				four +
+				'</div>' +
+				'<div class="col-md-2">' +
+				five +
+				'</div>' +
+				'<div class="col-md-2">' +
+				six +
+				'</div>' +
+				'</div>';
+	}
+
+	function updateStyleBatch() {
+		var form = $("#styleForm");
+		console.log(form.serializeArray());
+		$.post("/style_save_sort", form.serializeArray(), function (data) {
+			if (data) {
+				toastr.success("操作已成功！", "温馨提示");
+				jQuery('#preview').modal('hide');
+			}
 		});
 	}
 
@@ -221,6 +277,34 @@
 
 		table_global.on('row-reorder', function (e, diff, edit) {
 			console.log(diff);
+		});
+
+		$(".btn.btn-info.resort").click(function () {
+			$.getJSON("/style_list", {}, function (data) {
+				if (data) {
+					var preview = $("#preview_body");
+					var contentStr = "<form id='styleForm'>";
+					contentStr += "<hr/>";
+					for (var a in data["data"]) {
+						a = data["data"][a];
+						var nameEle = '名称:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["value"]);
+						var nameValEle = '<input type="hidden" name="value" value="VV" />'.replace("VV", a["value"]);
+						var imgEle = '<img src="VV" width="100px" height="100px" />'.replace("VV", a["image"]);
+						var imgValEle = '<input type="hidden" name="image" value="VV" />'.replace("VV", a["image"]);
+						contentStr += appendToPreviewList(nameEle, nameValEle, imgEle, imgValEle, "", "");
+						contentStr += "<hr/>";
+					}
+					var btnEle = '<input type="button" class="btn btn-info" value="保存" onclick="updateStyleBatch()" />';
+					contentStr += appendToPreviewList("", "", "", "", "", btnEle);
+					preview.html(contentStr + "</form>");
+					$("#styleForm").sortable();
+					$("#styleForm").disableSelection();
+					jQuery('#preview').modal({backdrop: 'static', keyboard: false});
+					toastr.success("操作已成功！", "温馨提示");
+				} else {
+					toastr.error("操作失败", "温馨提示");
+				}
+			});
 		});
 
 		$(".btn.btn-info.add").click(function () {

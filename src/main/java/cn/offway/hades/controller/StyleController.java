@@ -77,6 +77,26 @@ public class StyleController {
         return true;
     }
 
+    @ResponseBody
+    @RequestMapping("/style_save_sort")
+    public boolean updateStockListMix(@RequestParam("value") String[] values, @RequestParam("image") String[] images) {
+        if (values.length != images.length) {
+            return false;
+        }
+        JSONArray jsonArray = new JSONArray();
+        for (int i = 0; i < values.length; i++) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("value", values[i]);
+            jsonObject.put("image", images[i]);
+            jsonArray.add(jsonObject);
+        }
+        PhConfig config = configService.findOne("INDEX_STYLE");
+        config.setContent(jsonArray.toJSONString());
+        configService.save(config);
+        return true;
+    }
+
+
     @RequestMapping("/style_save")
     @ResponseBody
     public boolean save(Integer id, String name, String image) {
