@@ -47,9 +47,11 @@ public class CouponController {
     @ResponseBody
     @RequestMapping("/coupon_save")
     public boolean save(PhVoucherProject voucherProject) {
-        PhMerchant merchant = merchantService.findOne(voucherProject.getMerchantId());
-        if (merchant != null) {
-            voucherProject.setMerchantName(merchant.getName());
+        if (voucherProject.getMerchantId() != null) {
+            PhMerchant merchant = merchantService.findOne(voucherProject.getMerchantId());
+            if (merchant != null) {
+                voucherProject.setMerchantName(merchant.getName());
+            }
         }
         voucherProject.setCreateTime(new Date());
         voucherProject.setLimit(0L);
