@@ -67,7 +67,7 @@ public class PhGoods extends BaseRowModel implements Serializable {
     /** 发售价 **/
     @ExcelProperty(value = "发售价",index = 11)
     private Double price;
-    
+
     /** 原价 **/
     @ExcelProperty(value = "原价",index = 12)
     private Double originalPrice;
@@ -222,17 +222,17 @@ public class PhGoods extends BaseRowModel implements Serializable {
     public void setPrice(Double price) {
         this.price = price;
     }
-    
+
     @Column(name = "original_price", precision = 15, scale = 2)
     public Double getOriginalPrice() {
-		return originalPrice;
-	}
+        return originalPrice;
+    }
 
-	public void setOriginalPrice(Double originalPrice) {
-		this.originalPrice = originalPrice;
-	}
+    public void setOriginalPrice(Double originalPrice) {
+        this.originalPrice = originalPrice;
+    }
 
-	@Column(name = "price_range", length = 50)
+    @Column(name = "price_range", length = 50)
     public String getPriceRange() {
         return priceRange;
     }

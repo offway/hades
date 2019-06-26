@@ -84,10 +84,12 @@ public class StarSameController {
         PhStarsame starsame = starsameService.findOne(id);
         Map<String, Object> map = new HashMap<>();
         if (starsame != null) {
-            List<PhStarsameGoods> goodsList = starsameGoodsService.findAllByPid(starsame.getId());
+            List<PhStarsameGoods> goodsList = starsameGoodsService.findAllByPid(starsame.getId(),"0");
+            List<PhStarsameGoods> goodsListSame = starsameGoodsService.findAllByPid(starsame.getId(),"1");
             List<PhStarsameImage> imageList = starsameImageService.findAllByPid(starsame.getId());
             map.put("main", starsame);
             map.put("goodsList", goodsList);
+            map.put("goodsListSame",goodsListSame);
             map.put("imageList", imageList);
         }
         return map;
@@ -132,6 +134,9 @@ public class StarSameController {
         starsame.setCreateTime(new Date());
         if (starsame.getId() == null) {
             starsame.setSort(999L);
+        }
+        if(null == starsame.getCallCount()){
+            starsame.setCallCount(0L);
         }
         PhStarsame starsameObj = starsameService.save(starsame);
         //purge first

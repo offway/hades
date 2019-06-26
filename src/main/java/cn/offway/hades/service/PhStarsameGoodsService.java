@@ -18,5 +18,5 @@ public interface PhStarsameGoodsService {
 
     void deleteByPid(Long pid);
 
-    List<PhStarsameGoods> findAllByPid(Long pid);
+    List<PhStarsameGoods> findAllByPid(Long pid,String type);
 }

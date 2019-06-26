@@ -42,12 +42,13 @@ public class PhStarsameGoodsServiceImpl implements PhStarsameGoodsService {
     }
 
     @Override
-    public List<PhStarsameGoods> findAllByPid(Long pid) {
+    public List<PhStarsameGoods> findAllByPid(Long pid,String type) {
         return phStarsameGoodsRepository.findAll(new Specification<PhStarsameGoods>() {
             @Override
             public Predicate toPredicate(Root<PhStarsameGoods> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
                 params.add(criteriaBuilder.equal(root.get("starsameId"), pid));
+                params.add(criteriaBuilder.equal(root.get("type"), type));
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
                 return null;

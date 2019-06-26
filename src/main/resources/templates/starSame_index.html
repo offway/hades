@@ -661,6 +661,7 @@
 				form.find("div.toDel").remove();
 				var main = data["main"];
 				var goodsList = data["goodsList"];
+				var goodsListSame = data["goodsListSame"];
 				var imageList = data["imageList"];
 				for (var i in main) {
 					var ele = form.find("input[name='" + i + "']");
@@ -693,9 +694,13 @@
 				}
 				var newValue = JSON.stringify(list);
 				form.find("input[name='imagesJSONStr']").val(window.btoa(newValue));
-				//品牌
+				//商品
 				for (var k in goodsList) {
 					addMoreText("#addMoreTextEle", goodsList[k]["goodsId"]);
+				}
+				//品牌
+				for (var l in goodsListSame){
+					addMoreTextSame("#addMoreTextEleSame",goodsListSame[l]["brandId"]);
 				}
 				form.find(".btn.image").show();
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
