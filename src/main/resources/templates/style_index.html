@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+	<link rel="stylesheet" href="assets/css/rowReorder.dataTables.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -111,10 +112,10 @@
 			</div>
 		</div>
 	</div>
-
 	<script src="js/common.js"></script>
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+	<script src="assets/js/dataTables.rowReorder.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
@@ -179,40 +180,48 @@
 				var searchArray = $(".form-inline").serializeArray();
 				$.merge(aData, searchArray);
 			},
-			columnDefs: [
-				{
-					targets: 0,
-					data: "id",
-					width: "5%",
-					orderable: false,
-					className: 'select-checkbox',
-					title: '<input type="checkbox" id="checkbox-all"/>',
-					render: function (data, type, full, meta) {
-						return '<input type="checkbox" name="activityId" value="' + data + '" />';
-					}
-				},
-				{
-					targets: 1,
-					data: "id",
-					title: "序号"
-				},
-				{
-					targets: 2,
-					data: "value",
-					title: "名称"
-				},
-				{
-					targets: 3,
-					data: "image",
-					title: "封面图片",
-					render: function (data, type, row, meta) {
-						return buildImg(data);
-					}
-				}
-			]
+            columnDefs: [
+                {
+                    targets: 0,
+                    data: "id",
+                    width: "5%",
+                    orderable: false,
+                    className: 'reorder',
+                    title: '<input type="checkbox" id="checkbox-all"/>',
+                    render: function (data, type, full, meta) {
+                        return '<input type="checkbox" name="activityId" value="' + data + '" />';
+                    }
+                },
+                {
+                    targets: 1,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+                    targets: 2,
+                    data: "value",
+                    title: "名称"
+                },
+                {
+                    targets: 3,
+                    data: "image",
+                    title: "封面图片",
+                    render: function (data, type, row, meta) {
+                        return buildImg(data);
+                    }
+                }
+            ],
+            rowReorder: {
+                dataSrc: 'id',
+                selector: 'tr'
+            }
 		});
 
 		table_global = oTable;
+
+		table_global.on('row-reorder', function (e, diff, edit) {
+			console.log(diff);
+		});
 
 		$(".btn.btn-info.add").click(function () {
 			var form = $("#saveForm");
