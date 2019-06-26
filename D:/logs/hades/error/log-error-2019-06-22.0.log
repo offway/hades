@@ -1,0 +1,8 @@
+2019-06-22 11:00:22.244 -ERROR 2099 [nio-8088-exec-3] c.o.hades.controller.StarSameController  : goods Id 非法
+2019-06-22 11:00:22.319 -ERROR 2099 [nio-8088-exec-3] c.o.hades.controller.StarSameController  : goods Id 非法
+2019-06-22 13:57:00.490 -ERROR 3511 [nio-8088-exec-7] c.o.hades.controller.StarSameController  : goods Same Id 非法
+2019-06-22 13:57:00.490 -ERROR 3511 [nio-8088-exec-7] c.o.hades.controller.StarSameController  : goods Id 非法
+2019-06-22 13:58:29.763 -ERROR 3511 [nio-8088-exec-4] c.o.hades.controller.StarSameController  : goods Same Id 非法
+2019-06-22 13:58:29.763 -ERROR 3511 [nio-8088-exec-4] c.o.hades.controller.StarSameController  : goods Id 非法
+2019-06-22 13:59:20.014 -ERROR 3511 [nio-8088-exec-8] c.o.hades.controller.StarSameController  : goods Same Id 非法
+2019-06-22 13:59:20.014 -ERROR 3511 [nio-8088-exec-8] c.o.hades.controller.StarSameController  : goods Id 非法
