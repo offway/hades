@@ -21,7 +21,7 @@ public class PhArticle implements Serializable {
     private String name;
 
     /** 标题 **/
-        private String title;
+    private String title;
 
     /** 图片 **/
     private String image;
@@ -42,7 +42,7 @@ public class PhArticle implements Serializable {
     private String goodsIds;
 
     /** 状态[0-待审核，1-通过，2-不通过] **/
-    private String  status;
+    private String status;
 
     /** 浏览数 **/
     private Long viewCount;

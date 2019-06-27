@@ -60,6 +60,13 @@ public class ArticleController {
             brand.setCreateTime(new Date());
             brand.setStatus("0");
         }
+        PhArticle article = articleService.findOne(brand.getId());
+        brand.setStatus(article.getStatus());
+        brand.setCreateTime(article.getCreateTime());
+        brand.setApprover(article.getApprover());
+        brand.setApproval(article.getApproval());
+        brand.setApprovalContent(article.getApprovalContent());
+        brand.setRemark(article.getRemark());
         articleService.save(brand);
         return true;
     }
