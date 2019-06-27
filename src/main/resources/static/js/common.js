@@ -32,65 +32,57 @@ function getImgSize(file, cb) {
     reader.readAsDataURL(f);
 }
 
-function checkImgSize(imageFile, MB) {
+function checkFileSize(file, MB) {
     if (MB == null) {
         MB = 5;
     }
-    if (imageFile != '' && imageFile.size / 1024 / 1024 > MB) {
-        toastr.error("封面图片大小超过5M,请压缩处理后上传", "温馨提示");
+    if (file != '' && file.size / 1024 / 1024 > MB) {
+        toastr.error("文件大小超过5M,请压缩处理后上传", "温馨提示");
     }
 }
 
-window.upload = function upload(param, token, file, next, error, complete, sizeLimit) {
+window.upload = function upload(param, token, file, next, error, complete, sizeLimit, isVideo) {
     if (file == '' || file == null) {
         complete('');
     } else {
-        checkImgSize(file, sizeLimit);
-        getImgSize(file, function (w, h) {
+        checkFileSize(file, sizeLimit);
+        var config = {
+            useCdnDomain: true,
+            region: qiniu.region.z0
+        };
+        if (isVideo) {
             var filename = file.name;
             var postf = filename.substring(filename.lastIndexOf("."));
-            var config = {
-                useCdnDomain: true,
-                region: qiniu.region.z0ß
-            };
             var putExtra = {
                 fname: "",
                 params: {"x:param": param},
-                mimeType: ["image/png", "image/jpeg", "image/gif"] || null
+                mimeType: ["video/x-flv", "video/mp4", "video/3gpp", "video/quicktime", "video/x-msvideo", "video/x-ms-wmv"] || null
             };
-            var newFileName = "image/wx/#W#/#H#/" + UUID.randomUUID() + postf;
-            newFileName = newFileName.replace("#W#", w).replace("#H#", h);
+            var newFileName = "video/wx/" + UUID.randomUUID() + postf;
             var observable = qiniu.upload(file, newFileName, token,
                 putExtra, config);
-            var subscription = observable.subscribe(next, error, complete);
-        })
+            observable.subscribe(next, error, complete);
+        } else {
+            getImgSize(file, function (w, h) {
+                var filename = file.name;
+                var postf = filename.substring(filename.lastIndexOf("."));
+                var putExtra = {
+                    fname: "",
+                    params: {"x:param": param},
+                    mimeType: ["image/png", "image/jpeg", "image/gif"] || null
+                };
+                var newFileName = "image/wx/#W#/#H#/" + UUID.randomUUID() + postf;
+                newFileName = newFileName.replace("#W#", w).replace("#H#", h);
+                var observable = qiniu.upload(file, newFileName, token,
+                    putExtra, config);
+                observable.subscribe(next, error, complete);
+            });
+        }
     }
 };
 
-function upload(param, token, file, next, error, complete, sizeLimit) {
-    if (file == '' || file == null) {
-        complete('');
-    } else {
-        checkImgSize(file, sizeLimit);
-        getImgSize(file, function (w, h) {
-            var filename = file.name;
-            var postf = filename.substring(filename.lastIndexOf("."));
-            var config = {
-                useCdnDomain: true,
-                region: qiniu.region.z0
-            };
-            var putExtra = {
-                fname: "",
-                params: {"x:param": param},
-                mimeType: ["image/png", "image/jpeg", "image/gif"] || null
-            };
-            var newFileName = "image/wx/#W#/#H#/" + UUID.randomUUID() + postf;
-            newFileName = newFileName.replace("#W#", w).replace("#H#", h);
-            var observable = qiniu.upload(file, newFileName, token,
-                putExtra, config);
-            var subscription = observable.subscribe(next, error, complete);
-        })
-    }
+function upload(param, token, file, next, error, complete, sizeLimit, isVideo) {
+    this.upload(param, token, file, next, error, complete, sizeLimit, isVideo);
 }
 
 //对Date的扩展，将 Date 转化为指定格式的String
