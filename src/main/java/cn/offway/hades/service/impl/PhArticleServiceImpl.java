@@ -3,6 +3,8 @@ package cn.offway.hades.service.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import cn.offway.hades.service.PhArticleService;
 
@@ -28,7 +30,17 @@ public class PhArticleServiceImpl implements PhArticleService {
 	public PhArticle save(PhArticle phArticle){
 		return phArticleRepository.save(phArticle);
 	}
-	
+
+	@Override
+	public Page<PhArticle> findAll(Pageable pageable) {
+		return phArticleRepository.findAll(pageable);
+	}
+
+	@Override
+	public void del(Long id) {
+		phArticleRepository.delete(id);
+	}
+
 	@Override
 	public PhArticle findOne(Long id){
 		return phArticleRepository.findOne(id);
