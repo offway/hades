@@ -5,3 +5,6 @@
 /.factorypath
 /.gitignore
 /.project
+*.iml
+*.xml
+*.yml
