@@ -1,15 +1,18 @@
 package cn.offway.hades.controller;
 
+import cn.offway.hades.domain.PhAdmin;
 import cn.offway.hades.domain.PhArticle;
 import cn.offway.hades.domain.PhBrand;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhArticleService;
+import cn.offway.hades.service.PhRoleadminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -29,6 +34,8 @@ public class ArticleController {
     private QiniuProperties qiniuProperties;
     @Autowired
     private PhArticleService articleService;
+    @Autowired
+    private PhRoleadminService roleadminService;
 
     @RequestMapping("/article.html")
     public String index(ModelMap map) {
@@ -89,8 +96,12 @@ public class ArticleController {
 
     @ResponseBody
     @RequestMapping("/article_up")
-    public boolean goodsUp(Long id) {
+    public boolean goodsUp(Long id, @AuthenticationPrincipal PhAdmin admin) {
         PhArticle article = articleService.findOne(id);
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            return false;
+        }
         if (article != null){
             article.setStatus("1");
             article.setApproval(new Date());
@@ -101,8 +112,12 @@ public class ArticleController {
 
     @ResponseBody
     @RequestMapping("/article_down")
-    public boolean goodsDown(Long id) {
+    public boolean goodsDown(Long id, @AuthenticationPrincipal PhAdmin admin) {
         PhArticle article = articleService.findOne(id);
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            return false;
+        }
         if (article != null){
             article.setStatus("0");
             articleService.save(article);
