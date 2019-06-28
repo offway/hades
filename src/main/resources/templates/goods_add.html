@@ -1211,6 +1211,8 @@
 
 	var isAdmin = [[${isAdmin}]];
 
+
+
 	jQuery(document).ready(function ($) {
         $.base64.utf8encode = true;
         $.base64.utf8decode = true;
@@ -1258,6 +1260,8 @@
 			}
 			$("#styleDIV").html(str);
 		});
+
+
 
 		$(document).on("wheel", "input[type=number]", function (e) {
 			$(this).blur();
@@ -1318,6 +1322,14 @@
 
 			if (type == '' || category == '' || name == '' || code == '' || brand_id == '' || price == '' || material.trim() == '' || imageImg == '') {
 				toastr.error("请填写完整数据后提交", "温馨提示");
+				return;
+			}
+			if ($("input[name='style']:checkbox:checked").length<1){
+				toastr.error("最少选择一个风格", "温馨提示");
+				return;
+			}
+			if ($("input[name='style']:checkbox:checked").length>2){
+				toastr.error("最多选择两个风格", "温馨提示");
 				return;
 			}
 

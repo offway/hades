@@ -45,12 +45,12 @@ public class ArticleController {
 
     @ResponseBody
     @RequestMapping("/article_list")
-    public Map<String, Object> getList(HttpServletRequest request) {
+    public Map<String, Object> getList(HttpServletRequest request,String name, String tag, String status, String title, String type) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "id"), new Sort.Order(Sort.Direction.ASC, "sort"));
-        Page<PhArticle> pages = articleService.findAll( new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhArticle> pages = articleService.findAll(name,tag,status,title,type, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
@@ -104,6 +104,7 @@ public class ArticleController {
         }
         if (article != null){
             article.setStatus("1");
+            article.setApprover("管理员");
             article.setApproval(new Date());
             articleService.save(article);
         }
@@ -120,6 +121,7 @@ public class ArticleController {
         }
         if (article != null){
             article.setStatus("0");
+            article.setApprover("管理员");
             articleService.save(article);
         }
         return true;

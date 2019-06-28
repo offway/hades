@@ -20,4 +20,6 @@ public interface PhArticleService{
 	Page<PhArticle> findAll(Pageable pageable);
 
 	void del(Long id);
+
+	Page<PhArticle> findAll(String name, String tag, String status, String title, String type, Pageable pageable);
 }
