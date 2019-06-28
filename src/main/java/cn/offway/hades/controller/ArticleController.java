@@ -108,7 +108,7 @@ public class ArticleController {
         }
         if (article != null){
             article.setStatus("1");
-            article.setApprover("管理员");
+            article.setApprover(admin.getNickname());
             article.setApproval(new Date());
             articleService.save(article);
         }
@@ -125,7 +125,7 @@ public class ArticleController {
         }
         if (article != null){
             article.setStatus("0");
-            article.setApprover("管理员");
+            article.setApprover(admin.getNickname());
             articleService.save(article);
         }
         return true;
