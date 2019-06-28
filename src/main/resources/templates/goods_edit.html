@@ -9,312 +9,312 @@
 	<link rel="stylesheet" href="assets/css/jquery-editable-select.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
+		.form-group img{
+			max-width:400px;
+			max-height:300px;
+		}
 	</style>
 </head>
 <body class="page-body">
 
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">商品修改</h1>
-					<p class="activityDescription"></p>
-				</div>
+<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
 
-				<div class="breadcrumb-env">
+	<div th:replace="sidebar-menu"></div>
+	<div class="main-content">
+		<!-- User Info, Notifications and activity Bar -->
+		<nav th:replace="navbar"></nav>
+		<div class="page-title">
 
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>商品修改</strong></li>
-					</ol>
+			<div class="title-env">
+				<h1 class="title">商品修改</h1>
+				<p class="activityDescription"></p>
+			</div>
 
-				</div>
+			<div class="breadcrumb-env">
+
+				<ol class="breadcrumb bc-1">
+					<li><a href="/"><i class="fa-home"></i>Home</a></li>
+					<li><a>系统管理</a></li>
+					<li class="active"><strong>商品修改</strong></li>
+				</ol>
 
 			</div>
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title">商品修改</h3>
-							<div class="panel-options">
-<!--								<a href="#" data-toggle="panel">-->
-<!--									<span class="collapse-icon">–</span>-->
-<!--									<span class="expand-icon">+</span>-->
-<!--								</a>-->
-<!--								<a href="#" data-toggle="remove">-->
-<!--									×-->
-<!--								</a>-->
+
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">商品修改</h3>
+						<div class="panel-options">
+							<!--								<a href="#" data-toggle="panel">-->
+							<!--									<span class="collapse-icon">–</span>-->
+							<!--									<span class="expand-icon">+</span>-->
+							<!--								</a>-->
+							<!--								<a href="#" data-toggle="remove">-->
+							<!--									×-->
+							<!--								</a>-->
+						</div>
+					</div>
+					<div class="panel-body">
+						<form role="form" id="saveForm" class="form-horizontal">
+							<input type="hidden" name="id"/>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="field-1" class="control-label">*商品类别</label>
+										<select class="form-control" id="field-1" name="type" placeholder="商品类别" onchange="renderCategory(this)">
+										</select>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="field-2" class="control-label">*商品子类别</label>
+										<select class="form-control" id="field-2" name="category" placeholder="商品子类别">
+										</select>
+									</div>
+								</div>
 							</div>
-						</div>
-						<div class="panel-body">
-							<form role="form" id="saveForm" class="form-horizontal">
-									<input type="hidden" name="id"/>
-									<div class="row">
-										<div class="col-md-6">
-											<div class="form-group">
-												<label for="field-1" class="control-label">*商品类别</label>
-												<select class="form-control" id="field-1" name="type" placeholder="商品类别" onchange="renderCategory(this)">
-												</select>
-											</div>
-										</div>
-										<div class="col-md-6">
-											<div class="form-group">
-												<label for="field-2" class="control-label">*商品子类别</label>
-												<select class="form-control" id="field-2" name="category" placeholder="商品子类别">
-												</select>
-											</div>
-										</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-3" class="control-label">*名称</label>
+										<input type="text" class="form-control" id="field-3" name="name" placeholder="名称" />
 									</div>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="form-group">
-												<label for="field-3" class="control-label">*名称</label>
-												<input type="text" class="form-control" id="field-3" name="name" placeholder="名称" />
-											</div>
-										</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-10" class="control-label">*货号</label>
+										<input type="text" class="form-control" id="field-10" name="code" placeholder="货号" />
 									</div>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="form-group">
-												<label for="field-10" class="control-label">*货号</label>
-												<input type="text" class="form-control" id="field-10" name="code" placeholder="货号" />
-											</div>
-										</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-4" class="control-label">*封面图片</label>
+										<input type="file" class="form-control" id="field-4" name="imageFile" placeholder="封面图片" />
+										<input type="hidden" class="form-control" name="image" />
+										<img alt="" src="" name="imageImg" style="display:none;" />
 									</div>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="form-group">
-												<label for="field-4" class="control-label">*封面图片</label>
-												<input type="file" class="form-control" id="field-4" name="imageFile" placeholder="封面图片" />
-												<input type="hidden" class="form-control" name="image" />
-												<img alt="" src="" name="imageImg" style="display:none;" />
-											</div>
-										</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-2">
+									<div class="form-group">
+										<label class="control-label">banner 轮播图</label>
+										<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+										<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
+										<input type="hidden" class="form-control" name="banner" />
+										<img alt="" src="" name="bannerImg" style="display:none;" />
 									</div>
-									<div class="row">
-										<div class="col-md-2">
-											<div class="form-group">
-												<label class="control-label">banner 轮播图</label>
-												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
-												<input type="hidden" class="form-control" name="banner" />
-												<img alt="" src="" name="bannerImg" style="display:none;" />
-											</div>
-										</div>
-										<div class="col-md-2">
-											<div class="form-group">
-												<label class="control-label">banner 轮播图</label>
-												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
-												<input type="hidden" class="form-control" name="banner" />
-												<img alt="" src="" name="bannerImg" style="display:none;" />
-											</div>
-										</div>
-										<div class="col-md-2">
-											<div class="form-group">
-												<label class="control-label">banner 轮播图</label>
-												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
-												<input type="hidden" class="form-control" name="banner" />
-												<img alt="" src="" name="bannerImg" style="display:none;" />
-											</div>
-										</div>
-										<div class="col-md-2">
-											<div class="form-group">
-												<label class="control-label">banner 轮播图</label>
-												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
-												<input type="hidden" class="form-control" name="banner" />
-												<img alt="" src="" name="bannerImg" style="display:none;" />
-											</div>
-										</div>
-										<div class="col-md-2">
-											<div class="form-group">
-												<label class="control-label">banner 轮播图</label>
-												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
-												<input type="hidden" class="form-control" name="banner" />
-												<img alt="" src="" name="bannerImg" style="display:none;" />
-											</div>
-										</div>
-										<div class="col-md-2">
-											<div class="form-group">
-												<label class="control-label">banner 轮播图</label>
-												<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
-												<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
-												<input type="hidden" class="form-control" name="banner" />
-												<img alt="" src="" name="bannerImg" style="display:none;" />
-											</div>
-										</div>
+								</div>
+								<div class="col-md-2">
+									<div class="form-group">
+										<label class="control-label">banner 轮播图</label>
+										<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+										<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
+										<input type="hidden" class="form-control" name="banner" />
+										<img alt="" src="" name="bannerImg" style="display:none;" />
 									</div>
-									<div class="row" id="introDIV">
-<!--										<div class="col-md-2">-->
-<!--											<div class="form-group">-->
-<!--												<label class="control-label">商品长图</label>-->
-<!--												<input type="file" class="form-control" name="introFile" placeholder="商品长图" onchange="uploadIntroFile(this)"/>-->
-<!--												&lt;!&ndash;<input type="button" class="form-control" value="删除" onclick="delIntroFile(this)"/>&ndash;&gt;-->
-<!--												<input type="hidden" class="form-control" name="intro" />-->
-<!--												<img alt="" src="" name="introImg" style="display:none;" />-->
-<!--											</div>-->
-<!--										</div>-->
-										<div class="col-md-2">
-											<div class="form-group">
-												<input type="button" class="form-control" value="添加" id="addIntroFileBtn" onclick="addIntroFile(this)"/>
-											</div>
-										</div>
+								</div>
+								<div class="col-md-2">
+									<div class="form-group">
+										<label class="control-label">banner 轮播图</label>
+										<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+										<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
+										<input type="hidden" class="form-control" name="banner" />
+										<img alt="" src="" name="bannerImg" style="display:none;" />
 									</div>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="form-group">
-												<label for="field-5" class="control-label">*品牌</label>
-												<select class="form-control" id="field-5" name="brand_id" placeholder="品牌">
-												</select>
-											</div>
-										</div>
+								</div>
+								<div class="col-md-2">
+									<div class="form-group">
+										<label class="control-label">banner 轮播图</label>
+										<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+										<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
+										<input type="hidden" class="form-control" name="banner" />
+										<img alt="" src="" name="bannerImg" style="display:none;" />
 									</div>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="form-group">
-												<label for="field-9" class="control-label">*商家</label>
-												<select class="form-control" id="field-9" name="merchant_id" placeholder="商家"
-														onchange="renderFare(this)">
-												</select>
-											</div>
-										</div>
+								</div>
+								<div class="col-md-2">
+									<div class="form-group">
+										<label class="control-label">banner 轮播图</label>
+										<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+										<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
+										<input type="hidden" class="form-control" name="banner" />
+										<img alt="" src="" name="bannerImg" style="display:none;" />
 									</div>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="form-group">
-												<label for="field-11" class="control-label">运费模板</label>
-												<select class="form-control" id="field-11" name="fare" placeholder="运费模板">
-												</select>
-											</div>
-										</div>
+								</div>
+								<div class="col-md-2">
+									<div class="form-group">
+										<label class="control-label">banner 轮播图</label>
+										<input type="file" class="form-control" name="bannerFile" placeholder="banner 轮播图" onchange="uploadFile(this)"/>
+										<input type="button" class="form-control notMe" name="bannerReset" value="清空图片" onclick="resetImg(this)" style="display:none;"/>
+										<input type="hidden" class="form-control" name="banner" />
+										<img alt="" src="" name="bannerImg" style="display:none;" />
 									</div>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="form-group">
-												<label for="field-6" class="control-label">*当前价格(请与SKU价格保持一致)</label>
-												<input type="number" class="form-control" id="field-6" name="price" placeholder="当前价格(请与SKU价格保持一致)" />
-											</div>
-										</div>
+								</div>
+							</div>
+							<div class="row" id="introDIV">
+								<!--										<div class="col-md-2">-->
+								<!--											<div class="form-group">-->
+								<!--												<label class="control-label">商品长图</label>-->
+								<!--												<input type="file" class="form-control" name="introFile" placeholder="商品长图" onchange="uploadIntroFile(this)"/>-->
+								<!--												&lt;!&ndash;<input type="button" class="form-control" value="删除" onclick="delIntroFile(this)"/>&ndash;&gt;-->
+								<!--												<input type="hidden" class="form-control" name="intro" />-->
+								<!--												<img alt="" src="" name="introImg" style="display:none;" />-->
+								<!--											</div>-->
+								<!--										</div>-->
+								<div class="col-md-2">
+									<div class="form-group">
+										<input type="button" class="form-control" value="添加" id="addIntroFileBtn" onclick="addIntroFile(this)"/>
 									</div>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="form-group">
-												<label class="control-label">*标签</label>
-												<label><input name="tags" class="notMe" type="checkbox" value="0"/>品牌保障</label>
-												<label><input name="tags" class="notMe" id="sevenDay" type="checkbox" value="1" onchange="toggleA(this)"/>7天退换货</label>
-												<label style="display: none"><input name="tags" class="notMe" type="checkbox" value="2"/>限量商品</label>
-												<label><input name="tags" class="notMe" id="noSevenDay" type="checkbox" value="3" onchange="toggleB(this)"/>特殊商品(不支持7天退换货)</label>
-											</div>
-										</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-5" class="control-label">*品牌</label>
+										<select class="form-control" id="field-5" name="brand_id" placeholder="品牌">
+										</select>
 									</div>
-									<div class="row">
-										<div class="col-md-4">
-											<div class="form-group">
-												<label class="control-label"><font color="red">*</font>风格</label>
-												<div id="styleDIV"></div>
-											</div>
-										</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-9" class="control-label">*商家</label>
+										<select class="form-control" id="field-9" name="merchant_id" placeholder="商家"
+												onchange="renderFare(this)">
+										</select>
 									</div>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="form-group">
-												<label class="control-label">*是否有优惠</label>
-												<label><input name="isDiscount" class="notMe" type="radio" value="0"/>有</label>
-												<label><input name="isDiscount" class="notMe" type="radio" checked="checked" value="1"/>没有</label>
-											</div>
-										</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-11" class="control-label">运费模板</label>
+										<select class="form-control" id="field-11" name="fare" placeholder="运费模板">
+										</select>
 									</div>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="form-group originalPrice" style="display: none">
-												<label for="field-6" class="control-label">原价</label>
-												<input type="number" class="form-control" name="originalPrice" placeholder="原价" />
-											</div>
-										</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-6" class="control-label">*当前价格(请与SKU价格保持一致)</label>
+										<input type="number" class="form-control" id="field-6" name="price" placeholder="当前价格(请与SKU价格保持一致)" />
 									</div>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="form-group">
-												<label for="field-7" class="control-label">*材质(20字以内)</label>
-												<input type="text" class="form-control" id="field-7" name="material" placeholder="材质(20字以内)" />
-											</div>
-										</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label class="control-label">*是否有优惠</label>
+										<label><input name="isDiscount" class="notMe" type="radio" value="0"/>有</label>
+										<label><input name="isDiscount" class="notMe" type="radio" checked="checked" value="1"/>没有</label>
 									</div>
-									<div class="row">
-										<div class="col-md-12">
-											<div class="form-group">
-												<label for="field-8" class="control-label">备注</label>
-												<input type="text" class="form-control" id="field-8" name="remark" placeholder="备注" />
-											</div>
-										</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label class="control-label">*标签</label>
+										<label><input name="tags" class="notMe" type="checkbox" value="0"/>品牌保障</label>
+										<label><input name="tags" class="notMe" id="sevenDay" type="checkbox" value="1" onchange="toggleA(this)"/>7天退换货</label>
+										<label style="display: none"><input name="tags" class="notMe" type="checkbox" value="2"/>限量商品</label>
+										<label><input name="tags" class="notMe" id="noSevenDay" type="checkbox" value="3" onchange="toggleB(this)"/>特殊商品(不支持7天退换货)</label>
 									</div>
-<!--									<div class="row">-->
-<!--										<div class="col-md-12">-->
-<!--											<div class="form-group">-->
-<!--												<label class="control-label">商品属性模板</label>-->
-<!--												<label><input type="radio" class="" name="choice" value="0" checked="checked" onclick="switchToCommon()" />通用模板</label>-->
-<!--												<label><input type="radio" class="" name="choice" value="1" onclick="switchToCustom()"/>自定义模板</label>-->
-<!--											</div>-->
-<!--										</div>-->
-<!--									</div>-->
-									<div id="skuProperty">
-										<input id="addMoreAttrButton" style="display: none" type="button" value="添加商品属性(如颜色、尺码等)" onclick="addMoreAttr(this,false)"/>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-4">
+									<div class="form-group">
+										<label class="control-label"><font color="red">*</font>风格</label>
+										<div id="styleDIV"></div>
 									</div>
-									<div id="skuContainer">
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group originalPrice" style="display: none">
+										<label for="field-6" class="control-label">原价</label>
+										<input type="number" class="form-control" name="originalPrice" placeholder="原价" />
 									</div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-info save">保存</button>
-                                    </div>
-							</form>
-						</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-7" class="control-label">*材质(20字以内)</label>
+										<input type="text" class="form-control" id="field-7" name="material" placeholder="材质(20字以内)" />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label for="field-8" class="control-label">备注</label>
+										<input type="text" class="form-control" id="field-8" name="remark" placeholder="备注" />
+									</div>
+								</div>
+							</div>
+							<!--									<div class="row">-->
+							<!--										<div class="col-md-12">-->
+							<!--											<div class="form-group">-->
+							<!--												<label class="control-label">商品属性模板</label>-->
+							<!--												<label><input type="radio" class="" name="choice" value="0" checked="checked" onclick="switchToCommon()" />通用模板</label>-->
+							<!--												<label><input type="radio" class="" name="choice" value="1" onclick="switchToCustom()"/>自定义模板</label>-->
+							<!--											</div>-->
+							<!--										</div>-->
+							<!--									</div>-->
+							<div id="skuProperty">
+								<input id="addMoreAttrButton" style="display: none" type="button" value="添加商品属性(如颜色、尺码等)" onclick="addMoreAttr(this,false)"/>
+							</div>
+							<div id="skuContainer">
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-info save">保存</button>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
-			<footer th:replace="footer"></footer>
 		</div>
+		<footer th:replace="footer"></footer>
 	</div>
-	
-	<div th:replace="body-under"></div>
+</div>
 
-	<div class="modal fade in" id="modal-7" aria-hidden="false" style="display: none;z-index: 2000">
-	</div>
-	<input type="hidden" id="stockHolder" value=""/>
-	<input type="hidden" id="type_and_category_list"/>
-	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script src="assets/js/async.min.js"></script>
-    <script src="assets/js/jquery.base64.js"></script>
-    <script src="assets/js/distpicker.js"></script>
-	<script src="assets/js/jquery-editable-select.min.js"></script>
-	<script th:inline="javascript">
+<div th:replace="body-under"></div>
+
+<div class="modal fade in" id="modal-7" aria-hidden="false" style="display: none;z-index: 2000">
+</div>
+<input type="hidden" id="stockHolder" value=""/>
+<input type="hidden" id="type_and_category_list"/>
+<script src="js/common.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
+<script src="assets/js/daterangepicker/daterangepicker.js"></script>
+<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+<script src="assets/js/select2/select2.min.js"></script>
+<script src="assets/js/async.min.js"></script>
+<script src="assets/js/jquery.base64.js"></script>
+<script src="assets/js/distpicker.js"></script>
+<script src="assets/js/jquery-editable-select.min.js"></script>
+<script th:inline="javascript">
 	/*<![CDATA[*/
 
-    function addMoreImg(self) {
-        var that = $(self);
-        that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
-    }
+	function addMoreImg(self) {
+		var that = $(self);
+		that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
+	}
 
-    function addMoreText(self) {
-        var that = $(self);
-        that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
-    }
+	function addMoreText(self) {
+		var that = $(self);
+		that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
+	}
 
 	function getQNToken(cb) {
 		$.get("/qiniu/token", {}, function (token) {
@@ -447,73 +447,73 @@
 		}
 	}
 
-    function initCommonSku(savedSku) {
-        var commonSku = {
-            "颜色": [
-                // {"value": "赤", "remark": "", "sort": 1},
-                // {"value": "橙", "remark": "", "sort": 2},
-                // {"value": "黄", "remark": "", "sort": 3},
-                // {"value": "绿", "remark": "", "sort": 4},
-                // {"value": "青", "remark": "", "sort": 5},
-                // {"value": "蓝", "remark": "", "sort": 6},
-                // {"value": "紫", "remark": "", "sort": 7}
-            ],
-            "尺码": [
-                // {"value": "大", "remark": "L", "sort": 1},
-                // {"value": "小", "remark": "S", "sort": 2},
-                // {"value": "中", "remark": "M", "sort": 3},
-                // {"value": "特大", "remark": "XL", "sort": 4},
-                // {"value": "特小", "remark": "XS", "sort": 5},
-                // {"value": "特特大", "remark": "XXL", "sort": 6},
-                // {"value": "特特小", "remark": "XXS", "sort": 7}
-            ]
-        };
-        if (savedSku != null) {
-            commonSku = savedSku;
-        }
-        // //添加颜色
-        // addMoreAttr("#addMoreAttrButton", true);
-        // //添加尺码
-        // addMoreAttr("#addMoreAttrButton", true);
-        for (var i in commonSku) {
-            addMoreAttr("#addMoreAttrButton", true);
-        }
-        var attrNameList = $("#skuProperty").find("[name='attrName']");
-        var attrValueList = $("#skuProperty").find("[name='attrValue']");
-        var attrContainerList = $("#skuProperty").find("[name='attrContainer']");
-        var i = 0;
-        for (var name in commonSku) {
-            $(attrNameList[i]).val(name);
-            var vList = [];
-            for (var value in commonSku[name]) {
-                vList.push(commonSku[name][value]["value"]);
-            }
-            $(attrValueList[i]).val(vList.join(","));
-            $(attrContainerList[i]).val(JSON.stringify(commonSku[name]));
-            i++;
-        }
-    }
+	function initCommonSku(savedSku) {
+		var commonSku = {
+			"颜色": [
+				// {"value": "赤", "remark": "", "sort": 1},
+				// {"value": "橙", "remark": "", "sort": 2},
+				// {"value": "黄", "remark": "", "sort": 3},
+				// {"value": "绿", "remark": "", "sort": 4},
+				// {"value": "青", "remark": "", "sort": 5},
+				// {"value": "蓝", "remark": "", "sort": 6},
+				// {"value": "紫", "remark": "", "sort": 7}
+			],
+			"尺码": [
+				// {"value": "大", "remark": "L", "sort": 1},
+				// {"value": "小", "remark": "S", "sort": 2},
+				// {"value": "中", "remark": "M", "sort": 3},
+				// {"value": "特大", "remark": "XL", "sort": 4},
+				// {"value": "特小", "remark": "XS", "sort": 5},
+				// {"value": "特特大", "remark": "XXL", "sort": 6},
+				// {"value": "特特小", "remark": "XXS", "sort": 7}
+			]
+		};
+		if (savedSku != null) {
+			commonSku = savedSku;
+		}
+		// //添加颜色
+		// addMoreAttr("#addMoreAttrButton", true);
+		// //添加尺码
+		// addMoreAttr("#addMoreAttrButton", true);
+		for (var i in commonSku) {
+			addMoreAttr("#addMoreAttrButton", true);
+		}
+		var attrNameList = $("#skuProperty").find("[name='attrName']");
+		var attrValueList = $("#skuProperty").find("[name='attrValue']");
+		var attrContainerList = $("#skuProperty").find("[name='attrContainer']");
+		var i = 0;
+		for (var name in commonSku) {
+			$(attrNameList[i]).val(name);
+			var vList = [];
+			for (var value in commonSku[name]) {
+				vList.push(commonSku[name][value]["value"]);
+			}
+			$(attrValueList[i]).val(vList.join(","));
+			$(attrContainerList[i]).val(JSON.stringify(commonSku[name]));
+			i++;
+		}
+	}
 
-    function switchToCommon(savedSku) {
-        initCommonSku(savedSku);
-        $("#addMoreAttrButton").hide();
-        // generateSKUList();
-    }
+	function switchToCommon(savedSku) {
+		initCommonSku(savedSku);
+		$("#addMoreAttrButton").hide();
+		// generateSKUList();
+	}
 
-    function switchToCustom() {
-        $("#skuProperty").find(".row").remove();
-        $("#addMoreAttrButton").show();
-        generateSKUList();
-    }
+	function switchToCustom() {
+		$("#skuProperty").find(".row").remove();
+		$("#addMoreAttrButton").show();
+		generateSKUList();
+	}
 
-    function delNode(self, refresh) {
-        var that = $(self);
-        var name = that.attr("name");
-        $(".NAME".replace("NAME", name)).remove();
-        if (refresh) {
-            generateSKUList();
-        }
-    }
+	function delNode(self, refresh) {
+		var that = $(self);
+		var name = that.attr("name");
+		$(".NAME".replace("NAME", name)).remove();
+		if (refresh) {
+			generateSKUList();
+		}
+	}
 
 	function addMoreAttr(self, readonly) {
 		var uuid = UUID.randomUUID();
@@ -527,7 +527,7 @@
 		var contentStr = "\t\t\t\t\t<div class=\"row NAME\">\n".replace("NAME", uuid) +
 				"\t\t\t\t\t\t<div class=\"col-md-5\">\n" +
 				"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-                "\t\t\t\t\t\t\t\t<label class=\"control-label\">MAIN</label>\n".replace("MAIN", hasImg ? "主规格名称(如颜色、尺寸)" : "规格名称(如颜色、尺寸)");
+				"\t\t\t\t\t\t\t\t<label class=\"control-label\">MAIN</label>\n".replace("MAIN", hasImg ? "主规格名称(如颜色、尺寸)" : "规格名称(如颜色、尺寸)");
 		if (readonly) {
 			contentStr += "\t\t\t\t\t\t\t\t<input type='text' readonly='readonly' class=\"form-control\" name=\"attrName\" placeholder=\"规格名称(如颜色、尺寸)\" />\n";
 		} else {
@@ -571,19 +571,19 @@
 		return contentStr;
 	}
 
-    function calcHighestSort() {
-        var form = jQuery('#modal-7');
-        var skuSortList = form.find("input[name=skuSort]");
-        var highestSort = 0;
-        for (var i in skuSortList) {
-            if (isNaN(i)) {
-                continue;
-            }
-            var nowSort = parseInt(skuSortList[i].value);
-            highestSort = highestSort >= nowSort ? highestSort : nowSort;
-        }
-        return highestSort;
-    }
+	function calcHighestSort() {
+		var form = jQuery('#modal-7');
+		var skuSortList = form.find("input[name=skuSort]");
+		var highestSort = 0;
+		for (var i in skuSortList) {
+			if (isNaN(i)) {
+				continue;
+			}
+			var nowSort = parseInt(skuSortList[i].value);
+			highestSort = highestSort >= nowSort ? highestSort : nowSort;
+		}
+		return highestSort;
+	}
 
 	function addMoreAttrValue(self, hasImg) {
 		var uuid = UUID.randomUUID();
@@ -662,7 +662,7 @@
 			"\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
 			"\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
 			"\t\t\t\t\t\t\t\t<label for=\"field-6\" class=\"control-label\">操作</label>\n" +
-            "\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control UUID\" name=\"UUID\" value='删除' DELETE onclick=\"delNode(this,false)\" />\n" +
+			"\t\t\t\t\t\t\t\t<input type=\"button\" class=\"form-control UUID\" name=\"UUID\" value='删除' DELETE onclick=\"delNode(this,false)\" />\n" +
 			"\t\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t\t</div>\n" +
 			"\t\t\t\t\t</div>\n";
@@ -789,7 +789,7 @@
 		form.modal('toggle');
 	}
 
-    function generateSKUList(stockList) {
+	function generateSKUList(stockList) {
 		SkuStockList = [];
 		SkuStockDetailList = [];
 		SkuStockSavedList = [];
@@ -809,17 +809,17 @@
 		var attrArr = [];
 		var nameArr = [];
 		var containerArr = [];
-        for (var i in attrValueArr) {
-            if (isNaN(i)) {
-                continue;
-            }
-            var attr = attrValueArr[i].value;
-            var name = attrNameArr[i].value;
-            var containerStr = attrContainerArr[i].value;
-            attrArr.push(attr.split(","));
-            nameArr.push(name);
-            containerArr.push(JSON.parse(containerStr));
-        }
+		for (var i in attrValueArr) {
+			if (isNaN(i)) {
+				continue;
+			}
+			var attr = attrValueArr[i].value;
+			var name = attrNameArr[i].value;
+			var containerStr = attrContainerArr[i].value;
+			attrArr.push(attr.split(","));
+			nameArr.push(name);
+			containerArr.push(JSON.parse(containerStr));
+		}
 		mergeSKURecursively(attrArr, nameArr, containerArr, 0, "", []);
 		var contentStr = "";
 		for (var i in SkuStockList) {
@@ -846,49 +846,49 @@
 		if (contentStr != '') {
 			contentStr = buildButton("<input type=\"button\" name='batch' value=\"批量设置库存数量\" onclick=\"batchSetStockNum()\">", "<input type=\"button\" name='batch' value=\"批量设置价格\" onclick=\"batchSetStockPrice()\">") + contentStr;
 		}
-        target.html(contentStr);
-    }
+		target.html(contentStr);
+	}
 
-    function batchSetStockNum() {
-        var num = prompt("输入库存数量", "0");
-        if (!isNaN(num)) {
-            $("#skuContainer").find("[name='skuStock']").val(num);
-        } else {
-            alert("请输入数字!");
-        }
-    }
+	function batchSetStockNum() {
+		var num = prompt("输入库存数量", "0");
+		if (!isNaN(num)) {
+			$("#skuContainer").find("[name='skuStock']").val(num);
+		} else {
+			alert("请输入数字!");
+		}
+	}
 
-    function batchSetStockPrice() {
-        var num = prompt("输入库存价格", "0");
-        if (!isNaN(num)) {
-            $("#skuContainer").find("[name='skuPrice']").val(num);
-        } else {
-            alert("请输入数字!");
-        }
-    }
+	function batchSetStockPrice() {
+		var num = prompt("输入库存价格", "0");
+		if (!isNaN(num)) {
+			$("#skuContainer").find("[name='skuPrice']").val(num);
+		} else {
+			alert("请输入数字!");
+		}
+	}
 
-    var SkuStockList = [];
-    var SkuStockDetailList = [];
+	var SkuStockList = [];
+	var SkuStockDetailList = [];
 	var SkuStockSavedList = [];
 
-    function mergeSKURecursively(arr, nameArr, containerArr, i, previousItem, skuDetailArr) {
-        for (var obj in arr[i]) {
-            var newPreviousItem = previousItem + arr[i][obj] + "_";
-            var newSkuDetailArr = JSON.parse(JSON.stringify(skuDetailArr));//deep copy
-            newSkuDetailArr.push(
-                {
-                    "name": nameArr[i],
-                    "value": containerArr[i][obj]
-                }
-            );
-            if (arr.hasOwnProperty(i + 1)) {
-                mergeSKURecursively(arr, nameArr, containerArr, i + 1, newPreviousItem, newSkuDetailArr);
-            } else {
-                SkuStockList.push(newPreviousItem);
-                SkuStockDetailList.push(newSkuDetailArr);
-            }
-        }
-    }
+	function mergeSKURecursively(arr, nameArr, containerArr, i, previousItem, skuDetailArr) {
+		for (var obj in arr[i]) {
+			var newPreviousItem = previousItem + arr[i][obj] + "_";
+			var newSkuDetailArr = JSON.parse(JSON.stringify(skuDetailArr));//deep copy
+			newSkuDetailArr.push(
+					{
+						"name": nameArr[i],
+						"value": containerArr[i][obj]
+					}
+			);
+			if (arr.hasOwnProperty(i + 1)) {
+				mergeSKURecursively(arr, nameArr, containerArr, i + 1, newPreviousItem, newSkuDetailArr);
+			} else {
+				SkuStockList.push(newPreviousItem);
+				SkuStockDetailList.push(newSkuDetailArr);
+			}
+		}
+	}
 
 	function buildButton(button1, button2) {
 		return "                        <div class=\"row\">\n" +
@@ -956,10 +956,10 @@
 				"                        </div>";
 	}
 
-    function closeIt() {
-        var that = $("#modal-7");
-        that.toggle();
-    }
+	function closeIt() {
+		var that = $("#modal-7");
+		that.toggle();
+	}
 
 	function closeAndSaveIt() {
 		var that = $("#modal-7");
@@ -995,43 +995,43 @@
 		});
 	}
 
-    function formatTime(time) {
-        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
-    }
+	function formatTime(time) {
+		return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+	}
 
-    function buildImg(url) {
-        return "<img width='100px' height='100px' src='#' />".replace("#", url);
-    }
+	function buildImg(url) {
+		return "<img width='100px' height='100px' src='#' />".replace("#", url);
+	}
 
 
-    function bindTypeSelector(data, v1, v2) {
-        var typeStr = "";
-        var i = 0;
-        for (var j in data) {
-            var type = data[j];
-            if (type["name"] == v1) {
-                i = j;
-                typeStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", type["id"]).replace("KEY", type["name"]);
-            } else {
-                typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["id"]).replace("KEY", type["name"]);
-            }
-        }
-        $("#field-1").html(typeStr);
-        bindCategorySelector(data[i]["sub"], v2);
-    }
+	function bindTypeSelector(data, v1, v2) {
+		var typeStr = "";
+		var i = 0;
+		for (var j in data) {
+			var type = data[j];
+			if (type["name"] == v1) {
+				i = j;
+				typeStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", type["id"]).replace("KEY", type["name"]);
+			} else {
+				typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["id"]).replace("KEY", type["name"]);
+			}
+		}
+		$("#field-1").html(typeStr);
+		bindCategorySelector(data[i]["sub"], v2);
+	}
 
-    function bindCategorySelector(data, v) {
-        var categoryStr = "";
-        for (var category in data) {
-            category = data[category];
-            if (category["name"] == v) {
-                categoryStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", category["id"]).replace("KEY", category["name"]);
-            } else {
-                categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["id"]).replace("KEY", category["name"]);
-            }
-        }
-        $("#field-2").html(categoryStr);
-    }
+	function bindCategorySelector(data, v) {
+		var categoryStr = "";
+		for (var category in data) {
+			category = data[category];
+			if (category["name"] == v) {
+				categoryStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", category["id"]).replace("KEY", category["name"]);
+			} else {
+				categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["id"]).replace("KEY", category["name"]);
+			}
+		}
+		$("#field-2").html(categoryStr);
+	}
 
 	function renderCategory(self) {
 		var jsonStr = $("#type_and_category_list").val();
@@ -1045,65 +1045,65 @@
 		}
 	}
 
-    function bindBrandSelector(data, id) {
-        var brandStr = "";
-        for (var brand in data) {
-            brand = data[brand];
-            if (brand.hasOwnProperty("brandId") && brand.hasOwnProperty("brandName")) {
-                if (brand["brandId"] == id) {
-                    brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
-                } else {
-                    brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
-                }
-            } else {
-                if (brand["id"] == id) {
-                    brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-                } else {
-                    brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-                }
-            }
-        }
-        $("#field-5").html(brandStr);
-    }
+	function bindBrandSelector(data, id) {
+		var brandStr = "";
+		for (var brand in data) {
+			brand = data[brand];
+			if (brand.hasOwnProperty("brandId") && brand.hasOwnProperty("brandName")) {
+				if (brand["brandId"] == id) {
+					brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
+				} else {
+					brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
+				}
+			} else {
+				if (brand["id"] == id) {
+					brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+				} else {
+					brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+				}
+			}
+		}
+		$("#field-5").html(brandStr);
+	}
 
-    function bindMerchantSelector(data, id) {
-        var brandStr = "";
-        for (var brand in data) {
-            brand = data[brand];
-            if (parseInt(brand["id"]) == id) {
-                // brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-                brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-            } else {
-                brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-            }
-        }
-        $("#field-9").html(brandStr);
-        renderFare("#field-9");
-    }
+	function bindMerchantSelector(data, id) {
+		var brandStr = "";
+		for (var brand in data) {
+			brand = data[brand];
+			if (parseInt(brand["id"]) == id) {
+				// brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+				brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			} else {
+				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			}
+		}
+		$("#field-9").html(brandStr);
+		renderFare("#field-9");
+	}
 
-    function bindFareSelector(data) {
-        var brandStr = "";
-        for (var brand in data) {
-            brand = data[brand];
-            if (brand["isDefault" == "1"]) {//isDefault
-                brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["remark"]);
-            } else {
-                brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["remark"]);
-            }
-        }
-        $("#field-11").html(brandStr);
-    }
+	function bindFareSelector(data) {
+		var brandStr = "";
+		for (var brand in data) {
+			brand = data[brand];
+			if (brand["isDefault" == "1"]) {//isDefault
+				brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["remark"]);
+			} else {
+				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["remark"]);
+			}
+		}
+		$("#field-11").html(brandStr);
+	}
 
-    function renderFare(self) {
-        // var id = $(self).val();
-        //延迟1秒触发 等dom 对象ready
-        setTimeout(function () {
-            var id = $(self).parent().find("li.es-visible").val();
-            $.getJSON("/fare_list", {"pid": id}, function (data) {
-                bindFareSelector(data);
-            });
-        }, 1000);
-    }
+	function renderFare(self) {
+		// var id = $(self).val();
+		//延迟1秒触发 等dom 对象ready
+		setTimeout(function () {
+			var id = $(self).parent().find("li.es-visible").val();
+			$.getJSON("/fare_list", {"pid": id}, function (data) {
+				bindFareSelector(data);
+			});
+		}, 1000);
+	}
 
 	function checkImg(list) {
 		var returnList = {};
@@ -1130,43 +1130,43 @@
 	var isAdmin = [[${isAdmin}]];
 
 	jQuery(document).ready(function ($) {
-        $.base64.utf8encode = true;
-        $.base64.utf8decode = true;
+		$.base64.utf8encode = true;
+		$.base64.utf8decode = true;
 
-        if (theId != null) {
-            $.getJSON("/goods_find", {"id": theId}, function (data) {
-                console.log(data);
-                var form = $("#saveForm");
-                var main = data["main"];
-                var imageList = data["imageList"];
-                var propertyList = data["propertyList"];
-                var stockList = data["stockList"];
+		if (theId != null) {
+			$.getJSON("/goods_find", {"id": theId}, function (data) {
+				console.log(data);
+				var form = $("#saveForm");
+				var main = data["main"];
+				var imageList = data["imageList"];
+				var propertyList = data["propertyList"];
+				var stockList = data["stockList"];
 				var stockMap = data["stockMap"];
-                //main
-                for (var i in main) {
-                    var ele = form.find("input[name='" + i + "']");
-                    switch (ele.attr("type")) {
-                        case "radio":
-                            ele.val([main[i]]);
-                            break;
-                        default:
-                            if (main[i] != undefined && !isNaN(main[i]) && String(main[i]).length == 13) {
-                                ele.val(formatTime(main[i]));
-                                $("#" + i).val(formatTime(main[i]));
-                            } else {
-                                ele.val(main[i]);
-                            }
-                    }
-                    form.find("img[name='" + i + "Img']").attr("src", main[i]);
-                    form.find("img[name='" + i + "Img']").attr("width", 200);
-                    form.find("img[name='" + i + "Img']").attr("length", 200);
-                    form.find("img[name='" + i + "Img']").show();
-                }
-                //优惠按钮
-                if (main.hasOwnProperty("originalPrice") && main["originalPrice"] != null) {
-                    form.find("input[name='isDiscount']").val(["0"]);
-                    toggle("0");
-                }
+				//main
+				for (var i in main) {
+					var ele = form.find("input[name='" + i + "']");
+					switch (ele.attr("type")) {
+						case "radio":
+							ele.val([main[i]]);
+							break;
+						default:
+							if (main[i] != undefined && !isNaN(main[i]) && String(main[i]).length == 13) {
+								ele.val(formatTime(main[i]));
+								$("#" + i).val(formatTime(main[i]));
+							} else {
+								ele.val(main[i]);
+							}
+					}
+					form.find("img[name='" + i + "Img']").attr("src", main[i]);
+					form.find("img[name='" + i + "Img']").attr("width", 200);
+					form.find("img[name='" + i + "Img']").attr("length", 200);
+					form.find("img[name='" + i + "Img']").show();
+				}
+				//优惠按钮
+				if (main.hasOwnProperty("originalPrice") && main["originalPrice"] != null) {
+					form.find("input[name='isDiscount']").val(["0"]);
+					toggle("0");
+				}
 				//标签
 				if (main.hasOwnProperty("tag") && main["tag"] != null) {
 					var tag = parseInt(main["tag"]);
@@ -1190,12 +1190,12 @@
 					}
 					$("#styleDIV").html(str);
 				});
-                //分类
-                $.getJSON("/type_and_category_list", {}, function (data) {
-                    $("#type_and_category_list").val(JSON.stringify(data));
-                    bindTypeSelector(data, main["type"], main["category"]);
-                });
-                //品牌
+				//分类
+				$.getJSON("/type_and_category_list", {}, function (data) {
+					$("#type_and_category_list").val(JSON.stringify(data));
+					bindTypeSelector(data, main["type"], main["category"]);
+				});
+				//品牌
 				$.getJSON("/brand_list_all", {}, function (data) {
 					bindBrandSelector(data, main["brandId"]);
 					$('#field-5').editableSelect().on('select.editable-select', function (e, li) {
@@ -1214,11 +1214,11 @@
 						}
 					});
 				});
-                //商家
-                $.getJSON("/merchant_list_all", {}, function (data) {
-                    bindMerchantSelector(data, main["merchantId"]);
-                    $('#field-9').editableSelect();
-                });
+				//商家
+				$.getJSON("/merchant_list_all", {}, function (data) {
+					bindMerchantSelector(data, main["merchantId"]);
+					$('#field-9').editableSelect();
+				});
 				//图片
 				var bannerHide = form.find("[name='banner']");
 				var bannerImg = form.find("[name='bannerImg']");
@@ -1300,62 +1300,62 @@
 				switchToCommon(savedSku);
 				//库存
 				generateSKUList(stockMap);
-            });
-        }
+			});
+		}
 
 		$(document).on("wheel", "input[type=number]", function (e) {
 			$(this).blur();
 		});
 
-        $('[name="isDiscount"]').click(function () {
-            var value = $(this).val();  //获取选中的radio的值
-            toggle(value);
-        });
+		$('[name="isDiscount"]').click(function () {
+			var value = $(this).val();  //获取选中的radio的值
+			toggle(value);
+		});
 
-        function toggle(value) {
-            var theId = $(".originalPrice");
-            switch (parseInt(value)) {
-                case 0:
-                    theId.show();
-                    break;
-                default:
-                    theId.hide();
-                    break;
-            }
-        }
+		function toggle(value) {
+			var theId = $(".originalPrice");
+			switch (parseInt(value)) {
+				case 0:
+					theId.show();
+					break;
+				default:
+					theId.hide();
+					break;
+			}
+		}
 
-        // switchToCommon();
+		// switchToCommon();
 
 
 		//保存
 		$(".btn.btn-info.save").click(function () {
-            var footer = $(this).parent(".modal-footer");
-            var form = $("#saveForm");
-            var type = form.find("select[name='type']").val();
-            var category = form.find("select[name='category']").val();
-            var id = form.find("input[name='id']").val();
-            var name = form.find("input[name='name']").val();
+			var footer = $(this).parent(".modal-footer");
+			var form = $("#saveForm");
+			var type = form.find("select[name='type']").val();
+			var category = form.find("select[name='category']").val();
+			var id = form.find("input[name='id']").val();
+			var name = form.find("input[name='name']").val();
 			var code = form.find("input[name='code']").val();
 			// var brand_id = form.find("select[name='brand_id']").val();
 			var brand_id = form.find("input[name='brand_id']").parent().find("li.es-visible").val();
 			// var merchant_id = form.find("select[name='merchant_id']").val();
 			var merchant_id = form.find("input[name='merchant_id']").parent().find("li.es-visible").val();
-            var price = form.find("input[name='price']").val();
+			var price = form.find("input[name='price']").val();
 			var originalPrice = form.find("input[name='originalPrice']").val();
-            var isDiscount = form.find("input[name='isDiscount']:checked").val();
-            var material = form.find("input[name='material']").val();
-            var remark = form.find("input[name='remark']").val();
+			var isDiscount = form.find("input[name='isDiscount']:checked").val();
+			var material = form.find("input[name='material']").val();
+			var remark = form.find("input[name='remark']").val();
 			var tags = form.find("input[name='tags']:checked");
 			var styles = form.find("input[name='style']:checked");
-            //文件
-            var image = form.find("input[name='imageFile']").val();
-            //已上传的图片地址
-            var imageImg = form.find("input[name='image']").val();
+			//文件
+			var image = form.find("input[name='imageFile']").val();
+			//已上传的图片地址
+			var imageImg = form.find("input[name='image']").val();
 
-            if (type == '' || category == '' || name == '' || code == ''|| brand_id == '' || price == '' || material == '' || (image == '' && imageImg == '')) {
-                toastr.error("请填写完整数据后提交", "温馨提示");
-                return;
-            }
+			if (type == '' || category == '' || name == '' || code == ''|| brand_id == '' || price == '' || material == '' || (image == '' && imageImg == '')) {
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				return;
+			}
 
 			var tag = 0;
 			var tagList = [];
@@ -1373,12 +1373,12 @@
 				return;
 			}
 
-            //多个元素 sku 属性
-            var attrName = form.find("input[name='attrName']");
-            // var attrValue = form.find("input[name='attrValue']").val();//omit
-            var attrContainer = form.find("input[name='attrContainer']");
-            var attrNameList = [];
-            var attrContainerList = [];
+			//多个元素 sku 属性
+			var attrName = form.find("input[name='attrName']");
+			// var attrValue = form.find("input[name='attrValue']").val();//omit
+			var attrContainer = form.find("input[name='attrContainer']");
+			var attrNameList = [];
+			var attrContainerList = [];
 			for (var i in attrName) {
 				if (isNaN(i)) {
 					continue;
@@ -1393,32 +1393,32 @@
 					attrContainerList.push(b);
 				}
 			}
-            //多个元素 sku stock
-            var sku = form.find("input[name='sku']");
-            var skuStock = form.find("input[name='skuStock']");
-            var skuPrice = form.find("input[name='skuPrice']");
-            var skuRemark = form.find("input[name='skuRemark']");
-            var skuImage = form.find("input[name='skuImageFile']");
-            var skuImageSaved = form.find("input[name='skuImage']");
-            var skuDetail = form.find("input[name='skuDetail']");
-            var skuId = form.find("input[name='skuId']");
-            var stockList = [];
-            for (var j in sku) {
-                if (isNaN(j)) {
-                    continue;
-                }
-                var c = sku[j].value;
-                var d = skuStock[j].value;
-                var e = skuPrice[j].value;
-                var f = skuRemark[j].value;
-                var g = skuImage[j].value;
-                var h = skuDetail[j].value;
-                var m = skuId[j].value;
-                var n = skuImageSaved[j].value;
-                if (c == '' || d == '' || e == '' || f == '' || (g == '' && n == '')) {
-                    toastr.error("请填写完整数据后提交", "温馨提示");
-                    return;
-                } else {
+			//多个元素 sku stock
+			var sku = form.find("input[name='sku']");
+			var skuStock = form.find("input[name='skuStock']");
+			var skuPrice = form.find("input[name='skuPrice']");
+			var skuRemark = form.find("input[name='skuRemark']");
+			var skuImage = form.find("input[name='skuImageFile']");
+			var skuImageSaved = form.find("input[name='skuImage']");
+			var skuDetail = form.find("input[name='skuDetail']");
+			var skuId = form.find("input[name='skuId']");
+			var stockList = [];
+			for (var j in sku) {
+				if (isNaN(j)) {
+					continue;
+				}
+				var c = sku[j].value;
+				var d = skuStock[j].value;
+				var e = skuPrice[j].value;
+				var f = skuRemark[j].value;
+				var g = skuImage[j].value;
+				var h = skuDetail[j].value;
+				var m = skuId[j].value;
+				var n = skuImageSaved[j].value;
+				if (c == '' || d == '' || e == '' || f == '' || (g == '' && n == '')) {
+					toastr.error("请填写完整数据后提交", "温馨提示");
+					return;
+				} else {
 					stockList.push({
 						"id": m,
 						"sku": c,
@@ -1428,61 +1428,61 @@
 						"image": g == '' ? n : skuImage[j].files[0],
 						"detail": h
 					});
-                }
-            }
-            //banner 轮播图
-            var banner = form.find("input[name='banner']");
-            var bannerList = [];
-            for (var k in banner) {
-                if (isNaN(k)) {
-                    continue;
-                }
-                var bUrl = banner[k].value;
-                if (bUrl == '') {
-                    //skip
-                } else {
-                    bannerList.push(bUrl);
-                }
-            }
-            //商品长图
-            var intro = form.find("input[name='intro']");
-            var introList = [];
-            for (var l in intro) {
-                if (isNaN(l)) {
-                    continue;
-                }
-                var iUrl = intro[l].value;
-                if (iUrl == '') {
-                    //skip
-                } else {
-                    introList.push(iUrl);
-                }
-            }
+				}
+			}
+			//banner 轮播图
+			var banner = form.find("input[name='banner']");
+			var bannerList = [];
+			for (var k in banner) {
+				if (isNaN(k)) {
+					continue;
+				}
+				var bUrl = banner[k].value;
+				if (bUrl == '') {
+					//skip
+				} else {
+					bannerList.push(bUrl);
+				}
+			}
+			//商品长图
+			var intro = form.find("input[name='intro']");
+			var introList = [];
+			for (var l in intro) {
+				if (isNaN(l)) {
+					continue;
+				}
+				var iUrl = intro[l].value;
+				if (iUrl == '') {
+					//skip
+				} else {
+					introList.push(iUrl);
+				}
+			}
 			//获取token
 			$.get("/qiniu/token", {}, function (token) {
 				if (token != '') {
 					async.series({
 						one: function (callback) {
 							async.eachSeries(stockList, function (item, cb) {
-                                var f = item["image"];
-                                if (f instanceof File) {
-                                    this.upload("", token, f, function () {
-                                        //
-                                    }, function (err) {
-                                        console.log("上传imageFile异常:" + err);
-                                        cb(err);
-                                    }, function (res) {
-                                        //上传成功
-                                        if (res != '') {
-                                            var url = qiniuUrl + "/" + res.key;
-                                            item["image"] = url;
-                                        }
-                                        cb();
-                                    });
-                                } else {
-                                    item["image"] = f;
-                                    cb();
-                                }
+								var f = item["image"];
+								if (f instanceof File) {
+									this.upload("", token, f, function () {
+										//
+									}, function (err) {
+										console.log("上传imageFile异常:" + err);
+										cb(err);
+									}, function (res) {
+										//上传成功
+										if (res != '') {
+											var url = qiniuUrl + "/" + res.key;
+											item["image"] = url;
+										}
+										cb();
+									});
+								} else {
+									item["image"] = f;
+									cb();
+								}
 							}, function () {
 								callback();
 							});
@@ -1509,7 +1509,7 @@
 							});
 						},
 						three: function (callback) {
-                            //提交保存
+							//提交保存
 							var data = {
 								"id": id,
 								"name": name,
@@ -1521,7 +1521,7 @@
 								"category": category,
 								"price": price,
 								"originalPrice": originalPrice,
-                                "isDiscount": isDiscount,
+								"isDiscount": isDiscount,
 								"material": material,
 								"remark": remark,
 								"stocks": JSON.stringify(stockList),
@@ -1563,7 +1563,7 @@
 		});
 	});
 	/*]]>*/
-	</script>
+</script>
 </body>
 
 </html>

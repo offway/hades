@@ -56,17 +56,18 @@ public class ArticleController {
     @ResponseBody
     @RequestMapping("/article_save")
     public boolean save(PhArticle brand) {
-        if(brand.getId() == null){
+        if(brand.getId() == null) {
             brand.setCreateTime(new Date());
             brand.setStatus("0");
+        }else {
+            PhArticle article = articleService.findOne(brand.getId());
+            brand.setStatus(article.getStatus());
+            brand.setCreateTime(article.getCreateTime());
+            brand.setApprover(article.getApprover());
+            brand.setApproval(article.getApproval());
+            brand.setApprovalContent(article.getApprovalContent());
+            brand.setRemark(article.getRemark());
         }
-        PhArticle article = articleService.findOne(brand.getId());
-        brand.setStatus(article.getStatus());
-        brand.setCreateTime(article.getCreateTime());
-        brand.setApprover(article.getApprover());
-        brand.setApproval(article.getApproval());
-        brand.setApprovalContent(article.getApprovalContent());
-        brand.setRemark(article.getRemark());
         articleService.save(brand);
         return true;
     }
@@ -82,6 +83,29 @@ public class ArticleController {
     public boolean delete(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {
             articleService.del(id);
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/article_up")
+    public boolean goodsUp(Long id) {
+        PhArticle article = articleService.findOne(id);
+        if (article != null){
+            article.setStatus("1");
+            article.setApproval(new Date());
+            articleService.save(article);
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/article_down")
+    public boolean goodsDown(Long id) {
+        PhArticle article = articleService.findOne(id);
+        if (article != null){
+            article.setStatus("0");
+            articleService.save(article);
         }
         return true;
     }

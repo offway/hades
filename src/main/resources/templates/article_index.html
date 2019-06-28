@@ -122,21 +122,21 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="control-label">文章视频</label>
-                                <input type="file" class="form-control" name="videoFile" placeholder="文章视频" onchange="uploadMainFile(this,'1')"/>
-                                <input type="hidden" class="form-control" name="video"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
                                 <label class="control-label">文章类型</label>
                                 <label><input name="type" class="notMe" type="radio" value="0" checked="checked"/>资讯
                                 </label>
-                                <label><input name="type" class="notMe" type="radio" value="1" checked="checked"/>专题
+                                <label><input name="type" class="notMe" type="radio" value="1" />专题
                                 </label>
                                 <label><input name="type" class="notMe" type="radio" value="2"/>视频</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="videodiv" class="row" style="display: none">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">文章视频</label>
+                                <input type="file" class="form-control" name="videoFile" placeholder="文章视频" onchange="uploadMainFile(this,'1')"/>
+                                <input type="hidden" class="form-control" name="video"/>
                             </div>
                         </div>
                     </div>
@@ -235,6 +235,15 @@
                 console.log(name);
             }
         });
+    });
+
+    $('input[type=radio][name=type]').change(function() {
+        if (this.value == '2') {
+            $('#videodiv').show();
+        }
+        else {
+            $('#videodiv').hide();
+        }
     });
 
     function addMoreImg(self) {
@@ -451,6 +460,46 @@
         that.before(str);
     }
 
+    function upIt(id, self) {
+        $.post("/article_up", {"id": id}, function (data) {
+            if (data) {
+                $(self).val("下架");
+                //remove old handler
+                $(self).prop("onclick", null);
+                $(self).removeAttr("onclick");
+                $(self).off("click");
+                //bind new
+                $(self).on("click", function () {
+                    downIt(id, self);
+                });
+                toastr.success("操作已成功！", "温馨提示");
+                oTable.fnDraw();
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+    function downIt(id, self) {
+        $.post("/article_down", {"id": id}, function (data) {
+            if (data) {
+                $(self).val("上架");
+                //remove old handler
+                $(self).prop("onclick", null);
+                $(self).removeAttr("onclick");
+                $(self).off("click");
+                //bind new
+                $(self).on("click", function () {
+                    upIt(id, self);
+                });
+                toastr.success("操作已成功！", "温馨提示");
+                oTable.fnDraw();
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
     var qiniuUrl = [[${qiniuUrl}]];
 
 
@@ -543,9 +592,7 @@
                     data: "status",
                     title: "状态",
                     render: function (data,type,row,meta) {
-                        /** 状态[0-待审核，1-通过，2-不通过] **/
-                        var map = ["待审核","通过","不通过"];
-                        return map[parseInt(data)];
+                        return (data == "0" || data == undefined) ? "<font color='red'>未上架</font>" : "已上架";
                     }
                 },
                 {
@@ -569,25 +616,35 @@
                 {
                     targets: 14,
                     data: "approver",
-                    title: "审批人"
+                    title: "操作人"
                 },
                 {
                     targets: 15,
                     data: "approval",
-                    title: "审批时间",
+                    title: "上架时间",
                     render: function (data, type, row, meta) {
                         return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
                     }
                 },
                 {
                     targets: 16,
-                    data: "approvalContent",
-                    title: "拒绝原因"
+                    data: "remark",
+                    title: "备注"
                 },
                 {
                     targets: 17,
-                    data: "remark",
-                    title: "备注"
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        var str = "";
+                        if (full["status"] == "0") {
+                            str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+                        } else {
+                            str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+                        }
+                        return str;
+                    }
                 }
             ]
         });
@@ -636,8 +693,6 @@
                     break;
             }
         }
-
-
 
         //保存
         $(".btn.btn-info.save").click(function () {
@@ -690,6 +745,49 @@
                     footer.find(".bg-lg").hide();
                     toastr.error("操作失败", "温馨提示");
                 }
+            });
+        });
+
+
+        $(".btn.btn-info.pass").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
+
+            $.post("/article_get", {id: activityId.val()}, function (data) {
+                var form = $("#saveForm");
+                form.find("div.toDel").remove();
+                var goodsList = data["goodsIds"];
+                form.find("input:not(.notMe)").val("");
+                var content = data["content"];
+                editor.html(content);
+                for (var i in data) {
+                    var ele = form.find("input[name='" + i + "']");
+                    switch (ele.attr("type")) {
+                        case "radio":
+                            ele.val([data[i]]);
+                            toggle(data[i]);
+                            break;
+                        default:
+                            ele.val(data[i]);
+                    }
+                    form.find("img[name='" + i + "Img']").attr("src", data[i]);
+                    form.find("img[name='" + i + "Img']").show();
+                }
+
+                //商品
+                if (goodsList){
+                    var list = goodsList.split(',');
+                    for (var k in list) {
+                        addMoreTextAeticle("#addMoreTextEle", list[k]);
+                    }
+
+                }
+
+                form.find(".btn.image").show();
+                jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
             });
         });
 

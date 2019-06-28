@@ -41,7 +41,7 @@ public class PhArticle implements Serializable {
     /** 推荐商品id,多个以,相隔 **/
     private String goodsIds;
 
-    /** 状态[0-待审核，1-通过，2-不通过] **/
+    /** 状态[0-未上架，1-已上架] **/
     private String status;
 
     /** 浏览数 **/
