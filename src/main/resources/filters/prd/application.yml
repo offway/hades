@@ -57,6 +57,7 @@ ph:
   file: 
     path: /usr/local/images/product
     server: https://pic.offway.cn:8443/images/product
+  url: https://zeus.offway.cn
 qiniu:
   url: http://qiniu.offway.cn
   access-key: WU33Cpp1WJZAf4oIIHknc2ga3ZhQpgJo3UL-JUdB

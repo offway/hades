@@ -595,10 +595,11 @@
                 },
                 {
                     targets: 8,
-                    data: "content",
+                    data: "id",
                     title: "内容",
                     render: function (data,type,row,meta) {
-                        return "请在修改中查看内容";
+                        var url = [[${url}]];
+                        return "<a style='color: red;' target='_blank'  href=\""+url+"/article/info/"+data+".html\">预览</a>";
                     }
                 },
                 {

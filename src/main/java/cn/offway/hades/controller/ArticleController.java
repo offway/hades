@@ -9,6 +9,7 @@ import cn.offway.hades.service.PhRoleadminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -36,10 +37,13 @@ public class ArticleController {
     private PhArticleService articleService;
     @Autowired
     private PhRoleadminService roleadminService;
+    @Value("${ph.url}")
+    private  String url;
 
     @RequestMapping("/article.html")
     public String index(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("url", url);
         return "article_index";
     }
 
