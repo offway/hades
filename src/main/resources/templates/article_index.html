@@ -92,6 +92,10 @@
             <button class="btn btn-info add">添加</button>
             <button class="btn btn-info edit">修改</button>
             <button class="btn btn-info del">删除</button>
+            <button class="btn btn-danger tagList">标签列表</button>
+            <button class="btn btn-danger tagListPin">推荐标签列表</button>
+            <button class="btn btn-danger syncRecommend">同步推荐</button>
+            <button class="btn btn-danger syncType">同步分类</button>
         </div>
 
 
@@ -227,7 +231,7 @@
             <div class="modal-body" id="preview_body"></div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-white save" id="savePin" data-dismiss="modal">保存</button>
+                <button type="button" class="btn btn-danger save" id="saveBtn" data-dismiss="modal">保存</button>
                 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
             </div>
         </div>
@@ -364,8 +368,6 @@
         that.remove();
     }
 
-
-
     var table_global;
 
     function toggleTopIt(id) {
@@ -459,6 +461,7 @@
             confirm("未选择任何文件!");
         }
     }
+
     function getQNToken(cb) {
         $.get("/qiniu/token", {}, function (token) {
             cb(token);
@@ -519,8 +522,21 @@
         });
     }
 
-    var qiniuUrl = [[${qiniuUrl}]];
+    function delParentNode(self) {
+        $(self).parent().parent().remove();
+    }
 
+    function pinTag(tag) {
+        $.post("/article_attachTag", {"value": tag}, function (data) {
+            if (data) {
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+    var qiniuUrl = [[${qiniuUrl}]];
 
     jQuery(document).ready(function ($) {
         var oTable = $("#example-1").dataTable({
@@ -768,7 +784,6 @@
             });
         });
 
-
         $(".btn.btn-info.pass").click(function () {
             var activityId = $("input[name='activityId']:checked");
             if (activityId.length != 1) {
@@ -872,6 +887,106 @@
                 if (data) {
                     toastr.success("操作已成功！", "温馨提示");
                     oTable.fnDraw();
+                }
+            });
+        });
+
+        $(".btn.btn-danger.tagList").click(function () {
+            $.getJSON("/article_tagList", {}, function (data) {
+                if (data) {
+                    var preview = $("#preview_body");
+                    var contentStr = "";
+                    for (var key in data) {
+                        var valueEle = '<input type="text" value="VV" readonly="readonly" name="value">'.replace("VV", key);
+                        var delBtn = '<input type="button" value="删除" onclick="delParentNode(this)" >';
+                        var pinBtn = '<input type="button" value="推荐" onclick="pinTag(\'VV\')" >'.replace("VV", key);
+                        contentStr += appendToPreviewList(valueEle, "", delBtn, "", pinBtn, "");
+                    }
+                    preview.html(contentStr);
+                    preview.sortable();
+                    preview.disableSelection();
+                    var submit = $("#saveBtn");
+                    submit.off("click");
+                    submit.click(function () {
+                        var value = preview.find("input[name='value']");
+                        var values = [];
+                        value.each(function (i, e) {
+                            values.push(e.value);
+                        });
+                        $.post("/article_saveTags", {"values": values}, function (data) {
+                            if (data) {
+                                toastr.success("操作已成功！", "温馨提示");
+                            }
+                        });
+                    });
+                    jQuery('#preview').modal('show', {backdrop: 'fade'});
+                    toastr.success("操作已成功！", "温馨提示");
+                }
+            });
+        });
+
+        $(".btn.btn-danger.tagListPin").click(function () {
+            $.getJSON("/article_pinTagList", {}, function (data) {
+                if (data) {
+                    var preview = $("#preview_body");
+                    var contentStr = "";
+                    for (var i in data) {
+                        var item = data[i];
+                        var nameEle = '<input type="text" value="VV" readonly="readonly" name="name">'.replace("VV", item["name"] === '' ? " " : item["name"]);
+                        var textEle = '<input type="text" value="VV" readonly="readonly" name="text">'.replace("VV", item["text"] === '' ? " " : item["text"]);
+                        var valueEle = '<input type="text" value="VV" readonly="readonly" name="value">'.replace("VV", item["value"] === '' ? " " : item["value"]);
+                        var delBtn = '<input type="button" value="删除" onclick="delParentNode(this)" >';
+                        contentStr += appendToPreviewList(nameEle, "", textEle, "", valueEle, delBtn);
+                    }
+                    preview.html(contentStr);
+                    preview.sortable();
+                    preview.disableSelection();
+                    var submit = $("#saveBtn");
+                    submit.off("click");
+                    submit.click(function () {
+                        var name = preview.find("input[name='name']");
+                        var text = preview.find("input[name='text']");
+                        var value = preview.find("input[name='value']");
+                        var names = [];
+                        var texts = [];
+                        var values = [];
+                        name.each(function (i, e) {
+                            names.push(e.value);
+                        });
+                        text.each(function (i, e) {
+                            texts.push(e.value);
+                        });
+                        value.each(function (i, e) {
+                            values.push(e.value);
+                        });
+                        $.post("/article_savePinTags", {
+                            "names": names,
+                            "texts": texts,
+                            "values": values
+                        }, function (data) {
+                            if (data) {
+                                toastr.success("操作已成功！", "温馨提示");
+                            }
+                        });
+                    });
+                    jQuery('#preview').modal('show', {backdrop: 'fade'});
+                    toastr.success("操作已成功！", "温馨提示");
+                }
+            });
+        });
+
+        $(".btn.btn-danger.syncRecommend").click(function () {
+            $.post("/article_syncRecommend", {}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                }
+            });
+        });
+
+        $(".btn.btn-danger.syncType").click(function () {
+            $.post("/article_syncType", {}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
                 }
             });
         });
