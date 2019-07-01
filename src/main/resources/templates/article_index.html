@@ -140,6 +140,14 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">文章标签</label>
+                                <input type="text" class="form-control" name="tag" placeholder="文章标签"/>
+                            </div>
+                        </div>
+                    </div>
                     <div id="videodiv" class="row" style="display: none">
                         <div class="col-md-12">
                             <div class="form-group">
@@ -159,21 +167,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div id="contentdiv" class="row">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="control-label">文章内容</label>
                                 <textarea id="editor_id"  style="width:700px;height:300px;" placeholder="文章内容">
 									</textarea>
                                 <input type="hidden" class="form-control" name="content" placeholder="文章内容"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="control-label">文章标签</label>
-                                <input type="text" class="form-control" name="tag" placeholder="文章标签"/>
                             </div>
                         </div>
                     </div>
@@ -198,7 +198,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="control-label">点赞数</label>
-                                <input type="number" class="form-control" value="0" name="praiseCount" placeholder="文章点赞数s"/>
+                                <input type="number" class="form-control" value="0" name="praiseCount" placeholder="文章点赞数"/>
                             </div>
                         </div>
                     </div>
@@ -259,9 +259,11 @@
     $('input[type=radio][name=type]').change(function() {
         if (this.value == '2') {
             $('#videodiv').show();
+            $('#contentdiv').hide();
         }
         else {
             $('#videodiv').hide();
+            $('#contentdiv').show();
         }
     });
 
@@ -745,7 +747,7 @@
             form.find("input[name='goodsIds']").val(gidArrSame.join(","));
             var goodsIds = form.find("input[name='goodsIds']").val();
 
-            if (name == '' || title == '' || image == '' || type==''|| tag==''||content==''||viewCount=='') {
+            if (name == '' || title == '' || image == '' || type==''|| tag==''||viewCount=='') {
                 toastr.error("请填写完整数据后提交", "温馨提示");
                 footer.find("button").show();
                 footer.find(".bg-lg").hide();
