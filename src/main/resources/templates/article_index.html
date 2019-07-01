@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
     <link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
     <link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
+    <link rel="stylesheet" href="assets/css/selectize.bootstrap3.css"/>
     <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
     <style type="text/css">
         .form-group img {
@@ -135,6 +136,15 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
+                                <label class="control-label">文章标签</label>
+                                <select class="form-control" name="tag" id="tag" multiple="multiple"></select>
+                                <input type="hidden" class="form-control" name="tagStr" value=""/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
                                 <label class="control-label">文章类型</label>
                                 <label><input name="type" class="notMe" type="radio" value="0" checked="checked"/>资讯
                                 </label>
@@ -170,14 +180,6 @@
                                 <textarea id="editor_id"  style="width:700px;height:300px;" placeholder="文章内容">
 									</textarea>
                                 <input type="hidden" class="form-control" name="content" placeholder="文章内容"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="control-label">文章标签</label>
-                                <input type="text" class="form-control" name="tag" placeholder="文章标签"/>
                             </div>
                         </div>
                     </div>
@@ -245,6 +247,7 @@
 <script src="assets/kindeditor-4.1.12/kindeditor-all-min.js"></script>
 <script src="assets/kindeditor-4.1.12/lang/zh-CN.js"></script>
 <script src="assets/js/jquery-ui.min.js"></script>
+<script src="assets/js/selectize.min.js"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
 
@@ -536,6 +539,14 @@
         });
     }
 
+    function bindTagSelectorNew(data) {
+        var brandStr = "";
+        for (var brand in data) {
+            brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand).replace("KEY", brand);
+        }
+        return brandStr;
+    }
+
     var qiniuUrl = [[${qiniuUrl}]];
 
     jQuery(document).ready(function ($) {
@@ -708,9 +719,30 @@
             form.find("div.toDel").remove();
             form.find("input[type='file']").show();
             form.find("input[type='radio']").val(["0"]);
+            editor.html("");
             toggle("0");
-            $(".imageShow").remove();
-            jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+            //tag
+            $.getJSON("/article_tagList", {}, function (innerData) {
+                var that = $("#tag");
+                that.selectize()[0].selectize.clear();
+                that.selectize()[0].selectize.destroy();
+                var contentStr = bindTagSelectorNew(innerData);
+                that.html(contentStr);
+                that.selectize({
+                    // "plugins": ['drag_drop', 'remove_button'],
+                    // "items": arr,
+                    "persist": false,
+                    "create": true,
+                    "maxItems": null,
+                    "delimiter": ",",
+                    "hideSelected": true,
+                    "sortField": "text",
+                    "searchField": ['text'],
+                    "placeholder": "选择TAG"
+                });
+                $(".imageShow").remove();
+                jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+            });
         });
 
         $('[name="type"]').click(function () {
@@ -853,18 +885,42 @@
                     form.find("img[name='" + i + "Img']").attr("src", data[i]);
                     form.find("img[name='" + i + "Img']").show();
                 }
-
                 //商品
                 if (goodsList){
                     var list = goodsList.split(',');
                     for (var k in list) {
                         addMoreTextAeticle("#addMoreTextEle", list[k]);
                     }
-
                 }
-
-                form.find(".btn.image").show();
-                jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+                //tag
+                $.getJSON("/article_tagList", {}, function (innerData) {
+                    var that = $("#tag");
+                    that.selectize()[0].selectize.clear();
+                    that.selectize()[0].selectize.destroy();
+                    var arr = data["tag"].split(",");
+                    var contentStr = bindTagSelectorNew(innerData);
+                    for (var i in arr) {
+                        i = arr[i];
+                        if (!innerData.hasOwnProperty(i)) {
+                            contentStr += '<option value="VALUE">KEY</option>'.replace("VALUE", i).replace("KEY", i);
+                        }
+                    }
+                    that.html(contentStr);
+                    that.selectize({
+                        // "plugins": ['drag_drop', 'remove_button'],
+                        "items": arr,
+                        "persist": false,
+                        "create": true,
+                        "maxItems": null,
+                        "delimiter": ",",
+                        "hideSelected": true,
+                        "sortField": "text",
+                        "searchField": ['text'],
+                        "placeholder": "选择TAG"
+                    });
+                    form.find(".btn.image").show();
+                    jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+                });
             });
         });
 
