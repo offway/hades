@@ -1123,6 +1123,13 @@
 		return returnList;
 	}
 
+    function limitMax(self) {
+        if ($("input[name='style']:checked").length > 2) {
+            $(self).removeProp("checked");
+            alert("最多只能选择两项!");
+        }
+    }
+
 	var qiniuUrl = [[${qiniuUrl}]];
 
 	var theId = [[${theId}]];
@@ -1186,7 +1193,7 @@
 					var str = "";
 					for (var i in data["data"]) {
 						var item = data["data"][i];
-						str += "<label><input name=\"style\" class=\"notMe\" type=\"checkbox\" STATUS value=\"NAME\"/>NAME</label>".replace(/NAME/g, item["value"]).replace("STATUS", checked.indexOf(item["value"]) >= 0 ? "checked='checked'" : "");
+                        str += "<label><input name=\"style\" class=\"notMe\" type=\"checkbox\" STATUS value=\"NAME\" onchange='limitMax(this)'/>NAME</label>".replace(/NAME/g, item["value"]).replace("STATUS", checked.indexOf(item["value"]) >= 0 ? "checked='checked'" : "");
 					}
 					$("#styleDIV").html(str);
 				});

@@ -242,7 +242,6 @@
                     data: "id",
                     width: "5%",
                     orderable: false,
-                    className: 'reorder',
                     title: '<input type="checkbox" id="checkbox-all"/>',
                     render: function (data, type, full, meta) {
                         return '<input type="checkbox" name="activityId" value="' + data + '" />';
@@ -266,11 +265,7 @@
                         return buildImg(data);
                     }
                 }
-            ],
-            rowReorder: {
-                dataSrc: 'id',
-                selector: 'tr'
-            }
+            ]
 		});
 
 		table_global = oTable;
