@@ -48,6 +48,13 @@ public class BannerController {
         return "banner_index";
     }
 
+    @RequestMapping("/banner_other.html")
+    public String indexOther(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("position", 3);
+        return "banner_index";
+    }
+
     @RequestMapping("/banner_list")
     @ResponseBody
     public Map<String, Object> getAll(HttpServletRequest request, String position) {
