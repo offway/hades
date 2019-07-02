@@ -53,7 +53,7 @@ public class BrandController {
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         String name = request.getParameter("name");
         String type = request.getParameter("type");
-        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "isRecommend"), new Sort.Order(Sort.Direction.ASC, "sort"));
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "isRecommend"), new Sort.Order(Sort.Direction.ASC, "sort"), new Sort.Order(Sort.Direction.ASC, "id"));
         Page<PhBrand> pages = brandService.findAll(name, type, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
