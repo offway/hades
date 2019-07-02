@@ -7,8 +7,12 @@ import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhArticleService;
 import cn.offway.hades.service.PhConfigService;
 import cn.offway.hades.service.PhRoleadminService;
+import cn.offway.hades.service.QiniuService;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.qiniu.common.Zone;
+import com.qiniu.http.Response;
+import com.qiniu.storage.UploadManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +27,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.security.auth.login.Configuration;
 import javax.servlet.http.HttpServletRequest;
+import java.io.*;
 import java.math.BigInteger;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping
@@ -36,6 +44,8 @@ public class ArticleController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private QiniuProperties qiniuProperties;
+    @Autowired
+    private QiniuService qiniuService;
     @Autowired
     private PhArticleService articleService;
     @Autowired
@@ -176,12 +186,14 @@ public class ArticleController {
 
     @ResponseBody
     @RequestMapping("/article_save")
-    public boolean save(PhArticle brand) {
+    public boolean save(PhArticle brand) throws IOException {
         if (brand.getId() == null) {
+            brand.setContent(filterWxPicAndReplace(brand.getContent()));
             brand.setCreateTime(new Date());
             brand.setStatus("0");
         } else {
             PhArticle article = articleService.findOne(brand.getId());
+            brand.setContent(filterWxPicAndReplace(brand.getContent()));
             brand.setStatus(article.getStatus());
             brand.setCreateTime(article.getCreateTime());
             brand.setApprover(article.getApprover());
@@ -249,5 +261,71 @@ public class ArticleController {
             articleService.save(article);
         }
         return true;
+    }
+
+
+    private String filterWxPicAndReplace(String content) throws IOException {
+        Pattern p_image;
+        Matcher m_image;
+        String regEx_img = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
+        p_image = Pattern.compile(regEx_img, Pattern.CASE_INSENSITIVE);
+        m_image = p_image.matcher(content);
+        StringBuffer m_imageBuffer = new StringBuffer();
+        while (m_image.find()) {
+            // 得到<img />数据
+            String img = m_image.group();
+            // 匹配<img>中的src数据
+            Matcher m = Pattern.compile("src\\s*=\\s*\"?(.*?)(\"|>|\\s+)").matcher(img);
+            StringBuffer imgBuffer = new StringBuffer();
+            while (m.find()) {
+                // img图片地址
+                String oldImgSrc = m.group(1);
+                String newImgSrc = "";
+                if (null != oldImgSrc && !"".equals(oldImgSrc) && oldImgSrc.indexOf("http://qiniu.offway.cn")<0) {
+
+                    newImgSrc = getQiniuImg(oldImgSrc);
+                    m.appendReplacement(imgBuffer,"src=\"" + newImgSrc + "\"");
+                    System.out.println("newImgSrc:::::::::::::::"+newImgSrc);
+                }else{
+                    m.appendReplacement(imgBuffer,"src=\"" + oldImgSrc + "\"");
+                    System.out.println("oldImgSrc:::::::::::::::"+oldImgSrc);
+                }
+            }
+
+
+            m.appendTail(imgBuffer);
+            String string = java.util.regex.Matcher.quoteReplacement(imgBuffer.toString());
+            m_image.appendReplacement(m_imageBuffer,string);
+        }
+        m_image.appendTail(m_imageBuffer);
+        return m_imageBuffer.toString();
+    }
+    private  String getQiniuImg(String url) throws  IOException{
+        InputStream file  = parseFile(new URL(url));
+        return uploadImg(file);
+    }
+
+    private InputStream parseFile(URL url) throws IOException{
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        //设置超时间为3秒
+        conn.setConnectTimeout(3*1000);
+        //防止屏蔽程序抓取而返回403错误
+        conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+        //得到输入流
+        return conn.getInputStream();
+    }
+
+    private String uploadImg(InputStream file) throws IOException{
+        return qiniuService.qiniuUpload(file);
+    }
+    private  byte[] readInputStream(InputStream inputStream) throws IOException {
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        while((len = inputStream.read(buffer)) != -1) {
+            bos.write(buffer, 0, len);
+        }
+        bos.close();
+        return bos.toByteArray();
     }
 }
