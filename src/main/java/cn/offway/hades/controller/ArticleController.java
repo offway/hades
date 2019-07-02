@@ -281,7 +281,7 @@ public class ArticleController {
                 // img图片地址
                 String oldImgSrc = m.group(1);
                 String newImgSrc = "";
-                if (null != oldImgSrc && !"".equals(oldImgSrc)) {
+                if (null != oldImgSrc && !"".equals(oldImgSrc) && oldImgSrc.indexOf("http://qiniu.offway.cn")<0) {
 
                     newImgSrc = getQiniuImg(oldImgSrc);
                     m.appendReplacement(imgBuffer,"src=\"" + newImgSrc + "\"");
