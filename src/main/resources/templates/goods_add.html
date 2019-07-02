@@ -1327,18 +1327,29 @@
             //已上传的图片地址
             var imageImg = form.find("input[name='image']").val();
 
-			if (type == '' || category == '' || name == '' || code == '' || brand_id == '' || price == '' || material.trim() == '' || imageImg == '') {
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				return;
+            if (category == '42'||category =='45'||category=='46'||category=='48'||category=='50'||category=='51') {
+
+				if (type == '' || category == '' || name == '' || code == '' || brand_id == '' || price == '' || material.trim() == '' || imageImg == '') {
+					toastr.error("请填写完整数据后提交", "温馨提示");
+					return;
+				}
+				if ($("input[name='style']:checkbox:checked").length<1){
+					toastr.error("最少选择一个风格", "温馨提示");
+					return;
+				}
+				if ($("input[name='style']:checkbox:checked").length>2){
+					toastr.error("最多选择两个风格", "温馨提示");
+					return;
+				}
+
+			}else {
+				if (type == '' || name == '' || code == '' || brand_id == '' || price == '' || material.trim() == '' || imageImg == '') {
+					toastr.error("请填写完整数据后提交", "温馨提示");
+					return;
+				}
 			}
-			if ($("input[name='style']:checkbox:checked").length<1){
-				toastr.error("最少选择一个风格", "温馨提示");
-				return;
-			}
-			if ($("input[name='style']:checkbox:checked").length>2){
-				toastr.error("最多选择两个风格", "温馨提示");
-				return;
-			}
+
+			
 
 			var tag = 0;
 			var tagList = [];
