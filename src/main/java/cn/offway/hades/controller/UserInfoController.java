@@ -89,11 +89,23 @@ public class UserInfoController {
             for (Object uid : roleadminService.findAdminIdByRoleId(channelRoleId)) {
                 PhAdmin obj = adminService.findOne(((BigInteger) uid).longValue());
                 if (obj != null && !ret.containsKey(obj.getUsername())) {
-                    ret.put(obj.getUsername(), obj.getNickname());
+                    if ("wsd".equals(obj.getUsername().toLowerCase())) {
+                        for (int i = 1; i <= 10; i++) {
+                            ret.put(obj.getUsername() + i, obj.getNickname() + i);
+                        }
+                    } else {
+                        ret.put(obj.getUsername(), obj.getNickname());
+                    }
                 }
             }
         } else if (roles.contains(BigInteger.valueOf(channelRoleId))) {
-            ret.put(admin.getUsername(), admin.getNickname());
+            if ("wsd".equals(admin.getUsername().toLowerCase())) {
+                for (int i = 1; i <= 10; i++) {
+                    ret.put(admin.getUsername() + i, admin.getNickname() + i);
+                }
+            } else {
+                ret.put(admin.getUsername(), admin.getNickname());
+            }
         } else {
             ret.put("", "全部");
         }
