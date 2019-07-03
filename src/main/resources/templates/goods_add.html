@@ -1508,6 +1508,14 @@
 									toastr.error("操作失败", "温馨提示");
 									callback("ERROR");
 								}
+							}).fail(function (error) {
+								console.log(error);
+								if (error && parseInt(error.status) == 500) {
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									toastr.error("出错，请检查提交数据", "温馨提示");
+									callback("ERROR");
+								}
 							});
 						}
 					}, function (err, results) {

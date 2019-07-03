@@ -27,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -901,6 +902,7 @@ public class GoodsController {
     }
 
     @ResponseBody
+    @Transactional
     @RequestMapping("/goods_add")
     public Object add(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount, Boolean fromInner, @RequestParam(name = "tagList[]", required = false) Long[] tagList, @RequestParam(name = "styleList[]", required = false) String[] styleList) throws UnsupportedEncodingException {
         long tag = 0;
