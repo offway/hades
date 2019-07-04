@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -340,6 +341,7 @@ public class RefundController {
     }
 
     @ResponseBody
+    @Transactional
     @RequestMapping("/refund_allow")
     public boolean allow(Long id, @AuthenticationPrincipal PhAdmin admin) {
         PhRefund refund = refundService.findOne(id);
@@ -359,6 +361,15 @@ public class RefundController {
                 break;
             case "3":
                 refund.setStatus("4");
+                /* 是否整单退款[0-否,1-是] **/
+                if ("1".equals(refund.getIsComplete())) {
+                    PhOrderInfo orderInfo = orderInfoService.findOne(refund.getOrderNo());
+                    if (orderInfo != null) {
+                        /* 状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
+                        orderInfo.setStatus("4");
+                        orderInfoService.save(orderInfo);
+                    }
+                }
                 break;
             default:
                 break;
