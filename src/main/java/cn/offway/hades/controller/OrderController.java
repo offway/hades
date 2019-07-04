@@ -180,6 +180,18 @@ public class OrderController {
             feeInfo.put("amount", orderInfo.getAmount());
             feeInfoList.add(feeInfo);
             dataList.put("feeInfo", feeInfoList);
+            //退款、退货信息
+            List<Map> refundInfoList = new ArrayList<>();
+            PhRefund refund = refundService.findOne(orderInfo.getOrderNo());
+            if (refund != null && "0".equals(refund.getIsComplete())) {
+                for (PhRefundGoods refundGoods : refundGoodsService.listByPid(refund.getId())) {
+                    Map<String, Object> refundInfo = new HashMap<>();
+                    refundInfo.put("orderGoodsId", refundGoods.getOrderGoodsId());
+                    refundInfo.put("goodsCount", refundGoods.getGoodsCount());
+                    refundInfoList.add(refundInfo);
+                }
+            }
+            dataList.put("refundInfo", refundInfoList);
         }
         map.addAttribute("jsonStr", JSON.toJSONString(dataList));
         return "order_detail";
