@@ -62,29 +62,16 @@ window.upload = function upload(param, token, file, next, error, complete, sizeL
             var observable = qiniu.upload(file, newFileName, token,
                 putExtra, config);
             observable.subscribe(next, error, function (res, err) {
-                $.getJSON("/qiniu/authorization",{},function (data) {
+                var param = {};
+                var queryStr = "pfop?bucket=AAA&key=BBB&fops=CCC&pipeline=DDD".replace("AAA","offwaypro").replace("BBB",newFileName).replace("CCC","avthumb/m3u8/noDomain/1").replace("DDD","video");
+                param["urlSign"] = queryStr;
+                param["url"] = "https://api.qiniu.com/pfop/";
+                param["key"] = newFileName;
+                param["fops"] = "avthumb/m3u8/noDomain/1";
+                param["pipeline"] = "video";
+                console.log(param);
+                $.getJSON("/qiniu/pfop",param,function (data) {
                     console.log(data);//object
-                    $.ajax({
-                        url: "https://api.qiniu.com/pfop/",
-                        type: 'post',
-                        headers: {
-                            "Authorization": data["Authorization"] ,
-                            "Content-Type": "application/x-www-form-urlencoded",
-                            "Host": "api.qiniu.com"
-                        },
-                        data: {
-                            "bucket": "offwaypro",
-                            "key": newFileName,
-                            "fops": "xxxx",
-                            "pipeline": "xxxxxx"
-                        },
-                        success: function () {
-                            complete(res);
-                        },
-                        error: function () {
-                            complete('');
-                        }
-                    });
                 })
             });
         } else {
