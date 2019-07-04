@@ -8,10 +8,7 @@ import com.qiniu.util.StringMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,13 +31,16 @@ public class QiniuController {
     private QiniuService qiniuService;
 
     @GetMapping("/token")
-    public String token() {
+    public String token(@RequestParam(name = "isVideo", required = false) String isVideo) {
         try {
             Auth auth = Auth.create(qiniuProperties.getAccessKey(), qiniuProperties.getSecretKey());
             StringMap putPolicy = new StringMap();
-            putPolicy.put("returnBody", "{\"key\":\"$(key)\",\"hash\":\"$(etag)\",\"bucket\":\"$(bucket)\",\"fsize\":$(fsize),\"fname\":$(fname),\"param\":\"$(x:param)\"}");
-            String upToken = auth.uploadToken(qiniuProperties.getBucket(), null, qiniuProperties.getExpireSeconds(), putPolicy);
-            return upToken;
+            if (isVideo != null) {
+                putPolicy.put("returnBody", "{\"key\":\"$(key)\",\"hash\":\"$(etag)\",\"bucket\":\"$(bucket)\",\"fsize\":$(fsize),\"fname\":$(fname),\"param\":\"$(x:param)\"}");
+            } else {
+                putPolicy.put("returnBody", "{\"key\":\"$(key)\",\"hash\":\"$(etag)\",\"bucket\":\"$(bucket)\",\"fsize\":$(fsize),\"fname\":$(fname),\"param\":\"$(x:param)\"}");
+            }
+            return auth.uploadToken(qiniuProperties.getBucket(), null, qiniuProperties.getExpireSeconds(), putPolicy);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("获取七牛上传文件token异常", e);

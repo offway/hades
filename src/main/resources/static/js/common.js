@@ -61,19 +61,7 @@ window.upload = function upload(param, token, file, next, error, complete, sizeL
             var newFileName = "video/wx/" + UUID.randomUUID() + postf;
             var observable = qiniu.upload(file, newFileName, token,
                 putExtra, config);
-            observable.subscribe(next, error, function (res, err) {
-                var param = {};
-                var queryStr = "pfop?bucket=AAA&key=BBB&fops=CCC&pipeline=DDD".replace("AAA","offwaypro").replace("BBB",newFileName).replace("CCC","avthumb/m3u8/noDomain/1").replace("DDD","video");
-                param["urlSign"] = queryStr;
-                param["url"] = "https://api.qiniu.com/pfop/";
-                param["key"] = newFileName;
-                param["fops"] = "avthumb/m3u8/noDomain/1";
-                param["pipeline"] = "video";
-                console.log(param);
-                $.getJSON("/qiniu/pfop",param,function (data) {
-                    console.log(data);//object
-                })
-            });
+            observable.subscribe(next, error, complete);
         } else {
             getImgSize(file, function (w, h) {
                 var filename = file.name;

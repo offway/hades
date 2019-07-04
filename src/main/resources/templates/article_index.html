@@ -467,7 +467,11 @@
     }
 
     function getQNToken(cb) {
-        $.get("/qiniu/token", {}, function (token) {
+        var param = {};
+        if (true) {
+            param["isVideo"] = 1;
+        }
+        $.get("/qiniu/token", param, function (token) {
             cb(token);
         });
     }
