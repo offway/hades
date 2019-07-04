@@ -62,27 +62,30 @@ window.upload = function upload(param, token, file, next, error, complete, sizeL
             var observable = qiniu.upload(file, newFileName, token,
                 putExtra, config);
             observable.subscribe(next, error, function (res, err) {
-                $.ajax({
-                    url: "https://api.qiniu.com/pfop/",
-                    type: 'post',
-                    headers: {
-                        "Authorization": "QBox " + token,
-                        "Content-Type": "application/x-www-form-urlencoded",
-                        "Host": "api.qiniu.com"
-                    },
-                    data: {
-                        "bucket": "offwaypro",
-                        "key": newFileName,
-                        "fops": "xxxx",
-                        "pipeline": "xxxxxx"
-                    },
-                    success: function () {
-                        complete(res);
-                    },
-                    error: function () {
-                        complete('');
-                    }
-                });
+                $.getJSON("/qiniu/authorization",{},function (data) {
+                    console.log(data);//object
+                    $.ajax({
+                        url: "https://api.qiniu.com/pfop/",
+                        type: 'post',
+                        headers: {
+                            "Authorization": data["Authorization"] ,
+                            "Content-Type": "application/x-www-form-urlencoded",
+                            "Host": "api.qiniu.com"
+                        },
+                        data: {
+                            "bucket": "offwaypro",
+                            "key": newFileName,
+                            "fops": "xxxx",
+                            "pipeline": "xxxxxx"
+                        },
+                        success: function () {
+                            complete(res);
+                        },
+                        error: function () {
+                            complete('');
+                        }
+                    });
+                })
             });
         } else {
             getImgSize(file, function (w, h) {
