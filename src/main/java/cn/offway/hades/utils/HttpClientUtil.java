@@ -116,6 +116,50 @@ public class HttpClientUtil {
         } 
 		return result;
 	}
+
+	public static String postWithHeader(String url, Map<String, String> paramMap, Map<String, String> headerMap) {
+		logger.info("HTTP POST请求URL{};请求参数：{}", url, paramMap.toString());
+		String result = "";
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+
+		try {
+			HttpPost httppost = new HttpPost(url);
+			for (String key : headerMap.keySet()) {
+				httppost.addHeader(key, headerMap.get(key));
+			}
+			List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+			for (Map.Entry<String, String> entry : paramMap.entrySet()) {
+				nvps.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+			}
+			httppost.setEntity(new UrlEncodedFormEntity(nvps));
+
+			CloseableHttpResponse response = httpClient.execute(httppost);
+			try {
+				int statusCode = response.getStatusLine().getStatusCode();
+				if (HttpStatus.SC_OK == statusCode || HttpStatus.SC_CREATED == statusCode
+						|| HttpStatus.SC_ACCEPTED == statusCode) {
+					HttpEntity responseEntity = response.getEntity();
+					if (responseEntity != null) {
+						result = EntityUtils.toString(responseEntity, "UTF-8");
+						logger.info("HTTP POST请求结果:{}", result);
+					}
+				}
+			} finally {
+				response.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("http请求错误", e);
+		} finally {
+			// 关闭连接,释放资源
+			try {
+				httpClient.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
 	
 	/**
 	 * GET请求

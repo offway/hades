@@ -2,6 +2,7 @@ package cn.offway.hades.controller;
 
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.QiniuService;
+import cn.offway.hades.utils.HttpClientUtil;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -51,6 +53,23 @@ public class QiniuController {
     public Map<String, Object> authorization(String url) {
         Auth auth = Auth.create(qiniuProperties.getAccessKey(), qiniuProperties.getSecretKey());
         return auth.authorization(url).map();
+    }
+
+    @RequestMapping("/pfop")
+    public String pfop(String urlSign, String url, String key, String fops, String pipeline) {
+        Object auth = authorization(urlSign).get("Authorization");
+        //parameters
+        Map<String, String> param = new HashMap<>();
+        param.put("bucket", qiniuProperties.getBucket());
+        param.put("key", key);
+        param.put("fops", fops);
+        param.put("pipeline", pipeline);
+        //headers
+        Map<String, String> header = new HashMap<>();
+        header.put("Authorization", String.valueOf(auth));
+        header.put("Content-Type", "application/x-www-form-urlencoded");
+        header.put("Host", "api.qiniu.com");
+        return HttpClientUtil.postWithHeader(url, param, header);
     }
 
     @PostMapping("/delete")
