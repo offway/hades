@@ -75,6 +75,8 @@ public class OrderController {
     private PhRoleadminService roleadminService;
     @Autowired
     private PhRefundService refundService;
+    @Autowired
+    private PhRefundGoodsService refundGoodsService;
 
     @RequestMapping("/order.html")
     public String index(ModelMap map, String theId) {
@@ -231,6 +233,12 @@ public class OrderController {
             Map m = objectMapper.convertValue(item, Map.class);
             m.put("sub", orderGoodsService.findAllByPid(item.getOrderNo()));
             m.put("price_alt", item.getPrice() * getRatioOfMerchant(item.getMerchantId()));
+            PhRefund refund = refundService.findOne(item.getOrderNo());
+            if (refund != null && "0".equals(refund.getIsComplete())) {
+                m.put("refund", refundGoodsService.listByPid(refund.getId()));
+            } else {
+                m.put("refund", null);
+            }
             list.add(m);
         }
         map.put("aData", list);//数据集合
