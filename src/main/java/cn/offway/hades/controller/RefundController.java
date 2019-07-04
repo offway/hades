@@ -30,6 +30,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -62,6 +63,12 @@ public class RefundController {
     @RequestMapping("/refund.html")
     public String index(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            map.addAttribute("isAdmin", "0");
+        } else {
+            map.addAttribute("isAdmin", "1");
+        }
         return "refund_index";
     }
 

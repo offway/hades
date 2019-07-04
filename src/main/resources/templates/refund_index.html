@@ -379,6 +379,8 @@
 
 	var qiniuUrl = [[${qiniuUrl}]];
 
+	var isAdmin = [[${isAdmin}]];
+
     jQuery(document).ready(function($)
 	{
 		jQuery.datetimepicker.setLocale('zh');
@@ -574,17 +576,17 @@
 						/* 类型[0-仅退款,1-退货退款,2-换货] **/
 						var type = parseInt(full["type"]);
 						if (status == 0) {
-							if (type == 0) {
+							if (type == 0 && isAdmin == 1) {
 								str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="退款审核"/>';
-							} else if (type == 1) {
+							} else if (type == 1 && isAdmin == 0) {
 								str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="退货退款审核"/>';
-							} else {
+							} else if (isAdmin == 0) {
 								str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="换货审核"/>';
 							}
-						} else if (status == 2) {
+						} else if (status == 2 && isAdmin == 0) {
 							str += '<input type="button" onclick="trackOrder(' + data + ')" value="退货追踪"/>';
 							str += '<input type="button" onclick="confirmDelivery(' + data + ')" value="确认收货"/>';
-						} else if (status == 3) {
+						} else if (status == 3 && isAdmin == 1) {
 							str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="确认打款"/>';
 						}
                         return str;
