@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <head th:replace="head"></head>
-    <title>文章管理</title>
+    <title>资讯管理</title>
     <link rel="stylesheet" href="assets/js/select2/select2.css"/>
     <link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
     <link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
@@ -29,7 +29,7 @@
         <div class="page-title">
 
             <div class="title-env">
-                <h1 class="title">文章管理</h1>
+                <h1 class="title">资讯管理</h1>
                 <p class="activityDescription"></p>
             </div>
 
@@ -38,7 +38,7 @@
                 <ol class="breadcrumb bc-1">
                     <li><a href="/"><i class="fa-home"></i>Home</a></li>
                     <li><a>系统管理</a></li>
-                    <li class="active"><strong>文章管理</strong></li>
+                    <li class="active"><strong>资讯管理</strong></li>
                 </ol>
 
             </div>
@@ -61,13 +61,13 @@
                             </select>
                         </div>
                         <div class="input-group">
-                            <input type="text" name="name" class="form-control" style="height:35px" placeholder="文章名称"/>
+                            <input type="text" name="name" class="form-control" style="height:35px" placeholder="资讯名称"/>
                         </div>
                         <div class="input-group">
                             <input type="text" name="tag" class="form-control" style="height:35px" placeholder="标签"/>
                         </div>
                         <div class="input-group">
-                            <input type="text" name="title" class="form-control" style="height:35px" placeholder="文章标题"/>
+                            <input type="text" name="title" class="form-control" style="height:35px" placeholder="资讯标题"/>
                         </div>
                         <div class="input-group">
                             <label for="status" class="control-box">状态</label>
@@ -111,7 +111,7 @@
         <div class="modal-content" style="width: 800px;">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">添加文章</h4>
+                <h4 class="modal-title">添加资讯</h4>
             </div>
 
             <div class="modal-body">
@@ -120,23 +120,23 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="control-label">文章名称</label>
-                                <input type="text" class="form-control" name="name" placeholder="文章名称"/>
+                                <label class="control-label">资讯名称</label>
+                                <input type="text" class="form-control" name="name" placeholder="资讯名称"/>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="control-label">文章标题</label>
-                                <input type="text" class="form-control" name="title" placeholder="文章标题"/>
+                                <label class="control-label">资讯标题</label>
+                                <input type="text" class="form-control" name="title" placeholder="资讯标题"/>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="control-label">文章标签</label>
+                                <label class="control-label">资讯标签</label>
                                 <select class="form-control" name="tag" id="tag" multiple="multiple"></select>
                             </div>
                         </div>
@@ -144,7 +144,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="control-label">文章类型</label>
+                                <label class="control-label">资讯类型</label>
                                 <label><input name="type" class="notMe" type="radio" value="0" checked="checked"/>资讯
                                 </label>
                                 <label><input name="type" class="notMe" type="radio" value="1" />专题
@@ -156,8 +156,8 @@
                     <div id="videodiv" class="row" style="display: none">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="control-label">文章视频</label>
-                                <input type="file" class="form-control" name="videoFile" placeholder="文章视频" onchange="uploadMainFile(this,'1')"/>
+                                <label class="control-label">资讯视频</label>
+                                <input type="file" class="form-control" name="videoFile" placeholder="资讯视频" onchange="uploadMainFile(this,'1')"/>
                                 <input type="hidden" class="form-control" name="video"/>
                             </div>
                         </div>
@@ -165,8 +165,8 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="control-label">文章图片</label>
-                                <input type="file" class="form-control" name="imageFile" placeholder="文章图片" onchange="uploadMainFile(this,'0')"/>
+                                <label class="control-label">资讯图片</label>
+                                <input type="file" class="form-control" name="imageFile" placeholder="资讯图片" onchange="uploadMainFile(this,'0')"/>
                                 <input type="hidden" class="form-control" name="image"/>
                                 <img alt="" src="" name="imageImg" style="display:none;"/>
                             </div>
@@ -175,10 +175,10 @@
                     <div id="contentdiv" class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label class="control-label">文章内容</label>
-                                <textarea id="editor_id"  style="width:700px;height:300px;" placeholder="文章内容">
+                                <label class="control-label">资讯内容</label>
+                                <textarea id="editor_id"  style="width:700px;height:300px;" placeholder="资讯内容">
 									</textarea>
-                                <input type="hidden" class="form-control" name="content" placeholder="文章内容"/>
+                                <input type="hidden" class="form-control" name="content" placeholder="资讯内容"/>
                             </div>
                         </div>
                     </div>
@@ -195,7 +195,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="control-label">浏览数</label>
-                                <input type="number" class="form-control" value="0" name="viewCount" placeholder="文章浏览数"/>
+                                <input type="number" class="form-control" value="0" name="viewCount" placeholder="资讯浏览数"/>
                             </div>
                         </div>
                     </div>
@@ -203,7 +203,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="control-label">点赞数</label>
-                                <input type="number" class="form-control" value="0" name="praiseCount" placeholder="文章点赞数"/>
+                                <input type="number" class="form-control" value="0" name="praiseCount" placeholder="资讯点赞数"/>
                             </div>
                         </div>
                     </div>
