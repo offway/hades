@@ -100,6 +100,7 @@
 				<button class="btn btn-info add">添加</button>
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
+				<button class="btn btn-danger sendCode">派发优惠券</button>
 			</div>
 			
 					
@@ -575,6 +576,27 @@
 			var form = $("#saveForm");
 			form.find("input:not(.notMe)").val("");
 			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+		});
+
+		$(".btn.btn-danger.sendCode").click(function () {
+			var userId = prompt("输入用户ID", "0");
+			if (isNaN(userId) || userId == null) {
+				alert("请输入数字！");
+			} else {
+				var code = prompt("输入优惠券ID", "0");
+				if (isNaN(code) || code == null) {
+					alert("请输入数字！");
+				} else {
+					var url = "https://zeus.offway.cn/voucher/giveByVpId?userId=AAA&voucherProjectId=BBB".replace("AAA", userId).replace("BBB", code);
+					$.post(url, {}, function (data) {
+						if (data) {
+							toastr.success("操作已成功！", "温馨提示");
+						} else {
+							toastr.error("操作失败", "温馨提示");
+						}
+					});
+				}
+			}
 		});
 
 			 
