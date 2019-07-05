@@ -460,15 +460,15 @@
                     that.parent().find("[name=imageImg]").attr("height", "100px");
                     that.parent().find("[name=imageImg]").show();
                 },sizevideo,bl);
-            });
+            },bol);
         } else {
             confirm("未选择任何文件!");
         }
     }
 
-    function getQNToken(cb) {
+    function getQNToken(cb,bol) {
         var param = {};
-        if (true) {
+        if (bol == 1) {
             param["isVideo"] = 1;
         }
         $.get("/qiniu/token", param, function (token) {

@@ -5,11 +5,13 @@ import cn.offway.hades.service.QiniuService;
 import cn.offway.hades.utils.HttpClientUtil;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +38,11 @@ public class QiniuController {
             Auth auth = Auth.create(qiniuProperties.getAccessKey(), qiniuProperties.getSecretKey());
             StringMap putPolicy = new StringMap();
             if (isVideo != null) {
+                long newdate = DateUtils.addSeconds(new Date(),3600).getTime();
                 putPolicy.put("returnBody", "{\"key\":\"$(key)\",\"hash\":\"$(etag)\",\"bucket\":\"$(bucket)\",\"fsize\":$(fsize),\"fname\":$(fname),\"param\":\"$(x:param)\"}");
+                putPolicy.put("persistentOps","avthumb/mp4");
+                putPolicy.put("persistentNotifyUrl","https://admin.offway.cn/callback/qiniu/avthumb");
+                putPolicy.put("persistentPipeline","video");
             } else {
                 putPolicy.put("returnBody", "{\"key\":\"$(key)\",\"hash\":\"$(etag)\",\"bucket\":\"$(bucket)\",\"fsize\":$(fsize),\"fname\":$(fname),\"param\":\"$(x:param)\"}");
             }

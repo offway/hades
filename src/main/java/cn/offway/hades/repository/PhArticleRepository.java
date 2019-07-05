@@ -4,6 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import cn.offway.hades.domain.PhArticle;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 文章Repository接口
@@ -13,5 +16,8 @@ import cn.offway.hades.domain.PhArticle;
  */
 public interface PhArticleRepository extends JpaRepository<PhArticle,Long>,JpaSpecificationExecutor<PhArticle> {
 
-	/** 此处写一些自定义的方法 **/
+	@Transactional
+	@Modifying
+	@Query(nativeQuery = true,value = "update  ph_article set video = ?2 where video =?1 ")
+	int updateVideoUrl(String video,String url);
 }

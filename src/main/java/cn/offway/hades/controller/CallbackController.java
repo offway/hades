@@ -4,16 +4,14 @@ import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.offway.hades.repository.PhArticleRepository;
+import com.alibaba.fastjson.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -31,6 +29,9 @@ public class CallbackController {
     private JPushService jPushService;
     @Autowired
     private PhRefundService refundService;
+
+    @Autowired
+    private PhArticleRepository phArticleRepository;
     
     @Value("${meqia.key}")
     private String meqiaKey;
@@ -104,4 +105,18 @@ public class CallbackController {
         }
     	return "success";
 	}
+
+    @ResponseBody
+    @PostMapping("/qiniu/avthumb")
+    public String avthumb(@RequestBody String content){
+        JSONObject jsonObject = JSON.parseObject(content);
+        JSONArray jsonArray =  jsonObject.getJSONArray("items");
+        String key = jsonArray.getJSONObject(0).getString("key");
+        System.out.println(key);
+        String inputKey = jsonObject.getString("inputKey");
+        phArticleRepository.updateVideoUrl("http://qiniu.offway.cn/"+inputKey,"http://qiniu.offway.cn/"+key);
+
+        return "success";
+    }
+
 }
