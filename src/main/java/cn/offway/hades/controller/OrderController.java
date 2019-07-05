@@ -189,6 +189,14 @@ public class OrderController {
                     Map<String, Object> refundInfo = new HashMap<>();
                     refundInfo.put("orderGoodsId", refundGoods.getOrderGoodsId());
                     refundInfo.put("goodsCount", refundGoods.getGoodsCount());
+                    PhGoods goods = goodsService.findOne(refundGoods.getOrderGoodsId());
+                    if (goods != null) {
+                        refundInfo.put("name", goods.getName());
+                        refundInfo.put("image", goods.getImage());
+                    } else {
+                        refundInfo.put("name", "未知");
+                        refundInfo.put("image", "");
+                    }
                     refundInfoList.add(refundInfo);
                 }
             }
