@@ -109,6 +109,7 @@ public class CallbackController {
     @ResponseBody
     @PostMapping("/qiniu/avthumb")
     public String avthumb(@RequestBody String content){
+        logger.info("七牛视频处理结果："+content);
         JSONObject jsonObject = JSON.parseObject(content);
         JSONArray jsonArray =  jsonObject.getJSONArray("items");
         String key = jsonArray.getJSONObject(0).getString("key");
