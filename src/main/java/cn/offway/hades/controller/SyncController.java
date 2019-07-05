@@ -311,32 +311,32 @@ public class SyncController {
         }
     }
 
-    private class TaskGroups {
+    private static class TaskGroups {
         private List<TaskGroupVo> data = new ArrayList<TaskGroupVo>();
         private String error = "";
         private String error_Description = "";
 
-        private List<TaskGroupVo> getData() {
+        public List<TaskGroupVo> getData() {
             return data;
         }
 
-        private void setData(List<TaskGroupVo> data) {
+        public void setData(List<TaskGroupVo> data) {
             this.data = data;
         }
 
-        private String getError() {
+        public String getError() {
             return error;
         }
 
-        private void setError(String error) {
+        public void setError(String error) {
             this.error = error;
         }
 
-        private String getError_Description() {
+        public String getError_Description() {
             return error_Description;
         }
 
-        private void setError_Description(String error_Description) {
+        public void setError_Description(String error_Description) {
             this.error_Description = error_Description;
         }
 
@@ -346,23 +346,23 @@ public class SyncController {
         }
     }
 
-    private class TaskGroupVo {
+    private static class TaskGroupVo {
         private String taskGroupId;
         private String taskGroupName;
 
-        private String getTaskGroupId() {
+        public String getTaskGroupId() {
             return taskGroupId;
         }
 
-        private void setTaskGroupId(String taskGroupId) {
+        public void setTaskGroupId(String taskGroupId) {
             this.taskGroupId = taskGroupId;
         }
 
-        private String getTaskGroupName() {
+        public String getTaskGroupName() {
             return taskGroupName;
         }
 
-        private void setTaskGroupName(String taskGroupName) {
+        public void setTaskGroupName(String taskGroupName) {
             this.taskGroupName = taskGroupName;
         }
 
@@ -372,62 +372,62 @@ public class SyncController {
         }
     }
 
-    private class TaskResp<T> {
+    private static class TaskResp<T> {
         private List<T> data = null;
         private String error = "";
         private String error_Description = "";
 
-        private List<T> getData() {
+        public List<T> getData() {
             return data;
         }
 
-        private void setData(List<T> data) {
+        public void setData(List<T> data) {
             this.data = data;
         }
 
-        private String getError() {
+        public String getError() {
             return error;
         }
 
-        private void setError(String error) {
+        public void setError(String error) {
             this.error = error;
         }
 
-        private String getError_Description() {
+        public String getError_Description() {
             return error_Description;
         }
 
-        private void setError_Description(String error_Description) {
+        public void setError_Description(String error_Description) {
             this.error_Description = error_Description;
         }
     }
 
-    private class BaseResp {
+    private static class BaseResp {
         private NotexportdataVo data;
         private String error = "";
         private String error_Description = "";
 
-        private String getError() {
+        public String getError() {
             return error;
         }
 
-        private void setError(String error) {
+        public void setError(String error) {
             this.error = error;
         }
 
-        private String getError_Description() {
+        public String getError_Description() {
             return error_Description;
         }
 
-        private void setError_Description(String error_Description) {
+        public void setError_Description(String error_Description) {
             this.error_Description = error_Description;
         }
 
-        private NotexportdataVo getData() {
+        public NotexportdataVo getData() {
             return data;
         }
 
-        private void setData(NotexportdataVo data) {
+        public void setData(NotexportdataVo data) {
             this.data = data;
         }
 
@@ -438,41 +438,41 @@ public class SyncController {
         }
     }
 
-    private class NotexportdataVo {
+    private static class NotexportdataVo {
         private Integer total;
         private Integer offset;
         private Integer currentTotal;
         private List<HashMap<String, Object>> dataList;
 
-        private Integer getTotal() {
+        public Integer getTotal() {
             return total;
         }
 
-        private void setTotal(Integer total) {
+        public void setTotal(Integer total) {
             this.total = total;
         }
 
-        private Integer getCurrentTotal() {
+        public Integer getCurrentTotal() {
             return currentTotal;
         }
 
-        private void setCurrentTotal(Integer currentTotal) {
+        public void setCurrentTotal(Integer currentTotal) {
             this.currentTotal = currentTotal;
         }
 
-        private List<HashMap<String, Object>> getDataList() {
+        public List<HashMap<String, Object>> getDataList() {
             return dataList;
         }
 
-        private void setDataList(List<HashMap<String, Object>> dataList) {
+        public void setDataList(List<HashMap<String, Object>> dataList) {
             this.dataList = dataList;
         }
 
-        private Integer getOffset() {
+        public Integer getOffset() {
             return offset;
         }
 
-        private void setOffset(Integer offset) {
+        public void setOffset(Integer offset) {
             this.offset = offset;
         }
 
@@ -483,41 +483,41 @@ public class SyncController {
         }
     }
 
-    private class TokenResp {
+    public static class TokenResp {
         private String access_token;
         private String token_type;
         private String expires_in;
         private String refresh_token;
 
-        private String getAccess_token() {
+        public String getAccess_token() {
             return access_token;
         }
 
-        private void setAccess_token(String access_token) {
+        public void setAccess_token(String access_token) {
             this.access_token = access_token;
         }
 
-        private String getToken_type() {
+        public String getToken_type() {
             return token_type;
         }
 
-        private void setToken_type(String token_type) {
+        public void setToken_type(String token_type) {
             this.token_type = token_type;
         }
 
-        private String getExpires_in() {
+        public String getExpires_in() {
             return expires_in;
         }
 
-        private void setExpires_in(String expires_in) {
+        public void setExpires_in(String expires_in) {
             this.expires_in = expires_in;
         }
 
-        private String getRefresh_token() {
+        public String getRefresh_token() {
             return refresh_token;
         }
 
-        private void setRefresh_token(String refresh_token) {
+        public void setRefresh_token(String refresh_token) {
             this.refresh_token = refresh_token;
         }
 
