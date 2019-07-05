@@ -212,7 +212,7 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-info save">保存</button>
+                <button type="button" id="butsev" class="btn btn-info save">保存</button>
                 <button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
             </div>
 
@@ -266,10 +266,12 @@
         if (this.value == '2') {
             $('#videodiv').show();
             $('#contentdiv').hide();
+            $('#butsev').hide();
         }
         else {
             $('#videodiv').hide();
             $('#contentdiv').show();
+            $('#butsev').show();
         }
     });
 
@@ -452,6 +454,7 @@
                         Filname = 'image';
                     }else if (bol=='1') {
                         Filname = 'video';
+                        $('#butsev').show();
                     }
                     var url = qiniuUrl + "/" + res.key;
                     that.parent().find("[name="+Filname+"]").val(url);

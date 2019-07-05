@@ -38,7 +38,7 @@ public class StyleController {
     @ResponseBody
     public Map<String, Object> list() {
         Map<String, Object> list = new HashMap<>();
-        String jsonStr = configService.findContentByName("INDEX_STYLE");
+        String jsonStr = configService.findContentByName("INDEX_STYLE_FULL");
         JSONArray jsonArray = JSONArray.parseArray(jsonStr);
         int i = 0;
         List<Map> mapList = new ArrayList<>();
@@ -54,7 +54,7 @@ public class StyleController {
     @RequestMapping("/style_find")
     @ResponseBody
     public JSONObject fetch(Integer id) {
-        String jsonStr = configService.findContentByName("INDEX_STYLE");
+        String jsonStr = configService.findContentByName("INDEX_STYLE_FULL");
         JSONArray jsonArray = JSONArray.parseArray(jsonStr);
         return jsonArray.getJSONObject(id);
     }
@@ -62,7 +62,7 @@ public class StyleController {
     @RequestMapping("/style_del")
     @ResponseBody
     public boolean delete(@RequestParam("ids[]") Long[] ids) {
-        String jsonStr = configService.findContentByName("INDEX_STYLE");
+        String jsonStr = configService.findContentByName("INDEX_STYLE_FULL");
         JSONArray jsonArray = JSONArray.parseArray(jsonStr);
         List<Object> tmpList = new ArrayList<>();
         for (Long id : ids) {
@@ -71,7 +71,7 @@ public class StyleController {
         for (Object o : tmpList) {
             jsonArray.remove(o);
         }
-        PhConfig config = configService.findOne("INDEX_STYLE");
+        PhConfig config = configService.findOne("INDEX_STYLE_FULL");
         config.setContent(jsonArray.toJSONString());
         configService.save(config);
         return true;
@@ -84,15 +84,25 @@ public class StyleController {
             return false;
         }
         JSONArray jsonArray = new JSONArray();
+        JSONArray jsonArray2 = new JSONArray();
         for (int i = 0; i < values.length; i++) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("value", values[i]);
             jsonObject.put("image", images[i]);
             jsonArray.add(jsonObject);
+            if (i <= 7) {
+                JSONObject jsonObject2 = new JSONObject();
+                jsonObject2.put("value", values[i]);
+                jsonObject2.put("image", images[i]);
+                jsonArray2.add(jsonObject2);
+            }
         }
-        PhConfig config = configService.findOne("INDEX_STYLE");
+        PhConfig config = configService.findOne("INDEX_STYLE_FULL");
+        PhConfig config2 = configService.findOne("INDEX_STYLE");
+        config2.setContent(jsonArray2.toJSONString());
         config.setContent(jsonArray.toJSONString());
         configService.save(config);
+        configService.save(config2);
         return true;
     }
 
@@ -100,7 +110,7 @@ public class StyleController {
     @RequestMapping("/style_save")
     @ResponseBody
     public boolean save(Integer id, String name, String image) {
-        String jsonStr = configService.findContentByName("INDEX_STYLE");
+        String jsonStr = configService.findContentByName("INDEX_STYLE_FULL");
         JSONArray jsonArray = JSONArray.parseArray(jsonStr);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("value", name);
@@ -110,7 +120,7 @@ public class StyleController {
         } else {
             jsonArray.set(id, jsonObject);
         }
-        PhConfig config = configService.findOne("INDEX_STYLE");
+        PhConfig config = configService.findOne("INDEX_STYLE_FULLs");
         config.setContent(jsonArray.toJSONString());
         configService.save(config);
         return true;

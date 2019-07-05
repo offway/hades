@@ -280,14 +280,16 @@
 					var preview = $("#preview_body");
 					var contentStr = "<form id='styleForm'>";
 					contentStr += "<hr/>";
+					var i =1;
 					for (var a in data["data"]) {
 						a = data["data"][a];
 						var nameEle = '名称:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["value"]);
 						var nameValEle = '<input type="hidden" name="value" value="VV" />'.replace("VV", a["value"]);
 						var imgEle = '<img src="VV" width="100px" height="100px" />'.replace("VV", a["image"]);
 						var imgValEle = '<input type="hidden" name="image" value="VV" />'.replace("VV", a["image"]);
-						contentStr += appendToPreviewList(nameEle, nameValEle, imgEle, imgValEle, "", "");
+						contentStr += appendToPreviewList(i ,nameEle, nameValEle, imgEle, imgValEle,  "");
 						contentStr += "<hr/>";
+						i++;
 					}
 					var btnEle = '<input type="button" class="btn btn-info" value="保存" onclick="updateStyleBatch()" />';
 					contentStr += appendToPreviewList("", "", "", "", "", btnEle);
