@@ -1,5 +1,7 @@
 package cn.offway.hades.controller;
 
+import cn.offway.hades.domain.PhArticleDraft;
+import cn.offway.hades.service.PhArticleDraftService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections.MapUtils;
@@ -15,8 +17,13 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -25,14 +32,25 @@ import java.util.*;
 @Controller
 @RequestMapping("/sync")
 public class SyncController {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Autowired
+    private PhArticleDraftService articleDraftService;
+
     @RequestMapping("/bzy")
+    @ResponseBody
     public boolean sync() throws IOException {
+        doSync();
+        return true;
+    }
+
+    @Scheduled(fixedRate = 1000 * 60 * 60)
+    public void doSync() throws IOException {
         BzyClient bzyClient = new BzyClient();
         //创建任务列表
         List<Map<String, String>> taskAll = new ArrayList<Map<String, String>>();
         TaskGroups taskGroups = bzyClient.getBzyTaskGroups();
         if (taskGroups == null || !"success".equals(taskGroups.getError())) {
-            return false;
+            return;
         } else {
             for (TaskGroupVo taskGroupVo : taskGroups.getData()) {
                 if (taskGroupVo.getTaskGroupName().contains("offway")) {
@@ -56,7 +74,6 @@ public class SyncController {
             addDynamic(dataList);
             bzyClient.updateDataByTaskId(task.get("taskId"));
         }
-        return true;
     }
 
     //添加头条信息
@@ -84,7 +101,13 @@ public class SyncController {
                         consultationcontent = "<style>img{max-width:100%;height:auto;}</style>".concat(consultationcontent);
                     }
                     dataMap.put("consultationcontent", consultationcontent);
-//                    ApiDtConsultationService.addDynamic(dataMap);
+                    PhArticleDraft articleDraft = new PhArticleDraft();
+                    articleDraft.setContent(consultationcontent);
+                    articleDraft.setTitle(consultationtitle);
+                    articleDraft.setImage(consultationimg);
+                    articleDraft.setName(consultationtitle);
+                    articleDraft.setCreateTime(new Date());
+                    articleDraftService.save(articleDraft);
                 }
             }
         }
