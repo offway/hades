@@ -78,6 +78,11 @@ public class PhRefundServiceImpl implements PhRefundService {
     }
 
     @Override
+    public PhRefund findOne(String orderNo) {
+        return phRefundRepository.findOne(getFilter(orderNo, null, null, "", null, null, "", ""));
+    }
+
+    @Override
     public Page<PhRefund> list(String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String status, Pageable pageable) {
         return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, status), pageable);
     }

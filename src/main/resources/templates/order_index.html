@@ -487,14 +487,23 @@
                         targets: 9,
                         data: "sub",
                         title: "订单内商品",
-                        render: function (data, type, row, meta) {
-                            var str = "";
+						render: function (data, type, row, meta) {
+							var str = "";
+							var refundList = row["refund"];
+							var refundMap = {};
+							for (var k in refundList) {
+								refundMap[refundList[k]["orderGoodsId"]] = refundList[k];
+							}
 							for (var i in data) {
 								var it = data[i];
-								str += "<p>" + it["goodsName"] + "&nbsp;" + it["remark"] + "&nbsp;" + it["goodsCount"] + "件</p>";
+								if (refundMap.hasOwnProperty(it["goodsId"])) {
+									str += "<p style='color: red'>" + it["goodsName"] + "&nbsp;" + it["remark"] + "&nbsp;" + it["goodsCount"] + "件</p>";
+								} else {
+									str += "<p>" + it["goodsName"] + "&nbsp;" + it["remark"] + "&nbsp;" + it["goodsCount"] + "件</p>";
+								}
 							}
-                            return str;
-                        }
+							return str;
+						}
                     },
 					{
 						targets: 10,

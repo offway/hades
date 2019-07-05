@@ -99,6 +99,16 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<!-- Table Model 2 -->
+							<strong>退换货款信息</strong>
+							<table id="refundInfo" class="table table-bordered table-striped table-condensed table-hover">
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="panel-body panel-border">
+					<div class="row">
+						<div class="col-sm-12">
+							<!-- Table Model 2 -->
 							<strong>费用信息</strong>
 							<table id="feeInfo" class="table table-bordered table-striped table-condensed table-hover">
 							</table>
@@ -626,6 +636,32 @@
 				}
 			]
 		});
+		//退款、退货信息
+		if (jsonObj["refundInfo"].length == 0) {
+			$("#refundInfo").parent().hide();
+		} else {
+			$("#refundInfo").dataTable({
+				data: jsonObj["refundInfo"],
+				searching: false,
+				lengthChange: false,
+				paging: false,
+				language: {
+					url: "../assets/Chinese.txt"
+				},
+				columnDefs: [
+					{
+						targets: 0,
+						data: "orderGoodsId",
+						title: "商品ID"
+					},
+					{
+						targets: 1,
+						data: "goodsCount",
+						title: "商品数量"
+					}
+				]
+			});
+		}
 		//费用信息
 		$("#feeInfo").dataTable({
 			data: jsonObj["feeInfo"],
