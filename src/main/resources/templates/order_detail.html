@@ -507,7 +507,14 @@
 				{
 					targets: 9,
 					data: "remark",
-					title: "备注"
+					title: "备注",
+					render: function (data, type, row, meta) {
+						if (data) {
+							return data;
+						} else {
+							return "暂无";
+						}
+					}
 				}
 			]
 		});
@@ -560,17 +567,38 @@
 				{
 					targets: 0,
 					data: "realName",
-					title: "收货人"
+					title: "收货人",
+					render: function (data, type, row, meta) {
+						if (data) {
+							return data;
+						} else {
+							return "暂无";
+						}
+					}
 				},
 				{
 					targets: 1,
 					data: "phone",
-					title: "手机号码"
+					title: "手机号码",
+					render: function (data, type, row, meta) {
+						if (data) {
+							return data;
+						} else {
+							return "暂无";
+						}
+					}
 				},
 				{
 					targets: 2,
 					data: "location",
-					title: "收货地址"
+					title: "收货地址",
+					render: function (data, type, row, meta) {
+						if (data) {
+							return data;
+						} else {
+							return "暂无";
+						}
+					}
 				}
 			]
 		});
