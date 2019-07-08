@@ -91,7 +91,7 @@ public class MerchantController {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        Sort sort = new Sort("id");
+        Sort sort = new Sort("sort");
         Page<PhMerchant> pages;
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
         if (roles.contains(BigInteger.valueOf(8L))) {
@@ -273,5 +273,16 @@ public class MerchantController {
         } else {
             return null;
         }
+    }
+
+    @ResponseBody
+    @RequestMapping("/merchant_top")
+    public boolean top(Long id, Long sort) {
+        PhMerchant newOne = merchantService.findOne(id);
+        newOne.setSort(sort);
+        merchantService.resetSort(sort);
+        merchantService.save(newOne);
+
+        return true;
     }
 }

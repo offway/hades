@@ -13,6 +13,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.qiniu.common.Zone;
 import com.qiniu.http.Response;
 import com.qiniu.storage.UploadManager;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -258,10 +261,34 @@ public class ArticleController {
         if (article != null) {
             article.setStatus("0");
             article.setApprover(admin.getNickname());
+            article.setRemark("");
             articleService.save(article);
         }
         return true;
     }
+
+    @ResponseBody
+    @RequestMapping("/article_startup")
+    public boolean starttimeup(@RequestParam("ids[]") Long[] ids,String starttime,@AuthenticationPrincipal PhAdmin admin){
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            return false;
+        }
+        for (Long id : ids){
+            PhArticle article = articleService.findOne(id);
+            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            Date beginTime = null;
+            beginTime = DateTime.parse(starttime, format).toDate();
+            article.setStatus("1");
+            article.setRemark("定时上架");
+            article.setApproval(beginTime);
+            article.setApprover(admin.getNickname());
+            articleService.save(article);
+        }
+        return true;
+    }
+
+
 
 
     private String filterWxPicAndReplace(String content) throws IOException {

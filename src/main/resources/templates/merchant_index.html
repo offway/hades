@@ -374,17 +374,6 @@
         });
     }
 
-    function topIt(id) {
-        $.post("/brand_top", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
-
     function unTopIt(id) {
         $.post("/brand_untop", {"id": id}, function (data) {
             if (data) {
@@ -412,6 +401,22 @@
 			}
 		}
 		return returnList;
+	}
+
+	function topIt(id) {
+		var num = prompt("输入置顶位置,从0开始,0为第一位", "0");
+		if (isNaN(num) || num == null) {
+			alert("请输入数字！");
+		} else {
+			$.post("/merchant_top", {"id": id, "sort": num}, function (data) {
+				if (data) {
+					table_global.fnDraw();
+					toastr.success("操作已成功！", "温馨提示");
+				} else {
+					toastr.error("操作失败", "温馨提示");
+				}
+			});
+		}
 	}
 	jQuery(document).ready(function($)
 	{
@@ -562,6 +567,20 @@
 					render: function (data, type, full, meta) {
 						return '<input type="button" onclick="gotoFare(' + data + ')" value="管理运费模板"/>';
 					}
+				},
+				{
+					targets: 17,
+					data: "id",
+					orderable: false,
+					title: "排序",
+					render: function (data, type, full, meta) {
+						if (full['type'] =='1'){
+							return '<input type="button" onclick="topIt(' + data + ')" value="排序"/>';
+						}else {
+							return null;
+						}
+					}
+
 				}
                 // {
                 //     targets: 16,

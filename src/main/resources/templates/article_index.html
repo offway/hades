@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
     <link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
     <link rel="stylesheet" href="assets/css/selectize.bootstrap3.css"/>
+    <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
     <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
     <style type="text/css">
         .form-group img {
@@ -97,6 +98,7 @@
             <button class="btn btn-danger tagListPin">推荐标签列表</button>
             <button class="btn btn-danger syncRecommend">同步推荐</button>
             <button class="btn btn-danger syncType">同步分类</button>
+            <button class="btn btn-danger timeup">定时上架</button>
         </div>
 
 
@@ -220,6 +222,36 @@
     </div>
 </div>
 
+<div class="modal fade in" id="modal-7">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">定时上架时间</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="saveForm7">
+                    <input type="hidden" name="isBottom" id="isBottom"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class=" control-label">选择上架时间</label>
+                                <div class="col-md-12">
+                                    <input type="text" id="timeup" name="beginTime" class="form-control" placeholder="上架时间"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-info saveConfig">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -239,12 +271,15 @@
     </div>
 </div>
 
+
+<input type="hidden" class="form-control" name="articleid" id="articleid" value=""/>
 <script src="js/common.js"></script>
 <script src="assets/js/moment.min.js"></script>
 <script src="assets/js/select2/select2.min.js"></script>
 <script src="assets/js/async.min.js"></script>
 <script src="assets/kindeditor-4.1.12/kindeditor-all-min.js"></script>
 <script src="assets/kindeditor-4.1.12/lang/zh-CN.js"></script>
+<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 <script src="assets/js/jquery-ui.min.js"></script>
 <script src="assets/js/selectize.min.js"></script>
 <script th:inline="javascript">
@@ -557,7 +592,20 @@
 
     var qiniuUrl = [[${qiniuUrl}]];
 
+
+
     jQuery(document).ready(function ($) {
+        jQuery.datetimepicker.setLocale('zh');
+        jQuery('#timeup').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
         var oTable = $("#example-1").dataTable({
             language: {
                 url: "../assets/Chinese.txt"
@@ -880,7 +928,7 @@
                 var form = $("#saveForm");
                 form.find("div.toDel").remove();
                 var goodsList = data["goodsIds"];
-                form.find("input:not(.notMe)").val("");
+                fForm.find("input:not(.notMe)").val("");
                 var content = data["content"];
                 editor.html(content);
                 for (var i in data) {
@@ -957,6 +1005,36 @@
                 }
             });
         });
+
+        $(".btn.btn-danger.timeup").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
+            jQuery('#modal-7').modal({backdrop: 'static', keyboard: false});
+            $("#articleid").val(ids.join(','));
+        });
+
+        $(".btn.btn-info.saveConfig").click(function () {
+           var starttime = $('#timeup').val();
+           var articleid = $('#articleid').val().split(',');
+            $.post("/article_startup", {ids: articleid,starttime:starttime}, function (data) {
+                if (data) {
+                    table_global.fnDraw();
+                    jQuery('#modal-7').modal('hide');
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }else {
+                    toastr.error("非管理员无权操作", "温馨提示");
+                }
+            })
+        });
+
 
         $(".btn.btn-danger.tagList").click(function () {
             $.getJSON("/article_tagList", {}, function (data) {
@@ -1049,7 +1127,7 @@
                 }
             });
         });
-
+        
         $(".btn.btn-danger.syncType").click(function () {
             $.post("/article_syncType", {}, function (data) {
                 if (data) {

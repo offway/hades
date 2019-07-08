@@ -31,4 +31,6 @@ public interface PhMerchantService {
     Page<PhMerchant> findAll(Long id, Pageable pageable);
 
     void del(Long id);
+
+    void resetSort(Long sort);
 }

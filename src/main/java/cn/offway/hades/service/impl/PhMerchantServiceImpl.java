@@ -111,4 +111,9 @@ public class PhMerchantServiceImpl implements PhMerchantService {
     public PhMerchant findOne(Long id) {
         return phMerchantRepository.findOne(id);
     }
+
+    @Override
+    public void resetSort( Long sort) {
+        phMerchantRepository.resort(sort);
+    }
 }

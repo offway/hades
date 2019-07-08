@@ -81,6 +81,10 @@ public class PhMerchant implements Serializable {
     /** 商户类型[0-品牌商,1-买手店] **/
     private String type;
 
+    /** 排序 **/
+    private Long sort;
+
+
     @Column(name = "ratio", precision = 15, scale = 2)
     public Double getRatio() {
         return ratio;
@@ -282,5 +286,14 @@ public class PhMerchant implements Serializable {
 
     public void setBackground(String background) {
         this.background = background;
+    }
+
+    @Column(name = "sort", length = 11)
+    public Long getSort() {
+        return sort;
+    }
+
+    public void setSort(Long sort) {
+        this.sort = sort;
     }
 }
