@@ -8,6 +8,7 @@ import com.alibaba.excel.event.WriteHandler;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.joda.time.DateTime;
@@ -99,8 +100,17 @@ public class RefundController {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
         Page<PhRefund> pages = refundService.list(orderNo, strToDate(sTime), strToDate(eTime), userId, strToDate(sTimeCheck), strToDate(eTimeCheck), type, status, pr);
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Object> ret = new ArrayList<>();
+        for (PhRefund type0 : pages.getContent()) {
+            Map container = objectMapper.convertValue(type0, Map.class);
+            PhOrderInfo categoryList = orderInfoService.findOne(type0.getOrderNo());
+            container.put("preorderNo", categoryList.getPreorderNo());
+            container.put("payChannel", categoryList.getPayChannel());
+            ret.add(container);
+        }
         int initEcho = sEcho + 1;
-        return buildResponse(initEcho, pages.getTotalElements(), pages.getTotalElements(), pages.getContent());
+        return buildResponse(initEcho, pages.getTotalElements(), pages.getTotalElements(),ret);
     }
 
     @RequestMapping("/refund_list_export.html")

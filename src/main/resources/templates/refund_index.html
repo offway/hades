@@ -460,26 +460,31 @@
 				},
 				{
 					targets: 2,
+					data: "preorderNo",
+					title: "总订单号"
+				},
+				{
+					targets: 3,
 					data: "orderNo",
 					title: "购买订单号"
 				},
 				{
-					targets: 3,
+					targets: 4,
 					data: "userId",
 					title: "用户ID"
 				},
 				{
-					targets: 4,
+					targets: 5,
 					data: "amount",
 					title: "退款金额"
 				},
 				{
-					targets: 5,
+					targets: 6,
 					data: "mailNo",
 					title: "快递运单号"
 				},
 				{
-					targets: 6,
+					targets: 7,
 					data: "type",
 					title: "类型",
 					render: function (data, type, row, meta) {
@@ -489,7 +494,7 @@
 					}
 				},
 				{
-					targets: 7,
+					targets: 8,
 					data: "status",
 					title: "状态",
 					render: function (data, type, row, meta) {
@@ -499,17 +504,17 @@
 					}
 				},
 				{
-					targets: 8,
+					targets: 9,
 					data: "reason",
 					title: "退款原因"
 				},
 				{
-					targets: 9,
+					targets: 10,
 					data: "content",
 					title: "退款说明"
 				},
 				{
-					targets: 10,
+					targets: 11,
 					data: "image",
 					title: "退款图片",
 					render: function (data, type, row, meta) {
@@ -525,12 +530,26 @@
 					}
 				},
 				{
-					targets: 11,
+					targets: 12,
+					data: "payChannel",
+					title: "支付渠道",
+					render:function (data,type,row,meta) {
+						if (data=='wxpay') {
+							return '微信';
+						}else if (data=='alipay') {
+							return '支付宝';
+						}else {
+							return '未知';
+						}
+					}
+				},
+				{
+					targets: 13,
 					data: "checkName",
 					title: "审核人"
 				},
 				{
-					targets: 12,
+					targets: 14,
 					data: "checkTime",
 					title: "审核时间",
 					render: function (data, type, row, meta) {
@@ -538,17 +557,17 @@
 					}
 				},
 				{
-					targets: 13,
+					targets: 15,
 					data: "checkReason",
 					title: "拒绝原因"
 				},
 				{
-					targets: 14,
+					targets: 16,
 					data: "goodsCount",
 					title: "退款商品件数"
 				},
 				{
-					targets: 15,
+					targets: 17,
 					data: "isComplete",
 					title: "是否整单退款",
 					render: function (data, type, row, meta) {
@@ -557,7 +576,7 @@
 					}
 				},
 				{
-					targets: 16,
+					targets: 18,
 					data: "createTime",
 					title: "创建时间",
 					render: function (data, type, row, meta) {
@@ -565,7 +584,7 @@
 					}
 				},
                 {
-                    targets: 17,
+                    targets: 19,
                     data: "id",
                     orderable: false,
                     title: "操作",
@@ -578,12 +597,12 @@
 						if (status == 0) {
 							if (type == 0 && isAdmin == 1) {
 								str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="退款审核"/>';
-							} else if (type == 1 && isAdmin == 0) {
+							} else if (type == 1 ) {
 								str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="退货退款审核"/>';
-							} else if (isAdmin == 0) {
+							}else {
 								str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="换货审核"/>';
 							}
-						} else if (status == 2 && isAdmin == 0) {
+						} else if (status == 2) {
 							str += '<input type="button" onclick="trackOrder(' + data + ')" value="退货追踪"/>';
 							str += '<input type="button" onclick="confirmDelivery(' + data + ')" value="确认收货"/>';
 						} else if (status == 3 && isAdmin == 1) {
