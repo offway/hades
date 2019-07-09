@@ -928,7 +928,7 @@
                 var form = $("#saveForm");
                 form.find("div.toDel").remove();
                 var goodsList = data["goodsIds"];
-                fForm.find("input:not(.notMe)").val("");
+                form.find("input:not(.notMe)").val("");
                 var content = data["content"];
                 editor.html(content);
                 for (var i in data) {
