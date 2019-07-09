@@ -55,7 +55,7 @@ public class PhArticleDraftServiceImpl implements PhArticleDraftService {
     }
 
     @Override
-    public Page<PhArticleDraft> findAll(String name, String tag, String status, String title, String type, Pageable pageable) {
+    public Page<PhArticleDraft> findAll(String name, String title, Pageable pageable) {
         return phArticleRepository.findAll(new Specification<PhArticleDraft>() {
             @Override
             public Predicate toPredicate(Root<PhArticleDraft> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -63,17 +63,8 @@ public class PhArticleDraftServiceImpl implements PhArticleDraftService {
                 if (StringUtils.isNotBlank(name)) {
                     params.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
                 }
-                if (StringUtils.isNotBlank(tag)) {
-                    params.add(criteriaBuilder.like(root.get("tag"), "%" + tag + "%"));
-                }
-                if (StringUtils.isNotBlank(status)) {
-                    params.add(criteriaBuilder.like(root.get("status"), "%" + status + "%"));
-                }
                 if (StringUtils.isNotBlank(title)) {
                     params.add(criteriaBuilder.like(root.get("title"), "%" + title + "%"));
-                }
-                if (StringUtils.isNotBlank(type)) {
-                    params.add(criteriaBuilder.like(root.get("type"), "%" + type + "%"));
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));

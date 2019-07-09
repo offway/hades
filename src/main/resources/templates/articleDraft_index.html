@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <head th:replace="head"></head>
+    <title>抓取资讯管理</title>
+    <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
+</head>
+<body class="page-body">
+
+<div class="page-container">
+    <!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+
+    <div th:replace="sidebar-menu"></div>
+    <div class="main-content">
+        <!-- User Info, Notifications and activity Bar -->
+        <nav th:replace="navbar"></nav>
+        <div class="page-title">
+
+            <div class="title-env">
+                <h1 class="title">抓取资讯管理</h1>
+                <p class="activityDescription"></p>
+            </div>
+
+            <div class="breadcrumb-env">
+                <ol class="breadcrumb bc-1">
+                    <li><a href="/"><i class="fa-home"></i>Home</a></li>
+                    <li><a>系统管理</a></li>
+                    <li class="active"><strong>抓取资讯管理</strong></li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <form role="form" class="form-inline">
+                    <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+                        <div class="input-group">
+                            <input type="text" name="name" class="form-control" style="height:35px" placeholder="资讯名称"/>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" name="title" class="form-control" style="height:35px" placeholder="资讯标题"/>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+                        <button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+                    </div>
+                </form>
+            </div>
+            <div class="panel-body">
+                <table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                </table>
+            </div>
+            <button class="btn btn-info sync">同步</button>
+            <button class="btn btn-info delete">删除</button>
+        </div>
+
+        <footer th:replace="footer"></footer>
+    </div>
+</div>
+
+<div th:replace="body-under"></div>
+
+<div class="modal fade in" id="modal-6">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 800px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">添加资讯</h4>
+            </div>
+
+            <div class="modal-body">
+                <form role="form" id="saveForm">
+                    <input type="hidden" name="id"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">资讯名称</label>
+                                <input type="text" class="form-control" name="name" placeholder="资讯名称"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">资讯标题</label>
+                                <input type="text" class="form-control" name="title" placeholder="资讯标题"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">资讯标签</label>
+                                <select class="form-control" name="tag" id="tag" multiple="multiple"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">资讯类型</label>
+                                <label><input name="type" class="notMe" type="radio" value="0" checked="checked"/>资讯
+                                </label>
+                                <label><input name="type" class="notMe" type="radio" value="1" />专题
+                                </label>
+                                <label><input name="type" class="notMe" type="radio" value="2"/>视频</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="videodiv" class="row" style="display: none">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">资讯视频</label>
+                                <input type="file" class="form-control" id="btnvideo" name="videoFile" placeholder="资讯视频"/>
+                                <input type="hidden" class="form-control" name="video"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">资讯图片</label>
+                                <input type="file" class="form-control" name="imageFile" placeholder="资讯图片" onchange="uploadMainFile(this,'0',null)"/>
+                                <input type="hidden" class="form-control" name="image"/>
+                                <img alt="" src="" name="imageImg" style="display:none;"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="contentdiv" class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">资讯内容</label>
+                                <textarea id="editor_id"  style="width:700px;height:300px;" placeholder="资讯内容">
+									</textarea>
+                                <input type="hidden" class="form-control" name="content" placeholder="资讯内容"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">推荐商品id</label>
+                                <input type="button" id="addMoreTextEle" class="notMe" value="添加" onclick="addMoreTextAeticle(this,null);"/>
+                                <input type="hidden" class="form-control" name="goodsIds" value=""/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">浏览数</label>
+                                <input type="number" class="form-control" value="0" name="viewCount" placeholder="资讯浏览数"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">点赞数</label>
+                                <input type="number" class="form-control" value="0" name="praiseCount" placeholder="资讯点赞数"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                <button type="button" id="butsev" class="btn btn-info save">保存</button>
+                <button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade in" id="modal-7">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">定时上架时间</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="saveForm7">
+                    <input type="hidden" name="isBottom" id="isBottom"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class=" control-label">选择上架时间</label>
+                                <div class="col-md-12">
+                                    <input type="text" id="timeup" name="beginTime" class="form-control" placeholder="上架时间"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-info saveConfig">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">查看详情</h4>
+            </div>
+
+            <div class="modal-body" id="preview_body"></div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/async.min.js"></script>
+<script src="assets/js/jquery.base64.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    function closeIt(self) {
+        var that = $(self);
+        that.hide();
+    }
+
+    function formatTime(time) {
+        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+    }
+
+    function buildImg(url, h, w) {
+        if (url == null || url == '') {
+            return "";
+        } else {
+            if (h != null && w != null) {
+                return "<img width='WWWpx' height='HHHpx' src='#' />".replace("#", url).replace("WWW", w).replace("HHH", h);
+            } else {
+                return "<img width='375px' height='223px' src='#' />".replace("#", url);
+            }
+        }
+    }
+
+    function appendToPreview(key, value) {
+        return '<div class="row">' +
+            '<div class="col-md-2">' +
+            key +
+            '</div>' +
+            '<div class="col-md-10">' +
+            value +
+            '</div>' +
+            '</div>';
+    }
+
+    function appendToPreviewList(one, two, three, four, five, six) {
+        return '<div class="row">' +
+            '<div class="col-md-2">' +
+            one +
+            '</div>' +
+            '<div class="col-md-2">' +
+            two +
+            '</div>' +
+            '<div class="col-md-2">' +
+            three +
+            '</div>' +
+            '<div class="col-md-2">' +
+            four +
+            '</div>' +
+            '<div class="col-md-2">' +
+            five +
+            '</div>' +
+            '<div class="col-md-2">' +
+            six +
+            '</div>' +
+            '</div>';
+    }
+
+    function checkIt(str) {
+        var preview = $("#preview_body");
+        var contentStr = $.base64.atob(str);
+        preview.html(contentStr);
+        jQuery('#preview').modal('show', {backdrop: 'fade'});
+    }
+
+    function syncIt(id) {
+        $.post("/article_draft_sync", {"ids": [id]}, function (data) {
+            if (data) {
+                toastr.success("操作已成功！", "温馨提示");
+                table_global.fnDraw();
+            }
+        });
+    }
+
+    function delNode(uuid) {
+        var that = $("#"+uuid);
+        that.remove();
+    }
+
+    function delParentNode(self) {
+        $(self).parent().parent().remove();
+    }
+
+    function checkImg(list) {
+        var returnList = {};
+        for (var i in list) {
+            i = list[i];
+            var v = i[0];
+            var name = i[1];
+            var form = $("#saveForm");
+            var footer = $(this).parent(".modal-footer");
+            var imageFile = '';
+            //上传文件获得文件地址
+            if (v != '') {
+                imageFile = form.find("input[name='" + name + "File']")[0].files[0];
+                returnList[name] = imageFile;
+            }
+        }
+        return returnList;
+    }
+
+    function uploadMainFile(self,bol,res1) {
+        var that = $(self);
+        if (self.files.length > 0) {
+            var file = self.files[0];
+            getQNToken(function (token) {
+                sizevideo = 5;
+                bl= false;
+                if (bol=='1'){
+                    sizevideo = 50;
+                    bl =true;
+                }
+                this.upload("", token, file, function () {
+                    //
+                }, function (err) {
+                    console.log("error");
+                    console.log(err);
+                }, function (res) {
+                    //0图片，1视频
+                    if (bol =='0'){
+                        Filname = 'image';
+                    }else if (bol=='1') {
+                        Filname = 'video';
+                        // $('#butsev').show();
+                    }
+                    var url = qiniuUrl + "/" + res.key;
+                    that.parent().find("[name="+Filname+"]").val(url);
+                    that.parent().find("[name=imageImg]").attr("src", url);
+                    that.parent().find("[name=imageImg]").attr("width", "100px");
+                    that.parent().find("[name=imageImg]").attr("height", "100px");
+                    that.parent().find("[name=imageImg]").show();
+                    console.log('22');
+                    if (res1 != null){
+                        res1();
+                    }
+                },sizevideo,bl);
+            },bol);
+        } else {
+            confirm("未选择任何文件!");
+        }
+    }
+
+    function getQNToken(cb,bol) {
+        var param = {};
+        if (bol == 1) {
+            param["isVideo"] = 1;
+        }
+        $.get("/qiniu/token", param, function (token) {
+            cb(token);
+        });
+    }
+
+    var qiniuUrl = [[${qiniuUrl}]];
+    var table_global;
+
+    jQuery(document).ready(function ($) {
+        $.base64.utf8encode = true;
+        $.base64.utf8decode = true;
+        var oTable = $("#example-1").dataTable({
+            language: {
+                url: "../assets/Chinese.txt"
+            },
+            bFilter: false,
+            bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+            sAjaxSource: "/article_draft_list",//通过ajax实现分页的url路径。
+            fnServerParams: function (aData) {
+                var searchArray = $(".form-inline").serializeArray();
+                $.merge(aData, searchArray);
+            },
+            columnDefs: [
+                {
+                    targets: 0,
+                    data: "id",
+                    width: "5%",
+                    orderable: false,
+                    className: 'select-checkbox',
+                    title: '<input type="checkbox" id="checkbox-all"/>',
+                    render: function (data, type, full, meta) {
+                        return '<input type="checkbox" name="activityId" value="' + data + '" />';
+                    }
+                },
+                {
+                    targets: 1,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+                    targets: 2,
+                    data: "name",
+                    title: "名称"
+                },
+                {
+                    targets: 3,
+                    data: "title",
+                    title: "标题"
+                },
+                {
+                    targets: 4,
+                    data: "image",
+                    title: "图片",
+                    render: function (data, type, row, meta) {
+                        return buildImg(data);
+                    }
+                },
+                {
+                    targets: 5,
+                    data: "content",
+                    title: "内容",
+                    render: function (data, type, row, meta) {
+                        return "<input type=\"button\" onclick=\"checkIt('DATA')\" value=\"预览\">".replace("DATA", $.base64.btoa(data));
+                    }
+                },
+                {
+                    targets: 6,
+                    data: "createTime",
+                    title: "创建时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                },
+                {
+                    targets: 7,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        var str = "";
+                        if (full["status"] == "1") {
+                            str += '<input type="button" disabled="disabled" value="已同步"/>';
+                        } else {
+                            str += '<input type="button" onclick="syncIt(' + data + ')" value="同步"/>';
+                        }
+                        return str;
+                    }
+                }
+            ]
+        });
+        table_global = oTable;
+
+        $(".searchBtn").click(function () {
+            $("#checkbox-all").attr("checked", false);
+            oTable.fnDraw(); //or fnReloadAjax()
+            return false;
+        });
+
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='activityId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
+        });
+
+        $(".btn.btn-info.sync").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
+
+            $.post("/article_draft_sync", {"ids": ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            });
+        });
+
+        $(".btn.btn-info.delete").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            var confirm = window.confirm("你确定要这么做？");
+            if (confirm == false) {
+                return;
+            }
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
+
+            $.post("/article_draft_del", {"ids": ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            });
+        });
+    });
+    /*]]>*/
+</script>
+</body>
+
+</html>

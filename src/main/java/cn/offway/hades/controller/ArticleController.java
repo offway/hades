@@ -2,17 +2,12 @@ package cn.offway.hades.controller;
 
 import cn.offway.hades.domain.PhAdmin;
 import cn.offway.hades.domain.PhArticle;
+import cn.offway.hades.domain.PhArticleDraft;
 import cn.offway.hades.domain.PhConfig;
 import cn.offway.hades.properties.QiniuProperties;
-import cn.offway.hades.service.PhArticleService;
-import cn.offway.hades.service.PhConfigService;
-import cn.offway.hades.service.PhRoleadminService;
-import cn.offway.hades.service.QiniuService;
+import cn.offway.hades.service.*;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.qiniu.common.Zone;
-import com.qiniu.http.Response;
-import com.qiniu.storage.UploadManager;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -25,19 +20,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.security.auth.login.Configuration;
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +53,8 @@ public class ArticleController {
     private PhRoleadminService roleadminService;
     @Autowired
     private PhConfigService configService;
+    @Autowired
+    private PhArticleDraftService articleDraftService;
     @Value("${ph.url}")
     private String url;
 
@@ -63,6 +63,11 @@ public class ArticleController {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("url", url);
         return "article_index";
+    }
+
+    @RequestMapping("/article_draft.html")
+    public String indexDraft() {
+        return "articleDraft_index";
     }
 
     @ResponseBody
@@ -74,11 +79,27 @@ public class ArticleController {
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "id"), new Sort.Order(Sort.Direction.ASC, "sort"));
         Page<PhArticle> pages = articleService.findAll(name, tag, status, title, type, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
+        return echoBody(initEcho, pages.getTotalElements(), pages.getTotalElements(), pages.getContent());
+    }
+
+    @ResponseBody
+    @RequestMapping("/article_draft_list")
+    public Map<String, Object> getDraftList(HttpServletRequest request, String name, String title) {
+        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
+        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
+        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "id"));
+        Page<PhArticleDraft> pages = articleDraftService.findAll(name, title, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        int initEcho = sEcho + 1;
+        return echoBody(initEcho, pages.getTotalElements(), pages.getTotalElements(), pages.getContent());
+    }
+
+    private Map<String, Object> echoBody(int initEcho, long iTotalRecords, long iTotalDisplayRecords, List<?> data) {
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
-        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
-        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
-        map.put("aData", pages.getContent());//数据集合
+        map.put("iTotalRecords", iTotalRecords);//数据总条数
+        map.put("iTotalDisplayRecords", iTotalDisplayRecords);//显示的条数
+        map.put("aData", data);//数据集合
         return map;
     }
 
@@ -234,6 +255,41 @@ public class ArticleController {
     }
 
     @ResponseBody
+    @RequestMapping("/article_draft_del")
+    public boolean deleteDraft(@RequestParam("ids[]") Long[] ids) {
+        for (Long id : ids) {
+            articleDraftService.del(id);
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @Transactional
+    @RequestMapping("/article_draft_sync")
+    public boolean syncDraft(@RequestParam("ids[]") Long[] ids) {
+        for (Long id : ids) {
+            PhArticleDraft articleDraft = articleDraftService.findOne(id);
+            if (articleDraft != null) {
+                PhArticle article = new PhArticle();
+                article.setTitle(articleDraft.getTitle());
+                article.setContent(articleDraft.getContent());
+                article.setName(articleDraft.getName());
+                article.setImage(articleDraft.getImage());
+                article.setStatus("0");
+                article.setPraiseCount(0L);
+                article.setViewCount(0L);
+                article.setType("0");
+                article.setCreateTime(new Date());
+                articleService.save(article);
+                //mark as synced
+                articleDraft.setStatus("1");
+                articleDraftService.save(articleDraft);
+            }
+        }
+        return true;
+    }
+
+    @ResponseBody
     @RequestMapping("/article_up")
     public boolean goodsUp(Long id, @AuthenticationPrincipal PhAdmin admin) {
         PhArticle article = articleService.findOne(id);
@@ -269,12 +325,12 @@ public class ArticleController {
 
     @ResponseBody
     @RequestMapping("/article_startup")
-    public boolean starttimeup(@RequestParam("ids[]") Long[] ids,String starttime,@AuthenticationPrincipal PhAdmin admin){
+    public boolean starttimeup(@RequestParam("ids[]") Long[] ids, String starttime, @AuthenticationPrincipal PhAdmin admin) {
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
         if (roles.contains(BigInteger.valueOf(8L))) {
             return false;
         }
-        for (Long id : ids){
+        for (Long id : ids) {
             PhArticle article = articleService.findOne(id);
             DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
             Date beginTime = null;
@@ -287,9 +343,6 @@ public class ArticleController {
         }
         return true;
     }
-
-
-
 
     private String filterWxPicAndReplace(String content) throws IOException {
         Pattern p_image;
@@ -308,51 +361,39 @@ public class ArticleController {
                 // img图片地址
                 String oldImgSrc = m.group(1);
                 String newImgSrc = "";
-                if (null != oldImgSrc && !"".equals(oldImgSrc) && oldImgSrc.indexOf("http://qiniu.offway.cn")<0 && (oldImgSrc.startsWith("http://")||oldImgSrc.startsWith("https://"))) {
-
+                if (null != oldImgSrc && !"".equals(oldImgSrc) && !oldImgSrc.contains("http://qiniu.offway.cn") && (oldImgSrc.startsWith("http://") || oldImgSrc.startsWith("https://"))) {
                     newImgSrc = getQiniuImg(oldImgSrc);
-                    m.appendReplacement(imgBuffer,"src=\"" + newImgSrc + "\"");
-                    System.out.println("newImgSrc:::::::::::::::"+newImgSrc);
-                }else{
-                    m.appendReplacement(imgBuffer,"src=\"" + oldImgSrc + "\"");
-                    System.out.println("oldImgSrc:::::::::::::::"+oldImgSrc);
+                    m.appendReplacement(imgBuffer, "src=\"" + newImgSrc + "\"");
+                    System.out.println("newImgSrc:::::::::::::::" + newImgSrc);
+                } else {
+                    m.appendReplacement(imgBuffer, "src=\"" + oldImgSrc + "\"");
+                    System.out.println("oldImgSrc:::::::::::::::" + oldImgSrc);
                 }
             }
-
-
             m.appendTail(imgBuffer);
             String string = java.util.regex.Matcher.quoteReplacement(imgBuffer.toString());
-            m_image.appendReplacement(m_imageBuffer,string);
+            m_image.appendReplacement(m_imageBuffer, string);
         }
         m_image.appendTail(m_imageBuffer);
         return m_imageBuffer.toString();
     }
-    private  String getQiniuImg(String url) throws  IOException{
-        InputStream file  = parseFile(new URL(url));
+
+    private String getQiniuImg(String url) throws IOException {
+        InputStream file = parseFile(new URL(url));
         return uploadImg(file);
     }
 
-    private InputStream parseFile(URL url) throws IOException{
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+    private InputStream parseFile(URL url) throws IOException {
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         //设置超时间为3秒
-        conn.setConnectTimeout(3*1000);
+        conn.setConnectTimeout(3 * 1000);
         //防止屏蔽程序抓取而返回403错误
         conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
         //得到输入流
         return conn.getInputStream();
     }
 
-    private String uploadImg(InputStream file) throws IOException{
+    private String uploadImg(InputStream file) {
         return qiniuService.qiniuUpload(file);
-    }
-    private  byte[] readInputStream(InputStream inputStream) throws IOException {
-        byte[] buffer = new byte[1024];
-        int len = 0;
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        while((len = inputStream.read(buffer)) != -1) {
-            bos.write(buffer, 0, len);
-        }
-        bos.close();
-        return bos.toByteArray();
     }
 }

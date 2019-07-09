@@ -20,5 +20,5 @@ public interface PhArticleDraftService {
 
     void del(Long id);
 
-    Page<PhArticleDraft> findAll(String name, String tag, String status, String title, String type, Pageable pageable);
+    Page<PhArticleDraft> findAll(String name, String title, Pageable pageable);
 }
