@@ -120,7 +120,7 @@ public class StyleController {
         } else {
             jsonArray.set(id, jsonObject);
         }
-        PhConfig config = configService.findOne("INDEX_STYLE_FULLs");
+        PhConfig config = configService.findOne("INDEX_STYLE_FULL");
         config.setContent(jsonArray.toJSONString());
         configService.save(config);
         return true;
