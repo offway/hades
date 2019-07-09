@@ -119,26 +119,22 @@ public class BannerController {
 
     @RequestMapping("/banner_up")
     @ResponseBody
-    public boolean up(@RequestParam("ids[]") Long[] ids, String position) {
-        for (long id : ids) {
-            PhBanner banner = bannerService.findOne(id);
-            long latest = bannerService.getMaxSort(position);
-            banner.setStatus("1");
-            banner.setSort(latest + 1);
-            bannerService.save(banner);
-        }
+    public boolean up(Long id, String position) {
+        PhBanner banner = bannerService.findOne(id);
+        long latest = bannerService.getMaxSort(position);
+        banner.setStatus("1");
+        banner.setSort(latest + 1);
+        bannerService.save(banner);
         return true;
     }
 
     @RequestMapping("/banner_down")
     @ResponseBody
-    public boolean down(@RequestParam("ids[]") Long[] ids) {
-        for (long id : ids) {
-            PhBanner banner = bannerService.findOne(id);
-            banner.setStatus("0");
-            banner.setSort(null);
-            bannerService.save(banner);
-        }
+    public boolean down(Long id) {
+        PhBanner banner = bannerService.findOne(id);
+        banner.setStatus("0");
+        banner.setSort(null);
+        bannerService.save(banner);
         return true;
     }
 }

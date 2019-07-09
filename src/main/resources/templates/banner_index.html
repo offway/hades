@@ -61,8 +61,8 @@
 				<button class="btn btn-info add" >添加</button>
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
-                <button class="btn btn-info up">上架</button>
-                <button class="btn btn-info down">下架</button>
+<!--                <button class="btn btn-info up">上架</button>-->
+<!--                <button class="btn btn-info down">下架</button>-->
 			</div>
 
 					
@@ -188,6 +188,46 @@
 
 	var qiniuUrl = [[${qiniuUrl}]];
 	var position = [[${position}]];
+
+	function upIt(id, self) {
+		$.post("/banner_up", {"id": id,"position":position}, function (data) {
+			if (data) {
+				$(self).val("下架");
+				//remove old handler
+				$(self).prop("onclick", null);
+				$(self).removeAttr("onclick");
+				$(self).off("click");
+				//bind new
+				$(self).on("click", function () {
+					downIt(id, self);
+				});
+				toastr.success("操作已成功！", "温馨提示");
+				table_global.fnDraw();
+			} else {
+				toastr.error("非管理员无权操作", "温馨提示");
+			}
+		});
+	}
+
+	function downIt(id, self) {
+		$.post("/banner_down", {"id": id}, function (data) {
+			if (data) {
+				$(self).val("上架");
+				//remove old handler
+				$(self).prop("onclick", null);
+				$(self).removeAttr("onclick");
+				$(self).off("click");
+				//bind new
+				$(self).on("click", function () {
+					upIt(id, self);
+				});
+				toastr.success("操作已成功！", "温馨提示");
+				table_global.fnDraw();
+			} else {
+				toastr.error("非管理员无权操作", "温馨提示");
+			}
+		});
+	}
 	           
 	jQuery(document).ready(function($)
 	{
@@ -375,7 +415,7 @@
 					data: "status",
 					title: "是否上架",
 					render: function (data, type, row, meta) {
-						return "1" == data ? "已上架" : "<font color='blue'>未上架</font>";
+						return "1" == data && new Date(row["endTime"]).getTime() > new Date().getTime() ?  "已上架": "<font color='blue'>未上架</font>" ;
 					}
 				},
 				{
@@ -404,11 +444,27 @@
 					data: "id",
 					orderable: false,
 					title: "操作",
+					render:function (data, type, full, meta) {
+						var str = "";
+						if (full["status"] == "0") {
+							str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+						} else {
+							str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+						}
+						return str;
+					}
+				},
+				{
+					targets: 13,
+					data: "id",
+					orderable: false,
+					title: "操作",
 					render: function (data, type, full, meta) {
 						if (parseInt(full["status"]) == 1) {
 							return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="排序"/>';
 						} else {
-							return '<input type="button" name="checkIt" disabled="disabled" value="下架无法排序"/>';
+							// return '<input type="button" name="checkIt" disabled="disabled" value="下架无法排序"/>';
+							return '';
 						}
 					}
 				}
@@ -438,6 +494,8 @@
 					"defaultTime": "00:00:00"
 				}
 		);
+
+
 
 		function toggle(value) {
 			var url = $(".url");
