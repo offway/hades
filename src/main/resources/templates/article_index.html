@@ -970,7 +970,10 @@
                     var that = $("#tag");
                     that.selectize()[0].selectize.clear();
                     that.selectize()[0].selectize.destroy();
-                    var arr = data["tag"].split(",");
+                    var arr = [];
+                    if (data["tag"]) {
+                        arr = data["tag"].split(",");
+                    }
                     var contentStr = bindTagSelectorNew(innerData);
                     for (var i in arr) {
                         i = arr[i];

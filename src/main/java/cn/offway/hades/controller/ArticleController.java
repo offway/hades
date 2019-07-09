@@ -280,6 +280,7 @@ public class ArticleController {
                 article.setViewCount(0L);
                 article.setType("0");
                 article.setCreateTime(new Date());
+                article.setTag("资讯");
                 articleService.save(article);
                 //mark as synced
                 articleDraft.setStatus("1");
