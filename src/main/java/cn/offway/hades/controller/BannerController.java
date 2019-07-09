@@ -58,6 +58,7 @@ public class BannerController {
     @RequestMapping("/banner_list")
     @ResponseBody
     public Map<String, Object> getAll(HttpServletRequest request, String position) {
+        bannerService.updatetime();
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");

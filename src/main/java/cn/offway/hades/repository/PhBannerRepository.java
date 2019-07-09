@@ -23,4 +23,9 @@ public interface PhBannerRepository extends JpaRepository<PhBanner, Long>, JpaSp
 
     @Query(nativeQuery = true, value = "SELECT max(sort) as a FROM ph_banner where status = 1 AND position = ?1")
     Optional<String> getMaxSort(String position);
+
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true, value = "update `ph_banner` set `status` = 0 where `status` = 1 and `end_time` <= NOW()")
+    void updatetime();
 }

@@ -69,4 +69,9 @@ public class PhBannerServiceImpl implements PhBannerService {
     public void delete(Long id) {
         bannerRepository.delete(id);
     }
+
+    @Override
+    public void updatetime() {
+        bannerRepository.updatetime();
+    }
 }

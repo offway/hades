@@ -16,4 +16,6 @@ public interface PhBannerService {
     void resort(String position, Long sort);
 
     Long getMaxSort(String position);
+
+    void updatetime();
 }
