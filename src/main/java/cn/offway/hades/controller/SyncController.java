@@ -45,6 +45,11 @@ public class SyncController {
 
     @Scheduled(fixedRate = 1000 * 60 * 60)
     public void doSync() throws IOException {
+        String profile = System.getProperty("spring.profiles.active", "dev");
+        if ("dev".equals(profile)) {
+            //不在开发环境跑
+            return;
+        }
         BzyClient bzyClient = new BzyClient();
         //创建任务列表
         List<Map<String, String>> taskAll = new ArrayList<Map<String, String>>();
