@@ -3,6 +3,7 @@ package cn.offway.hades.service.impl;
 import cn.offway.hades.domain.PhBanner;
 import cn.offway.hades.repository.PhBannerRepository;
 import cn.offway.hades.service.PhBannerService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -73,5 +74,25 @@ public class PhBannerServiceImpl implements PhBannerService {
     @Override
     public void updatetime() {
         bannerRepository.updatetime();
+    }
+
+    @Override
+    public Page<PhBanner> findAll(String position, String id, String remark, Pageable pageable) {
+        return bannerRepository.findAll(new Specification<PhBanner>() {
+            @Override
+            public Predicate toPredicate(Root<PhBanner> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                if (StringUtils.isNotBlank(id)){
+                    params.add(criteriaBuilder.equal(root.get("id"), id));
+                }
+                if (StringUtils.isNotBlank(remark)){
+                    params.add(criteriaBuilder.like(root.get("remark"), "%"+remark+"%"));
+                }
+                params.add(criteriaBuilder.equal(root.get("position"), position));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        }, pageable);
     }
 }

@@ -18,4 +18,6 @@ public interface PhBannerService {
     Long getMaxSort(String position);
 
     void updatetime();
+
+    Page<PhBanner> findAll(String position, String id, String remark, Pageable pageable);
 }
