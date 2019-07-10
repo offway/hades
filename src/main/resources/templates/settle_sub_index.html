@@ -5,7 +5,7 @@
 	<title>财务报表明细</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -23,29 +23,65 @@
 			<!-- User Info, Notifications and activity Bar -->
 			<nav th:replace="navbar"></nav>
 			<div class="page-title">
-				
 				<div class="title-env">
 					<h1 class="title">财务报表明细</h1>
 					<p class="activityDescription"></p>
 				</div>
-
 				<div class="breadcrumb-env">
-
 					<ol class="breadcrumb bc-1">
 						<li><a href="/"><i class="fa-home"></i>Home</a></li>
 						<li><a>系统管理</a></li>
 						<li class="active"><strong>财务报表明细</strong></li>
 					</ol>
-
 				</div>
-
 			</div>
 			
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group" style="margin-left: 0;display: block;">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px" onclick="history.go(-1)">返回财务报表</button>
+					<form role="form" class="form-inline" id="queryForm">
+						<div class="input-group">
+							<label for="sTime" class="control-label">开始时间</label>
+							<input type="text" class="form-control" name="sTime" id="sTime" style="height:35px"
+								   placeholder="开始时间"/>
+						</div>
+						<div class="input-group">
+							<label for="eTime" class="control-label">结束时间</label>
+							<input type="text" class="form-control" name="eTime" id="eTime" style="height:35px"
+								   placeholder="结束时间"/>
+						</div>
+						<div class="input-group">
+							<label for="orderStatus" class="control-label">订单状态</label>
+							<select id="orderStatus" name="orderStatus" class="form-control" style="height:35px">
+								<option value="" selected="selected">全部</option>
+								<option value="0">审核中</option>
+								<option value="1">待退货</option>
+								<option value="2">退货中</option>
+								<option value="3">退款中</option>
+								<option value="4">退款成功</option>
+								<option value="5">退款取消</option>
+								<option value="6">审核失败</option>
+							</select>
+						</div>
+						<div class="input-group">
+							<label for="status" class="control-label">结算状态</label>
+							<select id="status" name="status" class="form-control" style="height:35px">
+								<option value="" selected="selected">全部</option>
+								<option value="0">待结算</option>
+								<option value="1">结算中</option>
+								<option value="2">已结算</option>
+							</select>
+						</div>
+						<div class="input-group">
+							<label for="payChannel" class="control-label">支付渠道</label>
+							<select id="payChannel" name="payChannel" class="form-control" style="height:35px">
+								<option value="" selected="selected">全部</option>
+								<option value="wxpay">微信支付</option>
+								<option value="alipay">支付宝</option>
+							</select>
+						</div>
+						<div class="form-group" style="margin-left: 0;margin-right:5px;margin-top:5px;display: block;">
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+							<button class="btn btn-secondary btn-single returnBtn" style="height:35px" onclick="return goBack()">返回财务报表</button>
 						</div>
 					</form>
 				</div>
@@ -54,8 +90,8 @@
 					</table>
 					
 				</div>
-<!--				<button class="btn btn-info add" >添加</button>-->
-<!--				<button class="btn btn-info edit">修改</button>-->
+				<button class="btn btn-info settle" >结算</button>
+				<button class="btn btn-info export">导出</button>
 <!--				<button class="btn btn-info del">删除</button>-->
 			</div>
 			
@@ -89,7 +125,6 @@
 			</div>
 		</div>
 	</div>
-
     <div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -110,28 +145,21 @@
 
 	<script src="js/common.js"></script>
 	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
+	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
-    function addMoreImg(self) {
-        var that = $(self);
-        that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
-    }
+	function goBack() {
+		window.location.href = '/settle.html';
+		return false;
+	}
 
-    function addMoreText(self) {
-        var that = $(self);
-        that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
-    }
-
-    function closeIt(self) {
-        var that = $(self);
-        that.hide();
-    }
+	function closeIt(self) {
+		var that = $(self);
+		that.hide();
+	}
 
     function formatTime(time) {
         return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
@@ -186,57 +214,60 @@
         });
     }
 
-	function checkItsList(id) {
-		window.location.href = '/goodsCategory.html?id=' + id;
+	function calcAmount(id) {
+		$.post("/settle_inner_calc", {"ids": [id]}, function (data) {
+			if (data) {
+				toastr.success("操作已成功！", "温馨提示");
+				table_global.fnDraw(); //or fnReloadAjax()
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	function settleOrder(id) {
+		$.post("/settle_inner_settle", {"ids": [id]}, function (data) {
+			if (data) {
+				toastr.success("操作已成功！", "温馨提示");
+				table_global.fnDraw(); //or fnReloadAjax()
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
 	}
 
 	var table_global;
-
-    function toggleTopIt(id) {
-        $.post("/brand_toggleTop", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
-
-    function topIt(id) {
-        $.post("/brand_top", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
-
-    function unTopIt(id) {
-        $.post("/brand_untop", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
+	var qiniuUrl = [[${qiniuUrl}]];
+	var theId = [[${theId}]];
 
     jQuery(document).ready(function($)
 	{
-		var qiniuUrl = [[${qiniuUrl}]];
-		var theId = [[${theId}]];
+		jQuery.datetimepicker.setLocale('zh');
+		jQuery('#sTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#eTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
 
 		var oTable = $("#example-1").dataTable({
 			language: {
                 url: "../assets/Chinese.txt"
             },
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
 			bFilter : false,
 			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
             sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
@@ -246,7 +277,6 @@
 				$.merge(aData, searchArray);
 				aData.push({"name": "theId", "value": theId});//append pid
 			},
-            order: [[ 6, "desc" ]],
 			columnDefs: [
 				{
 					targets: 0,
@@ -271,36 +301,54 @@
 				},
 				{
 					targets: 3,
+					data: "goods",
+					title: "商品名称",
+					render: function (data, type, full, meta) {
+						var str = "";
+						var refundMap = {};
+						for (var i in data) {
+							var it = data[i];
+							if (refundMap.hasOwnProperty(it["goodsId"])) {
+								str += "<p style='color: red'>" + it["goodsName"] + "&nbsp;" + it["remark"] + "&nbsp;" + it["goodsCount"] + "件</p>";
+							} else {
+								str += "<p>" + it["goodsName"] + "&nbsp;" + it["remark"] + "&nbsp;" + it["goodsCount"] + "件</p>";
+							}
+						}
+						return str;
+					}
+				},
+				{
+					targets: 4,
 					data: "price",
 					title: "订单总价"
 				},
 				{
-					targets: 4,
+					targets: 5,
 					data: "amount",
 					title: "实付金额"
 				},
 				{
-					targets: 5,
+					targets: 6,
 					data: "mvoucherAmount",
 					title: "店铺优惠券金额"
 				},
-				{
-					targets: 6,
-					data: "pvoucherAmount",
-					title: "平台优惠券金额"
-				},
+				// {
+				// 	targets: 6,
+				// 	data: "pvoucherAmount",
+				// 	title: "平台优惠券金额"
+				// },
+				// {
+				// 	targets: 7,
+				// 	data: "walletAmount",
+				// 	title: "钱包金额"
+				// },
 				{
 					targets: 7,
-					data: "walletAmount",
-					title: "钱包金额"
-				},
-				{
-					targets: 8,
 					data: "mailFee",
 					title: "运费"
 				},
 				{
-					targets: 9,
+					targets: 8,
 					data: "payChannel",
 					title: "支付渠道",
 					render: function (data, type, row, meta) {
@@ -309,51 +357,54 @@
 						return map.hasOwnProperty(data) ? map[data] : "未知";
 					}
 				},
+				// {
+				// 	targets: 10,
+				// 	data: "payFee",
+				// 	title: "支付渠道手续费"
+				// },
 				{
-					targets: 10,
-					data: "payFee",
-					title: "支付渠道手续费"
-				},
-				{
-					targets: 11,
-					data: "cutAmount",
-					title: "抽成金额"
-				},
-				{
-					targets: 12,
+					targets: 9,
 					data: "cutRate",
 					title: "抽成比率"
 				},
 				{
-					targets: 13,
+					targets: 10,
+					data: "cutAmount",
+					title: "抽成金额"
+				},
+
+				{
+					targets: 11,
 					data: "settledAmount",
 					title: "结算金额"
 				},
 				{
-					targets: 14,
+					targets: 12,
+					data: "remark",
+					title: "订单状态",
+					render: function (data, type, row, meta) {
+						//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
+						var map = ["已下单", "已付款", "已发货", "已收货", "取消"];
+						return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "未知";
+					}
+				},
+				{
+					targets: 13,
 					data: "status",
-					title: "状态",
+					title: "结算状态",
 					render: function (data, type, row, meta) {
 						/** 状态[0-待结算,1-结算中,2-已结算] **/
 						var map = ["待结算", "结算中", "已结算"];
 						return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "未知";
 					}
 				},
+				// {
+				// 	targets: 15,
+				// 	data: "settledName",
+				// 	title: "结算人"
+				// },
 				{
-					targets: 15,
-					data: "settledName",
-					title: "结算人"
-				},
-				{
-					targets: 16,
-					data: "settledTime",
-					title: "结算时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				},
-				{
-					targets: 17,
+					targets: 14,
 					data: "createTime",
 					title: "创建时间",
 					render: function (data, type, row, meta) {
@@ -361,12 +412,15 @@
 					}
 				},
 				{
-					targets: 18,
-					data: "remark",
-					title: "备注"
+					targets: 15,
+					data: "settledTime",
+					title: "结算时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
 				},
 				{
-					targets: 19,
+					targets: 16,
 					data: "id",
 					orderable: false,
 					title: "操作",
@@ -375,12 +429,19 @@
 					}
 				},
 				{
-					targets: 20,
+					targets: 17,
 					data: "id",
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="操作"/>';
+						switch (parseInt(full["status"])) {
+							case 0:
+								return '<input type="button" name="checkIt" onclick="calcAmount(' + data + ')" value="结算金额"/>';
+							case 1:
+								return '<input type="button" name="checkIt" onclick="settleOrder(' + data + ')" value="确认结算"/>';
+							case 2:
+								return '<input type="button" name="checkIt" disabled="disabled" value="已结算"/>';
+						}
 					}
 				}
 			]
@@ -394,198 +455,42 @@
 			return false;
 		});
 
-		$(".btn.btn-info.add").click(function () {
-			var form = $("#saveForm");
-			//form.find("input").val("");
-			form.find("img").attr("src","");
-			form.find("img").hide();
-			form.find("input[type='file']").show();
-			$(".imageShow").remove();
-			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-			//window.location.href = '/merchant_add.html';
-		});
-
-
-
-		//保存
-		$(".btn.btn-info.save").click(function(){
-			var footer = $(this).parent(".modal-footer");
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var form = $("#saveForm");
-			var name = form.find("input[name='name']").val();
-			//文件
-			var image = form.find("input[name='imageFile']").val();
-			//已上传的图片地址
-			var imageImg = form.find("input[name='image']").val();
-
-			if (name == '') {
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-				return;
-			}
-			var isOK = [];
-			if (image == '' && imageImg == '') {
-				isOK = checkImg([[image, "image"]]);
-				if (typeof isOK == 'boolean') {
-					return;
-				}
-			}
-
-			//获取token
-			$.get("/qiniu/token",{},function(token){
-				if(token !=''){
-					async.series({
-						one: function (callback) {
-							if (typeof isOK == 'object') {
-								callback();
-							} else {
-								callback("ERROR");
-							}
-						},
-						two: function(callback){
-							//上传详情图
-							async.eachSeries(Object.keys(isOK), function (item, cb) {
-								var f = isOK[item];
-								upload(item, token, f, function () {
-									//
-								}, function (err) {
-									console.log("上传imageFile异常:" + err);
-									cb(err);
-								}, function (res) {
-									//上传成功
-									if (res != '') {
-										var url = qiniuUrl + "/" + res.key;
-										form.find("input[name='" + res.param + "']").val(url);
-									}
-									cb();
-								});
-							}, function () {
-								callback();
-							});
-						},
-						three: function(callback){
-							//提交保存
-							$.post("/goodsType_save",$("#saveForm").serialize(),function(data){
-								if(data){
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									jQuery('#modal-6').modal('hide');
-									toastr.success("操作已成功！", "温馨提示");
-									oTable.fnDraw();
-								}else{
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败", "温馨提示");
-								}
-								callback();
-							});
-						}
-					}, function(err, results) {
-						console.log("OK");
-					});
-				}else{
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					toastr.error("上传文件错误，请联系管理员", "温馨提示");
-				}
-			});
-		});
-
-		$(".btn.btn-info.edit").click(function () {
+		$(".btn.btn-info.export").click(function () {
 			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return;
-			}
-
-			$.post("/goodsType_get", {id: activityId.val()}, function (data) {
-				var form = $("#saveForm");
-				//商家
-				for (var i in data) {
-					var ele = form.find("input[name='" + i + "']");
-					switch (ele.attr("type")) {
-						case "radio":
-							ele.val([data[i]]);
-							break;
-						default:
-							if (data[i] != undefined && !isNaN(data[i]) && String(data[i]).length == 13) {
-								ele.val(formatTime(data[i]));
-								$("#" + i).val(formatTime(data[i]));
-							} else {
-								ele.val(data[i]);
-							}
-					}
-					form.find("img[name='" + i + "Img']").attr("src", data[i]);
-					form.find("img[name='" + i + "Img']").attr("width", 200);
-					form.find("img[name='" + i + "Img']").attr("length", 200);
-					form.find("img[name='" + i + "Img']").show();
-				}
-				form.find(".btn.image").show();
-				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-			});
-		});
-
-		$(".btn.btn-info.del").click(function(){
-			var activityId = $("input[name='activityId']:checked");
-			if(activityId.length < 1){
+			if (activityId.length < 1) {
 				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return ;
+				return;
 			}
 
 			var ids = [];
-			activityId.each(function(i,e){
+			activityId.each(function (i, e) {
 				ids.push(e.value);
 			});
 
-			$.post("/goodsType_del",{ids:ids},function(data){
-				if(data){
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			})
+			window.open('/settle_inner_export.html?ids[]=' + ids, "_blank");
+			return false;
 		});
 
-        $(".btn.btn-info.up").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
+		$(".btn.btn-info.settle").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
 
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
 
-            $.post("/banner_up",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
-
-        $(".btn.btn-info.down").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
-
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
-
-            $.post("/banner_down",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
+			$.post("/settle_inner_batchSettle", {"ids": ids}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+					alert("你需要结算给商户" + data + "元");
+				}
+			});
+		});
 	});
 	/*]]>*/
 	</script>

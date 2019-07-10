@@ -1,29 +1,39 @@
 package cn.offway.hades.controller;
 
-import cn.offway.hades.domain.PhMerchant;
-import cn.offway.hades.domain.PhOrderInfo;
-import cn.offway.hades.domain.PhSettlementDetail;
-import cn.offway.hades.domain.PhSettlementInfo;
+import cn.offway.hades.domain.*;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
+import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.event.WriteHandler;
+import com.alibaba.excel.metadata.Sheet;
+import com.alibaba.excel.support.ExcelTypeEnum;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping
@@ -36,6 +46,8 @@ public class SettlementController {
     @Autowired
     private PhOrderExpressInfoService orderExpressInfoService;
     @Autowired
+    private PhOrderGoodsService orderGoodsService;
+    @Autowired
     private PhMerchantService merchantService;
     @Autowired
     private PhSettlementInfoService settlementInfoService;
@@ -44,7 +56,7 @@ public class SettlementController {
     @Autowired
     private PhGoodsService goodsService;
 
-//    @Scheduled(cron = "0 0 * * * *")
+    //    @Scheduled(cron = "0 0 * * * *")
     @RequestMapping("/stat")
     @ResponseBody
     public void dailyStat() {
@@ -154,21 +166,191 @@ public class SettlementController {
         return map;
     }
 
+    private Date strToDate(String s) {
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        if (!"".equals(s)) {
+            return DateTime.parse(s, format).toDate();
+        } else {
+            return null;
+        }
+    }
+
     @ResponseBody
     @RequestMapping("/settle_inner_list")
-    public Map<String, Object> getSettleSubList(HttpServletRequest request) {
+    public Map<String, Object> getSettleSubList(HttpServletRequest request, String sTime, String eTime, String orderStatus, String status, String payChannel) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Object> list = new ArrayList<>();
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         String id = request.getParameter("theId");
-        Sort sort = new Sort("id");
-        Page<PhSettlementDetail> pages = settlementDetailService.findAll(Long.valueOf(id), new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "id"));
+        PageRequest pageRequest = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
+        Page<PhSettlementDetail> pages = settlementDetailService.findAll(Long.valueOf(id), strToDate(sTime), strToDate(eTime), orderStatus, status, payChannel, pageRequest);
+        for (PhSettlementDetail detail : pages.getContent()) {
+            Map m = objectMapper.convertValue(detail, Map.class);
+            if (detail.getOrderNo() != null) {
+                m.put("goods", orderGoodsService.findAllByPid(detail.getOrderNo()));
+            } else {
+                m.put("goods", null);
+            }
+            list.add(m);
+        }
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
         map.put("iTotalRecords", pages.getTotalElements());//数据总条数
         map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
-        map.put("aData", pages.getContent());//数据集合
+        map.put("aData", list);//数据集合
         return map;
+    }
+
+    @ResponseBody
+    @Transactional
+    @RequestMapping("/settle_inner_calc")
+    public boolean markAsToSettle(@RequestParam("ids[]") Long[] ids) {
+        for (Long id : ids) {
+            PhSettlementDetail detail = settlementDetailService.findOne(id);
+            if (detail != null) {
+                detail.setSettledAmount(detail.getAmount() - detail.getCutAmount() - Double.valueOf(detail.getPayFee()) - detail.getMailFee());
+                detail.setStatus("1");//结算中
+                settlementDetailService.save(detail);
+            }
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @Transactional
+    @RequestMapping("/settle_inner_settle")
+    public boolean markAsSettled(@RequestParam("ids[]") Long[] ids, @AuthenticationPrincipal PhAdmin admin) {
+        for (Long id : ids) {
+            PhSettlementDetail detail = settlementDetailService.findOne(id);
+            if (detail != null) {
+                detail.setStatus("2");//已结算
+                detail.setSettledName(admin.getNickname());
+                detail.setSettledTime(new Date());
+                settlementDetailService.save(detail);
+                PhSettlementInfo info = settlementInfoService.findByPid(detail.getMerchantId());
+                info.setUnsettledCount(info.getUnsettledCount() - 1);
+                info.setUnsettledAmount(info.getUnsettledAmount() - detail.getSettledAmount());
+                info.setSettledCount(info.getSettledCount() + 1);
+                info.setSettledAmount(info.getSettledAmount() + detail.getSettledAmount());
+                info.setStatisticalTime(new Date());
+                settlementInfoService.save(info);
+            }
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @Transactional
+    @RequestMapping("/settle_inner_batchSettle")
+    public double batchSettle(@RequestParam("ids[]") Long[] ids, @AuthenticationPrincipal PhAdmin admin) {
+        double totalAmount = 0;
+        PhSettlementInfo info = null;//settlementInfoService.findByPid(detail.getMerchantId());
+        for (Long id : ids) {
+            PhSettlementDetail detail = settlementDetailService.findOne(id);
+            if (detail != null && "0".equals(detail.getStatus())) {
+                double amount = detail.getAmount() - detail.getCutAmount() - Double.valueOf(detail.getPayFee()) - detail.getMailFee();
+                totalAmount += amount;
+                detail.setSettledAmount(amount);
+                detail.setStatus("2");//已结算
+                detail.setSettledName(admin.getNickname());
+                detail.setSettledTime(new Date());
+                settlementDetailService.save(detail);
+                if (info == null) {
+                    info = settlementInfoService.findByPid(detail.getMerchantId());
+                }
+                info.setUnsettledCount(info.getUnsettledCount() - 1);
+                info.setUnsettledAmount(info.getUnsettledAmount() - detail.getSettledAmount());
+                info.setSettledCount(info.getSettledCount() + 1);
+                info.setSettledAmount(info.getSettledAmount() + detail.getSettledAmount());
+            }
+        }
+        if (info != null) {
+            info.setStatisticalTime(new Date());
+            settlementInfoService.save(info);
+        }
+        return totalAmount;
+    }
+
+    @RequestMapping("/settle_inner_export.html")
+    public void exportSettle(@RequestParam("ids[]") Long[] ids, @AuthenticationPrincipal PhAdmin admin, HttpServletResponse response) {
+        List<PhSettlementDetail> list = settlementDetailService.findList(ids);
+        try {
+            ServletOutputStream outputStream = response.getOutputStream();
+            response.setContentType("multipart/form-data");
+            response.setCharacterEncoding("utf-8");
+            String fileName = new String(("SettleList_" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()))
+                    .getBytes(), StandardCharsets.UTF_8);
+            response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
+            ExcelWriter writer = new ExcelWriter(null, outputStream, ExcelTypeEnum.XLSX, true, new WriteHandler() {
+                @Override
+                public void sheet(int i, org.apache.poi.ss.usermodel.Sheet sheet) {
+                    //nothing
+                }
+
+                @Override
+                public void row(int i, Row row) {
+                    //nothing
+                }
+
+                @Override
+                public void cell(int i, Cell cell) {
+                    if (cell.getRowIndex() == 0) {
+                        return;
+                    }
+                    switch (i) {
+                        case 10:
+                            /* 状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
+                            String[] arr = new String[]{"已下单", "已付款", "已发货", "已收货", "取消"};
+                            if (cell.getStringCellValue() == null || "".equals(cell.getStringCellValue())) {
+                                cell.setCellValue("未知");
+                            } else {
+                                cell.setCellValue(arr[Integer.valueOf(cell.getStringCellValue())]);
+                            }
+                            break;
+                        case 11:
+                            /* 状态[0-待结算,1-结算中,2-已结算] **/
+                            String[] arr2 = new String[]{"待结算", "结算中", "已结算"};
+                            cell.setCellValue(arr2[Integer.valueOf(cell.getStringCellValue())]);
+                            break;
+                        case 7:
+                            if ("alipay".equals(cell.getStringCellValue())) {
+                                cell.setCellValue("支付宝");
+                            } else if ("wxpay".equals(cell.getStringCellValue())) {
+                                cell.setCellValue("微信支付");
+                            } else {
+                                cell.setCellValue("未知");
+                            }
+                            break;
+                        case 2:
+                            String orderNo = cell.getStringCellValue();
+                            StringBuilder sb = new StringBuilder();
+                            for (PhOrderGoods goods : orderGoodsService.findAllByPid(orderNo)) {
+                                sb.append("名称:");
+                                sb.append(goods.getGoodsName());
+                                sb.append("数量:");
+                                sb.append(goods.getGoodsCount());
+                                sb.append("\r\n");
+                            }
+                            cell.setCellValue(sb.toString());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
+            Sheet sheet = new Sheet(1, 0, PhSettlementDetail.class);
+            sheet.setSheetName("Settle");
+            sheet.setAutoWidth(true);
+            writer.write(list, sheet);
+            writer.finish();
+            outputStream.flush();
+            outputStream.close();
+        } catch (IOException e) {
+            logger.error("IO ERROR", e);
+        }
     }
 }

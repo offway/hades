@@ -16,6 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,17 +56,61 @@ public class PhSettlementDetailServiceImpl implements PhSettlementDetailService 
     }
 
     @Override
-    public Page<PhSettlementDetail> findAll(Long merchantId, Pageable pageable) {
+    public Page<PhSettlementDetail> findAll(Long merchantId, Date sTime, Date eTime, String orderStatus, String status, String payChannel, Pageable pageable) {
         return phSettlementDetailRepository.findAll(new Specification<PhSettlementDetail>() {
             @Override
             public Predicate toPredicate(Root<PhSettlementDetail> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
                 params.add(criteriaBuilder.equal(root.get("merchantId"), merchantId));
+                if (!"".equals(status)) {
+                    params.add(criteriaBuilder.equal(root.get("status"), status));
+                }
+                if (!"".equals(payChannel)) {
+                    params.add(criteriaBuilder.equal(root.get("payChannel"), payChannel));
+                }
+                if (sTime != null && eTime != null) {
+                    params.add(criteriaBuilder.between(root.get("createTime"), sTime, eTime));
+                } else if (sTime != null) {
+                    params.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createTime"), sTime));
+                } else if (eTime != null) {
+                    params.add(criteriaBuilder.lessThanOrEqualTo(root.get("createTime"), eTime));
+                }
+                if (!"".equals(orderStatus)) {
+                    params.add(criteriaBuilder.equal(root.get("remark"), orderStatus));
+//                    Subquery<PhOrderInfo> subquery = criteriaQuery.subquery(PhOrderInfo.class);
+//                    Root<PhOrderInfo> subRoot = subquery.from(PhOrderInfo.class);
+//                    subquery.select(subRoot);
+//                    subquery.where(
+//                            criteriaBuilder.equal(root.get("orderNo"), subRoot.get("orderNo")),
+//                            criteriaBuilder.equal(subRoot.get("status"), orderStatus)
+//                    );
+//                    params.add(criteriaBuilder.exists(subquery));
+                }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
             }
         }, pageable);
+    }
+
+    @Override
+    public List<PhSettlementDetail> findList(Long[] idList) {
+        return phSettlementDetailRepository.findAll(new Specification<PhSettlementDetail>() {
+            @Override
+            public Predicate toPredicate(Root<PhSettlementDetail> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                if (idList.length > 0) {
+                    CriteriaBuilder.In<Long> in = criteriaBuilder.in(root.get("id"));
+                    for (Long v : idList) {
+                        in.value(v);
+                    }
+                    params.add(in);
+                }
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        });
     }
 
     @Override

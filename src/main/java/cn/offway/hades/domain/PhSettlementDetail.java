@@ -1,5 +1,8 @@
 package cn.offway.hades.domain;
 
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.metadata.BaseRowModel;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -12,9 +15,10 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "ph_settlement_detail")
-public class PhSettlementDetail implements Serializable {
+public class PhSettlementDetail extends BaseRowModel implements Serializable {
 
     /** ID **/
+    @ExcelProperty(value = "序号",index = 0)
     private Long id;
 
     /** 商户ID **/
@@ -27,15 +31,23 @@ public class PhSettlementDetail implements Serializable {
     private String merchantLogo;
 
     /** 订单号 **/
+    @ExcelProperty(value = "订单号",index = 1)
     private String orderNo;
 
+    /** 订单号副本 for 商品名称 **/
+    @ExcelProperty(value = "商品名称",index = 2)
+    private String orderNoCopy;
+
     /** 订单总价 **/
+    @ExcelProperty(value = "订单总价",index = 3)
     private Double price;
 
     /** 实付金额 **/
+    @ExcelProperty(value = "实付金额",index = 4)
     private Double amount;
 
     /** 店铺优惠券金额 **/
+    @ExcelProperty(value = "店铺优惠券金额",index = 5)
     private Double mVoucherAmount;
 
     /** 平台优惠券金额 **/
@@ -45,36 +57,44 @@ public class PhSettlementDetail implements Serializable {
     private Double walletAmount;
 
     /** 运费 **/
+    @ExcelProperty(value = "运费",index = 6)
     private Double mailFee;
 
     /** 支付渠道[wxpay-微信支付,alipay-支付宝] **/
+    @ExcelProperty(value = "支付渠道",index = 7)
     private String payChannel;
 
     /** 支付渠道手续费 **/
     private String payFee;
 
     /** 抽成金额 **/
+    @ExcelProperty(value = "抽成金额",index = 9)
     private Double cutAmount;
 
     /** 抽成比率 **/
+    @ExcelProperty(value = "抽成比率",index = 8)
     private Double cutRate;
 
     /** 结算金额 **/
     private Double settledAmount;
 
     /** 状态[0-待结算,1-结算中,2-已结算] **/
+    @ExcelProperty(value = "结算状态",index = 11)
     private String status;
 
     /** 结算人 **/
     private String settledName;
 
     /** 结算时间 **/
+    @ExcelProperty(value = "结算时间",index = 13)
     private Date settledTime;
 
     /** 创建时间 **/
+    @ExcelProperty(value = "创建时间",index = 12)
     private Date createTime;
 
     /** 备注 **/
+    @ExcelProperty(value = "订单状态",index = 10)
     private String remark;
 
     /** 版本号 **/
@@ -126,6 +146,7 @@ public class PhSettlementDetail implements Serializable {
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
+        this.orderNoCopy = orderNo;
     }
 
     @Column(name = "price", precision = 15, scale = 2)
@@ -283,4 +304,12 @@ public class PhSettlementDetail implements Serializable {
         this.version = version;
     }
 
+    @Transient
+    public String getOrderNoCopy() {
+        return orderNoCopy;
+    }
+
+    public void setOrderNoCopy(String orderNoCopy) {
+        this.orderNoCopy = orderNoCopy;
+    }
 }
