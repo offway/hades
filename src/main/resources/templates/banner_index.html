@@ -381,7 +381,7 @@
 					render: function (data, type, row, meta) {
 						/** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款] **/
 						var map = ["跳转URL", "品牌", "商品", "明星同款", "OFFWAY优选", "资讯", "抽奖", "纯h5", "待支付", "待收货", "退货", "中国力量首页", "高街时尚首页", "买手店首页", "买手店详情页"];
-						return map[parseInt(data)]
+						return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "无";
 					}
 				},
 				{
