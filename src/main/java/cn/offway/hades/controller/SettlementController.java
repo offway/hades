@@ -44,7 +44,7 @@ public class SettlementController {
     @Autowired
     private PhGoodsService goodsService;
 
-    @Scheduled(cron = "0 0 * * * *")
+//    @Scheduled(cron = "0 0 * * * *")
     @RequestMapping("/stat")
     @ResponseBody
     public void dailyStat() {
