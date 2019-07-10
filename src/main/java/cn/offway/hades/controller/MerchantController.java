@@ -119,6 +119,15 @@ public class MerchantController {
         return map;
     }
 
+
+    @ResponseBody
+    @RequestMapping("/merchant_list_top")
+    public List<PhMerchant> getList() {
+        List<PhMerchant> list = merchantService.findAll("1");
+
+        return list;
+    }
+
     @ResponseBody
     @RequestMapping("/merchant_del")
     public boolean delete(@RequestParam("ids[]") Long[] ids) {
@@ -277,12 +286,14 @@ public class MerchantController {
 
     @ResponseBody
     @RequestMapping("/merchant_top")
-    public boolean top(Long id, Long sort) {
-        PhMerchant newOne = merchantService.findOne(id);
-        newOne.setSort(sort);
-        merchantService.resetSort(sort);
-        merchantService.save(newOne);
-
+    public boolean top(@RequestParam(name="id") Long[] ids) {
+        Long i=0L;
+        for (Long id : ids) {
+            PhMerchant newOne = merchantService.findOne(id);
+            newOne.setSort(i);
+            merchantService.save(newOne);
+            i++;
+        }
         return true;
     }
 }

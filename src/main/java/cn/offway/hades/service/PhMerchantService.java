@@ -33,4 +33,6 @@ public interface PhMerchantService {
     void del(Long id);
 
     void resetSort(Long sort);
+
+    List<PhMerchant> findAll(String type);
 }
