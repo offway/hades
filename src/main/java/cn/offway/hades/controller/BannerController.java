@@ -57,16 +57,13 @@ public class BannerController {
 
     @RequestMapping("/banner_list")
     @ResponseBody
-    public Map<String, Object> getAll(HttpServletRequest request, String position) {
+    public Map<String, Object> getAll(HttpServletRequest request, String position,String id,String remark) {
         bannerService.updatetime();
-        String sortCol = request.getParameter("iSortCol_0");
-        String sortName = request.getParameter("mDataProp_" + sortCol);
-        String sortDir = request.getParameter("sSortDir_0");
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "status"), new Sort.Order("sort"));
-        Page<PhBanner> pages = bannerService.findAll(position, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhBanner> pages = bannerService.findAll(position,id,remark, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);

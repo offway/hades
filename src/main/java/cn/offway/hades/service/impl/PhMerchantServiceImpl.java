@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -60,12 +61,17 @@ public class PhMerchantServiceImpl implements PhMerchantService {
         }, pageable);
     }
 
-    private Specification<PhMerchant> getFilter(Object id) {
+    private Specification<PhMerchant> getFilter(Object id,Object type) {
         return new Specification<PhMerchant>() {
             @Override
             public Predicate toPredicate(Root<PhMerchant> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
-                params.add(criteriaBuilder.equal(root.get("id"), id));
+                if (id != null){
+                    params.add(criteriaBuilder.equal(root.get("id"), id));
+                }
+                if (type != null){
+                    params.add(criteriaBuilder.equal(root.get("type"), type));
+                }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
@@ -75,7 +81,7 @@ public class PhMerchantServiceImpl implements PhMerchantService {
 
     @Override
     public Page<PhMerchant> findAll(Long id, Pageable pageable) {
-        return phMerchantRepository.findAll(getFilter(id), pageable);
+        return phMerchantRepository.findAll(getFilter(id,null), pageable);
     }
 
     @Override
@@ -85,7 +91,7 @@ public class PhMerchantServiceImpl implements PhMerchantService {
 
     @Override
     public List<PhMerchant> findAll(Long id) {
-        return phMerchantRepository.findAll(getFilter(id));
+        return phMerchantRepository.findAll(getFilter(id,null));
     }
 
     @Override
@@ -115,5 +121,10 @@ public class PhMerchantServiceImpl implements PhMerchantService {
     @Override
     public void resetSort( Long sort) {
         phMerchantRepository.resort(sort);
+    }
+
+    @Override
+    public List<PhMerchant> findAll(String type) {
+        return phMerchantRepository.findAll(getFilter(null,type),new Sort("sort"));
     }
 }
