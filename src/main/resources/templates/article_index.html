@@ -497,9 +497,8 @@
                     that.parent().find("[name=imageImg]").attr("width", "100px");
                     that.parent().find("[name=imageImg]").attr("height", "100px");
                     that.parent().find("[name=imageImg]").show();
-                    console.log('22');
                     if (res1 != null){
-                        res1();
+                        eval(res1+'();') ;
                     }
                 },sizevideo,bl);
             },bol);
@@ -592,6 +591,59 @@
             brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand).replace("KEY", brand);
         }
         return brandStr;
+    }
+
+    function savearticle () {
+        var footer = $('#modal-6').find(".modal-footer");
+        var form = $("#saveForm");
+        // var code = form.find("input[name='code']").val();
+        var name = form.find("input[name='name']").val();
+        var title = form.find("input[name='title']").val();
+        var image = form.find("input[name='image']").val();
+        var video = form.find("input[name='video']").val();
+        var type = form.find("input[name='type']").val();
+        var tag = form.find("input[name='tag']").val();
+        var content = editor.html();
+        form.find("input[name='content']").val(content);
+
+        var viewCount = form.find("input[name='viewCount']").val();
+        var praiseCount = form.find("input[name='praiseCount']").val();
+
+        var goodsIDListSame = form.find("input[name='goodsIdsSame']");
+        var gidArrSame = [];
+        for (var gidSame in goodsIDListSame) {
+            if (isNaN(gidSame)) {
+                continue;
+            }
+            gidArrSame.push(goodsIDListSame[gidSame].value);
+        }
+        form.find("input[name='goodsIds']").val(gidArrSame.join(","));
+        var goodsIds = form.find("input[name='goodsIds']").val();
+
+        if (name == '' || title == '' || image == '' || type==''|| tag==''||viewCount=='') {
+            toastr.error("请填写完整数据后提交", "温馨提示");
+            footer.find("button").show();
+            footer.find(".bg-lg").hide();
+            return;
+        }
+
+
+        //提交保存
+        $.post("/article_save", $("#saveForm").serialize(), function (data) {
+            if (data) {
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                jQuery('#modal-6').modal('hide');
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+                oTable.fnDraw();
+            } else {
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                table_global.fnDraw();
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
     }
 
     var qiniuUrl = [[${qiniuUrl}]];
@@ -831,63 +883,13 @@
             footer.find("button").hide();
             footer.find(".bg-lg").show();
             var form = $("#saveForm");
-            if (form.find("input[name='type']").val()=='2'){
-                uploadMainFile($("#btnvideo")[0],1,savearticle());
+            if (form.find("input[name='type']:checked").val()=='2'){
+                uploadMainFile($("#btnvideo")[0],1,'savearticle');
             } else {
                 savearticle();
             }
         });
 
-        function savearticle () {
-            var footer = $(this).parent(".modal-footer");
-            var form = $("#saveForm");
-            // var code = form.find("input[name='code']").val();
-            var name = form.find("input[name='name']").val();
-            var title = form.find("input[name='title']").val();
-            var image = form.find("input[name='image']").val();
-            var video = form.find("input[name='video']").val();
-            var type = form.find("input[name='type']").val();
-            var tag = form.find("input[name='tag']").val();
-            var content = editor.html();
-            form.find("input[name='content']").val(content);
-
-            var viewCount = form.find("input[name='viewCount']").val();
-            var praiseCount = form.find("input[name='praiseCount']").val();
-
-            var goodsIDListSame = form.find("input[name='goodsIdsSame']");
-            var gidArrSame = [];
-            for (var gidSame in goodsIDListSame) {
-                if (isNaN(gidSame)) {
-                    continue;
-                }
-                gidArrSame.push(goodsIDListSame[gidSame].value);
-            }
-            form.find("input[name='goodsIds']").val(gidArrSame.join(","));
-            var goodsIds = form.find("input[name='goodsIds']").val();
-
-            if (name == '' || title == '' || image == '' || type==''|| tag==''||viewCount=='') {
-                toastr.error("请填写完整数据后提交", "温馨提示");
-                footer.find("button").show();
-                footer.find(".bg-lg").hide();
-                return;
-            }
-
-
-            //提交保存
-            $.post("/article_save", $("#saveForm").serialize(), function (data) {
-                if (data) {
-                    footer.find("button").show();
-                    footer.find(".bg-lg").hide();
-                    jQuery('#modal-6').modal('hide');
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                } else {
-                    footer.find("button").show();
-                    footer.find(".bg-lg").hide();
-                    toastr.error("操作失败", "温馨提示");
-                }
-            });
-        }
 
         $(".btn.btn-info.pass").click(function () {
             var activityId = $("input[name='activityId']:checked");
