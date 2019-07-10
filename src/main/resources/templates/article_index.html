@@ -745,11 +745,23 @@
                 },
                 {
                     targets: 9,
+                    data: "id",
+                    title: "手机预览",
+                    render: function (data,type,row,meta) {
+                        if (row['type']=='2'){
+                            return "<font color=\"red\">无</font>";
+                        }
+                        var url = [[${url}]];
+                        return  "<a style='color: #0e7df0;' target='_blank'  href=\"http://www.kuaizhan.com/common/encode-png?large=true&data="+url+"/article/info/"+data+".html\">手机预览</a>";
+                    }
+                },
+                {
+                    targets: 10,
                     data: "goodsIds",
                     title: "推荐商品"
                 },
                 {
-                    targets: 10,
+                    targets: 11,
                     data: "status",
                     title: "状态",
                     render: function (data,type,row,meta) {
@@ -757,17 +769,17 @@
                     }
                 },
                 {
-                    targets: 11,
+                    targets: 12,
                     data: "viewCount",
                     title: "浏览数"
                 },
                 {
-                    targets: 12,
+                    targets: 13,
                     data: "praiseCount",
                     title: "点赞数"
                 },
                 {
-                    targets: 13,
+                    targets: 14,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -775,12 +787,12 @@
                     }
                 },
                 {
-                    targets: 14,
+                    targets: 15,
                     data: "approver",
                     title: "操作人"
                 },
                 {
-                    targets: 15,
+                    targets: 16,
                     data: "approval",
                     title: "上架时间",
                     render: function (data, type, row, meta) {
@@ -788,12 +800,12 @@
                     }
                 },
                 {
-                    targets: 16,
+                    targets: 17,
                     data: "remark",
                     title: "备注"
                 },
                 {
-                    targets: 17,
+                    targets: 18,
                     data: "id",
                     orderable: false,
                     title: "操作",
