@@ -212,12 +212,12 @@ public class ArticleController {
     @RequestMapping("/article_save")
     public boolean save(PhArticle brand) throws IOException {
         if (brand.getId() == null) {
-            brand.setContent(filterWxPicAndReplace(brand.getContent()));
+            brand.setContent(filterWxPicAndReplace(brand.getContent().replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))","").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))","")));
             brand.setCreateTime(new Date());
             brand.setStatus("0");
         } else {
             PhArticle article = articleService.findOne(brand.getId());
-            brand.setContent(filterWxPicAndReplace(brand.getContent()));
+            brand.setContent(filterWxPicAndReplace(brand.getContent().replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))","").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))","")));
             brand.setStatus(article.getStatus());
             brand.setCreateTime(article.getCreateTime());
             brand.setApprover(article.getApprover());
