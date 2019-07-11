@@ -133,6 +133,11 @@
 			<artifactId>easyexcel</artifactId>
 			<version>1.1.2-beta5</version>
 		</dependency>
+		<dependency>
+			<groupId>com.aliyun.mq</groupId>
+			<artifactId>mq-http-sdk</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
