@@ -1,7 +1,6 @@
 package cn.offway.hades.service;
 
 import cn.offway.hades.domain.PhSettlementDetail;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
@@ -23,7 +22,7 @@ public interface PhSettlementDetailService {
 
     Boolean isExist(String orderNo);
 
-    Page<PhSettlementDetail> findAll(Long merchantId, Date sTime, Date eTime, String orderStatus, String status, String payChannel, Pageable pageable);
+    Iterable<PhSettlementDetail> findAll(Long merchantId, Date sTime, Date eTime, String orderStatus, String status, String payChannel, Pageable pageable);
 
     List<PhSettlementDetail> findList(Long[] idList);
 }

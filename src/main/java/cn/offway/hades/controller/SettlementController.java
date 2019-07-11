@@ -187,7 +187,7 @@ public class SettlementController {
         String id = request.getParameter("theId");
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "id"));
         PageRequest pageRequest = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
-        Page<PhSettlementDetail> pages = settlementDetailService.findAll(Long.valueOf(id), strToDate(sTime), strToDate(eTime), orderStatus, status, payChannel, pageRequest);
+        Page<PhSettlementDetail> pages = (Page<PhSettlementDetail>) settlementDetailService.findAll(Long.valueOf(id), strToDate(sTime), strToDate(eTime), orderStatus, status, payChannel, pageRequest);
         for (PhSettlementDetail detail : pages.getContent()) {
             Map m = objectMapper.convertValue(detail, Map.class);
             if (detail.getOrderNo() != null) {
@@ -203,6 +203,38 @@ public class SettlementController {
         map.put("iTotalRecords", pages.getTotalElements());//数据总条数
         map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
         map.put("aData", list);//数据集合
+        return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/settle_inner_list_all")
+    public Map<String, Object> getSettleSubListAll(@RequestParam("theId") String id, String sTime, String eTime, String orderStatus, String status, String payChannel) {
+        List<PhSettlementDetail> pages = (List<PhSettlementDetail>) settlementDetailService.findAll(Long.valueOf(id), strToDate(sTime), strToDate(eTime), orderStatus, status, payChannel, null);
+        Map<String, Object> map = new HashMap<>();
+        double price = 0, mVoucherAmount = 0, settledAmount = 0, settledAmount_a = 0, settledAmount_b = 0, cutAmount = 0, mailFee = 0, mailFee_a = 0, mailFee_b = 0;
+        for (PhSettlementDetail item : pages) {
+            price += item.getPrice();
+            mVoucherAmount += item.getMVoucherAmount();
+            settledAmount += item.getSettledAmount();
+            cutAmount += item.getCutAmount();
+            mailFee += item.getMailFee();
+            if ("0".equals(item.getStatus())) {
+                settledAmount_a += item.getSettledAmount();
+                mailFee_a += item.getMailFee();
+            } else {
+                settledAmount_b += item.getSettledAmount();
+                mailFee_b += item.getMailFee();
+            }
+        }
+        map.put("price", price);
+        map.put("mVoucherAmount", mVoucherAmount);
+        map.put("settledAmount", settledAmount);
+        map.put("settledAmount_a", settledAmount_a);
+        map.put("settledAmount_b", settledAmount_b);
+        map.put("cutAmount", cutAmount);
+        map.put("mailFee", mailFee);
+        map.put("mailFee_a", mailFee_a);
+        map.put("mailFee_b", mailFee_b);
         return map;
     }
 

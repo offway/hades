@@ -6,7 +6,6 @@ import cn.offway.hades.service.PhSettlementDetailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -56,8 +55,8 @@ public class PhSettlementDetailServiceImpl implements PhSettlementDetailService 
     }
 
     @Override
-    public Page<PhSettlementDetail> findAll(Long merchantId, Date sTime, Date eTime, String orderStatus, String status, String payChannel, Pageable pageable) {
-        return phSettlementDetailRepository.findAll(new Specification<PhSettlementDetail>() {
+    public Iterable<PhSettlementDetail> findAll(Long merchantId, Date sTime, Date eTime, String orderStatus, String status, String payChannel, Pageable pageable) {
+        Specification<PhSettlementDetail> specification = new Specification<PhSettlementDetail>() {
             @Override
             public Predicate toPredicate(Root<PhSettlementDetail> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
@@ -90,7 +89,12 @@ public class PhSettlementDetailServiceImpl implements PhSettlementDetailService 
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
             }
-        }, pageable);
+        };
+        if (pageable != null) {
+            return phSettlementDetailRepository.findAll(specification, pageable);
+        } else {
+            return phSettlementDetailRepository.findAll(specification);
+        }
     }
 
     @Override

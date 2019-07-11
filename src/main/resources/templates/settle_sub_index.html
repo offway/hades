@@ -453,9 +453,110 @@
 						}
 					}
 				}
-			]
+			],
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api();
+                // Remove the formatting to get integer data for summation
+                var intVal = function (i) {
+                    return parseFloat(i);
+                };
+                // Total over all pages
+                var total = api
+                    .column(4)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                // Total over all pages
+                var totalPay = api
+                    .column(5)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                // Total over all pages
+                var totalCouponOfMerchant = api
+                    .column(6)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                // Total over all pages
+                var totalMailFee = api
+                    .column(7)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                // Total over all pages
+                var totalServiceFee = api
+                    .column(10)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                // Total over all pages
+                var totalSettleAmount = api
+                    .column(11)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                // Update footer part 1
+                $(this).find("#tfoot1").html(
+                    '当页订单价格总计￥' + total.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                    '当页店铺优惠券总计￥' + totalCouponOfMerchant.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                    '当页应结款总计￥' + totalSettleAmount.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                    '当页服务费总计￥' + totalServiceFee.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                    '当页运费总计￥' + totalMailFee.toFixed(2) + '元'
+                );
+                var searchArray = $(".form-inline").serializeArray();
+                searchArray.push({"name": "theId", "value": theId});//append pid
+                $.post("/settle_inner_list_all", searchArray, function (data) {
+                    /*
+                    *
+        map.put("price", price);
+        map.put("mVoucherAmount", mVoucherAmount);
+        map.put("settledAmount", settledAmount);
+        map.put("settledAmount_a", settledAmount_a);
+        map.put("settledAmount_b", settledAmount_b);
+        map.put("cutAmount", cutAmount);
+        map.put("mailFee", mailFee);
+        map.put("mailFee_a", mailFee_a);
+        map.put("mailFee_b", mailFee_b);
+                    *
+                    * */
+                    var total = parseFloat(data["price"]);
+                    var totalCouponOfMerchant = parseFloat(data["mVoucherAmount"]);
+                    var totalSettleAmount = parseFloat(data["settledAmount"]);
+                    var settledAmount_a = parseFloat(data["settledAmount_a"]);
+                    var settledAmount_b = parseFloat(data["settledAmount_b"]);
+                    var totalServiceFee = parseFloat(data["cutAmount"]);
+                    var totalMailFee = parseFloat(data["mailFee"]);
+                    var mailFee_a = parseFloat(data["mailFee_a"]);
+                    var mailFee_b = parseFloat(data["mailFee_b"]);
+                    // Update footer part 2
+                    $("#tfoot2").html(
+                        '全部订单价格总计￥' + total.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                        '全部店铺优惠券总计￥' + totalCouponOfMerchant.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                        '全部应结款总计￥' + totalSettleAmount.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                        '未结款总计￥' + settledAmount_a.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                        '已结款总计￥' + settledAmount_b.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                        '全部服务费总计￥' + totalServiceFee.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;" +
+                        '全部运费总计￥' + totalMailFee.toFixed(2) + '元' +
+                        '未结运费总计￥' + mailFee_a.toFixed(2) + '元' +
+                        '已结运费总计￥' + mailFee_b.toFixed(2) + '元'
+                    );
+                });
+            }
 		});
-
+        setTimeout(function () {
+            // $("#example-1").append(
+            // 		$('<tfoot/>').append($("#example-1 thead tr").clone())
+            // );
+            $("#example-1").append('<tfoot><tr><td id="tfoot1" colspan="9"></td><td id="tfoot2" colspan="7"></td></tr></tfoot>');
+            oTable.fnDraw(); //or fnReloadAjax()
+        }, 500);
 		table_global = oTable;
 		
 		$(".searchBtn").click(function(){
