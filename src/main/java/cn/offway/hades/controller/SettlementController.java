@@ -192,8 +192,10 @@ public class SettlementController {
             Map m = objectMapper.convertValue(detail, Map.class);
             if (detail.getOrderNo() != null) {
                 m.put("goods", orderGoodsService.findAllByPid(detail.getOrderNo()));
+                m.put("orderId", orderInfoService.findOne(detail.getOrderNo()).getId());
             } else {
                 m.put("goods", null);
+                m.put("orderId", null);
             }
             list.add(m);
         }

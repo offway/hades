@@ -45,7 +45,7 @@ public class SyncController {
 
     @Scheduled(fixedRate = 1000 * 60 * 60)
     public void doSync() throws IOException {
-        String profile = System.getProperty("spring.profiles.active", "dev");
+        String profile = System.getProperty("spring.profiles.active", "prd");
         if ("dev".equals(profile)) {
             //不在开发环境跑
             return;

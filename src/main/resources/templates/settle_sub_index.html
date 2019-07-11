@@ -181,39 +181,9 @@
             '</div>';
     }
 
-    function checkIt(id) {
-		alert("暂不支持");
-		return;
-        $.post("/goodsType_find", {"id": id}, function (data) {
-            if (data) {
-                var preview = $("#preview_body");
-                var contentStr = "";
-                var mainObj = data["main"];
-                contentStr += appendToPreview("编号:", mainObj["id"]);
-                contentStr += appendToPreview("名称:", mainObj["name"]);
-                contentStr += appendToPreview("图片:", buildImg(mainObj["image"]));
-                contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
-                contentStr += appendToPreview("备注:", mainObj["remark"]);
-
-                for (var category in data["categoryList"]) {
-                    category = data["categoryList"][category];
-                    contentStr += appendToPreview("商品类别ID:", category["goodsType"]);
-                    contentStr += appendToPreview("商品类别名称:", category["goodsTypeName"]);
-                    contentStr += appendToPreview("创建时间:", formatTime(category["createTime"]));
-                    contentStr += appendToPreview("图片:", buildImg(category["image"]));
-                    contentStr += appendToPreview("名称:", category["name"]);
-                    contentStr += appendToPreview("编号:", category["id"]);
-                    contentStr += appendToPreview("备注:", category["remark"]);
-                    contentStr += appendToPreview("排序:", category["sort"]);
-                }
-                preview.html(contentStr);
-                jQuery('#preview').modal('show', {backdrop: 'fade'});
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
+	function checkIt(id) {
+		window.open('/order_detail.html?id=' + id, "_blank");
+	}
 
 	function calcAmount(id) {
 		$.post("/settle_inner_calc", {"ids": [id]}, function (data) {
@@ -432,7 +402,7 @@
 				},
 				{
 					targets: 16,
-					data: "id",
+					data: "orderId",
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
