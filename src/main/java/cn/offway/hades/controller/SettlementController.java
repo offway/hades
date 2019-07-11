@@ -57,6 +57,7 @@ public class SettlementController {
     private PhGoodsService goodsService;
 
     //    @Scheduled(cron = "0 0 * * * *")
+    @Deprecated
     @RequestMapping("/stat")
     @ResponseBody
     public void dailyStat() {
@@ -205,6 +206,7 @@ public class SettlementController {
         return map;
     }
 
+    @Deprecated
     @ResponseBody
     @Transactional
     @RequestMapping("/settle_inner_calc")
@@ -220,6 +222,7 @@ public class SettlementController {
         return true;
     }
 
+    @Deprecated
     @ResponseBody
     @Transactional
     @RequestMapping("/settle_inner_settle")
@@ -252,9 +255,9 @@ public class SettlementController {
         for (Long id : ids) {
             PhSettlementDetail detail = settlementDetailService.findOne(id);
             if (detail != null && "0".equals(detail.getStatus())) {
-                double amount = detail.getAmount() - detail.getCutAmount() - Double.valueOf(detail.getPayFee()) - detail.getMailFee();
+                double amount = detail.getSettledAmount();//detail.getAmount() - detail.getCutAmount() - Double.valueOf(detail.getPayFee()) - detail.getMailFee();
                 totalAmount += amount;
-                detail.setSettledAmount(amount);
+//                detail.setSettledAmount(amount);
                 detail.setStatus("2");//已结算
                 detail.setSettledName(admin.getNickname());
                 detail.setSettledTime(new Date());

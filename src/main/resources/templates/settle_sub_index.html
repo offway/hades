@@ -58,6 +58,9 @@
 								<option value="2">已发货</option>
 								<option value="3">已收货</option>
 								<option value="4">取消</option>
+								<option value="5">已退款</option>
+								<option value="6">已退货</option>
+								<option value="7">已退货退款</option>
 							</select>
 						</div>
 						<div class="input-group">
@@ -65,7 +68,7 @@
 							<select id="status" name="status" class="form-control" style="height:35px">
 								<option value="" selected="selected">全部</option>
 								<option value="0">待结算</option>
-								<option value="1">结算中</option>
+<!--								<option value="1">结算中</option>-->
 								<option value="2">已结算</option>
 							</select>
 						</div>
@@ -234,6 +237,16 @@
 		});
 	}
 
+	function batchSettle(idList) {
+		$.post("/settle_inner_batchSettle", {"ids": idList}, function (data) {
+			if (data) {
+				toastr.success("操作已成功！", "温馨提示");
+				table_global.fnDraw();
+				alert("你需要结算给商户" + data + "元");
+			}
+		});
+	}
+
 	var table_global;
 	var qiniuUrl = [[${qiniuUrl}]];
 	var theId = [[${theId}]];
@@ -382,8 +395,8 @@
 					title: "订单状态",
 					render: function (data, type, row, meta) {
 						//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
-						var map = ["已下单", "已付款", "已发货", "已收货", "取消"];
-						return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "未知";
+						var map = ["已下单", "已付款", "已发货", "已收货", "取消", "已退款", "已退货", "已退货退款"];
+						return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "";
 					}
 				},
 				{
@@ -392,8 +405,8 @@
 					title: "结算状态",
 					render: function (data, type, row, meta) {
 						/** 状态[0-待结算,1-结算中,2-已结算] **/
-						var map = ["待结算", "结算中", "已结算"];
-						return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "未知";
+						var map = ["待结算", "结算中(不再使用)", "已结算"];
+						return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "";
 					}
 				},
 				// {
@@ -434,9 +447,7 @@
 					render: function (data, type, full, meta) {
 						switch (parseInt(full["status"])) {
 							case 0:
-								return '<input type="button" name="checkIt" onclick="calcAmount(' + data + ')" value="结算金额"/>';
-							case 1:
-								return '<input type="button" name="checkIt" onclick="settleOrder(' + data + ')" value="确认结算"/>';
+								return '<input type="button" name="checkIt" onclick="batchSettle([' + data + '])" value="结算"/>';
 							case 2:
 								return '<input type="button" name="checkIt" disabled="disabled" value="已结算"/>';
 						}
@@ -480,14 +491,8 @@
 			activityId.each(function (i, e) {
 				ids.push(e.value);
 			});
-
-			$.post("/settle_inner_batchSettle", {"ids": ids}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-					alert("你需要结算给商户" + data + "元");
-				}
-			});
+			//do settle
+			batchSettle(ids);
 		});
 	});
 	/*]]>*/
