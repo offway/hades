@@ -183,7 +183,7 @@ public class OrderController {
             dataList.put("feeInfo", feeInfoList);
             //退款、退货信息
             List<Map> refundInfoList = new ArrayList<>();
-            PhRefund refund = refundService.findOne(orderInfo.getOrderNo());
+            PhRefund refund = refundService.findOne(orderInfo.getOrderNo(), new String[]{"0", "1", "2", "3", "4"});
             if (refund != null && "0".equals(refund.getIsComplete())) {
                 for (PhRefundGoods refundGoods : refundGoodsService.listByPid(refund.getId())) {
                     Map<String, Object> refundInfo = new HashMap<>();
@@ -254,7 +254,7 @@ public class OrderController {
             Map m = objectMapper.convertValue(item, Map.class);
             m.put("sub", orderGoodsService.findAllByPid(item.getOrderNo()));
             m.put("price_alt", item.getPrice() * getRatioOfMerchant(item.getMerchantId()));
-            PhRefund refund = refundService.findOne(item.getOrderNo());
+            PhRefund refund = refundService.findOne(item.getOrderNo(), new String[]{"0", "1", "2", "3", "4"});
             if (refund != null && "0".equals(refund.getIsComplete())) {
                 m.put("refund", refundGoodsService.listByPid(refund.getId()));
             } else {

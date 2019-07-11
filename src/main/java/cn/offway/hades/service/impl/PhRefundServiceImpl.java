@@ -39,7 +39,7 @@ public class PhRefundServiceImpl implements PhRefundService {
         return phRefundRepository.save(phRefund);
     }
 
-    private Specification<PhRefund> getFilter(String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String status) {
+    private Specification<PhRefund> getFilter(String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String[] status) {
         return new Specification<PhRefund>() {
             @Override
             public Predicate toPredicate(Root<PhRefund> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -53,8 +53,12 @@ public class PhRefundServiceImpl implements PhRefundService {
                 if (!"".equals(type)) {
                     params.add(criteriaBuilder.equal(root.get("type"), type));
                 }
-                if (!"".equals(status)) {
-                    params.add(criteriaBuilder.equal(root.get("status"), status));
+                if (status != null && status.length > 0) {
+                    CriteriaBuilder.In<String> in = criteriaBuilder.in(root.get("status"));
+                    for (String v : status) {
+                        in.value(v);
+                    }
+                    params.add(in);
                 }
                 if (sTime != null && eTime != null) {
                     params.add(criteriaBuilder.between(root.get("createTime"), sTime, eTime));
@@ -79,17 +83,22 @@ public class PhRefundServiceImpl implements PhRefundService {
 
     @Override
     public PhRefund findOne(String orderNo) {
-        return phRefundRepository.findOne(getFilter(orderNo, null, null, "", null, null, "", ""));
+        return phRefundRepository.findOne(getFilter(orderNo, null, null, "", null, null, "", null));
+    }
+
+    @Override
+    public PhRefund findOne(String orderNo, String... status) {
+        return phRefundRepository.findOne(getFilter(orderNo, null, null, "", null, null, "", status));
     }
 
     @Override
     public Page<PhRefund> list(String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String status, Pageable pageable) {
-        return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, status), pageable);
+        return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{status}), pageable);
     }
 
     @Override
     public List<PhRefund> all(String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String status) {
-        return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, status));
+        return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{status}));
     }
 
     @Override

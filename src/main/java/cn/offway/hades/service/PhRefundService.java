@@ -24,4 +24,6 @@ public interface PhRefundService {
     List<PhRefund> all(String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String status);
 
     PhRefund findOne(String orderNo);
+
+    PhRefund findOne(String orderNo, String... status);
 }
