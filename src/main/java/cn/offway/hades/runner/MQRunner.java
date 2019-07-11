@@ -136,6 +136,9 @@ public class MQRunner implements ApplicationRunner {
             settlementDetail.setPayFee(String.format("%.2f", orderInfo.getAmount() * 0.003));//千分之三的手续费
             settlementDetail.setPrice(orderInfo.getPrice());
             settlementDetail.setWalletAmount(orderInfo.getWalletAmount());
+            //计算结算金额
+            double amount = settlementDetail.getAmount() - settlementDetail.getCutAmount() - Double.valueOf(settlementDetail.getPayFee()) - settlementDetail.getMailFee();
+            settlementDetail.setSettledAmount(amount);
             /* 状态[0-待结算,1-结算中,2-已结算] */
             settlementDetail.setStatus("0");
             settlementDetail.setRemark(orderInfo.getStatus());
@@ -159,6 +162,7 @@ public class MQRunner implements ApplicationRunner {
             settlementInfo.setOrderCount(settlementInfo.getOrderCount() + 1L);
             settlementInfo.setUnsettledAmount(MathUtils.add(settlementInfo.getUnsettledAmount(), settlementDetail.getAmount()));
             settlementInfo.setUnsettledCount(settlementInfo.getUnsettledCount() + 1L);
+            settlementInfo.setStatisticalTime(new Date());
             phSettlementInfos.add(settlementInfo);
         }
         //入库
