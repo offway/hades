@@ -160,7 +160,7 @@ public class MQRunner implements ApplicationRunner {
             }
             settlementInfo.setOrderAmount(MathUtils.add(settlementDetail.getAmount(), settlementInfo.getOrderAmount()));
             settlementInfo.setOrderCount(settlementInfo.getOrderCount() + 1L);
-            settlementInfo.setUnsettledAmount(MathUtils.add(settlementInfo.getUnsettledAmount(), settlementDetail.getAmount()));
+            settlementInfo.setUnsettledAmount(MathUtils.add(settlementInfo.getUnsettledAmount(), settlementDetail.getSettledAmount()));
             settlementInfo.setUnsettledCount(settlementInfo.getUnsettledCount() + 1L);
             settlementInfo.setStatisticalTime(new Date());
             phSettlementInfos.add(settlementInfo);
