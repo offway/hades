@@ -534,6 +534,14 @@
 					targets: 9,
 					data: "goodsCount",
 					title: "数量"
+				},
+				{
+					targets: 10,
+					data: "stockImg",
+					title: "库存图片",
+					render: function (data, type, row, meta) {
+						return buildImg(data);
+					}
 				}
 			]
 		});
