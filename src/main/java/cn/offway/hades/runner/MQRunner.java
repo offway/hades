@@ -145,7 +145,8 @@ public class MQRunner implements ApplicationRunner {
             settlementDetail.setPrice(orderInfo.getPrice());
             settlementDetail.setWalletAmount(orderInfo.getWalletAmount());
             //计算结算金额
-            double amount = settlementDetail.getAmount() - settlementDetail.getCutAmount() - Double.valueOf(settlementDetail.getPayFee()) - settlementDetail.getMailFee();
+//            double amount = settlementDetail.getAmount() - settlementDetail.getCutAmount() - Double.valueOf(settlementDetail.getPayFee()) - settlementDetail.getMailFee();
+            double amount = (settlementDetail.getPrice() - settlementDetail.getMVoucherAmount()) * (1D - phMerchant.getRatio() / 100);
             settlementDetail.setSettledAmount(amount);
             /* 状态[0-待结算,1-结算中,2-已结算] */
             settlementDetail.setStatus("0");
