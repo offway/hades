@@ -737,7 +737,7 @@
                     title: "内容",
                     render: function (data,type,row,meta) {
                         if (row['type']=='2'){
-                            return "<font color=\"red\">无</font>";
+                            return "<font color=\"red\">视频资讯无内容</font>";
                         }
                         var url = [[${url}]];
                         return "<a style='color: #7fff00;' target='_blank'  href=\""+url+"/article/info/"+data+".html\">预览</a>";
@@ -749,7 +749,8 @@
                     title: "手机预览",
                     render: function (data,type,row,meta) {
                         if (row['type']=='2'){
-                            return "<font color=\"red\">无</font>";
+                            return  "<a style='color: #0e7df0;' target='_blank'  href=\"http://www.kuaizhan.com/common/encode-png?large=true&data="+row['video']+"\">手机预览</a>";
+                            // return "<font color=\"red\">无</font>";
                         }
                         var url = [[${url}]];
                         return  "<a style='color: #0e7df0;' target='_blank'  href=\"http://www.kuaizhan.com/common/encode-png?large=true&data="+url+"/article/info/"+data+".html\">手机预览</a>";

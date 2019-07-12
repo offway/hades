@@ -76,7 +76,7 @@ public class MQRunner implements ApplicationRunner {
             }
             // 没有消息
             if (messages == null || messages.isEmpty()) {
-                System.out.println(Thread.currentThread().getName() + ": no new message, continue!");
+                //System.out.println(Thread.currentThread().getName() + ": no new message, continue!");
                 continue;
             }
             // 处理业务逻辑
