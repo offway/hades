@@ -93,12 +93,20 @@ public class PhRefundServiceImpl implements PhRefundService {
 
     @Override
     public Page<PhRefund> list(String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String status, Pageable pageable) {
-        return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{status}), pageable);
+        if ("".equals(status)) {
+            return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{}), pageable);
+        } else {
+            return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{status}), pageable);
+        }
     }
 
     @Override
     public List<PhRefund> all(String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String status) {
-        return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{status}));
+        if ("".equals(status)) {
+            return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{}));
+        } else {
+            return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{status}));
+        }
     }
 
     @Override
