@@ -1,3 +1,4 @@
+is-prd: true
 #服务相关配置
 server: 
 #HTTP端口

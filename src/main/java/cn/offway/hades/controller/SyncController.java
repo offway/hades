@@ -20,6 +20,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,9 @@ public class SyncController {
     @Autowired
     private PhArticleDraftService articleDraftService;
 
+    @Value("${is-prd}")
+    private boolean isPrd;
+
     @RequestMapping("/bzy")
     @ResponseBody
     public boolean sync() throws IOException {
@@ -45,8 +49,8 @@ public class SyncController {
 
     @Scheduled(fixedRate = 1000 * 60 * 60)
     public void doSync() throws IOException {
-        String profile = System.getProperty("spring.profiles.active", "prd");
-        if ("dev".equals(profile)) {
+//        String profile = System.getProperty("spring.profiles.active", "prd");
+        if (!isPrd) {
             //不在开发环境跑
             return;
         }

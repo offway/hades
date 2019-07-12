@@ -16,6 +16,7 @@ import com.aliyun.mq.http.model.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -32,9 +33,9 @@ public class MQRunner implements ApplicationRunner {
     // 您在控制台创建的 Consumer ID(Group ID)
     private final static String GROUP_ID = "GID_HADES";
     // Topic所属实例ID，默认实例为空
-    private final static String INSTANCE_ID = "MQ_INST_1021766862384088_BayRNaow";
+    private final static String INSTANCE_ID = "MQ_INST_1021766862384088_BbBUuFSI";
     // 设置HTTP接入域名（此处以公共云生产环境为例）
-    private final static String HTTP_ENDPOINT = "http://1021766862384088.mqrest.cn-qingdao-public.aliyuncs.com";
+    private final static String HTTP_ENDPOINT = "http://1021766862384088.mqrest.cn-shanghai-internal.aliyuncs.com";
     // AccessKey 阿里云身份验证，在阿里云服务器管理控制台创建
     private final static String ACCESS_KEY = "LTAIp3JnL0OkoWAc";
     // SecretKey 阿里云身份验证，在阿里云服务器管理控制台创建
@@ -52,8 +53,15 @@ public class MQRunner implements ApplicationRunner {
     @Autowired
     private PhMerchantService phMerchantService;
 
+    @Value("${is-prd}")
+    private boolean isPrd;
+
     @Override
     public void run(ApplicationArguments applicationArguments) throws Exception {
+        if (!isPrd) {
+            //不在开发环境跑
+            return;
+        }
         MQClient mqClient = new MQClient(HTTP_ENDPOINT, ACCESS_KEY, SECRET_KEY);
         MQConsumer consumer = mqClient.getConsumer(INSTANCE_ID, TOPIC, GROUP_ID, null);
         // 在当前线程循环消费消息，建议是多开个几个线程并发消费消息
