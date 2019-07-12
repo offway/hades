@@ -3,6 +3,7 @@ package cn.offway.hades.controller;
 import cn.offway.hades.domain.*;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
+import cn.offway.hades.utils.MathUtils;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.event.WriteHandler;
 import com.alibaba.excel.metadata.Sheet;
@@ -134,6 +135,66 @@ public class SettlementController {
             settlementInfo.setUnsettledAmount(unsettledAmount);
             settlementInfo.setUnsettledCount(unsettleCount);
             settlementInfoService.save(settlementInfo);
+        }
+    }
+
+    @Transactional
+    @RequestMapping("/reSync")
+    @ResponseBody
+    public void reSync() {
+        List<PhOrderInfo> phOrderInfos = orderInfoService.findByPreorderNoAndStatus("", "1", "2", "3");
+        List<PhSettlementDetail> phSettlementDetails = new ArrayList<>();
+        for (PhOrderInfo orderInfo : phOrderInfos) {
+            PhSettlementDetail settlementDetail = new PhSettlementDetail();
+            settlementDetail.setAmount(orderInfo.getAmount());
+            settlementDetail.setCreateTime(new Date());
+            Long merchantId = orderInfo.getMerchantId();
+            PhMerchant phMerchant = merchantService.findOne(merchantId);
+            settlementDetail.setCutRate(phMerchant.getRatio());
+            settlementDetail.setCutAmount(orderInfo.getAmount() * phMerchant.getRatio() / 100);
+            settlementDetail.setMailFee(orderInfo.getMailFee());
+            settlementDetail.setMerchantId(orderInfo.getMerchantId());
+            settlementDetail.setMerchantLogo(orderInfo.getMerchantLogo());
+            settlementDetail.setMerchantName(orderInfo.getMerchantName());
+            settlementDetail.setMVoucherAmount(orderInfo.getMVoucherAmount());
+            settlementDetail.setPVoucherAmount(orderInfo.getPVoucherAmount());
+            settlementDetail.setOrderNo(orderInfo.getOrderNo());
+            settlementDetail.setPayChannel(orderInfo.getPayChannel());
+            settlementDetail.setPayFee(String.format("%.2f", orderInfo.getAmount() * 0.003));//千分之三的手续费
+            settlementDetail.setPrice(orderInfo.getPrice());
+            settlementDetail.setWalletAmount(orderInfo.getWalletAmount());
+            //计算结算金额
+            double amount = settlementDetail.getAmount() - settlementDetail.getCutAmount() - Double.valueOf(settlementDetail.getPayFee()) - settlementDetail.getMailFee();
+            settlementDetail.setSettledAmount(amount);
+            /* 状态[0-待结算,1-结算中,2-已结算] */
+            settlementDetail.setStatus("0");
+            settlementDetail.setRemark(orderInfo.getStatus());
+            phSettlementDetails.add(settlementDetail);
+            PhSettlementInfo settlementInfo = settlementInfoService.findByPid(merchantId);
+            if (null == settlementInfo) {
+                settlementInfo = new PhSettlementInfo();
+                settlementInfo.setMerchantId(phMerchant.getId());
+                settlementInfo.setMerchantLogo(phMerchant.getLogo());
+                settlementInfo.setMerchantName(phMerchant.getName());
+                settlementInfo.setMerchantGoodsCount(0L);
+                settlementInfo.setStatisticalTime(new Date());
+                settlementInfo.setOrderAmount(0d);
+                settlementInfo.setOrderCount(0L);
+                settlementInfo.setSettledAmount(0d);
+                settlementInfo.setSettledCount(0L);
+                settlementInfo.setUnsettledAmount(0d);
+                settlementInfo.setUnsettledCount(0L);
+            }
+            settlementInfo.setOrderAmount(MathUtils.add(settlementDetail.getAmount(), settlementInfo.getOrderAmount()));
+            settlementInfo.setOrderCount(settlementInfo.getOrderCount() + 1L);
+            settlementInfo.setUnsettledAmount(MathUtils.add(settlementInfo.getUnsettledAmount(), settlementDetail.getSettledAmount()));
+            settlementInfo.setUnsettledCount(settlementInfo.getUnsettledCount() + 1L);
+            settlementInfo.setStatisticalTime(new Date());
+            settlementInfoService.save(settlementInfo);
+        }
+        //入库
+        for (PhSettlementDetail detail : phSettlementDetails) {
+            settlementDetailService.save(detail);
         }
     }
 

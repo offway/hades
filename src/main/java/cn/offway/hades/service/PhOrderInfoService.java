@@ -33,5 +33,5 @@ public interface PhOrderInfoService {
 
     List<PhOrderInfo> findAll(String preOrderNo);
 
-    List<PhOrderInfo> findByPreorderNoAndStatus(String preorderno, String status);
+    List<PhOrderInfo> findByPreorderNoAndStatus(String preorderno, String... status);
 }
