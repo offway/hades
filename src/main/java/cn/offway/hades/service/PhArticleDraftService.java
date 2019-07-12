@@ -21,4 +21,6 @@ public interface PhArticleDraftService {
     void del(Long id);
 
     Page<PhArticleDraft> findAll(String name, String title, Pageable pageable);
+
+    boolean isExist(String title);
 }
