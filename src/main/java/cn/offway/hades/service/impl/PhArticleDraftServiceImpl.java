@@ -18,6 +18,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -52,6 +53,16 @@ public class PhArticleDraftServiceImpl implements PhArticleDraftService {
     @Override
     public PhArticleDraft findOne(Long id) {
         return phArticleRepository.findOne(id);
+    }
+
+    @Override
+    public boolean isExist(String title) {
+        Optional<String> res = phArticleRepository.getCount(title);
+        if (res.isPresent()) {
+            return Long.compare(Long.valueOf(String.valueOf(res.get())), 0) > 0;
+        } else {
+            return false;
+        }
     }
 
     @Override

@@ -163,14 +163,22 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
     }
 
     @Override
-    public List<PhOrderInfo> findByPreorderNoAndStatus(String preOrderNo, String status) {
+    public List<PhOrderInfo> findByPreorderNoAndStatus(String preOrderNo, String... status) {
         return phOrderInfoRepository.findAll(new Specification<PhOrderInfo>() {
             @Override
             public Predicate toPredicate(Root<PhOrderInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
-                /* 状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] */
-                params.add(criteriaBuilder.equal(root.get("status"), status));
-                params.add(criteriaBuilder.equal(root.get("preorderNo"), preOrderNo));
+                if (status != null && status.length > 0) {
+                    /* 状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] */
+                    CriteriaBuilder.In<String> in = criteriaBuilder.in(root.get("status"));
+                    for (String s : status) {
+                        in.value(s);
+                    }
+                    params.add(in);
+                }
+                if (!"".equals(preOrderNo)) {
+                    params.add(criteriaBuilder.equal(root.get("preorderNo"), preOrderNo));
+                }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
                 return null;

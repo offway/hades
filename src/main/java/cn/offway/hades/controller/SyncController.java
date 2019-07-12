@@ -20,13 +20,13 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -35,6 +35,9 @@ public class SyncController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private PhArticleDraftService articleDraftService;
+
+    @Value("${is-prd}")
+    private boolean isPrd;
 
     @RequestMapping("/bzy")
     @ResponseBody
@@ -45,8 +48,8 @@ public class SyncController {
 
     @Scheduled(fixedRate = 1000 * 60 * 60)
     public void doSync() throws IOException {
-        String profile = System.getProperty("spring.profiles.active", "prd");
-        if ("dev".equals(profile)) {
+//        String profile = System.getProperty("spring.profiles.active", "prd");
+        if (!isPrd) {
             //不在开发环境跑
             return;
         }
@@ -89,30 +92,19 @@ public class SyncController {
                 String consultationimg = MapUtils.getString(dataMap, "consultationimg");
                 String consultationcontent = MapUtils.getString(dataMap, "consultationcontent");
                 if (consultationtitle != null && !"".equals(consultationimg) && consultationcontent != null && !"".equals(consultationcontent)) {
-                    //头条ID
-                    dataMap.put("consultationid", UUID.randomUUID().toString().replace("-", ""));
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    //头条发布时间
-                    //dataMap.put("ispublishtime", sdf.format(new Date()));
-                    //创建时间
-                    dataMap.put("createid", 1);
-                    dataMap.put("updateid", 1);
-                    dataMap.put("createtime", sdf.format(new Date()));
-                    dataMap.put("updatetime", sdf.format(new Date()));
-                    dataMap.put("isaudit", 1);
-                    dataMap.put("establish", 2);
                     //头条内容
                     if (null != consultationcontent && consultationcontent.indexOf("img{max-width:100%;height:auto;}") < 0) {
                         consultationcontent = "<style>img{max-width:100%;height:auto;}</style>".concat(consultationcontent);
                     }
-                    dataMap.put("consultationcontent", consultationcontent);
-                    PhArticleDraft articleDraft = new PhArticleDraft();
-                    articleDraft.setContent(consultationcontent);
-                    articleDraft.setTitle(consultationtitle);
-                    articleDraft.setImage(consultationimg);
-                    articleDraft.setName(consultationtitle);
-                    articleDraft.setCreateTime(new Date());
-                    articleDraftService.save(articleDraft);
+                    if (!articleDraftService.isExist(consultationtitle)) {
+                        PhArticleDraft articleDraft = new PhArticleDraft();
+                        articleDraft.setContent(consultationcontent);
+                        articleDraft.setTitle(consultationtitle);
+                        articleDraft.setImage(consultationimg);
+                        articleDraft.setName(consultationtitle);
+                        articleDraft.setCreateTime(new Date());
+                        articleDraftService.save(articleDraft);
+                    }
                 }
             }
         }

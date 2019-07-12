@@ -57,6 +57,8 @@ public class RefundController {
     @Autowired
     private PhGoodsPropertyService goodsPropertyService;
     @Autowired
+    private PhGoodsStockService goodsStockService;
+    @Autowired
     private PhAddressService addressService;
     @Autowired
     private PhMerchantService merchantService;
@@ -110,7 +112,7 @@ public class RefundController {
             ret.add(container);
         }
         int initEcho = sEcho + 1;
-        return buildResponse(initEcho, pages.getTotalElements(), pages.getTotalElements(),ret);
+        return buildResponse(initEcho, pages.getTotalElements(), pages.getTotalElements(), ret);
     }
 
     @RequestMapping("/refund_list_export.html")
@@ -212,6 +214,7 @@ public class RefundController {
                     PhOrderGoods orderGoods = holder.get(refundGoods.getOrderGoodsId());
                     PhGoods goods = goodsService.findOne(orderGoods.getGoodsId());
                     List<PhGoodsProperty> propertyList = goodsPropertyService.findByStockId(orderGoods.getGoodsStockId());
+                    PhGoodsStock goodsStock = goodsStockService.findOne(orderGoods.getGoodsStockId());
                     goodsInfo.put("SKU", orderGoods.getGoodsStockId());
                     goodsInfo.put("goodsId", orderGoods.getGoodsId());
                     goodsInfo.put("goodsName", orderGoods.getGoodsName());
@@ -220,6 +223,7 @@ public class RefundController {
                     goodsInfo.put("brandName", goods.getBrandName());
                     goodsInfo.put("type", goods.getType() + goods.getCategory());
                     goodsInfo.put("merchantName", goods.getMerchantName());
+                    goodsInfo.put("stockImg", goodsStock.getImage());
                     StringBuilder sb = new StringBuilder();
                     for (PhGoodsProperty p : propertyList) {
                         sb.append(p.getName());
