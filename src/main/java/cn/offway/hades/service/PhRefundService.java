@@ -19,7 +19,7 @@ public interface PhRefundService {
 
     PhRefund findOne(Long id);
 
-    Page<PhRefund> list(String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String status, Pageable pageable);
+    Page<PhRefund> list(Object mid, String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String status, Pageable pageable);
 
     List<PhRefund> all(String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String status);
 

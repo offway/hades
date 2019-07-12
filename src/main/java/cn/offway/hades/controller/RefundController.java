@@ -95,13 +95,21 @@ public class RefundController {
 
     @ResponseBody
     @RequestMapping("/refund_list")
-    public Map<String, Object> getList(HttpServletRequest request, String orderNo, String sTime, String eTime, String userId, String sTimeCheck, String eTimeCheck, String type, String status) {
+    public Map<String, Object> getList(HttpServletRequest request, String orderNo, String sTime, String eTime, String userId, String sTimeCheck, String eTimeCheck, String type, String status, @AuthenticationPrincipal PhAdmin admin) {
+        Object mid = null;
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
-        Page<PhRefund> pages = refundService.list(orderNo, strToDate(sTime), strToDate(eTime), userId, strToDate(sTimeCheck), strToDate(eTimeCheck), type, status, pr);
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            PhMerchant merchant = merchantService.findByAdminId(admin.getId());
+            if (merchant != null) {
+                mid = merchant.getId();
+            }
+        }
+        Page<PhRefund> pages = refundService.list(mid, orderNo, strToDate(sTime), strToDate(eTime), userId, strToDate(sTimeCheck), strToDate(eTimeCheck), type, status, pr);
         ObjectMapper objectMapper = new ObjectMapper();
         List<Object> ret = new ArrayList<>();
         for (PhRefund type0 : pages.getContent()) {

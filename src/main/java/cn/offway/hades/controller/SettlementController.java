@@ -216,12 +216,20 @@ public class SettlementController {
 
     @ResponseBody
     @RequestMapping("/settle_list")
-    public Map<String, Object> getSettleList(HttpServletRequest request) {
+    public Map<String, Object> getSettleList(HttpServletRequest request, @AuthenticationPrincipal PhAdmin admin) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         Sort sort = new Sort("id");
-        Page<PhSettlementInfo> pages = settlementInfoService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        Object mid = null;
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            PhMerchant merchant = merchantService.findByAdminId(admin.getId());
+            if (merchant != null) {
+                mid = merchant.getId();
+            }
+        }
+        Page<PhSettlementInfo> pages = settlementInfoService.findAll(mid, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);

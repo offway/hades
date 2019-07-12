@@ -20,5 +20,5 @@ public interface PhSettlementInfoService {
 
     Boolean isExist(Long merchantId);
 
-    Page<PhSettlementInfo> findAll(Pageable pageable);
+    Page<PhSettlementInfo> findAll(Object merchantId, Pageable pageable);
 }

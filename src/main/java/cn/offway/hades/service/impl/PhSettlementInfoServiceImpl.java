@@ -54,8 +54,20 @@ public class PhSettlementInfoServiceImpl implements PhSettlementInfoService {
     }
 
     @Override
-    public Page<PhSettlementInfo> findAll(Pageable pageable) {
-        return phSettlementInfoRepository.findAll(pageable);
+    public Page<PhSettlementInfo> findAll(Object merchantId, Pageable pageable) {
+        Specification<PhSettlementInfo> filter = new Specification<PhSettlementInfo>() {
+            @Override
+            public Predicate toPredicate(Root<PhSettlementInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                if (merchantId != null) {
+                    params.add(criteriaBuilder.equal(root.get("merchantId"), merchantId));
+                }
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        };
+        return phSettlementInfoRepository.findAll(filter, pageable);
     }
 
     @Override

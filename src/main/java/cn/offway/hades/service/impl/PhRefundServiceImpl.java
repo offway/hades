@@ -1,5 +1,6 @@
 package cn.offway.hades.service.impl;
 
+import cn.offway.hades.domain.PhOrderInfo;
 import cn.offway.hades.domain.PhRefund;
 import cn.offway.hades.repository.PhRefundRepository;
 import cn.offway.hades.service.PhRefundService;
@@ -11,10 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,7 +37,7 @@ public class PhRefundServiceImpl implements PhRefundService {
         return phRefundRepository.save(phRefund);
     }
 
-    private Specification<PhRefund> getFilter(String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String[] status) {
+    private Specification<PhRefund> getFilter(Object mid, String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String[] status) {
         return new Specification<PhRefund>() {
             @Override
             public Predicate toPredicate(Root<PhRefund> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -74,6 +72,16 @@ public class PhRefundServiceImpl implements PhRefundService {
                 } else if (eTimeCheck != null) {
                     params.add(criteriaBuilder.lessThan(root.get("checkTime"), eTimeCheck));
                 }
+                if (mid != null) {
+                    Subquery<PhOrderInfo> subquery = criteriaQuery.subquery(PhOrderInfo.class);
+                    Root<PhOrderInfo> subRoot = subquery.from(PhOrderInfo.class);
+                    subquery.select(subRoot);
+                    subquery.where(
+                            criteriaBuilder.equal(root.get("orderNo"), subRoot.get("orderNo")),
+                            criteriaBuilder.equal(subRoot.get("merchantId"), mid)
+                    );
+                    params.add(criteriaBuilder.exists(subquery));
+                }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
@@ -83,29 +91,29 @@ public class PhRefundServiceImpl implements PhRefundService {
 
     @Override
     public PhRefund findOne(String orderNo) {
-        return phRefundRepository.findOne(getFilter(orderNo, null, null, "", null, null, "", null));
+        return phRefundRepository.findOne(getFilter(null, orderNo, null, null, "", null, null, "", null));
     }
 
     @Override
     public PhRefund findOne(String orderNo, String... status) {
-        return phRefundRepository.findOne(getFilter(orderNo, null, null, "", null, null, "", status));
+        return phRefundRepository.findOne(getFilter(null, orderNo, null, null, "", null, null, "", status));
     }
 
     @Override
-    public Page<PhRefund> list(String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String status, Pageable pageable) {
+    public Page<PhRefund> list(Object mid, String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String status, Pageable pageable) {
         if ("".equals(status)) {
-            return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{}), pageable);
+            return phRefundRepository.findAll(getFilter(mid, orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{}), pageable);
         } else {
-            return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{status}), pageable);
+            return phRefundRepository.findAll(getFilter(mid, orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{status}), pageable);
         }
     }
 
     @Override
     public List<PhRefund> all(String orderNo, Date sTime, Date eTime, String userId, Date sTimeCheck, Date eTimeCheck, String type, String status) {
         if ("".equals(status)) {
-            return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{}));
+            return phRefundRepository.findAll(getFilter(null, orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{}));
         } else {
-            return phRefundRepository.findAll(getFilter(orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{status}));
+            return phRefundRepository.findAll(getFilter(null, orderNo, sTime, eTime, userId, sTimeCheck, eTimeCheck, type, new String[]{status}));
         }
     }
 
