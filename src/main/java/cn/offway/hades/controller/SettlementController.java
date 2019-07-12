@@ -147,7 +147,7 @@ public class SettlementController {
         for (PhOrderInfo orderInfo : phOrderInfos) {
             PhSettlementDetail settlementDetail = new PhSettlementDetail();
             settlementDetail.setAmount(orderInfo.getAmount());
-            settlementDetail.setCreateTime(new Date());
+            settlementDetail.setCreateTime(orderInfo.getCreateTime());
             Long merchantId = orderInfo.getMerchantId();
             PhMerchant phMerchant = merchantService.findOne(merchantId);
             settlementDetail.setCutRate(phMerchant.getRatio());
