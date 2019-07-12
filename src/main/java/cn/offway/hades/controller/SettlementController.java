@@ -32,6 +32,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -56,6 +57,8 @@ public class SettlementController {
     private PhSettlementDetailService settlementDetailService;
     @Autowired
     private PhGoodsService goodsService;
+    @Autowired
+    private PhRoleadminService roleadminService;
 
     //    @Scheduled(cron = "0 0 * * * *")
     @Deprecated
@@ -345,6 +348,10 @@ public class SettlementController {
     @Transactional
     @RequestMapping("/settle_inner_batchSettle")
     public double batchSettle(@RequestParam("ids[]") Long[] ids, @AuthenticationPrincipal PhAdmin admin) {
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            return 0;
+        }
         double totalAmount = 0;
         PhSettlementInfo info = null;//settlementInfoService.findByPid(detail.getMerchantId());
         for (Long id : ids) {
