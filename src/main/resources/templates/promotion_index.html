@@ -126,6 +126,24 @@
 								</div>
 							</div>
 						</div>
+						<div id="discount" class="row" style="display: none">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">折扣</label>
+									<input type="text" class="form-control" name="discount" placeholder="折扣率"/>
+								</div>
+							</div>
+						</div>
+						<div id="preferential" class="row" style="display: none">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">满</label>
+									<input type="text" class="form-control" name="meet"  placeholder="满足金额"/>
+									<label>减</label>
+									<input type="text" class="form-control" name="reduction" placeholder="减少金额"/>
+								</div>
+							</div>
+						</div>
 						<div id="gift" class="row" style="display: none">
 							<div class="col-md-12">
 								<div class="form-group">
@@ -138,7 +156,7 @@
 				</div>
 				
 				<div class="modal-footer">
-				 	<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				 	<button type="button" class="btn btn-white" onclick="refresh()" data-dismiss="modal">关闭</button>
 					<button type="button" class="btn btn-info save">保存</button>
 					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 				</div>
@@ -251,6 +269,10 @@
 	}
 
 	var table_global;
+    
+    function refresh() {
+		table_global.fnDraw();
+	}
 
 	function closeOrder(id) {
 		$.post("/order_closeOrder", {"id": id}, function (data) {
@@ -303,9 +325,16 @@
 			target.val("0");
 			target.attr("disabled", "disabled");
 			$('#gift').hide();
+			$('#preferential').hide();
+			$('#discount').show();
 		}else if (id == '2'){
+			$('#preferential').hide();
+			$('#discount').hide();
 			$('#gift').show();
 		} else {
+			$('#discount').hide();
+			$('#gift').hide();
+			$('#preferential').show();
 			target.removeAttr("disabled");
 		}
 
@@ -575,9 +604,17 @@
 			} else {
 				$('#merchantId').hide();
 			}
-			if ($('#mode').val() =='0' || $('#mode').val() =='1' ){
+			if ($('#mode').val() =='0'){
 				$('#gift').hide();
-			} else {
+				$('#preferential').hide();
+				$('#discount').show();
+			} else if ($('#mode').val() =='1') {
+				$('#gift').hide();
+				$('#discount').hide();
+				$('#preferential').show();
+			}else {
+				$('#discount').hide();
+				$('#preferential').hide();
 				$('#gift').show();
 			}
 
@@ -715,10 +752,19 @@
 				}else {
 					$('#merchantId').hide();
 				}
-				if (data["mode"] == '2'){
-					$('#gift').show();
-				}else {
+				if (data["mode"] =='0'){
 					$('#gift').hide();
+					$('#preferential').hide();
+					$('#discount').show();
+				} else if (data["mode"] =='1') {
+					$('#gift').hide();
+					$('#discount').hide();
+					$('#preferential').show();
+
+				}else {
+					$('#discount').hide();
+					$('#preferential').hide();
+					$('#gift').show();
 				}
 				form.find(".btn.image").show();
 				jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
