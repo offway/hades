@@ -1,6 +1,8 @@
 package cn.offway.hades.service;
 
 import cn.offway.hades.domain.PhPromotionRule;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 促销活动规则Service接口
@@ -13,4 +15,6 @@ public interface PhPromotionRuleService{
 	PhPromotionRule save(PhPromotionRule phPromotionRule);
 	
 	PhPromotionRule findOne(Long id);
+
+	Page<PhPromotionRule> findAll(Pageable pageable);
 }

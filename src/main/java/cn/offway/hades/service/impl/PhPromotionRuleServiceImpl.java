@@ -1,13 +1,22 @@
 package cn.offway.hades.service.impl;
 
+import cn.offway.hades.domain.PhPromotionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import cn.offway.hades.service.PhPromotionRuleService;
 
 import cn.offway.hades.domain.PhPromotionRule;
 import cn.offway.hades.repository.PhPromotionRuleRepository;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.awt.print.Pageable;
 
 
 /**
@@ -32,5 +41,15 @@ public class PhPromotionRuleServiceImpl implements PhPromotionRuleService {
 	@Override
 	public PhPromotionRule findOne(Long id){
 		return phPromotionRuleRepository.findOne(id);
+	}
+
+	@Override
+	public Page<PhPromotionRule> findAll(org.springframework.data.domain.Pageable pageable) {
+		return phPromotionRuleRepository.findAll(new Specification<PhPromotionRule>() {
+			@Override
+			public Predicate toPredicate(Root<PhPromotionRule> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+				return null;
+			}
+		},pageable);
 	}
 }

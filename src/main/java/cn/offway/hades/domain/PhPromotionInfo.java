@@ -51,6 +51,8 @@ public class PhPromotionInfo implements Serializable {
     /** 备注 **/
     private String remark;
 
+    /** 商品数量 **/
+    private String goodsCount;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -156,4 +158,12 @@ public class PhPromotionInfo implements Serializable {
         this.remark = remark;
     }
 
+    @Column(name = "goods_count", length = 11)
+    public String getGoodsCount() {
+        return goodsCount;
+    }
+
+    public void setGoodsCount(String goodsCount) {
+        this.goodsCount = goodsCount;
+    }
 }

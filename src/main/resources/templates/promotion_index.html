@@ -42,57 +42,6 @@
 			</div>
 			
 			<div class="panel panel-default">
-<!--				<div class="panel-heading">-->
-<!--					<form role="form" class="form-inline">-->
-<!--						<div class="form-group ">-->
-<!--							<div class="input-group">-->
-<!--								<label for="merchantId" class="control-label">商户</label>-->
-<!--								<select id="merchantId" name="merchantId" class="form-control" style="height:35px">-->
-<!--								</select>-->
-<!--							</div>-->
-<!--							<div class="input-group">-->
-<!--								<label for="name" class="control-label">名称</label>-->
-<!--								<input id="name" type="text" name="name" class="form-control" style="height:35px" placeholder="名称"/>-->
-<!--							</div>-->
-<!--							<div class="input-group">-->
-<!--								<label for="beginTime" class="control-label">开始时间</label>-->
-<!--								<input id="beginTime" type="text" name="beginTime" class="form-control" style="height:35px" placeholder="开始时间"/>-->
-<!--							</div>-->
-<!--							<div class="input-group">-->
-<!--								<label for="endTime" class="control-label">结束时间</label>-->
-<!--								<input id="endTime" type="text" name="endTime" class="form-control" style="height:35px" placeholder="结束时间"/>-->
-<!--							</div>-->
-<!--							<div class="input-group">-->
-<!--								<label for="remark" class="control-label">备注</label>-->
-<!--								<input id="remark" type="text" name="remark" class="form-control" style="height:35px" placeholder="备注"/>-->
-<!--							</div>-->
-<!--							<div class="input-group">-->
-<!--								<label for="type" class="control-label">优惠券类型</label>-->
-<!--								<select id="type" name="type" class="form-control" style="height:35px">-->
-<!--									<option value="" selected="selected">全部</option>-->
-<!--									<option value="0">平台券</option>-->
-<!--									<option value="1">店铺券</option>-->
-<!--								</select>-->
-<!--							</div>-->
-<!--&lt;!&ndash;-->
-<!--							<div class="input-group">-->
-<!--								<label for="status" class="control-label">状态</label>-->
-<!--								<select id="status" name="status" class="form-control" style="height:35px">-->
-<!--									<option value="" selected="selected">全部</option>-->
-<!--									<option value="0">已下单</option>-->
-<!--									<option value="1">已付款</option>-->
-<!--									<option value="2">已发货</option>-->
-<!--									<option value="3">已收货</option>-->
-<!--									<option value="4">取消</option>-->
-<!--								</select>-->
-<!--							</div>-->
-<!--&ndash;&gt;-->
-<!--						</div>-->
-<!--						<div class="form-group">-->
-<!--							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>-->
-<!--						</div>-->
-<!--					</form>-->
-<!--				</div>-->
 				<div class="panel-body">
 					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
 					</table>
@@ -375,6 +324,46 @@
 
 	}
 
+	function upIt(id, self) {
+		$.post("/promotion_up", {"id": id}, function (data) {
+			if (data) {
+				$(self).val("下架");
+				//remove old handler
+				$(self).prop("onclick", null);
+				$(self).removeAttr("onclick");
+				$(self).off("click");
+				//bind new
+				$(self).on("click", function () {
+					downIt(id, self);
+				});
+				toastr.success("操作已成功！", "温馨提示");
+				table_global.fnDraw();
+			} else {
+				toastr.error("非管理员无权操作", "温馨提示");
+			}
+		});
+	}
+
+	function downIt(id, self) {
+		$.post("/promotion_down", {"id": id}, function (data) {
+			if (data) {
+				$(self).val("上架");
+				//remove old handler
+				$(self).prop("onclick", null);
+				$(self).removeAttr("onclick");
+				$(self).off("click");
+				//bind new
+				$(self).on("click", function () {
+					upIt(id, self);
+				});
+				toastr.success("操作已成功！", "温馨提示");
+				table_global.fnDraw();
+			} else {
+				toastr.error("非管理员无权操作", "温馨提示");
+			}
+		});
+	}
+
     jQuery(document).ready(function($)
 	{
         var oTable;
@@ -413,11 +402,6 @@
 				},
 				{
 					targets: 2,
-					data: "name",
-					title: "活动名称"
-				},
-				{
-					targets: 3,
 					data: "type",
 					title: "类型",
 					render: function (data, type, row, meta) {
@@ -426,37 +410,17 @@
 					}
 				},
 				{
+					targets: 3,
+					data: "name",
+					title: "活动名称"
+				},
+				{
 					targets: 4,
-					data: "merchantId",
-					title: "商户ID"
+					data: "goodsCount",
+					title: "商品数量"
 				},
 				{
 					targets: 5,
-					data: "beginTime",
-					title: "开始时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				},
-				{
-					targets: 6,
-					data: "endTime",
-					title: "截止时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				},
-				{
-					targets: 7,
-					data: "status",
-					title: "状态",
-					render:function (data, type, row, meta) {
-						var map = ["未上架", "已上架"];
-						return map[parseInt(data)];
-					}
-				},
-				{
-					targets: 8,
 					data: "mode",
 					title: "减价类型",
 					render:function (data, type, row, meta) {
@@ -465,12 +429,28 @@
 					}
 				},
 				{
-					targets: 9,
-					data: "gift",
-					title: "赠品"
+					targets: 6,
+					data: "name",
+					title: "促销详情"
 				},
 				{
-					targets: 10,
+					targets: 7,
+					data: "beginTime",
+					title: "开始时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 8,
+					data: "endTime",
+					title: "截止时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 9,
 					data: "createTime",
 					title: "创建时间",
 					render: function (data, type, row, meta) {
@@ -478,9 +458,43 @@
 					}
 				},
 				{
+					targets: 10,
+					data: "merchantId",
+					title: "商户ID"
+				},
+				{
 					targets: 11,
+					data: "gift",
+					title: "赠品"
+				},
+				{
+					targets: 12,
+					data: "status",
+					title: "状态",
+					render:function (data, type, row, meta) {
+						var map = ["未上架", "已上架"];
+						return map[parseInt(data)];
+					}
+				},
+				{
+					targets: 13,
 					data: "remark",
-					title: "备注"
+					title: "操作人"
+				},
+				{
+					targets: 14,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						var str = "";
+						if (full["status"] == "0") {
+							str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+						} else {
+							str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+						}
+						return str;
+					}
 				}
 			]
 		});
@@ -561,10 +575,10 @@
 			} else {
 				$('#merchantId').hide();
 			}
-			if ($('#mode').val() =='2'){
-				$('#gift').show();
-			} else {
+			if ($('#mode').val() =='0' || $('#mode').val() =='1' ){
 				$('#gift').hide();
+			} else {
+				$('#gift').show();
 			}
 
 			var form = $("#saveForm");
@@ -730,46 +744,6 @@
 				}
 			})
 		});
-
-        $(".btn.btn-info.up").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
-
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
-
-            $.post("/banner_up",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
-
-        $(".btn.btn-info.down").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
-
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
-
-            $.post("/banner_down",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
 	});
 	/*]]>*/
 	</script>
