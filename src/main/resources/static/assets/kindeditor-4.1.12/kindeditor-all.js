@@ -234,7 +234,7 @@ K.basePath = _getBasePath();
 K.options = {
 	designMode : true,
 	fullscreenMode : false,
-	filterMode : true,
+	filterMode : false,
 	wellFormatMode : true,
 	shadowMode : true,
 	loadStyleMode : true,
@@ -949,15 +949,38 @@ function _mediaAttrs(srcTag) {
 }
 
 function _mediaEmbed(attrs) {
-	videoCapture(attrs["src"], function (base64Str) {
-		console.log(base64Str);
-		var html = '<embed ';
-		_each(attrs, function (key, val) {
-			html += key + '="' + val + '" ';
-		});
-		html += '/>';
-		return html;
+	videoCapture(attrs["src"], function (nimabi) {
+
 	});
+	var timer = setInterval(function(){
+		var caonima = $("#facke").val();
+		var caonimaw = $("#fackew").val();
+		var caonimah = $("#fackeh").val();
+		if(caonima == ""){
+			return ;
+		}else {
+			$("#facke").val("");
+		}
+		var html = '<video ';
+		_each(attrs, function (key, val) {
+			if(key == "width"){
+				html += 'width="' + '375' + '" ';
+			}else if(key == "height"){
+				html += 'height="' + '200' + '" ';
+			}else {
+				html += key + '="' + val + '" ';
+			}
+
+		});
+		html += 'poster="' + caonima + '" ';
+		html += 'controls="" >';
+		html += '</video>';
+		var a = editor.html();
+		var lj = a.replace("#videoCapture_replacer#",html);
+		editor.html(lj);
+		clearInterval(timer);
+	},500);
+	return "#videoCapture_replacer#";
 }
 function _mediaImg(blankPath, attrs) {
 	var width = attrs.width,

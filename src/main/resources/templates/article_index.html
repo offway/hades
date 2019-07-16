@@ -271,6 +271,10 @@
     </div>
 </div>
 
+<input type="hidden" id="facke"/>
+<input type="hidden" id="fackew"/>
+<input type="hidden" id="fackeh"/>
+
 <video id="videoObj"></video>
 <input type="hidden" class="form-control" name="articleid" id="articleid" value=""/>
 <script src="js/common.js"></script>
@@ -614,6 +618,9 @@
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 var imgBase64 = canvas.toDataURL("image/jpg");
                 console.log(imgBase64);
+                $('#facke').val(imgBase64);
+                $('#fackeh').val(h);
+                $('#fackew').val(w);
                 cb(imgBase64);
             }, 500);
         };
