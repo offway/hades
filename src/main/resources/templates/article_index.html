@@ -271,13 +271,13 @@
     </div>
 </div>
 
-
+<video id="videoObj"></video>
 <input type="hidden" class="form-control" name="articleid" id="articleid" value=""/>
 <script src="js/common.js"></script>
 <script src="assets/js/moment.min.js"></script>
 <script src="assets/js/select2/select2.min.js"></script>
 <script src="assets/js/async.min.js"></script>
-<script src="assets/kindeditor-4.1.12/kindeditor-all-min.js"></script>
+<script src="assets/kindeditor-4.1.12/kindeditor-all.js"></script>
 <script src="assets/kindeditor-4.1.12/lang/zh-CN.js"></script>
 <script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 <script src="assets/js/jquery-ui.min.js"></script>
@@ -593,6 +593,35 @@
         return brandStr;
     }
 
+    function videoCapture(url, cb) {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        var video = document.getElementById('videoObj');
+        // Add a listener to wait for the 'loadedmetadata' state so the video's dimensions can be read
+        video.onloadedmetadata = function () {
+            // Calculate the ratio of the video's width to height
+            var ratio = video.videoWidth / video.videoHeight;
+            // Define the required width as 100 pixels smaller than the actual video's width
+            var w = video.videoWidth;
+            // Calculate the height based on the video's width and the ratio
+            var h = parseInt(w / ratio, 10);
+            // Set the canvas width and height to the values just calculated
+            canvas.width = w;
+            canvas.height = h;
+            ctx.globalAlpha = 0.5;
+            setTimeout(function () {
+                ctx.fillRect(0, 0, w, h);
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                var imgBase64 = canvas.toDataURL("image/jpg");
+                console.log(imgBase64);
+                cb(imgBase64);
+            }, 500);
+        };
+        video.src = url + "#t=3";
+        // video.load();
+        // video.play();
+    }
+
     function savearticle () {
         var footer = $('#modal-6').find(".modal-footer");
         var form = $("#saveForm");
@@ -646,8 +675,6 @@
     }
 
     var qiniuUrl = [[${qiniuUrl}]];
-
-
 
     jQuery(document).ready(function ($) {
         jQuery.datetimepicker.setLocale('zh');
