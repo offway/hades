@@ -1,8 +1,10 @@
 package cn.offway.hades.service.impl;
 
+import cn.offway.hades.config.AsciiPredicate;
 import cn.offway.hades.domain.PhBrand;
 import cn.offway.hades.repository.PhBrandRepository;
 import cn.offway.hades.service.PhBrandService;
+import org.hibernate.jpa.criteria.CriteriaBuilderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -77,12 +76,21 @@ public class PhBrandServiceImpl implements PhBrandService {
             @Override
             public Predicate toPredicate(Root<PhBrand> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
-                params.add(criteriaBuilder.like(root.get("name"), prefix + "%"));
+                if ("#".equals(prefix)) {
+                    params.add(ascii((CriteriaBuilderImpl) criteriaBuilder, root.get("name"), null));
+                } else {
+                    params.add(criteriaBuilder.like(root.get("name"), prefix + "%"));
+                }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
             }
         });
+    }
+
+    public <Y extends Comparable<? super Y>> Predicate ascii(CriteriaBuilderImpl criteriaBuilder,
+                                                             Expression<? extends Y> expression, Y object) {
+        return new AsciiPredicate<>(criteriaBuilder, expression, null);
     }
 
     @Override

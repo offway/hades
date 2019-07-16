@@ -644,7 +644,7 @@
 
 		function buildAZBar() {
 			var str = "";
-			var AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			var AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#";
 			for (var i in AZ.split("")) {
 				var char = AZ[i];
 				str += "<a href='#' onclick='renderBrandSelect(\"VAL\")'>CHAR</a>&nbsp;".replace("CHAR", char).replace("VAL", char);
