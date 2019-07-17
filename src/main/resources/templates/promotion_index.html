@@ -23,22 +23,17 @@
 			<!-- User Info, Notifications and activity Bar -->
 			<nav th:replace="navbar"></nav>
 			<div class="page-title">
-				
 				<div class="title-env">
 					<h1 class="title">促销管理</h1>
 					<p class="activityDescription"></p>
 				</div>
-
 				<div class="breadcrumb-env">
-
 					<ol class="breadcrumb bc-1">
 						<li><a href="/"><i class="fa-home"></i>Home</a></li>
 						<li><a>系统管理</a></li>
 						<li class="active"><strong>促销管理</strong></li>
 					</ol>
-
 				</div>
-
 			</div>
 			
 			<div class="panel panel-default">
@@ -50,8 +45,6 @@
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
 			</div>
-			
-					
 			<footer th:replace="footer"></footer>
 		</div>
 	</div>
@@ -65,7 +58,6 @@
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 					<h4 class="modal-title">添加促销</h4>
 				</div>
-				
 				<div class="modal-body">
 					<form role="form" id="saveForm">
 						<input type="hidden" name="id"/>
@@ -81,10 +73,8 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">促销类型</label>
-									<select class="form-control" id="type" name="type" onchange="toggleMerchant1(this)">
-										<option value="0">平台促销</option>
-                                        <option value="1">商户促销</option>
-									</select>
+									<label><input name="type" class="notMe" type="radio" value="0" checked="checked" />平台促销 </label>
+									<label><input name="type" class="notMe" type="radio" value="1" />商户促销</label>
 								</div>
 							</div>
 						</div>
@@ -96,21 +86,19 @@
 								</div>
 							</div>
 						</div>
-						<div id="two">
-							<div class="row">
-								<div class="col-md-12">
-									<div class="form-group">
-										<label class="control-label">开始时间</label>
-										<input type="text" id="beginTimeAlt" name="beginTime" class="form-control" placeholder="开始时间"/>
-									</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">开始时间</label>
+									<input type="text" id="beginTimeAlt" name="beginTime" class="form-control" placeholder="开始时间"/>
 								</div>
 							</div>
-							<div class="row">
-								<div class="col-md-12">
-									<div class="form-group">
-										<label class="control-label">截止时间</label>
-										<input type="text" id="endTimeAlt" name="endTime" class="form-control" placeholder="截止时间"/>
-									</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">截止时间</label>
+									<input type="text" id="endTimeAlt" name="endTime" class="form-control" placeholder="截止时间"/>
 								</div>
 							</div>
 						</div>
@@ -118,33 +106,16 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">减价类型</label>
-									<select class="form-control" id="mode" name="mode" onchange="toggleMerchant(this)">
-										<option value="0">折扣</option>
-										<option value="1">满减</option>
-										<option value="2">赠品</option>
-									</select>
+									<label><input name="mode" class="notMe" type="radio" value="0" />折扣</label>
+									<label><input name="mode" class="notMe" type="radio" value="1" />满减</label>
+									<label><input name="mode" class="notMe" type="radio" value="2" checked="checked" />赠品</label>
 								</div>
 							</div>
 						</div>
-						<div id="discount" class="row" style="display: none">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">折扣</label>
-									<input type="text" class="form-control" name="discount" placeholder="折扣率"/>
-								</div>
-							</div>
+						<div class="row" id="cfgDetail" style="display: none;">
+							<input type="button" class="notMe" value="添加规则" id="addCfgBtn" onclick="addCfg(this)"/>
 						</div>
-						<div id="preferential" class="row" style="display: none">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">满</label>
-									<input type="text" class="form-control" name="meet"  placeholder="满足金额"/>
-									<label>减</label>
-									<input type="text" class="form-control" name="reduction" placeholder="减少金额"/>
-								</div>
-							</div>
-						</div>
-						<div id="gift" class="row" style="display: none">
+						<div id="gift" class="row" style="display: block">
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">赠品</label>
@@ -152,15 +123,27 @@
 								</div>
 							</div>
 						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">减价商品</label>
+									<label><input name="method" class="notMe" type="radio" value="0" />全场</label>
+									<label><input name="method" class="notMe" type="radio" value="1" />优选商品</label>
+									<label><input name="method" class="notMe" type="radio" value="2" />商户</label>
+									<label><input name="method" class="notMe" type="radio" value="3" />品牌</label>
+									<label><input name="method" class="notMe" type="radio" value="4" />选择商品</label>
+								</div>
+							</div>
+						</div>
+						<div class="row" id="goodsPool" style="display: block;">
+						</div>
 					</form>
 				</div>
-				
 				<div class="modal-footer">
-				 	<button type="button" class="btn btn-white" onclick="refresh()" data-dismiss="modal">关闭</button>
+				 	<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 					<button type="button" class="btn btn-info save">保存</button>
 					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 				</div>
-				
 			</div>
 		</div>
 	</div>
@@ -183,6 +166,8 @@
 		</div>
 	</div>
 
+	<input type="hidden" id="discount" value="" />
+	<input type="hidden" id="reduce" value="" />
 	<script src="js/common.js"></script>
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
@@ -260,50 +245,6 @@
 		});
 	}
 
-	function goToDetail(id) {
-		window.location.href = '/order_detail.html?id=' + id;
-	}
-
-	function checkSku(id) {
-		window.location.href = '/goods_stock_index.html?id=' + id;
-	}
-
-	var table_global;
-    
-    function refresh() {
-		table_global.fnDraw();
-	}
-
-	function closeOrder(id) {
-		$.post("/order_closeOrder", {"id": id}, function (data) {
-			if (data) {
-				table_global.fnDraw();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
-
-	function deliverOrder(id) {
-		var form = $("#saveForm");
-		form.find("input").val("");
-		form.find("[name='id']").val(id);
-		jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-	}
-
-    function trackOrder(id) {
-        $.post("/order_trackOrder", {"id": id}, function (data) {
-            console.log(data);
-            if (data != '') {
-                checkIt(JSON.parse(data));
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
-
     function bindMerchantSelector(data) {
         var brandStr = "";
         for (var brand in data) {
@@ -318,39 +259,79 @@
         $("#merchantIdAlt").html(brandStr);
     }
 
-	function toggleMerchant(self) {
-		var id = $(self).val();
-		var target = $("#merchantIdAlt");
-		if (id == '0') {
-			target.val("0");
-			target.attr("disabled", "disabled");
-			$('#gift').hide();
-			$('#preferential').hide();
-			$('#discount').show();
-		}else if (id == '2'){
-			$('#preferential').hide();
-			$('#discount').hide();
-			$('#gift').show();
-		} else {
-			$('#discount').hide();
-			$('#gift').hide();
-			$('#preferential').show();
-			target.removeAttr("disabled");
-		}
-
-	}
-
-	function toggleMerchant1(self) {
-		var id = $(self).val();
-		var target = $("#merchantIdAlt");
-		if (id == '0') {
-			target.val("0");
-			target.attr("disabled", "disabled");
+	function toggleMerchant(value) {
+		if (parseInt(value) == 0) {
 			$('#merchantId').hide();
-		}else {
+		} else {
 			$('#merchantId').show();
 		}
+	}
 
+	function saveCfg(isDiscount) {
+		var cfgDetail = $("#cfgDetail");
+		if (isDiscount) {
+			var discount_num = cfgDetail.find("input[name='discount_num']");
+			var discount_rate = cfgDetail.find("input[name='discount_rate']");
+			var list = [];
+			for (var i in discount_num) {
+				if (isNaN(i)) {
+					continue;
+				}
+				list.push({"discount_num": discount_num[i].value, "discount_rate": discount_rate[i].value});
+			}
+			$("#discount").val(JSON.stringify(list));
+		} else {
+			var reduce_limit = cfgDetail.find("input[name='reduce_limit']");
+			var reduce_amount = cfgDetail.find("input[name='reduce_amount']");
+			var list = [];
+			for (var i in reduce_limit) {
+				if (isNaN(i)) {
+					continue;
+				}
+				list.push({"reduce_limit": reduce_limit[i].value, "reduce_amount": reduce_amount[i].value});
+			}
+			$("#reduce").val(JSON.stringify(list));
+		}
+	}
+
+	function restoreCfg(isDiscount) {
+		var jsonObj = [];
+		if (isDiscount) {
+			jsonObj = JSON.parse($("#discount").val());
+			for (var i in jsonObj) {
+				i = jsonObj[i];
+				addCfg("#addCfgBtn", i["discount_num"], i["discount_rate"])
+			}
+		} else {
+			jsonObj = JSON.parse($("#reduce").val());
+			for (var i in jsonObj) {
+				i = jsonObj[i];
+				addCfg("#addCfgBtn", i["reduce_limit"], i["reduce_amount"])
+			}
+		}
+	}
+
+	function toggleMode(value) {
+		switch (parseInt(value)) {
+			case 0:
+				$('#gift').hide();
+				saveCfg(false);
+				$('#cfgDetail').find("div.row").remove();
+				restoreCfg(true);
+				$('#cfgDetail').show();
+				break;
+			case 1:
+				$('#gift').hide();
+				saveCfg(true);
+				$('#cfgDetail').find("div.row").remove();
+				restoreCfg(false);
+				$('#cfgDetail').show();
+				break;
+			case 2:
+				$('#gift').show();
+				$('#cfgDetail').hide();
+				break;
+		}
 	}
 
 	function upIt(id, self) {
@@ -393,140 +374,195 @@
 		});
 	}
 
+	function delNode(id) {
+		$("#" + id).remove();
+	}
+
+	function addCfg(self, value1, value2) {
+		var mode = $("input[name='mode']:checked").val();
+		var str = "";
+		if (mode == 0) {
+			var uuid = UUID.randomUUID();
+			str = '\t\t\t\t\t\t<div id="UUID" class="row" style="display: block">\n' +
+					'\t\t\t\t\t\t\t<div class="col-md-5">\n' +
+					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+					'\t\t\t\t\t\t\t\t\t<input type="number" class="form-control" name="discount_num" value="ONE"  placeholder="折扣件数(统一折扣仅添加一条即可)"/>\n'.replace("ONE", value1 ? value1 : "") +
+					'\t\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t<div class="col-md-5">\n' +
+					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+					'\t\t\t\t\t\t\t\t\t<input type="number" class="form-control" name="discount_rate" value="TWO" placeholder="折扣率"/>\n'.replace("TWO", value2 ? value2 : "") +
+					'\t\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t<div class="col-md-2">\n' +
+					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+					'\t\t\t\t\t\t\t\t\t<input type="button" class="form-control" value="删除" onclick="delNode(\'UUID\')"/>\n' +
+					'\t\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t</div>';
+			$(self).parent().append(str.replace(/UUID/g, uuid));
+		} else {
+			var uuid = UUID.randomUUID();
+			str = '\t\t\t\t\t\t<div id="UUID" class="row" style="display: block">\n' +
+					'\t\t\t\t\t\t\t<div class="col-md-5">\n' +
+					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+					'\t\t\t\t\t\t\t\t\t<label class="control-label">满</label>\n' +
+					'\t\t\t\t\t\t\t\t\t<input type="number" class="form-control" name="reduce_limit" value="ONE"  placeholder="满足金额"/>\n'.replace("ONE", value1 ? value1 : "") +
+					'\t\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t<div class="col-md-5">\n' +
+					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+					'\t\t\t\t\t\t\t\t\t<label>减</label>\n' +
+					'\t\t\t\t\t\t\t\t\t<input type="number" class="form-control" name="reduce_amount" value="TWO" placeholder="减少金额"/>\n'.replace("TWO", value2 ? value2 : "") +
+					'\t\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t<div class="col-md-2">\n' +
+					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+					'\t\t\t\t\t\t\t\t\t<label>操作</label>\n' +
+					'\t\t\t\t\t\t\t\t\t<input type="button" class="form-control" value="删除" onclick="delNode(\'UUID\')"/>\n' +
+					'\t\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t</div>';
+			$(self).parent().append(str.replace(/UUID/g, uuid));
+		}
+	}
+
+	var table_global;
+	var qiniuUrl = [[${qiniuUrl}]];
     jQuery(document).ready(function($)
 	{
         var oTable;
-		oTable = $("#example-1").dataTable({
-			language: {
-				url: "../assets/Chinese.txt"
-			},
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
-			bFilter: false,
-			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
-			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
-			sAjaxSource: "/promotion_list",//通过ajax实现分页的url路径。
-			fnServerParams: function (aData) {
-				var searchArray = $(".form-inline").serializeArray();
-				$.merge(aData, searchArray);
-			},
-			order: [[6, "desc"]],
-			columnDefs: [
-				{
-					targets: 0,
-					data: "id",
-					width: "5%",
-					orderable: false,
-					className: 'select-checkbox',
-					title: '<input type="checkbox" id="checkbox-all"/>',
-					render: function (data, type, full, meta) {
-						return '<input type="checkbox" name="activityId" value="' + data + '" />';
-					}
-				},
-				{
-					targets: 1,
-					data: "id",
-					title: "序号"
-				},
-				{
-					targets: 2,
-					data: "type",
-					title: "类型",
-					render: function (data, type, row, meta) {
-						var map = ["平台促销", "商户促销"];
-						return map[parseInt(data)];
-					}
-				},
-				{
-					targets: 3,
-					data: "name",
-					title: "活动名称"
-				},
-				{
-					targets: 4,
-					data: "goodsCount",
-					title: "商品数量"
-				},
-				{
-					targets: 5,
-					data: "mode",
-					title: "减价类型",
-					render:function (data, type, row, meta) {
-						var map = ["折扣", "满减","赠品"];
-						return map[parseInt(data)];
-					}
-				},
-				{
-					targets: 6,
-					data: "name",
-					title: "促销详情"
-				},
-				{
-					targets: 7,
-					data: "beginTime",
-					title: "开始时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				},
-				{
-					targets: 8,
-					data: "endTime",
-					title: "截止时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				},
-				{
-					targets: 9,
-					data: "createTime",
-					title: "创建时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				},
-				{
-					targets: 10,
-					data: "merchantId",
-					title: "商户ID"
-				},
-				{
-					targets: 11,
-					data: "gift",
-					title: "赠品"
-				},
-				{
-					targets: 12,
-					data: "status",
-					title: "状态",
-					render:function (data, type, row, meta) {
-						var map = ["未上架", "已上架"];
-						return map[parseInt(data)];
-					}
-				},
-				{
-					targets: 13,
-					data: "remark",
-					title: "操作人"
-				},
-				{
-					targets: 14,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						var str = "";
-						if (full["status"] == "0") {
-							str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
-						} else {
-							str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
-						}
-						return str;
-					}
-				}
-			]
-		});
+		// oTable = $("#example-1").dataTable({
+		// 	language: {
+		// 		url: "../assets/Chinese.txt"
+		// 	},
+		// 	aLengthactivity: [
+		// 		[10, 25, 50, 100], [10, 25, 50, 100]
+		// 	],
+		// 	bFilter: false,
+		// 	bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+		// 	sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+		// 	sAjaxSource: "/promotion_list",//通过ajax实现分页的url路径。
+		// 	fnServerParams: function (aData) {
+		// 		var searchArray = $(".form-inline").serializeArray();
+		// 		$.merge(aData, searchArray);
+		// 	},
+		// 	order: [[6, "desc"]],
+		// 	columnDefs: [
+		// 		{
+		// 			targets: 0,
+		// 			data: "id",
+		// 			width: "5%",
+		// 			orderable: false,
+		// 			className: 'select-checkbox',
+		// 			title: '<input type="checkbox" id="checkbox-all"/>',
+		// 			render: function (data, type, full, meta) {
+		// 				return '<input type="checkbox" name="activityId" value="' + data + '" />';
+		// 			}
+		// 		},
+		// 		{
+		// 			targets: 1,
+		// 			data: "id",
+		// 			title: "序号"
+		// 		},
+		// 		{
+		// 			targets: 2,
+		// 			data: "type",
+		// 			title: "类型",
+		// 			render: function (data, type, row, meta) {
+		// 				var map = ["平台促销", "商户促销"];
+		// 				return map[parseInt(data)];
+		// 			}
+		// 		},
+		// 		{
+		// 			targets: 3,
+		// 			data: "name",
+		// 			title: "活动名称"
+		// 		},
+		// 		{
+		// 			targets: 4,
+		// 			data: "goodsCount",
+		// 			title: "商品数量"
+		// 		},
+		// 		{
+		// 			targets: 5,
+		// 			data: "mode",
+		// 			title: "减价类型",
+		// 			render:function (data, type, row, meta) {
+		// 				var map = ["折扣", "满减","赠品"];
+		// 				return map[parseInt(data)];
+		// 			}
+		// 		},
+		// 		{
+		// 			targets: 6,
+		// 			data: "name",
+		// 			title: "促销详情"
+		// 		},
+		// 		{
+		// 			targets: 7,
+		// 			data: "beginTime",
+		// 			title: "开始时间",
+		// 			render: function (data, type, row, meta) {
+		// 				return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+		// 			}
+		// 		},
+		// 		{
+		// 			targets: 8,
+		// 			data: "endTime",
+		// 			title: "截止时间",
+		// 			render: function (data, type, row, meta) {
+		// 				return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+		// 			}
+		// 		},
+		// 		{
+		// 			targets: 9,
+		// 			data: "createTime",
+		// 			title: "创建时间",
+		// 			render: function (data, type, row, meta) {
+		// 				return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+		// 			}
+		// 		},
+		// 		{
+		// 			targets: 10,
+		// 			data: "merchantId",
+		// 			title: "商户ID"
+		// 		},
+		// 		{
+		// 			targets: 11,
+		// 			data: "gift",
+		// 			title: "赠品"
+		// 		},
+		// 		{
+		// 			targets: 12,
+		// 			data: "status",
+		// 			title: "状态",
+		// 			render:function (data, type, row, meta) {
+		// 				var map = ["未上架", "已上架"];
+		// 				return map[parseInt(data)];
+		// 			}
+		// 		},
+		// 		{
+		// 			targets: 13,
+		// 			data: "remark",
+		// 			title: "操作人"
+		// 		},
+		// 		{
+		// 			targets: 14,
+		// 			data: "id",
+		// 			orderable: false,
+		// 			title: "操作",
+		// 			render: function (data, type, full, meta) {
+		// 				var str = "";
+		// 				if (full["status"] == "0") {
+		// 					str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+		// 				} else {
+		// 					str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+		// 				}
+		// 				return str;
+		// 			}
+		// 		}
+		// 	]
+		// });
 		table_global = oTable;
 		jQuery.datetimepicker.setLocale('zh');
 		jQuery('#beginTimeAlt').datetimepicker(
@@ -570,27 +606,15 @@
 				}
 		);
 
-		$('[name="switch"]').click(function () {
+		$('[name="type"]').click(function () {
 			var value = $(this).val();  //获取选中的radio的值
-			toggle(value);
+			toggleMerchant(value);
 		});
 
-		function toggle(value) {
-			var one = $("#one");
-			var two = $("#two");
-			switch (parseInt(value)) {
-				case 0:
-					one.show();
-					two.hide();
-					break;
-				case 1:
-					one.hide();
-					two.show();
-					break;
-				default:
-					break;
-			}
-		}
+		$('[name="mode"]').click(function () {
+			var value = $(this).val();  //获取选中的radio的值
+			toggleMode(value);
+		});
 		
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);
@@ -599,54 +623,11 @@
 		});
 
 		$(".btn.btn-info.add").click(function () {
-			if ($('#type').click().val() =='1'){
-				$('#merchantId').show();
-			} else {
-				$('#merchantId').hide();
-			}
-			if ($('#mode').val() =='0'){
-				$('#gift').hide();
-				$('#preferential').hide();
-				$('#discount').show();
-			} else if ($('#mode').val() =='1') {
-				$('#gift').hide();
-				$('#discount').hide();
-				$('#preferential').show();
-			}else {
-				$('#discount').hide();
-				$('#preferential').hide();
-				$('#gift').show();
-			}
-
 			var form = $("#saveForm");
 			form.find("input:not(.notMe)").val("");
 			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 		});
 
-		$(".btn.btn-danger.sendCode").click(function () {
-			var userId = prompt("输入用户ID", "0");
-			if (isNaN(userId) || userId == null) {
-				alert("请输入数字！");
-			} else {
-				var code = prompt("输入优惠券ID", "0");
-				if (isNaN(code) || code == null) {
-					alert("请输入数字！");
-				} else {
-					var url = "https://zeus.offway.cn/voucher/giveByVpId?userId=AAA&voucherProjectId=BBB".replace("AAA", userId).replace("BBB", code);
-					$.post(url, {}, function (data) {
-						if (data) {
-							toastr.success("操作已成功！", "温馨提示");
-						} else {
-							toastr.error("操作失败", "温馨提示");
-						}
-					});
-				}
-			}
-		});
-
-			 
-		var qiniuUrl = [[${qiniuUrl}]];
-		//保存
 		$(".btn.btn-info.save").click(function () {
 			var footer = $(this).parent(".modal-footer");
 			footer.find("button").hide();

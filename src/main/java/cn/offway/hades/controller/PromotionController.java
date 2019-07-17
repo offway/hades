@@ -46,7 +46,7 @@ public class PromotionController {
 
     @ResponseBody
     @RequestMapping("/promotion_save")
-    public boolean save(PhPromotionInfo PromotionInfo,@AuthenticationPrincipal PhAdmin admin) {
+    public boolean save(PhPromotionInfo PromotionInfo,@AuthenticationPrincipal PhAdmin admin,String discountJSONStr,String reduceJSONStr) {
         PromotionInfo.setCreateTime(new Date());
         PromotionInfo.setStatus("0");
         PromotionInfo.setRemark(admin.getNickname());
