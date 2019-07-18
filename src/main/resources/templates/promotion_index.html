@@ -840,137 +840,124 @@
     jQuery(document).ready(function($)
 	{
         var oTable;
-		// oTable = $("#example-1").dataTable({
-		// 	language: {
-		// 		url: "../assets/Chinese.txt"
-		// 	},
-		// 	aLengthactivity: [
-		// 		[10, 25, 50, 100], [10, 25, 50, 100]
-		// 	],
-		// 	bFilter: false,
-		// 	bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
-		// 	sAjaxDataProp: "aData",//是服务器分页的标志，必须有
-		// 	sAjaxSource: "/promotion_list",//通过ajax实现分页的url路径。
-		// 	fnServerParams: function (aData) {
-		// 		var searchArray = $(".form-inline").serializeArray();
-		// 		$.merge(aData, searchArray);
-		// 	},
-		// 	order: [[6, "desc"]],
-		// 	columnDefs: [
-		// 		{
-		// 			targets: 0,
-		// 			data: "id",
-		// 			width: "5%",
-		// 			orderable: false,
-		// 			className: 'select-checkbox',
-		// 			title: '<input type="checkbox" id="checkbox-all"/>',
-		// 			render: function (data, type, full, meta) {
-		// 				return '<input type="checkbox" name="activityId" value="' + data + '" />';
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 1,
-		// 			data: "id",
-		// 			title: "序号"
-		// 		},
-		// 		{
-		// 			targets: 2,
-		// 			data: "type",
-		// 			title: "类型",
-		// 			render: function (data, type, row, meta) {
-		// 				var map = ["平台促销", "商户促销"];
-		// 				return map[parseInt(data)];
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 3,
-		// 			data: "name",
-		// 			title: "活动名称"
-		// 		},
-		// 		{
-		// 			targets: 4,
-		// 			data: "goodsCount",
-		// 			title: "商品数量"
-		// 		},
-		// 		{
-		// 			targets: 5,
-		// 			data: "mode",
-		// 			title: "减价类型",
-		// 			render:function (data, type, row, meta) {
-		// 				var map = ["折扣", "满减","赠品"];
-		// 				return map[parseInt(data)];
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 6,
-		// 			data: "name",
-		// 			title: "促销详情"
-		// 		},
-		// 		{
-		// 			targets: 7,
-		// 			data: "beginTime",
-		// 			title: "开始时间",
-		// 			render: function (data, type, row, meta) {
-		// 				return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 8,
-		// 			data: "endTime",
-		// 			title: "截止时间",
-		// 			render: function (data, type, row, meta) {
-		// 				return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 9,
-		// 			data: "createTime",
-		// 			title: "创建时间",
-		// 			render: function (data, type, row, meta) {
-		// 				return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 10,
-		// 			data: "merchantId",
-		// 			title: "商户ID"
-		// 		},
-		// 		{
-		// 			targets: 11,
-		// 			data: "gift",
-		// 			title: "赠品"
-		// 		},
-		// 		{
-		// 			targets: 12,
-		// 			data: "status",
-		// 			title: "状态",
-		// 			render:function (data, type, row, meta) {
-		// 				var map = ["未上架", "已上架"];
-		// 				return map[parseInt(data)];
-		// 			}
-		// 		},
-		// 		{
-		// 			targets: 13,
-		// 			data: "remark",
-		// 			title: "操作人"
-		// 		},
-		// 		{
-		// 			targets: 14,
-		// 			data: "id",
-		// 			orderable: false,
-		// 			title: "操作",
-		// 			render: function (data, type, full, meta) {
-		// 				var str = "";
-		// 				if (full["status"] == "0") {
-		// 					str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
-		// 				} else {
-		// 					str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
-		// 				}
-		// 				return str;
-		// 			}
-		// 		}
-		// 	]
-		// });
+		oTable = $("#example-1").dataTable({
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			bFilter: false,
+			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+			sAjaxSource: "/promotion_list",//通过ajax实现分页的url路径。
+			fnServerParams: function (aData) {
+				var searchArray = $(".form-inline").serializeArray();
+				$.merge(aData, searchArray);
+			},
+			order: [[6, "desc"]],
+			columnDefs: [
+				{
+					targets: 0,
+					data: "id",
+					width: "5%",
+					orderable: false,
+					className: 'select-checkbox',
+					title: '<input type="checkbox" id="checkbox-all"/>',
+					render: function (data, type, full, meta) {
+						return '<input type="checkbox" name="activityId" value="' + data + '" />';
+					}
+				},
+				{
+					targets: 1,
+					data: "id",
+					title: "序号"
+				},
+				{
+					targets: 2,
+					data: "type",
+					title: "类型",
+					render: function (data, type, row, meta) {
+						var map = ["平台促销", "商户促销"];
+						return map[parseInt(data)];
+					}
+				},
+				{
+					targets: 3,
+					data: "name",
+					title: "活动名称"
+				},
+				{
+					targets: 4,
+					data: "mode",
+					title: "减价类型",
+					render: function (data, type, row, meta) {
+						var map = ["折扣", "满减", "赠品"];
+						return map[parseInt(data)];
+					}
+				},
+				{
+					targets: 5,
+					data: "name",
+					title: "促销详情"
+				},
+				{
+					targets: 6,
+					data: "beginTime",
+					title: "开始时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 7,
+					data: "endTime",
+					title: "截止时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 8,
+					data: "createTime",
+					title: "创建时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 9,
+					data: "merchantId",
+					title: "商户ID"
+				},
+				{
+					targets: 10,
+					data: "status",
+					title: "状态",
+					render: function (data, type, row, meta) {
+						var map = ["未上架", "已上架"];
+						return map[parseInt(data)];
+					}
+				},
+				{
+					targets: 11,
+					data: "remark",
+					title: "操作人"
+				},
+				{
+					targets: 12,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						var str = "";
+						if (full["status"] == "0") {
+							str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+						} else {
+							str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+						}
+						return str;
+					}
+				}
+			]
+		});
 		table_global = oTable;
 		jQuery.datetimepicker.setLocale('zh');
 		jQuery('#beginTimeAlt').datetimepicker(
