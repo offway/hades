@@ -109,7 +109,12 @@ public class OrderController {
             basicInfo.put("userId", orderInfo.getUserId());
             basicInfo.put("payChannel", orderInfo.getPayChannel());
             basicInfo.put("status", orderInfo.getStatus());
-            basicInfo.put("remark", orderInfo.getRemark());
+            PhPreorderInfo preorderInfo = preorderInfoService.findByOrderNoAndStatus(orderInfo.getPreorderNo(), "2");
+            if (preorderInfo != null) {
+                basicInfo.put("remark", preorderInfo.getRemark());
+            } else {
+                basicInfo.put("remark", "");
+            }
             basicInfo.put("merchantName", orderInfo.getMerchantName());
             basicInfo.put("id", orderInfo.getId());
             PhOrderExpressInfo orderExpressInfo = orderExpressInfoService.findByPid(orderInfo.getOrderNo(), "0");//类型[0-寄,1-退]
