@@ -184,8 +184,8 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="control-label">选择方式</label>
-                                <label><input name="method" class="notMe" type="radio" checked="checked" value="0"/>品牌首字母索引</label>
-                                <label><input name="method" class="notMe" type="radio" value="1"/>按分类索引</label>
+                                <label><input name="way" class="notMe" type="radio" checked="checked" value="0"/>品牌首字母索引</label>
+                                <label><input name="way" class="notMe" type="radio" value="1"/>按分类索引</label>
                             </div>
                         </div>
                     </div>
@@ -631,6 +631,65 @@
         });
     }
 
+    function bindTypeSelector(data) {
+        var typeStr = "<option value=\"\" selected=\"selected\">请选择</option>";
+        for (var type in data) {
+            type = data[type];
+            typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["name"]).replace("KEY", type["name"]);
+        }
+        $("#typeSelect").html(typeStr);
+        // bindCategorySelector(data[0]["sub"]);
+    }
+
+    function bindCategorySelector(data) {
+        var categoryStr = "<option value=\"\" selected=\"selected\">请选择</option>";
+        for (var category in data) {
+            category = data[category];
+            categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
+        }
+        $("#categorySelect").html(categoryStr);
+    }
+
+    function renderCategory(self) {
+        var jsonStr = $("#type_and_category_list").val();
+        var list = JSON.parse(jsonStr);
+        var selectedId = $(self).val();
+        for (var type in list) {
+            if (selectedId == list[type]["name"]) {
+                bindCategorySelector(list[type]["sub"]);
+                break;
+            }
+        }
+        //update goods list
+        $.post("/pick_getGoods", {"value": selectedId, "type": 1}, function (data) {
+            bindGoods(data);
+        });
+    }
+
+    function renderGoods(self) {
+        //update goods list
+        var selectedId = $(self).val();
+        $.post("/pick_getGoods", {"value": selectedId, "type": 2}, function (data) {
+            bindGoods(data);
+        });
+    }
+
+    function addTheGoods(all) {
+        var ele = $("#goodsSelect");
+        var imgList = JSON.parse($("#IMGHOLDER").val());
+        if (all) {
+            ele.children().each(function () {
+                var id = $(this).val();
+                var text = $(this).text();
+                addGoodsId(id);
+            });
+        } else {
+            var id = ele.val();
+            var text = $("#goodsSelect option:selected").text();
+            addGoodsId(id);
+        }
+    }
+
 	var table_global;
 	var qiniuUrl = [[${qiniuUrl}]];
     jQuery(document).ready(function($)
@@ -823,7 +882,28 @@
 		$('[name="method"]').click(function () {
 			var value = $(this).val();
 			toggleMethod(value);
-		})
+		});
+
+        $('[name="way"]').click(function () {
+            var value = $(this).val();  //获取选中的radio的值
+            var azBarDiv = $("#azBarDiv");
+            var typeAndCategoryDiv = $("#typeAndCategoryDiv");
+            switch (parseInt(value)) {
+                case 0:
+                    azBarDiv.show();
+                    typeAndCategoryDiv.hide();
+                    break;
+                default:
+                    azBarDiv.hide();
+                    typeAndCategoryDiv.show();
+                    break;
+            }
+        });
+
+        $.getJSON("/type_and_category_list", {}, function (data) {
+            $("#type_and_category_list").val(JSON.stringify(data));
+            bindTypeSelector(data);
+        });
 		
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);
