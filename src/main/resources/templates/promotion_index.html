@@ -127,7 +127,7 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">减价商品</label>
-									<label><input name="method" class="notMe" type="radio" value="0" />全场</label>
+									<label><input name="method" class="notMe" type="radio" value="0" checked="checked"/>全场</label>
 									<label><input name="method" class="notMe" type="radio" value="1" />优选商品</label>
 									<label><input name="method" class="notMe" type="radio" value="2" />商户</label>
 									<label><input name="method" class="notMe" type="radio" value="3" />品牌</label>
@@ -334,6 +334,39 @@
 		}
 	}
 
+	function toggleMethod(value) {
+		switch (parseInt(value)) {
+			case 0:
+				$('#goodsPool').find("div.row").remove();
+				$('#goodsPool').show();
+				break;
+			case 1:
+				$('#goodsPool').find("div.row").remove();
+				if (value == 1) {
+					var goosid = prompt("输入优选ID", "0")
+					if (isNaN(goosid) || goosid != null) {
+						addGoosId(goosid);
+					}
+				}else {
+
+				}
+				$('#goodsPool').show();
+				break;
+			case 2:
+				$('#goodsPool').find("div.row").remove();
+				$('#goodsPool').show();
+				break;
+			case 3:
+				$('#goodsPool').find("div.row").remove();
+				$('#goodsPool').show();
+				break;
+			case 4:
+				$('#goodsPool').find("div.row").remove();
+				$('#goodsPool').show();
+				break;
+		}
+	}
+
 	function upIt(id, self) {
 		$.post("/promotion_up", {"id": id}, function (data) {
 			if (data) {
@@ -376,6 +409,28 @@
 
 	function delNode(id) {
 		$("#" + id).remove();
+	}
+
+	function addGoosId(id) {
+		var str = "";
+		var uuid = UUID.randomUUID();
+		str =   '\t\t\t\t\t\t<div id="UUID" class="row" style="display: block">\n' +
+				'\t\t\t\t\t\t\t<div class="col-md-10">\n' +
+				'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+				'\t\t\t\t\t\t\t\t\t<label class="control-label">优选id</label>\n' +
+				'\t\t\t\t\t\t\t\t\t<input type="text" class="form-control" name="goosid" value="DDD" placeholder="id"/>\n' +
+				'\t\t\t\t\t\t\t\t</div>\n' +
+				'\t\t\t\t\t\t\t</div>\n' +
+				'\t\t\t\t\t\t\t<div class="col-md-2">\n' +
+				'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+				'\t\t\t\t\t\t\t\t\t<label class="control-label">操作</label>\n' +
+				'\t\t\t\t\t\t\t\t\t<input type="button" class="form-control" value="删除" onclick="delNode(\'UUID\')"/>\n' +
+				'\t\t\t\t\t\t\t\t</div>\n' +
+				'\t\t\t\t\t\t\t</div>\n' +
+				'\t\t\t\t\t\t</div>';
+		str.replace(/DDD/g, id);
+		str.replace(/UUID/g, uuid);
+		$('#goodsPool').parent().append(str);
 	}
 
 	function addCfg(self, value1, value2) {
@@ -615,6 +670,11 @@
 			var value = $(this).val();  //获取选中的radio的值
 			toggleMode(value);
 		});
+
+		$('[name="method"]').click(function () {
+			var value = $(this).val();
+			toggleMethod(value);
+		})
 		
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);
