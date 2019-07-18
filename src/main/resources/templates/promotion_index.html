@@ -6,6 +6,10 @@
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+    <link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
+    <link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
+    <link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
+    <link rel="stylesheet" href="assets/css/ui-selectbox.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -51,7 +55,7 @@
 	
 	<div th:replace="body-under"></div>
 	
-	<div class="modal fade in" id="modal-6">
+	<div class="modal fade in" id="modal-6" style="z-index: 1000">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 800px;">
 				<div class="modal-header">
@@ -148,6 +152,74 @@
 		</div>
 	</div>
 
+    <div class="modal fade in" id="modal-7" style="z-index: 1001">
+        <div class="modal-dialog">
+            <div class="modal-content" style="width: 500px;/*! background-color: skyblue; */border: solid;border-width: 1px;margin-top: 50px;margin-left: 122px;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">添加商品</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">查询商品</label>
+                                <select class="form-control" id="goodsSelect"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label"></label>
+                                <input type="button" class="notMe form-control" value="添加商品" onclick="addTheGoods(false)" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label"></label>
+                                <input type="button" class="notMe form-control" value="添加全部" onclick="addTheGoods(true)" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">选择方式</label>
+                                <label><input name="method" class="notMe" type="radio" checked="checked" value="0"/>品牌首字母索引</label>
+                                <label><input name="method" class="notMe" type="radio" value="1"/>按分类索引</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="azBarDiv">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">品牌首字母索引</label>
+                                <select class="form-control" id="brandSelect" onchange="renderGoodsSelect(this)"></select>
+                                <div id="azBar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="typeAndCategoryDiv" style="display: none">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">一级分类</label>
+                                <select class="form-control" id="typeSelect" onchange="renderCategory(this)"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">二级分类</label>
+                                <select class="form-control" id="categorySelect" onchange="renderGoods(this)"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -168,11 +240,15 @@
 
 	<input type="hidden" id="discount" value="" />
 	<input type="hidden" id="reduce" value="" />
+    <input type="hidden" id="IMGHOLDER"/>
+    <input type="hidden" id="type_and_category_list"/>
 	<script src="js/common.js"></script>
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
-	<script src="assets/js/async.min.js"></script>
+    <script src="assets/js/jquery-ui.min.js"></script>
+    <script src="assets/js/selectbox-min.js"></script>
+    <script src="assets/js/async.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -357,6 +433,9 @@
 				break;
 			case 4:
 				$('#goodsPool').find("div.row").remove();
+				buildAZBar();
+                jQuery('#modal-7').modal({backdrop: 'static', keyboard: false});
+                $(".modal-backdrop").css("z-index", 999);
 				break;
 		}
 	}
@@ -495,6 +574,62 @@
 			$(self).parent().append(str.replace(/UUID/g, uuid));
 		}
 	}
+
+    function buildAZBar() {
+        var str = "";
+        var AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#";
+        for (var i in AZ.split("")) {
+            var char = AZ[i];
+            str += "<a href='#' onclick='renderBrandSelect(\"VAL\")'>CHAR</a>&nbsp;".replace("CHAR", char).replace("VAL", char);
+        }
+        $("#azBar").html(str);
+        $("#brandSelect").html("");
+        $("#goodsSelect").html("");
+    }
+
+    function renderBrandSelect(key) {
+        $("#goodsSelect").html("");
+        $.post("/pick_getBrand", {"prefix": key}, function (data) {
+            var str = "";
+            for (var i in data) {
+                var brand = data[i];
+                if (i == 0) {
+                    renderGoodsSelect(null, brand["id"]);
+                }
+                str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+            }
+            $("#brandSelect").html(str);
+        });
+    }
+
+    function renderGoodsSelect(self, id) {
+        var theId;
+        if (self == null) {
+            theId = id;
+        } else {
+            var that = $(self);
+            theId = that.val();
+        }
+        $.post("/pick_getGoods", {"value": theId, "type": 0}, function (data) {
+            bindGoods(data);
+        });
+    }
+
+    function bindGoods(data) {
+        var str = "";
+        var imgList = {};
+        for (var i in data) {
+            var brand = data[i];
+            str += '<option value="VALUE" data-icon="ICON" data-goodsNo="CODE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]).replace("ICON", brand["image"]).replace("CODE", brand["code"]);
+            imgList[brand["id"]] = brand["image"];
+        }
+        var ele = $("#goodsSelect");
+        ele.html(str);
+        $("#IMGHOLDER").val(JSON.stringify(imgList));
+        selectbox(ele, {
+            optionHtml: '<dd class="ui-selectbox-option {{className}}" data-option="{{index}}" tabindex="-1"><label>{{goodsno}}-</label><img src="{{icon}}" alt="icon" style="width:30px;height:30px;vertical-align:middle" /> {{textContent}}</dd>'
+        });
+    }
 
 	var table_global;
 	var qiniuUrl = [[${qiniuUrl}]];
@@ -699,7 +834,8 @@
 		$(".btn.btn-info.add").click(function () {
 			var form = $("#saveForm");
 			form.find("input:not(.notMe)").val("");
-			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+            jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+            $(".modal-backdrop").css("z-index", 999);
 		});
 
 		$(".btn.btn-info.save").click(function () {
