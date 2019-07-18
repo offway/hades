@@ -61,15 +61,15 @@ public class PhMerchantServiceImpl implements PhMerchantService {
         }, pageable);
     }
 
-    private Specification<PhMerchant> getFilter(Object id,Object type) {
+    private Specification<PhMerchant> getFilter(Object id, Object type) {
         return new Specification<PhMerchant>() {
             @Override
             public Predicate toPredicate(Root<PhMerchant> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
-                if (id != null){
+                if (id != null) {
                     params.add(criteriaBuilder.equal(root.get("id"), id));
                 }
-                if (type != null){
+                if (type != null) {
                     params.add(criteriaBuilder.equal(root.get("type"), type));
                 }
                 Predicate[] predicates = new Predicate[params.size()];
@@ -81,7 +81,7 @@ public class PhMerchantServiceImpl implements PhMerchantService {
 
     @Override
     public Page<PhMerchant> findAll(Long id, Pageable pageable) {
-        return phMerchantRepository.findAll(getFilter(id,null), pageable);
+        return phMerchantRepository.findAll(getFilter(id, null), pageable);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class PhMerchantServiceImpl implements PhMerchantService {
 
     @Override
     public List<PhMerchant> findAll(Long id) {
-        return phMerchantRepository.findAll(getFilter(id,null));
+        return phMerchantRepository.findAll(getFilter(id, null));
     }
 
     @Override
@@ -119,12 +119,12 @@ public class PhMerchantServiceImpl implements PhMerchantService {
     }
 
     @Override
-    public void resetSort( Long sort) {
+    public void resetSort(Long sort) {
         phMerchantRepository.resort(sort);
     }
 
     @Override
     public List<PhMerchant> findAll(String type) {
-        return phMerchantRepository.findAll(getFilter(null,type),new Sort("sort"));
+        return phMerchantRepository.findAll(getFilter(null, type), new Sort("sort"));
     }
 }

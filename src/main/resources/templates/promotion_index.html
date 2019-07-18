@@ -151,7 +151,6 @@
 			</div>
 		</div>
 	</div>
-
     <div class="modal fade in" id="modal-7" style="z-index: 1001">
         <div class="modal-dialog">
             <div class="modal-content" style="width: 500px;/*! background-color: skyblue; */border: solid;border-width: 1px;margin-top: 50px;margin-left: 122px;">
@@ -219,7 +218,57 @@
             </div>
         </div>
     </div>
-
+	<div class="modal fade in" id="modal-8" style="z-index: 1001">
+		<div class="modal-dialog">
+			<div class="modal-content" style="width: 500px;/*! background-color: skyblue; */border: solid;border-width: 1px;margin-top: 50px;margin-left: 122px;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">添加商品</h4>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="control-label">选择商户</label>
+								<select class="form-control" id="merchantSelectAlt" onchange="queryBrandList(this)"></select>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="control-label">选择品牌</label>
+								<select class="form-control" id="brandSelectAlt" onchange="queryGoodsList(this)"></select>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="control-label">选择商品</label>
+								<select class="form-control" id="goodsSelectAlt"></select>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="form-group">
+								<label class="control-label"></label>
+								<input type="button" class="notMe form-control" value="添加商品" onclick="addTheGoodsAlt(false)" />
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="form-group">
+								<label class="control-label"></label>
+								<input type="button" class="notMe form-control" value="添加全部" onclick="addTheGoodsAlt(true)" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -332,7 +381,6 @@
             }
         }
         $("#merchantId").html(brandStr);
-        $("#merchantIdAlt").html(brandStr);
     }
 
 	function toggleMerchant(value) {
@@ -425,19 +473,102 @@
 					}
 				}
 				break;
-			case 2:
+			case 2://商户
 				$('#goodsPool').find("div.row").remove();
+				$("#merchantSelectAlt").removeAttr("disabled");
+				var mid = "";
+				if ($("input[name='type']:checked").val() == "0") {
+
+				} else {
+					mid = $("input[name='merchantId']").val();
+				}
+				queryMerchantList(mid);
+				jQuery('#modal-8').modal({backdrop: 'static', keyboard: false});
+				$(".modal-backdrop").css("z-index", 999);
 				break;
-			case 3:
+			case 3://品牌
 				$('#goodsPool').find("div.row").remove();
+				$("#merchantSelectAlt").attr("disabled", "disabled");
+				$("#merchantSelectAlt").html("");
+				var mid = "";
+				if ($("input[name='type']:checked").val() == "0") {
+
+				} else {
+					mid = $("input[name='merchantId']").val();
+				}
+				queryBrandList(mid);
+				jQuery('#modal-8').modal({backdrop: 'static', keyboard: false});
+				$(".modal-backdrop").css("z-index", 999);
 				break;
 			case 4:
 				$('#goodsPool').find("div.row").remove();
 				buildAZBar();
-                jQuery('#modal-7').modal({backdrop: 'static', keyboard: false});
-                $(".modal-backdrop").css("z-index", 999);
+				jQuery('#modal-7').modal({backdrop: 'static', keyboard: false});
+				$(".modal-backdrop").css("z-index", 999);
 				break;
 		}
+	}
+
+	function queryMerchantList(id) {
+		$.post("/promotion_getMerchantList", {"id": id}, function (data) {
+			if (data) {
+				var str = "";
+				for (var i in data) {
+					var brand = data[i];
+					if (i == 0) {
+						queryBrandList(brand["id"]);
+					}
+					str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+				}
+				$("#merchantSelectAlt").html(str);
+			}
+		});
+	}
+
+	function queryBrandList(id) {
+		if (typeof id == "object") {
+			id = $(id).val();
+		}
+		$.post("/promotion_getBrandList", {"id": id}, function (data) {
+			if (data) {
+				var str = "";
+				for (var i in data) {
+					var brand = data[i];
+					if (i == 0) {
+						queryGoodsList(brand["brandId"]);
+					}
+					str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
+				}
+				$("#brandSelectAlt").html(str);
+			} else {
+				$("#brandSelectAlt").html("");
+			}
+		});
+	}
+
+	function queryGoodsList(id) {
+		if (isNaN(id)) {
+			id = $(id).val();
+		}
+		var mid = $("#merchantSelectAlt").val();
+		console.log(id);
+		console.log(mid);
+		var param = {"bid": id};
+		if (mid) {
+			param["mid"] = mid;
+		}
+		$.post("/promotion_getGoodsList", param, function (data) {
+			if (data) {
+				var str = "";
+				for (var i in data) {
+					var brand = data[i];
+					str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+				}
+				$("#goodsSelectAlt").html(str);
+			} else {
+				$("#goodsSelectAlt").html("");
+			}
+		});
 	}
 
 	function upIt(id, self) {
@@ -676,7 +807,6 @@
 
     function addTheGoods(all) {
         var ele = $("#goodsSelect");
-        var imgList = JSON.parse($("#IMGHOLDER").val());
         if (all) {
             ele.children().each(function () {
                 var id = $(this).val();
@@ -689,6 +819,21 @@
             addGoodsId(id);
         }
     }
+
+	function addTheGoodsAlt(all) {
+		var ele = $("#goodsSelectAlt");
+		if (all) {
+			ele.children().each(function () {
+				var id = $(this).val();
+				var text = $(this).text();
+				addGoodsId(id);
+			});
+		} else {
+			var id = ele.val();
+			var text = $("#goodsSelectAlt option:selected").text();
+			addGoodsId(id);
+		}
+	}
 
 	var table_global;
 	var qiniuUrl = [[${qiniuUrl}]];

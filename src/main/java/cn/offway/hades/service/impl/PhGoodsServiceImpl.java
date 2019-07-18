@@ -166,6 +166,17 @@ public class PhGoodsServiceImpl implements PhGoodsService {
     }
 
     @Override
+    public List<PhGoods> findAll(String mid, String bid) {
+        Optional<List<PhGoods>> res;
+        if ("".equals(mid)) {
+            res = phGoodsRepository.findAllRestGoods(Long.valueOf(bid));
+        } else {
+            res = phGoodsRepository.findAllRestGoods(Long.valueOf(mid), Long.valueOf(bid));
+        }
+        return res.isPresent() ? res.get() : null;
+    }
+
+    @Override
     public PhGoods findOne(Long id) {
         return phGoodsRepository.findOne(id);
     }

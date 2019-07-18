@@ -1,8 +1,6 @@
 package cn.offway.hades.controller;
 
-import cn.offway.hades.domain.PhAdmin;
-import cn.offway.hades.domain.PhPromotionInfo;
-import cn.offway.hades.domain.PhVoucherProject;
+import cn.offway.hades.domain.*;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
 import org.slf4j.Logger;
@@ -41,6 +39,12 @@ public class PromotionController {
     private PhRoleadminService roleadminService;
     @Autowired
     private PhPickGoodsService pickGoodsService;
+    @Autowired
+    private PhMerchantService merchantService;
+    @Autowired
+    private PhMerchantBrandService merchantBrandService;
+    @Autowired
+    private PhGoodsService goodsService;
 
     @RequestMapping("/promotion.html")
     public String index(ModelMap map) {
@@ -146,5 +150,31 @@ public class PromotionController {
     @RequestMapping("/promotion_getGoodsListAll")
     public List<Integer> getGoodsListAll() {
         return pickGoodsService.findAllRestGoods();
+    }
+
+    @ResponseBody
+    @RequestMapping("/promotion_getMerchantList")
+    public List<PhMerchant> getMerchantList(@RequestParam(name = "id", required = false, defaultValue = "") String id) {
+        Long mid = null;
+        if (!"".equals(id)) {
+            mid = Long.valueOf(id);
+        }
+        return merchantService.findAll(mid);
+    }
+
+    @ResponseBody
+    @RequestMapping("/promotion_getBrandList")
+    public List<PhMerchantBrand> getBrandList(@RequestParam(name = "id", required = false, defaultValue = "") String id) {
+        Long mid = null;
+        if (!"".equals(id)) {
+            mid = Long.valueOf(id);
+        }
+        return merchantBrandService.findByPid(mid);
+    }
+
+    @ResponseBody
+    @RequestMapping("/promotion_getGoodsList")
+    public List<PhGoods> getGoodsList(@RequestParam(name = "mid", required = false, defaultValue = "") String mid, String bid) {
+        return goodsService.findAll(mid, bid);
     }
 }

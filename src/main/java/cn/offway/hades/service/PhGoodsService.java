@@ -37,4 +37,6 @@ public interface PhGoodsService {
     void updateMerchantInfo(PhMerchant merchant);
 
     void updateBrandInfo(PhBrand brand);
+
+    List<PhGoods> findAll(String mid, String bid);
 }
