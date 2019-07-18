@@ -92,6 +92,7 @@
 					
 				</div>
 				<button class="btn btn-info settle" >结算</button>
+				<button class="btn btn-danger settleAll" >全部结算</button>
 				<button class="btn btn-info export">导出</button>
 <!--				<button class="btn btn-info del">删除</button>-->
 			</div>
@@ -570,6 +571,27 @@
 			});
 			//do settle
 			batchSettle(ids);
+		});
+
+		$(".btn.btn-danger.settleAll").click(function () {
+			var yes = confirm("确定全部结算?");
+			if (yes) {
+				var searchArray = $(".form-inline").serializeArray();
+				searchArray.push({"name": "theId", "value": theId});//append pid
+				$.post("/settle_inner_batchSettle_all", searchArray, function (data) {
+					if (data) {
+						if (parseInt(data) == 0) {
+							toastr.error("操作失败，无权限!", "温馨提示");
+						} else {
+							toastr.success("操作已成功！", "温馨提示");
+							table_global.fnDraw();
+							alert("你需要结算给商户" + data + "元");
+						}
+					} else {
+						toastr.error("操作失败，无权限!", "温馨提示");
+					}
+				});
+			}
 		});
 	});
 	/*]]>*/
