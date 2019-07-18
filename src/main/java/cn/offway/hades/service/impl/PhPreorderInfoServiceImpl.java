@@ -45,13 +45,22 @@ public class PhPreorderInfoServiceImpl implements PhPreorderInfoService {
     }
 
     @Override
-    public PhPreorderInfo findByOrderNoAndStatus(String orderno, String status) {
-        return phPreorderInfoRepository.findByOrderNoAndStatus(orderno, status);
-    }
-
-    @Override
-    public int countByUserIdAndStatus(Long userId, String status) {
-        return phPreorderInfoRepository.countByUserIdAndStatus(userId, status);
+    public PhPreorderInfo findByOrderNoAndStatus(String orderNo, String status) {
+        return phPreorderInfoRepository.findOne(new Specification<PhPreorderInfo>() {
+            @Override
+            public Predicate toPredicate(Root<PhPreorderInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                if (!"".equals(orderNo)) {
+                    params.add(criteriaBuilder.equal(root.get("orderNo"), orderNo));
+                }
+                if (!"".equals(status)) {
+                    params.add(criteriaBuilder.equal(root.get("status"), status));
+                }
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        });
     }
 
     @Override

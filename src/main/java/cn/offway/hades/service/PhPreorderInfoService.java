@@ -21,7 +21,5 @@ public interface PhPreorderInfoService {
 
     PhPreorderInfo findByOrderNoAndStatus(String orderno, String status);
 
-    int countByUserIdAndStatus(Long userId, String status);
-
     Page<PhPreorderInfo> findAll(String orderNo, Date sTime, Date eTime, String userId, String payMethod, String status, Pageable pageable);
 }

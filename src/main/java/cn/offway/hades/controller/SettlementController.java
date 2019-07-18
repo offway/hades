@@ -389,6 +389,41 @@ public class SettlementController {
         return totalAmount;
     }
 
+    @ResponseBody
+    @Transactional
+    @RequestMapping("/settle_inner_batchSettle_all")
+    public double batchSettleAll(@AuthenticationPrincipal PhAdmin admin, String sTime, String eTime, String orderStatus, String status, String payChannel, String theId) {
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            return 0;
+        }
+        double totalAmount = 0;
+        PhSettlementInfo info = null;
+        List<PhSettlementDetail> pages = (List<PhSettlementDetail>) settlementDetailService.findAll(Long.valueOf(theId), strToDate(sTime), strToDate(eTime), orderStatus, status, payChannel, null);
+        for (PhSettlementDetail detail : pages) {
+            if (detail != null && "0".equals(detail.getStatus())) {
+                double amount = detail.getSettledAmount();
+                totalAmount += amount;
+                detail.setStatus("2");//已结算
+                detail.setSettledName(admin.getNickname());
+                detail.setSettledTime(new Date());
+                settlementDetailService.save(detail);
+                if (info == null) {
+                    info = settlementInfoService.findByPid(detail.getMerchantId());
+                }
+                info.setUnsettledCount(info.getUnsettledCount() - 1);
+                info.setUnsettledAmount(info.getUnsettledAmount() - detail.getSettledAmount());
+                info.setSettledCount(info.getSettledCount() + 1);
+                info.setSettledAmount(info.getSettledAmount() + detail.getSettledAmount());
+            }
+        }
+        if (info != null) {
+            info.setStatisticalTime(new Date());
+            settlementInfoService.save(info);
+        }
+        return totalAmount;
+    }
+
     @RequestMapping("/settle_inner_export.html")
     public void exportSettle(@RequestParam("ids[]") Long[] ids, @AuthenticationPrincipal PhAdmin admin, HttpServletResponse response) {
         List<PhSettlementDetail> list = settlementDetailService.findList(ids);
