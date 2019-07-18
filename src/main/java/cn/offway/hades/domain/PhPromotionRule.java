@@ -38,6 +38,9 @@ public class PhPromotionRule implements Serializable {
     /** 备注 **/
     private String remark;
 
+    /** 赠品 **/
+    private String gift;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -114,4 +117,12 @@ public class PhPromotionRule implements Serializable {
         this.remark = remark;
     }
 
+    @Column(name = "gift", length = 100)
+    public String getGift() {
+        return gift;
+    }
+
+    public void setGift(String gift) {
+        this.gift = gift;
+    }
 }

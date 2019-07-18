@@ -38,5 +38,5 @@ public interface PhGoodsService {
 
     void updateBrandInfo(PhBrand brand);
 
-    List<PhGoods> findAll(String mid, String bid);
+    List<PhGoods> findAllAlt(String mid, String bid);
 }

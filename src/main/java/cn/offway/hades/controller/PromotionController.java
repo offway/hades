@@ -3,6 +3,8 @@ package cn.offway.hades.controller;
 import cn.offway.hades.domain.*;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,10 @@ public class PromotionController {
     @Autowired
     private PhPromotionInfoService promotionInfoService;
     @Autowired
+    private PhPromotionRuleService promotionRuleService;
+    @Autowired
+    private PhPromotionGoodsService promotionGoodsService;
+    @Autowired
     private PhRoleadminService roleadminService;
     @Autowired
     private PhPickGoodsService pickGoodsService;
@@ -54,11 +60,57 @@ public class PromotionController {
 
     @ResponseBody
     @RequestMapping("/promotion_save")
-    public boolean save(PhPromotionInfo PromotionInfo, @AuthenticationPrincipal PhAdmin admin, String discountJSONStr, String reduceJSONStr) {
-        PromotionInfo.setCreateTime(new Date());
-        PromotionInfo.setStatus("0");
-        PromotionInfo.setRemark(admin.getNickname());
-        promotionInfoService.save(PromotionInfo);
+    public boolean save(PhPromotionInfo promotionInfo, @AuthenticationPrincipal PhAdmin admin, String discountJSONStr, String reduceJSONStr, @RequestParam(name = "goodsId", required = true) String[] goodsId, String gift) {
+        promotionInfo.setCreateTime(new Date());
+        promotionInfo.setStatus("0");
+        promotionInfo.setRemark(admin.getNickname());
+        PhPromotionInfo infoSaved = promotionInfoService.save(promotionInfo);
+        //保存规则
+        switch (promotionInfo.getMode()) {
+            case "0":
+                JSONArray jsonArray = JSONArray.parseArray(discountJSONStr);
+                for (Object object : jsonArray) {
+                    JSONObject o = (JSONObject) object;
+                    PhPromotionRule rule = new PhPromotionRule();
+                    rule.setCreateTime(new Date());
+                    rule.setDiscountNum(o.getLong("discount_num"));
+                    rule.setDiscountRate(o.getDouble("discount_rate"));
+                    rule.setPromotionId(infoSaved.getId());
+                    promotionRuleService.save(rule);
+                }
+                break;
+            case "1":
+                JSONArray jsonArray2 = JSONArray.parseArray(reduceJSONStr);
+                for (Object object : jsonArray2) {
+                    JSONObject o = (JSONObject) object;
+                    PhPromotionRule rule = new PhPromotionRule();
+                    rule.setCreateTime(new Date());
+                    rule.setReduceLimit(o.getDouble("reduce_limit"));
+                    rule.setReduceAmount(o.getDouble("reduce_amount"));
+                    rule.setPromotionId(infoSaved.getId());
+                    promotionRuleService.save(rule);
+                }
+                break;
+            case "2":
+                PhPromotionRule rule = new PhPromotionRule();
+                rule.setCreateTime(new Date());
+                rule.setGift(gift);
+                rule.setPromotionId(infoSaved.getId());
+                promotionRuleService.save(rule);
+            default:
+                break;
+        }
+        //保存商品
+        for (String gid : goodsId) {
+            if ("".equals(gid.trim())) {
+                continue;
+            }
+            PhPromotionGoods goods = new PhPromotionGoods();
+            goods.setCreateTime(new Date());
+            goods.setGoodsId(Long.valueOf(gid));
+            goods.setPromotionId(infoSaved.getId());
+            promotionGoodsService.save(goods);
+        }
         return true;
     }
 
@@ -175,6 +227,6 @@ public class PromotionController {
     @ResponseBody
     @RequestMapping("/promotion_getGoodsList")
     public List<PhGoods> getGoodsList(@RequestParam(name = "mid", required = false, defaultValue = "") String mid, String bid) {
-        return goodsService.findAll(mid, bid);
+        return goodsService.findAllAlt(mid, bid);
     }
 }

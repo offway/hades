@@ -1071,12 +1071,12 @@
 			var name = form.find("input[name='name']").val();
 			var merchantId = form.find("input[name='merchantId']").val();
 			var type = form.find("input[name='type']:checked").val();
-			var status = form.find("input[name='status']:checked").val();
+			var beginTime = form.find("input[name='beginTime']").val();
+			var endTime = form.find("input[name='endTime']").val();
 			var mode = form.find("input[name='mode']:checked").val();
-			var gift = form.find("input[name='gift']:checked").val();
+			var gift = form.find("input[name='gift']").val();
 
-
-			if (name == '' ||  type == '' || status =='' || mode =='' ) {
+			if (false) {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
@@ -1095,7 +1095,10 @@
 						},
 						three: function (callback) {
 							//提交保存
-							$.post("/promotion_save", $("#saveForm").serialize(), function (data) {
+							var postData = $("#saveForm").serializeArray();
+							postData.push({"name": "discountJSONStr", "value": $("#discount").val()});//append pid
+							postData.push({"name": "reduceJSONStr", "value": $("#reduce").val()});//append pid
+							$.post("/promotion_save", postData, function (data) {
 								if (data) {
 									footer.find("button").show();
 									footer.find(".bg-lg").hide();

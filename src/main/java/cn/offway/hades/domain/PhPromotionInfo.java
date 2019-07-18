@@ -42,17 +42,11 @@ public class PhPromotionInfo implements Serializable {
     /** 减价类型[0-折扣，1-满减，2-赠品] **/
     private String mode;
 
-    /** 赠品 **/
-    private String gift;
-
     /** 创建时间 **/
     private Date createTime;
 
     /** 备注 **/
     private String remark;
-
-    /** 商品数量 **/
-    private String goodsCount;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -130,15 +124,6 @@ public class PhPromotionInfo implements Serializable {
         this.mode = mode;
     }
 
-    @Column(name = "gift", length = 100)
-    public String getGift() {
-        return gift;
-    }
-
-    public void setGift(String gift) {
-        this.gift = gift;
-    }
-
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_time")
     public Date getCreateTime() {
@@ -156,14 +141,5 @@ public class PhPromotionInfo implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    @Column(name = "goods_count", length = 11)
-    public String getGoodsCount() {
-        return goodsCount;
-    }
-
-    public void setGoodsCount(String goodsCount) {
-        this.goodsCount = goodsCount;
     }
 }
