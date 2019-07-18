@@ -18,5 +18,9 @@ public interface PhPickGoodsService {
 
     List<PhPickGoods> findByPid(Long pid);
 
+    List<Integer> findAllRestByPid(Long pid);
+
+    List<Integer> findAllRestGoods();
+
     void delByPid(Long pid);
 }

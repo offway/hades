@@ -16,6 +16,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -49,6 +50,26 @@ public class PhPickGoodsServiceImpl implements PhPickGoodsService {
                 return null;
             }
         }, new Sort(new Sort.Order(Sort.Direction.ASC, "id")));
+    }
+
+    @Override
+    public List<Integer> findAllRestByPid(Long pid) {
+        Optional<List<Integer>> res = phPickGoodsRepository.findAllRestByPid(pid);
+        if (res.isPresent()) {
+            return res.get();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public List<Integer> findAllRestGoods() {
+        Optional<List<Integer>> res = phPickGoodsRepository.findAllRestGoods();
+        if (res.isPresent()) {
+            return res.get();
+        } else {
+            return null;
+        }
     }
 
     @Override

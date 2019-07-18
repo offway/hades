@@ -1,11 +1,10 @@
 package cn.offway.hades.controller;
 
-import cn.offway.hades.domain.*;
+import cn.offway.hades.domain.PhAdmin;
+import cn.offway.hades.domain.PhPromotionInfo;
+import cn.offway.hades.domain.PhVoucherProject;
 import cn.offway.hades.properties.QiniuProperties;
-import cn.offway.hades.service.PhPromotionInfoService;
-import cn.offway.hades.service.PhRoleadminService;
-import cn.offway.hades.service.PhVoucherInfoService;
-import cn.offway.hades.service.PhVoucherProjectService;
+import cn.offway.hades.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping
@@ -37,6 +39,8 @@ public class PromotionController {
     private PhPromotionInfoService promotionInfoService;
     @Autowired
     private PhRoleadminService roleadminService;
+    @Autowired
+    private PhPickGoodsService pickGoodsService;
 
     @RequestMapping("/promotion.html")
     public String index(ModelMap map) {
@@ -46,7 +50,7 @@ public class PromotionController {
 
     @ResponseBody
     @RequestMapping("/promotion_save")
-    public boolean save(PhPromotionInfo PromotionInfo,@AuthenticationPrincipal PhAdmin admin,String discountJSONStr,String reduceJSONStr) {
+    public boolean save(PhPromotionInfo PromotionInfo, @AuthenticationPrincipal PhAdmin admin, String discountJSONStr, String reduceJSONStr) {
         PromotionInfo.setCreateTime(new Date());
         PromotionInfo.setStatus("0");
         PromotionInfo.setRemark(admin.getNickname());
@@ -88,7 +92,7 @@ public class PromotionController {
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "id"));
-        Page<PhPromotionInfo> pages = promotionInfoService.findAll( new PageRequest(iDisplayStart==0?0:iDisplayStart/iDisplayLength, iDisplayLength<0?9999999:iDisplayLength));
+        Page<PhPromotionInfo> pages = promotionInfoService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
@@ -103,10 +107,10 @@ public class PromotionController {
     public boolean goodsUp(Long id, @AuthenticationPrincipal PhAdmin admin) {
         PhPromotionInfo promotionInfo = promotionInfoService.findOne(id);
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
-        if (roles.contains(BigInteger.valueOf(8L))){
+        if (roles.contains(BigInteger.valueOf(8L))) {
             return false;
-        }else {
-            if (promotionInfo != null){
+        } else {
+            if (promotionInfo != null) {
                 promotionInfo.setStatus("1");
                 promotionInfo.setRemark(admin.getNickname());
                 promotionInfoService.save(promotionInfo);
@@ -120,15 +124,27 @@ public class PromotionController {
     public boolean goodsDown(Long id, @AuthenticationPrincipal PhAdmin admin) {
         PhPromotionInfo promotionInfo = promotionInfoService.findOne(id);
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
-        if (roles.contains(BigInteger.valueOf(8L))){
+        if (roles.contains(BigInteger.valueOf(8L))) {
             return false;
-        }else {
-            if (promotionInfo != null){
+        } else {
+            if (promotionInfo != null) {
                 promotionInfo.setStatus("0");
                 promotionInfo.setRemark(admin.getNickname());
                 promotionInfoService.save(promotionInfo);
             }
         }
         return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/promotion_getGoodsListByPickId")
+    public List<Integer> getGoodsListByPickId(Long pickId) {
+        return pickGoodsService.findAllRestByPid(pickId);
+    }
+
+    @ResponseBody
+    @RequestMapping("/promotion_getGoodsListAll")
+    public List<Integer> getGoodsListAll() {
+        return pickGoodsService.findAllRestGoods();
     }
 }
