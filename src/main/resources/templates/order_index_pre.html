@@ -75,10 +75,10 @@
 								<label for="status" class="control-label">状态</label>
 								<select id="status" name="status" class="form-control" style="height:35px">
 									<option value="" selected="selected">全部</option>
-									<option value="0">已下单</option>
+									<option value="0">待付款</option>
 									<option value="1">已付款</option>
-									<option value="2">已发货</option>
-									<option value="3">已收货</option>
+									<option value="2">交易关闭</option>
+									<option value="3">付款中</option>
 									<option value="4">取消</option>
 								</select>
 							</div>
@@ -349,8 +349,8 @@
 					data: "status",
 					title: "状态",
 					render: function (data, type, row, meta) {
-						//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
-						var map = ["已下单", "已付款", "已发货", "已收货", "取消"];
+						//状态[0-待付款,1-已付款,2-交易关闭,,3-付款中] **/
+						var map = ["待付款", "已付款", "交易关闭", "付款中", "取消"];
 						return map[parseInt(data)];
 					}
 				},
