@@ -86,7 +86,7 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">商户ID</label>
-									<input type="text" class="form-control" name="merchantId" placeholder="商户ID"/>
+									<input type="hidden" class="form-control" name="merchantId" placeholder="商户ID"/>
 								</div>
 							</div>
 						</div>
@@ -120,9 +120,15 @@
 							<input type="button" class="notMe" value="添加规则" id="addCfgBtn" onclick="addCfg(this)"/>
 						</div>
 						<div id="gift" class="row" style="display: block">
-							<div class="col-md-12">
+							<div class="col-md-6">
 								<div class="form-group">
-									<label class="control-label">赠品</label>
+									<label class="control-label">满</label>
+									<input type="text" class="form-control" name="giftLimit" placeholder="满足金额"/>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label">赠</label>
 									<input type="text" class="form-control" name="gift" placeholder="赠品"/>
 								</div>
 							</div>
@@ -131,11 +137,11 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">减价商品</label>
-									<label><input name="method" class="notMe" type="radio" value="0" />全场</label>
-									<label><input name="method" class="notMe" type="radio" value="1" />优选商品</label>
-									<label><input name="method" class="notMe" type="radio" value="2" />商户</label>
-									<label><input name="method" class="notMe" type="radio" value="3" />品牌</label>
-									<label><input name="method" class="notMe" type="radio" value="4" />选择商品</label>
+									<label id="fullInput"><input name="method" class="notMe" type="radio" value="0"/>全场</label>
+									<label id="goodsInput"><input name="method" class="notMe" type="radio" value="1"/>优选商品</label>
+									<label id="merchantInput"><input name="method" class="notMe" type="radio" value="2"/>商户</label>
+									<label id="brandInput"><input name="method" class="notMe" type="radio" value="3"/>品牌</label>
+									<label id="chooseInput"><input name="method" class="notMe" type="radio" value="4"/>选择商品</label>
 								</div>
 							</div>
 						</div>
@@ -287,6 +293,7 @@
 		</div>
 	</div>
 
+
 	<input type="hidden" id="discount" value="" />
 	<input type="hidden" id="reduce" value="" />
     <input type="hidden" id="IMGHOLDER"/>
@@ -336,40 +343,6 @@
 				'</div>';
 	}
 
-	function checkIt(data) {
-		$.post("/coupon_find", {"id": data}, function (data) {
-			if (data) {
-				var preview = $("#preview_body");
-				var contentStr = "";
-				var mainObj = data["main"];
-				contentStr += appendToPreview("编号:", mainObj["id"]);
-				contentStr += appendToPreview("名称:", mainObj["name"]);
-				contentStr += appendToPreview("优惠券类型[0-平台券，1-店铺券]:", mainObj["type"]);
-				contentStr += appendToPreview("商户ID:", mainObj["merchantId"]);
-				contentStr += appendToPreview("满多少金额可用:", mainObj["usedMinAmount"]);
-				contentStr += appendToPreview("优惠券金额:", mainObj["amount"]);
-				contentStr += appendToPreview("有效期[单位：天]:", mainObj["validNum"]);
-				contentStr += appendToPreview("开始时间:", formatTime(mainObj["beginTime"]));
-				contentStr += appendToPreview("截止时间:", formatTime(mainObj["endTime"]));
-				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
-				contentStr += appendToPreview("备注:", mainObj["remark"]);
-				contentStr += "<hr/>";
-				for (var a in data["voucherInfoList"]) {
-					a = data["voucherInfoList"][a];
-					contentStr += appendToPreview("优惠券方案ID:", a["voucherProjectId"]);
-					contentStr += appendToPreview("用户ID:", a["userId"]);
-					contentStr += appendToPreview("开始时间:", formatTime(a["beginTime"]));
-					contentStr += appendToPreview("截止时间:", formatTime(a["endTime"]));
-				}
-				preview.html(contentStr);
-				jQuery('#preview').modal('show', {backdrop: 'fade'});
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
-
     function bindMerchantSelector(data) {
         var brandStr = "";
         for (var brand in data) {
@@ -386,8 +359,16 @@
 	function toggleMerchant(value) {
 		if (parseInt(value) == 0) {
 			$('#merchantId').hide();
+			$('#goodsInput').show();
+			$('#fullInput').show();
+			$('#brandInput').show();
+			$('#chooseInput').show();
 		} else {
-			$('#merchantId').show();
+			$('#merchantId').hide();
+			$('#goodsInput').hide();
+			$('#fullInput').hide();
+			$('#brandInput').hide();
+			$('#chooseInput').hide();
 		}
 	}
 
@@ -822,6 +803,11 @@
 
 	function addTheGoodsAlt(all) {
 		var ele = $("#goodsSelectAlt");
+		if($("input[name='type']:checked").val() == "0"){
+
+		}else {
+			$("input[name = 'merchantId']").val($('#merchantSelectAlt').val());
+		}
 		if (all) {
 			ele.children().each(function () {
 				var id = $(this).val();
@@ -1069,6 +1055,11 @@
 				footer.find(".bg-lg").hide();
 				return;
 			}
+			if (mode == '0') {
+				saveCfg(true);
+			} else if (mode == '1') {
+				saveCfg(false);
+			}
 
 			//获取token
 			$.get("/qiniu/token", {}, function (token) {
@@ -1091,6 +1082,7 @@
 									footer.find(".bg-lg").hide();
 									jQuery('#modal-6').modal('hide');
 									toastr.success("操作已成功！", "温馨提示");
+									$('#id').val("");
 									oTable.fnDraw();
 								} else {
 									footer.find("button").show();
@@ -1118,51 +1110,67 @@
 				return;
 			}
 
-			$.post("/promotion_get", {id: activityId.val()}, function (data) {
+			$.post("/promotion_findAll", {id: activityId.val()}, function (data) {
 				var form = $("#saveForm");
 				form.find("input:not(.notMe)").val("");
-				for (var i in data) {
+				var main = data["main"];
+				var promotionGoodsList = data["promotionGoodsList"];
+				var promotionRuleList = data["promotionRuleList"];
+				for (var i in main) {
 					var ele = form.find("input[name='" + i + "']");
 					switch (ele.attr("type")) {
 						case "radio":
-							ele.val([data[i]]);
+							ele.val([main[i]]);
 							break;
 						default:
-							ele.val(data[i]);
+							ele.val(main[i]);
 					}
 					var eleSelect = form.find("select[name='" + i + "']");
-					eleSelect.val(data[i]);
-					form.find("img[name='" + i + "Img']").attr("src", data[i]);
+					eleSelect.val(main[i]);
+					form.find("img[name='" + i + "Img']").attr("src", main[i]);
 					form.find("img[name='" + i + "Img']").show();
 				}
-				if (data["beginTime"] != null) {
-					var btime = new Date(data["beginTime"]).Format("yyyy-MM-dd hh:mm:ss");
+				for (var j in promotionGoodsList) {
+					addGoodsId(promotionGoodsList[j]["goodsId"]);
+				}
+				$('#addCfgBtn').find("div.row").remove();
+				for (var k in promotionRuleList) {
+					if(promotionRuleList[k]["discountNum"]!=null){
+						addCfg("#addCfgBtn", promotionRuleList[k]["discountNum"], promotionRuleList[k]["discountRate"]);
+						$('#cfgDetail').show();
+					}else if(promotionRuleList[k]["reduceLimit"]!=null){
+						addCfg("#addCfgBtn", promotionRuleList[k]["reduceLimit"], promotionRuleList[k]["reduceAmount"]);
+                        $('#cfgDetail').show();
+					}else {
+						$("input[name='giftLimit']").val(promotionRuleList[k]["giftLimit"]);
+						$("input[name='gift']").val(promotionRuleList[k]["gift"]);
+					}
+				}
+				if (main["beginTime"] != null) {
+					var btime = new Date(main["beginTime"]).Format("yyyy-MM-dd hh:mm:ss");
 					form.find("#beginTimeAlt").val(btime);
 					$("input[name='switch']").val(["1"]);
-					toggle("1");
 				} else {
 					$("input[name='switch']").val(["0"]);
-					toggle("0");
 				}
-				if (data["endTime"] != null) {
-					var etime = new Date(data["endTime"]).Format("yyyy-MM-dd hh:mm:ss");
+				if (main["endTime"] != null) {
+					var etime = new Date(main["endTime"]).Format("yyyy-MM-dd hh:mm:ss");
 					form.find("#endTimeAlt").val(etime);
 					$("input[name='switch']").val(["1"]);
-					toggle("1");
 				} else {
 					$("input[name='switch']").val(["0"]);
-					toggle("0");
+
 				}
-				if (data["type"] == '1'){
-					$('#merchantId').show();
+				if (main["type"] == '1'){
+					$('#merchantId').hide();
 				}else {
 					$('#merchantId').hide();
 				}
-				if (data["mode"] =='0'){
+				if (main["mode"] =='0'){
 					$('#gift').hide();
 					$('#preferential').hide();
 					$('#discount').show();
-				} else if (data["mode"] =='1') {
+				} else if (main["mode"] =='1') {
 					$('#gift').hide();
 					$('#discount').hide();
 					$('#preferential').show();
@@ -1174,6 +1182,7 @@
 				}
 				form.find(".btn.image").show();
 				jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+				$(".modal-backdrop").css("z-index", 999);
 			});
 		});
 

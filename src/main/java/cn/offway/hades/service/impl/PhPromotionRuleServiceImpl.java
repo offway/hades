@@ -1,5 +1,6 @@
 package cn.offway.hades.service.impl;
 
+import cn.offway.hades.domain.PhPromotionGoods;
 import cn.offway.hades.domain.PhPromotionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.awt.print.Pageable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -51,5 +54,24 @@ public class PhPromotionRuleServiceImpl implements PhPromotionRuleService {
 				return null;
 			}
 		},pageable);
+	}
+
+	@Override
+	public void del(Long id) {
+		phPromotionRuleRepository.delBypromotionid(id);
+	}
+
+	@Override
+	public List<PhPromotionRule> findAllByPid(Long id) {
+		return phPromotionRuleRepository.findAll(new Specification<PhPromotionRule>() {
+			@Override
+			public Predicate toPredicate(Root<PhPromotionRule> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+				List<Predicate> params = new ArrayList<Predicate>();
+				params.add(criteriaBuilder.equal(root.get("promotionId"), id));
+				Predicate[] predicates = new Predicate[params.size()];
+				criteriaQuery.where(params.toArray(predicates));
+				return null;
+			}
+		});
 	}
 }

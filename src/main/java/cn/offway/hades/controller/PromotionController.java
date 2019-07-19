@@ -60,11 +60,25 @@ public class PromotionController {
 
     @ResponseBody
     @RequestMapping("/promotion_save")
-    public boolean save(PhPromotionInfo promotionInfo, @AuthenticationPrincipal PhAdmin admin, String discountJSONStr, String reduceJSONStr, @RequestParam(name = "goodsId", required = true) String[] goodsId, String gift) {
-        promotionInfo.setCreateTime(new Date());
-        promotionInfo.setStatus("0");
-        promotionInfo.setRemark(admin.getNickname());
-        PhPromotionInfo infoSaved = promotionInfoService.save(promotionInfo);
+    public boolean save(PhPromotionInfo promotionInfo, @AuthenticationPrincipal PhAdmin admin, String discountJSONStr, String reduceJSONStr, @RequestParam(name = "goodsId", required = true) String[] goodsId, String gift,String giftLimit) {
+        PhPromotionInfo infoSaved;
+        if (promotionInfo.getId() == null){
+            promotionInfo.setCreateTime(new Date());
+            promotionInfo.setStatus("0");
+            promotionInfo.setRemark(admin.getNickname());
+            infoSaved = promotionInfoService.save(promotionInfo);
+        }else {
+            PhPromotionInfo getphPromotionInfo = promotionInfoService.findOne(promotionInfo.getId());
+            getphPromotionInfo.setName(promotionInfo.getName());
+            getphPromotionInfo.setType(promotionInfo.getType());
+            getphPromotionInfo.setMerchantId(promotionInfo.getMerchantId());
+            getphPromotionInfo.setBeginTime(promotionInfo.getBeginTime());
+            getphPromotionInfo.setEndTime(promotionInfo.getEndTime());
+            getphPromotionInfo.setMode(promotionInfo.getMode());
+            infoSaved = promotionInfoService.save(getphPromotionInfo);
+            promotionGoodsService.del(promotionInfo.getId());
+            promotionRuleService.del(promotionInfo.getId());
+        }
         //保存规则
         switch (promotionInfo.getMode()) {
             case "0":
@@ -95,6 +109,7 @@ public class PromotionController {
                 PhPromotionRule rule = new PhPromotionRule();
                 rule.setCreateTime(new Date());
                 rule.setGift(gift);
+                rule.setGiftLimit(giftLimit);
                 rule.setPromotionId(infoSaved.getId());
                 promotionRuleService.save(rule);
             default:
@@ -119,6 +134,8 @@ public class PromotionController {
     public boolean delete(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {
             promotionInfoService.del(id);
+            promotionGoodsService.del(id);
+            promotionRuleService.del(id);
         }
         return true;
     }
@@ -155,6 +172,21 @@ public class PromotionController {
         map.put("iTotalRecords", pages.getTotalElements());//数据总条数
         map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
         map.put("aData", pages.getContent());//数据集合
+        return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/promotion_findAll")
+    public Map<String, Object> findPromotionAllList(Long id) {
+        PhPromotionInfo promotionInfo = promotionInfoService.findOne(id);
+        Map<String, Object> map = new HashMap<>();
+        if (promotionInfo != null) {
+            List<PhPromotionGoods> promotionGoodsList = promotionGoodsService.findAllByPid(promotionInfo.getId());
+            List<PhPromotionRule> promotionRuleList = promotionRuleService.findAllByPid(promotionInfo.getId());
+            map.put("main", promotionInfo);
+            map.put("promotionGoodsList",promotionGoodsList);
+            map.put("promotionRuleList", promotionRuleList);
+        }
         return map;
     }
 
