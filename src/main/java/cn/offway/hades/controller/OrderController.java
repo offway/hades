@@ -437,6 +437,12 @@ public class OrderController {
                                 sb.append(goods.getGoodsName());
                                 sb.append("数量:");
                                 sb.append(goods.getGoodsCount());
+                                sb.append("规格:");
+                                for (PhGoodsProperty property : goodsPropertyService.findByStockId(goods.getGoodsStockId())) {
+                                    sb.append(property.getName());
+                                    sb.append(":");
+                                    sb.append(property.getValue());
+                                }
                                 sb.append("\r\n");
                             }
                             cell.setCellValue(sb.toString());
