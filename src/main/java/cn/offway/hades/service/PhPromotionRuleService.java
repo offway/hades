@@ -4,6 +4,8 @@ import cn.offway.hades.domain.PhPromotionRule;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 /**
  * 促销活动规则Service接口
  *
@@ -17,4 +19,8 @@ public interface PhPromotionRuleService{
 	PhPromotionRule findOne(Long id);
 
 	Page<PhPromotionRule> findAll(Pageable pageable);
+
+	void del(Long id);
+
+	List<PhPromotionRule>  findAllByPid(Long id);
 }

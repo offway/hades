@@ -41,6 +41,9 @@ public class PhPromotionRule implements Serializable {
     /** 赠品 **/
     private String gift;
 
+    /** 赠品条件金额 **/
+    private String giftLimit;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -124,5 +127,14 @@ public class PhPromotionRule implements Serializable {
 
     public void setGift(String gift) {
         this.gift = gift;
+    }
+
+    @Column(name = "gift_limit", precision = 15, scale = 2)
+    public String getGiftLimit() {
+        return giftLimit;
+    }
+
+    public void setGiftLimit(String giftLimit) {
+        this.giftLimit = giftLimit;
     }
 }

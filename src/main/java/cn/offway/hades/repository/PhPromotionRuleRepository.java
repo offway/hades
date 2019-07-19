@@ -4,6 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import cn.offway.hades.domain.PhPromotionRule;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 促销活动规则Repository接口
@@ -13,5 +16,9 @@ import cn.offway.hades.domain.PhPromotionRule;
  */
 public interface PhPromotionRuleRepository extends JpaRepository<PhPromotionRule,Long>,JpaSpecificationExecutor<PhPromotionRule> {
 
+    @Modifying
+    @Transactional
 	/** 此处写一些自定义的方法 **/
+    @Query(nativeQuery=true,value="DELETE FROM `ph_promotion_rule` WHERE `promotion_id` = ?1")
+    void delBypromotionid(Long id);
 }
