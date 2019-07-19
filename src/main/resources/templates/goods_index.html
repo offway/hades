@@ -187,7 +187,6 @@
 			</div>
 		</div>
 	</div>
-
 	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -542,6 +541,15 @@
             }
         });
     }
+
+	function batchSetPrice() {
+		var p = prompt("输入价格:", "0");
+		if (isNaN(p)) {
+			alert("请输入数字!");
+		} else {
+			$("#preview").find("input[name='stockPrice']").val(p);
+		}
+	}
 
     jQuery(document).ready(function($)
 	{
@@ -928,6 +936,8 @@
 						var originalPriceEle = '原价:<input type="number" name="originalPrice" value="VV" placeholder="无促销可不填" />'.replace("VV", a["originalPrice"] == null ? "" : a["originalPrice"]);
 						var originalPriceHiddenEle = '<input type="hidden" name="originalPriceHidden" value="VV" />'.replace("VV", a["originalPrice"] == null ? "NULL" : a["originalPrice"]);
 						contentStr += appendToPreviewList(imgEle, gidEle, priceEle, originalPriceEle, originalPriceHiddenEle, "");
+						var batchSetBtn = '<input type="button" value="批量设置价格" onclick="batchSetPrice()" />';
+						contentStr += appendToPreviewList("", "", "", "", batchSetBtn, "");
 						for (var b in a["sub"]) {
 							b = a["sub"][b];
 							var idEle = '<input type="hidden" name="sid" value="VV" />'.replace("VV", b["id"]);

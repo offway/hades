@@ -437,9 +437,36 @@ public class OrderController {
                                 sb.append(goods.getGoodsName());
                                 sb.append("数量:");
                                 sb.append(goods.getGoodsCount());
+                                sb.append("规格:");
+                                for (PhGoodsProperty property : goodsPropertyService.findByStockId(goods.getGoodsStockId())) {
+                                    sb.append(property.getName());
+                                    sb.append(":");
+                                    sb.append(property.getValue());
+                                }
                                 sb.append("\r\n");
                             }
                             cell.setCellValue(sb.toString());
+                            break;
+                        case 17:
+                            Long addrId = (long) cell.getNumericCellValue();
+                            StringBuilder sbAddr = new StringBuilder();
+                            PhAddress address = addressService.findOne(addrId);
+                            if (address != null) {
+                                sbAddr.append("省:");
+                                sbAddr.append(address.getProvince());
+                                sbAddr.append("市:");
+                                sbAddr.append(address.getCity());
+                                sbAddr.append("区:");
+                                sbAddr.append(address.getCounty());
+                                sbAddr.append("详细地址:");
+                                sbAddr.append(address.getContent());
+                                sbAddr.append("\r\n");
+                                sbAddr.append("姓名:");
+                                sbAddr.append(address.getRealName());
+                                sbAddr.append("手机号:");
+                                sbAddr.append(address.getPhone());
+                            }
+                            cell.setCellValue(sbAddr.toString());
                             break;
                         default:
                             break;
