@@ -293,7 +293,7 @@
 		</div>
 	</div>
 
-	<input type="hidden" id="promotionid" value=""/>
+
 	<input type="hidden" id="discount" value="" />
 	<input type="hidden" id="reduce" value="" />
     <input type="hidden" id="IMGHOLDER"/>
@@ -803,6 +803,11 @@
 
 	function addTheGoodsAlt(all) {
 		var ele = $("#goodsSelectAlt");
+		if($("input[name='type']:checked").val() == "0"){
+
+		}else {
+			$("input[name = 'merchantId']").val($('#merchantSelectAlt').val());
+		}
 		if (all) {
 			ele.children().each(function () {
 				var id = $(this).val();
@@ -1071,7 +1076,6 @@
 							var postData = $("#saveForm").serializeArray();
 							postData.push({"name": "discountJSONStr", "value": $("#discount").val()});//append pid
 							postData.push({"name": "reduceJSONStr", "value": $("#reduce").val()});//append pid
-							postData.push({"name": "promotionid", "value": $('#id').val()});//
 							$.post("/promotion_save", postData, function (data) {
 								if (data) {
 									footer.find("button").show();
@@ -1133,8 +1137,10 @@
 				for (var k in promotionRuleList) {
 					if(promotionRuleList[k]["discountNum"]!=null){
 						addCfg("#addCfgBtn", promotionRuleList[k]["discountNum"], promotionRuleList[k]["discountRate"]);
+						$('#cfgDetail').show();
 					}else if(promotionRuleList[k]["reduceLimit"]!=null){
 						addCfg("#addCfgBtn", promotionRuleList[k]["reduceLimit"], promotionRuleList[k]["reduceAmount"]);
+                        $('#cfgDetail').show();
 					}else {
 						$("input[name='giftLimit']").val(promotionRuleList[k]["giftLimit"]);
 						$("input[name='gift']").val(promotionRuleList[k]["gift"]);
