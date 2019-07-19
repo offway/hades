@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -588,35 +589,94 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_stock_update_mix_tree")
-    public boolean updateStockListMixTree(@RequestParam("sid") Long[] sids, @RequestParam("stockPrice") Double[] stockPrices, @RequestParam("gid") Long[] gids, @RequestParam("price") Double[] prices, @RequestParam("originalPrice") String[] originalPrices, @RequestParam("originalPriceHidden") String[] originalPriceHiddens) {
+    public boolean updateStockListMixTree(@RequestParam("sid") Long[] sids, @RequestParam("stockPrice") Double[] stockPrices, @RequestParam("gid") Long[] gids, @RequestParam("price") Double[] prices, @RequestParam("originalPrice") String[] originalPrices, @RequestParam("originalPriceHidden") String[] originalPriceHiddens, String startTimeText, String stopTimeText) {
         if (sids.length != stockPrices.length || gids.length != prices.length || gids.length != originalPrices.length) {
             return false;
         }
-        Map<Long, List<Double>> priceList = new HashMap<>();
-        for (int i = 0; i < sids.length; i++) {
-            PhGoodsStock goodsStock = goodsStockService.findOne(sids[i]);
-            goodsStock.setPrice(stockPrices[i]);
-            goodsStockService.save(goodsStock);
-            if (priceList.containsKey(goodsStock.getGoodsId())) {
-                priceList.get(goodsStock.getGoodsId()).add(goodsStock.getPrice());
+        if ("".equals(startTimeText) && "".equals(stopTimeText)) {
+            //立即改价
+            Map<Long, List<Double>> priceList = new HashMap<>();
+            for (int i = 0; i < sids.length; i++) {
+                PhGoodsStock goodsStock = goodsStockService.findOne(sids[i]);
+                goodsStock.setPrice(stockPrices[i]);
+                goodsStockService.save(goodsStock);
+                if (priceList.containsKey(goodsStock.getGoodsId())) {
+                    priceList.get(goodsStock.getGoodsId()).add(goodsStock.getPrice());
+                } else {
+                    List<Double> tmpList = new ArrayList<>();
+                    tmpList.add(goodsStock.getPrice());
+                    priceList.put(goodsStock.getGoodsId(), tmpList);
+                }
+            }
+            for (int i = 0; i < gids.length; i++) {
+                PhGoods goods = goodsService.findOne(gids[i]);
+                goods.setPrice(prices[i]);
+                boolean noChange = originalPriceHiddens[i].equals(originalPrices[i]);
+                if (!"NULL".equals(originalPrices[i])) {
+                    goods.setOriginalPrice(Double.valueOf(originalPrices[i]));
+                } else if (!noChange) {
+                    goods.setOriginalPrice(null);
+                }
+                String range = InitRunner.genPriceRange(priceList.get(goods.getId()));
+                goods.setPriceRange(range);
+                goodsService.save(goods);
+            }
+        } else {
+            List<Map<String, Object>> list = new ArrayList<>();
+            String key = startTimeText + "_" + stopTimeText + "_" + "{0}" + "_" + "DirectChange";
+            StringBuilder sb = new StringBuilder();
+            int i = 0;
+            for (Long gid : gids) {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("id", gid);
+                map.put("goodsPrice", prices[i]);
+                map.put("goodsPriceOriginal", goodsService.findOne(gid).getPrice());//assert it NOT NULL
+                map.put("type", "goodsPrice");
+                map.put("sTime", startTimeText);
+                map.put("eTime", stopTimeText);
+                list.add(map);
+                i++;
+                sb.append(gid);
+                sb.append(",");
+            }
+            int j = 0;
+            for (Long sid : sids) {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("id", sid);
+                map.put("stockPrice", stockPrices[j]);
+                map.put("stockPriceOriginal", goodsStockService.findOne(sid).getPrice());//assert it NOT NULL
+                map.put("type", "stockPrice");
+                map.put("sTime", startTimeText);
+                map.put("eTime", stopTimeText);
+                list.add(map);
+                j++;
+                sb.append(sid);
+                sb.append(",");
+            }
+            key = MessageFormat.format(key, sb.toString());
+            //save to DB
+            String jsonStr = configService.findContentByName("CRONJOB");
+            JSONObject jsonObject;
+            if (jsonStr == null || "".equals(jsonStr.trim())) {
+                jsonObject = new JSONObject();
+                jsonObject.put(key, list);
             } else {
-                List<Double> tmpList = new ArrayList<>();
-                tmpList.add(goodsStock.getPrice());
-                priceList.put(goodsStock.getGoodsId(), tmpList);
+                jsonObject = JSON.parseObject(jsonStr);
+                if (jsonObject.containsKey(key)) {
+                    return false;
+                } else {
+                    jsonObject.put(key, list);
+                }
             }
-        }
-        for (int i = 0; i < gids.length; i++) {
-            PhGoods goods = goodsService.findOne(gids[i]);
-            goods.setPrice(prices[i]);
-            boolean noChange = originalPriceHiddens[i].equals(originalPrices[i]);
-            if (!"NULL".equals(originalPrices[i])) {
-                goods.setOriginalPrice(Double.valueOf(originalPrices[i]));
-            } else if (!noChange) {
-                goods.setOriginalPrice(null);
-            }
-            String range = InitRunner.genPriceRange(priceList.get(goods.getId()));
-            goods.setPriceRange(range);
-            goodsService.save(goods);
+            PhConfig config = configService.findOne("CRONJOB");
+            config.setContent(jsonObject.toJSONString());
+            configService.save(config);
+            //create the jobs
+            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+            Date sTime = DateTime.parse(startTimeText, format).toDate();
+            Date eTime = DateTime.parse(stopTimeText, format).toDate();
+            JSONArray taskList = jsonObject.getJSONArray(key);
+            InitRunner.createJob(taskList, key, sTime, eTime, new Date(), goodsService, goodsStockService);
         }
         return true;
     }
@@ -749,8 +809,9 @@ public class GoodsController {
             List<Map<String, Object>> list = new ArrayList<>();
             for (String id : ids.split(",")) {
                 HashMap<String, Object> map = new HashMap<>();
-                map.put("gid", id);
+                map.put("id", id);
                 map.put("discount", discount);
+                map.put("type", "discount");
                 map.put("sTime", beginTime);
                 map.put("eTime", endTime);
                 list.add(map);
@@ -785,8 +846,9 @@ public class GoodsController {
             List<Map<String, Object>> list = new ArrayList<>();
             for (String id : ids.split(",")) {
                 HashMap<String, Object> map = new HashMap<>();
-                map.put("gid", id);
+                map.put("id", id);
                 map.put("discount", discount);
+                map.put("type", "discount");
                 list.add(map);
             }
             taskList = JSONArray.parseArray(JSON.toJSONString(list));

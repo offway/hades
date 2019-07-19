@@ -542,14 +542,26 @@
         });
     }
 
-	function batchSetPrice() {
-		var p = prompt("输入价格:", "0");
-		if (isNaN(p)) {
-			alert("请输入数字!");
-		} else {
-			$("#preview").find("input[name='stockPrice']").val(p);
-		}
-	}
+    function batchSetPrice() {
+        var p = prompt("输入价格:", "0");
+        if (isNaN(p)) {
+            alert("请输入数字!");
+        } else {
+            $("#preview").find("input[name='stockPrice']").val(p);
+        }
+    }
+
+    function isInstantChange(yes) {
+        if (yes) {
+            $("#startTimeText").hide();
+            $("#startTimeText").val("");
+            $("#stopTimeText").hide();
+            $("#stopTimeText").val("");
+        } else {
+            $("#startTimeText").show();
+            $("#stopTimeText").show();
+        }
+    }
 
     jQuery(document).ready(function($)
 	{
@@ -936,8 +948,14 @@
 						var originalPriceEle = '原价:<input type="number" name="originalPrice" value="VV" placeholder="无促销可不填" />'.replace("VV", a["originalPrice"] == null ? "" : a["originalPrice"]);
 						var originalPriceHiddenEle = '<input type="hidden" name="originalPriceHidden" value="VV" />'.replace("VV", a["originalPrice"] == null ? "NULL" : a["originalPrice"]);
 						contentStr += appendToPreviewList(imgEle, gidEle, priceEle, originalPriceEle, originalPriceHiddenEle, "");
-						var batchSetBtn = '<input type="button" value="批量设置价格" onclick="batchSetPrice()" />';
-						contentStr += appendToPreviewList("", "", "", "", batchSetBtn, "");
+                        var delayChange = '<label><input type="radio" name="isInstantChangeBtn" onclick="isInstantChange(false)"/>否 </label>';
+                        var instantChange = '<label><input type="radio" name="isInstantChangeBtn" checked="checked" onclick="isInstantChange(true)"/>是</label>';
+                        var startTimeText = '<input type="text" id="startTimeText" name="startTimeText" style="display: none;" placeholder="开始时间" />';
+                        var stopTimeText = '<input type="text" id="stopTimeText" name="stopTimeText" style="display: none;" placeholder="结束时间" />';
+                        contentStr += appendToPreviewList("是否及时改价", "", delayChange, "", instantChange, "");
+                        contentStr += appendToPreviewList("", "", startTimeText, "", stopTimeText, "");
+                        var batchSetBtn = '<input type="button" value="批量设置价格" onclick="batchSetPrice()" />';
+                        contentStr += appendToPreviewList("", "", "", "", batchSetBtn, "");
 						for (var b in a["sub"]) {
 							b = a["sub"][b];
 							var idEle = '<input type="hidden" name="sid" value="VV" />'.replace("VV", b["id"]);
@@ -952,6 +970,26 @@
 					var btnEle = '<input type="button" class="btn btn-info" value="保存" onclick="updatePriceBatch()" />';
 					contentStr += appendToPreviewList("", "", "", "", "", btnEle);
 					preview.html(contentStr + "</form>");
+                    jQuery('#startTimeText').datetimepicker(
+                        {
+                            "lang": "zh",
+                            "format": "Y-m-d H:i:s",
+                            "timepicker": true,
+                            "datepicker": true,
+                            "defaultDate": new Date(),
+                            "defaultTime": "00:00:00"
+                        }
+                    );
+                    jQuery('#stopTimeText').datetimepicker(
+                        {
+                            "lang": "zh",
+                            "format": "Y-m-d H:i:s",
+                            "timepicker": true,
+                            "datepicker": true,
+                            "defaultDate": new Date(),
+                            "defaultTime": "00:00:00"
+                        }
+                    );
 					jQuery('#preview').modal({backdrop: 'static', keyboard: false});
 					toastr.success("操作已成功！", "温馨提示");
 				} else {
