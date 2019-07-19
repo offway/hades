@@ -40,6 +40,7 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
     private Long userId;
 
     /** 地址ID **/
+    @ExcelProperty(value = "收货地址",index = 17)
     private Long addrId;
 
     /** 订单总价 **/
