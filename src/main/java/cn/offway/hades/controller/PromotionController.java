@@ -261,4 +261,10 @@ public class PromotionController {
     public List<PhGoods> getGoodsList(@RequestParam(name = "mid", required = false, defaultValue = "") String mid, String bid) {
         return goodsService.findAllAlt(mid, bid);
     }
+
+    @ResponseBody
+    @RequestMapping("/promotion_getGoodsImageByid")
+    public PhGoods getGoodsListAll(@RequestParam(name = "id", required = false, defaultValue = "") Long id) {
+        return goodsService.findOne(id);
+    }
 }

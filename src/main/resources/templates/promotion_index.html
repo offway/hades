@@ -634,23 +634,34 @@
 	function addGoodsId(id) {
 		var str = "";
 		var uuid = UUID.randomUUID();
-		str = '\t\t\t\t\t\t<div id="UUID" class="row" style="display: block">\n' +
-				'\t\t\t\t\t\t\t<div class="col-md-10">\n' +
-				'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
-				'\t\t\t\t\t\t\t\t\t<label class="control-label">商品ID</label>\n' +
-				'\t\t\t\t\t\t\t\t\t<input type="text" class="form-control" name="goodsId" value="DDD" placeholder="id"/>\n' +
-				'\t\t\t\t\t\t\t\t</div>\n' +
-				'\t\t\t\t\t\t\t</div>\n' +
-				'\t\t\t\t\t\t\t<div class="col-md-2">\n' +
-				'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
-				'\t\t\t\t\t\t\t\t\t<label class="control-label">操作</label>\n' +
-				'\t\t\t\t\t\t\t\t\t<input type="button" class="form-control" value="删除" onclick="delNode(\'UUID\')"/>\n' +
-				'\t\t\t\t\t\t\t\t</div>\n' +
-				'\t\t\t\t\t\t\t</div>\n' +
-				'\t\t\t\t\t\t</div>';
-		str = str.replace(/DDD/g, id);
-		str = str.replace(/UUID/g, uuid);
-		$('#goodsPool').append(str);
+		var img = "";
+		$.post("/promotion_getGoodsImageByid",{"id":id},function (data) {
+			img = data["image"];
+			str = '\t\t\t\t\t\t<div id="UUID" class="row" style="display: block">\n' +
+					'\t\t\t\t\t\t\t<div class="col-md-5">\n' +
+					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+					'\t\t\t\t\t\t\t\t\t<label class="control-label">商品图片</label>\n' +
+					'\t\t\t\t\t\t\t\t\t<img style="display:inline-block;width: 60px; height: 60px" class="form-control" src="SRC" />\n' +
+					'\t\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t<div class="col-md-5">\n' +
+					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+					'\t\t\t\t\t\t\t\t\t<label class="control-label">商品ID</label>\n' +
+					'\t\t\t\t\t\t\t\t\t<input type="text" class="form-control" name="goodsId" value="DDD" placeholder="id"/>\n' +
+					'\t\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t<div class="col-md-2">\n' +
+					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+					'\t\t\t\t\t\t\t\t\t<label class="control-label">操作</label>\n' +
+					'\t\t\t\t\t\t\t\t\t<input type="button" class="form-control" value="删除" onclick="delNode(\'UUID\')"/>\n' +
+					'\t\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t\t</div>\n' +
+					'\t\t\t\t\t\t</div>';
+			str = str.replace(/DDD/g, id);
+			str = str.replace(/UUID/g, uuid);
+			str = str.replace("SRC", img);
+			$('#goodsPool').append(str);
+		});
 	}
 
 	function addCfg(self, value1, value2) {
