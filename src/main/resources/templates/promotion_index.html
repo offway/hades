@@ -86,7 +86,7 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">商户ID</label>
-									<input type="text" class="form-control" name="merchantId" placeholder="商户ID"/>
+									<input type="hidden" class="form-control" name="merchantId" placeholder="商户ID"/>
 								</div>
 							</div>
 						</div>
@@ -293,7 +293,7 @@
 		</div>
 	</div>
 
-	<input type="hidden" id=""/>
+	<input type="hidden" id="promotionid" value=""/>
 	<input type="hidden" id="discount" value="" />
 	<input type="hidden" id="reduce" value="" />
     <input type="hidden" id="IMGHOLDER"/>
@@ -1050,6 +1050,11 @@
 				footer.find(".bg-lg").hide();
 				return;
 			}
+			if (mode == '0') {
+				saveCfg(true);
+			} else if (mode == '1') {
+				saveCfg(false);
+			}
 
 			//获取token
 			$.get("/qiniu/token", {}, function (token) {
@@ -1066,12 +1071,14 @@
 							var postData = $("#saveForm").serializeArray();
 							postData.push({"name": "discountJSONStr", "value": $("#discount").val()});//append pid
 							postData.push({"name": "reduceJSONStr", "value": $("#reduce").val()});//append pid
+							postData.push({"name": "promotionid", "value": $('#id').val()});//
 							$.post("/promotion_save", postData, function (data) {
 								if (data) {
 									footer.find("button").show();
 									footer.find(".bg-lg").hide();
 									jQuery('#modal-6').modal('hide');
 									toastr.success("操作已成功！", "温馨提示");
+									$('#id').val("");
 									oTable.fnDraw();
 								} else {
 									footer.find("button").show();

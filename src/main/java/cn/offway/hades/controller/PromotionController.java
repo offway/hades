@@ -60,58 +60,115 @@ public class PromotionController {
 
     @ResponseBody
     @RequestMapping("/promotion_save")
-    public boolean save(PhPromotionInfo promotionInfo, @AuthenticationPrincipal PhAdmin admin, String discountJSONStr, String reduceJSONStr, @RequestParam(name = "goodsId", required = true) String[] goodsId, String gift,String giftLimit) {
-        promotionInfo.setCreateTime(new Date());
-        promotionInfo.setStatus("0");
-        promotionInfo.setRemark(admin.getNickname());
-        PhPromotionInfo infoSaved = promotionInfoService.save(promotionInfo);
-        //保存规则
-        switch (promotionInfo.getMode()) {
-            case "0":
-                JSONArray jsonArray = JSONArray.parseArray(discountJSONStr);
-                for (Object object : jsonArray) {
-                    JSONObject o = (JSONObject) object;
+    public boolean save(PhPromotionInfo promotionInfo, @AuthenticationPrincipal PhAdmin admin, String discountJSONStr, String reduceJSONStr, @RequestParam(name = "goodsId", required = true) String[] goodsId, String gift,String giftLimit,String promotionid) {
+        if (promotionid == null){
+            promotionInfo.setCreateTime(new Date());
+            promotionInfo.setStatus("0");
+            promotionInfo.setRemark(admin.getNickname());
+            PhPromotionInfo infoSaved = promotionInfoService.save(promotionInfo);
+            //保存规则
+            switch (promotionInfo.getMode()) {
+                case "0":
+                    JSONArray jsonArray = JSONArray.parseArray(discountJSONStr);
+                    for (Object object : jsonArray) {
+                        JSONObject o = (JSONObject) object;
+                        PhPromotionRule rule = new PhPromotionRule();
+                        rule.setCreateTime(new Date());
+                        rule.setDiscountNum(o.getLong("discount_num"));
+                        rule.setDiscountRate(o.getDouble("discount_rate"));
+                        rule.setPromotionId(infoSaved.getId());
+                        promotionRuleService.save(rule);
+                    }
+                    break;
+                case "1":
+                    JSONArray jsonArray2 = JSONArray.parseArray(reduceJSONStr);
+                    for (Object object : jsonArray2) {
+                        JSONObject o = (JSONObject) object;
+                        PhPromotionRule rule = new PhPromotionRule();
+                        rule.setCreateTime(new Date());
+                        rule.setReduceLimit(o.getDouble("reduce_limit"));
+                        rule.setReduceAmount(o.getDouble("reduce_amount"));
+                        rule.setPromotionId(infoSaved.getId());
+                        promotionRuleService.save(rule);
+                    }
+                    break;
+                case "2":
                     PhPromotionRule rule = new PhPromotionRule();
                     rule.setCreateTime(new Date());
-                    rule.setDiscountNum(o.getLong("discount_num"));
-                    rule.setDiscountRate(o.getDouble("discount_rate"));
+                    rule.setGift(gift);
+                    rule.setGiftLimit(giftLimit);
                     rule.setPromotionId(infoSaved.getId());
                     promotionRuleService.save(rule);
-                }
-                break;
-            case "1":
-                JSONArray jsonArray2 = JSONArray.parseArray(reduceJSONStr);
-                for (Object object : jsonArray2) {
-                    JSONObject o = (JSONObject) object;
-                    PhPromotionRule rule = new PhPromotionRule();
-                    rule.setCreateTime(new Date());
-                    rule.setReduceLimit(o.getDouble("reduce_limit"));
-                    rule.setReduceAmount(o.getDouble("reduce_amount"));
-                    rule.setPromotionId(infoSaved.getId());
-                    promotionRuleService.save(rule);
-                }
-                break;
-            case "2":
-                PhPromotionRule rule = new PhPromotionRule();
-                rule.setCreateTime(new Date());
-                rule.setGift(gift);
-                rule.setGiftLimit(giftLimit);
-                rule.setPromotionId(infoSaved.getId());
-                promotionRuleService.save(rule);
-            default:
-                break;
-        }
-        //保存商品
-        for (String gid : goodsId) {
-            if ("".equals(gid.trim())) {
-                continue;
+                default:
+                    break;
             }
-            PhPromotionGoods goods = new PhPromotionGoods();
-            goods.setCreateTime(new Date());
-            goods.setGoodsId(Long.valueOf(gid));
-            goods.setPromotionId(infoSaved.getId());
-            promotionGoodsService.save(goods);
+            //保存商品
+            for (String gid : goodsId) {
+                if ("".equals(gid.trim())) {
+                    continue;
+                }
+                PhPromotionGoods goods = new PhPromotionGoods();
+                goods.setCreateTime(new Date());
+                goods.setGoodsId(Long.valueOf(gid));
+                goods.setPromotionId(infoSaved.getId());
+                promotionGoodsService.save(goods);
+            }
+        }else {
+//            PhPromotionInfo getphPromotionInfo = promotionInfoService.findOne(Long.parseLong(promotionid));
+//            getphPromotionInfo.setName(promotionInfo.getName());
+//            getphPromotionInfo.setType(promotionInfo.getType());
+//            getphPromotionInfo.setMerchantId(promotionInfo.getMerchantId());
+//            getphPromotionInfo.setBeginTime(promotionInfo.getBeginTime());
+//            getphPromotionInfo.setEndTime(promotionInfo.getEndTime());
+//            getphPromotionInfo.setMode(promotionInfo.getMode());
+//            switch (promotionInfo.getMode()) {
+//                case "0":
+//                    JSONArray jsonArray = JSONArray.parseArray(discountJSONStr);
+//                    for (Object object : jsonArray) {
+//                        JSONObject o = (JSONObject) object;
+//                        PhPromotionRule rule = new PhPromotionRule();
+//                        rule.setCreateTime(new Date());
+//                        rule.setDiscountNum(o.getLong("discount_num"));
+//                        rule.setDiscountRate(o.getDouble("discount_rate"));
+//                        rule.setPromotionId(infoSaved.getId());
+//                        promotionRuleService.save(rule);
+//                    }
+//                    break;
+//                case "1":
+//                    JSONArray jsonArray2 = JSONArray.parseArray(reduceJSONStr);
+//                    for (Object object : jsonArray2) {
+//                        JSONObject o = (JSONObject) object;
+//                        PhPromotionRule rule = new PhPromotionRule();
+//                        rule.setCreateTime(new Date());
+//                        rule.setReduceLimit(o.getDouble("reduce_limit"));
+//                        rule.setReduceAmount(o.getDouble("reduce_amount"));
+//                        rule.setPromotionId(infoSaved.getId());
+//                        promotionRuleService.save(rule);
+//                    }
+//                    break;
+//                case "2":
+//                    PhPromotionRule rule = new PhPromotionRule();
+//                    rule.setCreateTime(new Date());
+//                    rule.setGift(gift);
+//                    rule.setGiftLimit(giftLimit);
+//                    rule.setPromotionId(infoSaved.getId());
+//                    promotionRuleService.save(rule);
+//                default:
+//                    break;
+//            }
+//            //保存商品
+//            for (String gid : goodsId) {
+//                if ("".equals(gid.trim())) {
+//                    continue;
+//                }
+//                PhPromotionGoods goods = new PhPromotionGoods();
+//                goods.setCreateTime(new Date());
+//                goods.setGoodsId(Long.valueOf(gid));
+//                goods.setPromotionId(infoSaved.getId());
+//                promotionGoodsService.save(goods);
+//            }
         }
+
         return true;
     }
 
