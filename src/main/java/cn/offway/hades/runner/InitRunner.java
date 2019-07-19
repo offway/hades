@@ -85,26 +85,60 @@ public class InitRunner implements ApplicationRunner {
                 pool.schedule(new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        long gid = task.getLongValue("gid");
-                        double discount = task.getDoubleValue("discount");
-                        PhGoods goods = goodsService.findOne(gid);
-                        if (goods != null) {
-                            //update goods
-                            if (discount >= 1) {
-                                goods.setOriginalPrice(null);
-                            } else {
-                                goods.setOriginalPrice(goods.getPrice());
-                            }
-                            goods.setPrice(goods.getPrice() * discount);
-                            //update stock
-                            List<Double> priceList = new ArrayList<>();
-                            for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
-                                stock.setPrice(stock.getPrice() * discount);
-                                PhGoodsStock stockSaved = stockService.save(stock);
-                                priceList.add(stockSaved.getPrice());
-                            }
-                            goods.setPriceRange(genPriceRange(priceList));
-                            goodsService.save(goods);
+                        long id = task.containsKey("gid") ? task.getLongValue("gid") : task.getLongValue("id");
+                        String type = "discount";
+                        if (task.containsKey("type")) {
+                            type = task.getString("type");
+                        }
+                        PhGoods goods;
+                        PhGoodsStock goodsStock;
+                        switch (type) {
+                            case "discount":
+                                double discount = task.getDoubleValue("discount");
+                                goods = goodsService.findOne(id);
+                                if (goods != null) {
+                                    //update goods
+                                    if (discount >= 1) {
+                                        goods.setOriginalPrice(null);
+                                    } else {
+                                        goods.setOriginalPrice(goods.getPrice());
+                                    }
+                                    goods.setPrice(goods.getPrice() * discount);
+                                    //update stock
+                                    List<Double> priceList = new ArrayList<>();
+                                    for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
+                                        stock.setPrice(stock.getPrice() * discount);
+                                        PhGoodsStock stockSaved = stockService.save(stock);
+                                        priceList.add(stockSaved.getPrice());
+                                    }
+                                    goods.setPriceRange(genPriceRange(priceList));
+                                    goodsService.save(goods);
+                                }
+                                break;
+                            case "goodsPrice":
+                                double goodsPrice = task.getDoubleValue("goodsPrice");
+                                goods = goodsService.findOne(id);
+                                if (goods != null) {
+                                    goods.setPrice(goodsPrice);
+                                    goodsService.save(goods);
+                                }
+                                break;
+                            case "stockPrice":
+                                double stockPrice = task.getDoubleValue("stockPrice");
+                                goodsStock = stockService.findOne(id);
+                                if (goodsStock != null) {
+                                    goods = goodsService.findOne(goodsStock.getGoodsId());
+                                    goodsStock.setPrice(stockPrice);
+                                    stockService.save(goodsStock);
+                                    //update PriceRange
+                                    List<Double> priceList = new ArrayList<>();
+                                    for (PhGoodsStock stock : stockService.findByPid(goodsStock.getGoodsId())) {
+                                        priceList.add(stock.getPrice());
+                                    }
+                                    goods.setPriceRange(genPriceRange(priceList));
+                                    goodsService.save(goods);
+                                }
+                                break;
                         }
                         checkAndPurgeTask(key);
                         return null;
@@ -118,22 +152,56 @@ public class InitRunner implements ApplicationRunner {
                 poolReverse.schedule(new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
-                        long gid = task.getLongValue("gid");
-                        double discount = task.getDoubleValue("discount");
-                        PhGoods goods = goodsService.findOne(gid);
-                        if (goods != null) {
-                            //update goods
-                            goods.setPrice(goods.getPrice() / discount);
-                            goods.setOriginalPrice(null);
-                            //update stock
-                            List<Double> priceList = new ArrayList<>();
-                            for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
-                                stock.setPrice(stock.getPrice() / discount);
-                                PhGoodsStock stockSaved = stockService.save(stock);
-                                priceList.add(stockSaved.getPrice());
-                            }
-                            goods.setPriceRange(genPriceRange(priceList));
-                            goodsService.save(goods);
+                        long id = task.containsKey("gid") ? task.getLongValue("gid") : task.getLongValue("id");
+                        String type = "discount";
+                        if (task.containsKey("type")) {
+                            type = task.getString("type");
+                        }
+                        PhGoods goods;
+                        PhGoodsStock goodsStock;
+                        switch (type) {
+                            case "discount":
+                                double discount = task.getDoubleValue("discount");
+                                goods = goodsService.findOne(id);
+                                if (goods != null) {
+                                    //update goods
+                                    goods.setPrice(goods.getPrice() / discount);
+                                    goods.setOriginalPrice(null);
+                                    //update stock
+                                    List<Double> priceList = new ArrayList<>();
+                                    for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
+                                        stock.setPrice(stock.getPrice() / discount);
+                                        PhGoodsStock stockSaved = stockService.save(stock);
+                                        priceList.add(stockSaved.getPrice());
+                                    }
+                                    goods.setPriceRange(genPriceRange(priceList));
+                                    goodsService.save(goods);
+                                }
+                                break;
+                            case "goodsPrice":
+                                double goodsPrice = task.getDoubleValue("goodsPriceOriginal");
+                                goods = goodsService.findOne(id);
+                                if (goods != null) {
+                                    goods.setPrice(goodsPrice);
+                                    goodsService.save(goods);
+                                }
+                                break;
+                            case "stockPrice":
+                                double stockPrice = task.getDoubleValue("stockPriceOriginal");
+                                goodsStock = stockService.findOne(id);
+                                if (goodsStock != null) {
+                                    goods = goodsService.findOne(goodsStock.getGoodsId());
+                                    goodsStock.setPrice(stockPrice);
+                                    stockService.save(goodsStock);
+                                    //update PriceRange
+                                    List<Double> priceList = new ArrayList<>();
+                                    for (PhGoodsStock stock : stockService.findByPid(goodsStock.getGoodsId())) {
+                                        priceList.add(stock.getPrice());
+                                    }
+                                    goods.setPriceRange(genPriceRange(priceList));
+                                    goodsService.save(goods);
+                                }
+                                break;
                         }
                         checkAndPurgeTask(key + "_REVERSE");
                         return null;
