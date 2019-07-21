@@ -630,7 +630,10 @@ public class GoodsController {
                 HashMap<String, Object> map = new HashMap<>();
                 map.put("id", gid);
                 map.put("goodsPrice", prices[i]);
-                map.put("goodsPriceOriginal", goodsService.findOne(gid).getPrice());//assert it NOT NULL
+                if ("NULL".equals(originalPrices[i])) {
+                    return false;
+                }
+                map.put("goodsPriceOriginal", originalPrices[i]);//MUST NOT NULL
                 map.put("type", "goodsPrice");
                 map.put("sTime", startTimeText);
                 map.put("eTime", stopTimeText);

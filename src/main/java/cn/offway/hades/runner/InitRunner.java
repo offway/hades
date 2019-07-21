@@ -117,9 +117,11 @@ public class InitRunner implements ApplicationRunner {
                                 break;
                             case "goodsPrice":
                                 double goodsPrice = task.getDoubleValue("goodsPrice");
+                                double goodsPriceOriginal = task.getDoubleValue("goodsPriceOriginal");
                                 goods = goodsService.findOne(id);
                                 if (goods != null) {
                                     goods.setPrice(goodsPrice);
+                                    goods.setOriginalPrice(goodsPriceOriginal);
                                     goodsService.save(goods);
                                 }
                                 break;
@@ -183,6 +185,7 @@ public class InitRunner implements ApplicationRunner {
                                 goods = goodsService.findOne(id);
                                 if (goods != null) {
                                     goods.setPrice(goodsPrice);
+                                    goods.setOriginalPrice(null);
                                     goodsService.save(goods);
                                 }
                                 break;
