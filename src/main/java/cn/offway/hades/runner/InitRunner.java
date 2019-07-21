@@ -35,7 +35,7 @@ public class InitRunner implements ApplicationRunner {
     private PhGoodsService goodsService;
     @Autowired
     private PhGoodsStockService stockService;
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static Logger logger = LoggerFactory.getLogger(ApplicationRunner.class);
 
     @Override
     public void run(ApplicationArguments applicationArguments) throws Exception {
@@ -122,23 +122,20 @@ public class InitRunner implements ApplicationRunner {
                                 if (goods != null) {
                                     goods.setPrice(goodsPrice);
                                     goods.setOriginalPrice(goodsPriceOriginal);
+                                    logger.info("setPrice to " + goodsPrice);
+                                    logger.info("setOriginalPrice to " + goodsPriceOriginal);
+                                    logger.info("now is " + new Date());
                                     goodsService.save(goods);
+                                    //re-calc priceRange 3 seconds later
+                                    calcPriceRange(id, stockService, goodsService);
                                 }
                                 break;
                             case "stockPrice":
                                 double stockPrice = task.getDoubleValue("stockPrice");
                                 goodsStock = stockService.findOne(id);
                                 if (goodsStock != null) {
-                                    goods = goodsService.findOne(goodsStock.getGoodsId());
                                     goodsStock.setPrice(stockPrice);
                                     stockService.save(goodsStock);
-                                    //update PriceRange
-                                    List<Double> priceList = new ArrayList<>();
-                                    for (PhGoodsStock stock : stockService.findByPid(goodsStock.getGoodsId())) {
-                                        priceList.add(stock.getPrice());
-                                    }
-                                    goods.setPriceRange(genPriceRange(priceList));
-                                    goodsService.save(goods);
                                 }
                                 break;
                         }
@@ -186,23 +183,20 @@ public class InitRunner implements ApplicationRunner {
                                 if (goods != null) {
                                     goods.setPrice(goodsPrice);
                                     goods.setOriginalPrice(null);
+                                    logger.info("setPrice to " + goodsPrice);
+                                    logger.info("setOriginalPrice to NULL");
+                                    logger.info("now is " + new Date());
                                     goodsService.save(goods);
+                                    //re-calc priceRange 3 seconds later
+                                    calcPriceRange(id, stockService, goodsService);
                                 }
                                 break;
                             case "stockPrice":
                                 double stockPrice = task.getDoubleValue("stockPriceOriginal");
                                 goodsStock = stockService.findOne(id);
                                 if (goodsStock != null) {
-                                    goods = goodsService.findOne(goodsStock.getGoodsId());
                                     goodsStock.setPrice(stockPrice);
                                     stockService.save(goodsStock);
-                                    //update PriceRange
-                                    List<Double> priceList = new ArrayList<>();
-                                    for (PhGoodsStock stock : stockService.findByPid(goodsStock.getGoodsId())) {
-                                        priceList.add(stock.getPrice());
-                                    }
-                                    goods.setPriceRange(genPriceRange(priceList));
-                                    goodsService.save(goods);
                                 }
                                 break;
                         }
@@ -228,12 +222,33 @@ public class InitRunner implements ApplicationRunner {
         }
     }
 
+    private static void calcPriceRange(Long gid, PhGoodsStockService stockService, PhGoodsService goodsService) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000);//wait all sub task done
+                    //update PriceRange
+                    List<Double> priceList = new ArrayList<>();
+                    for (PhGoodsStock stock : stockService.findByPid(gid)) {
+                        priceList.add(stock.getPrice());
+                    }
+                    PhGoods goods = goodsService.findOne(gid);
+                    goods.setPriceRange(genPriceRange(priceList));
+                    goodsService.save(goods);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
     private static void checkAndPurgeTask(String key) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(5000);
                     if (JobHolder.getHolder().containsKey(key)) {
                         ExecutorService service = JobHolder.getHolder().get(key);
                         if (service.isShutdown() || service.isTerminated()) {
