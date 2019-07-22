@@ -428,10 +428,13 @@
 			language: {
 				url: "../assets/Chinese.txt"
 			},
-			bFilter: false,
-			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
-			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
-			sAjaxSource: "/goods_discount_list_detail",//通过ajax实现分页的url路径。
+            searching: false,
+            lengthChange: false,
+            paging: false,
+            bFilter: false,
+            bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+            sAjaxSource: "/goods_discount_list_detail",//通过ajax实现分页的url路径。
 			fnServerParams: function (aData) {
 				var searchArray = $(".form-inline").serializeArray();
 				$.merge(aData, searchArray);
