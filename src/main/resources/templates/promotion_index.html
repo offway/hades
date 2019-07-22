@@ -1064,6 +1064,8 @@
 
 		$(".btn.btn-info.add").click(function () {
 			var form = $("#saveForm");
+			$('#goodsPool').find("div").remove();
+			$('#cfgDetail').find("div.row").remove();
 			form.find("input:not(.notMe)").val("");
             jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
             $(".modal-backdrop").css("z-index", 999);
@@ -1138,6 +1140,8 @@
 
 		$(".btn.btn-info.edit").click(function () {
 			var activityId = $("input[name='activityId']:checked");
+			$('#goodsPool').find("div").remove();
+			$('#cfgDetail').find("div.row").remove();
 			if (activityId.length != 1) {
 				toastr.error("请选择一条数据操作", "温馨提示");
 				return;
