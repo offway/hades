@@ -882,14 +882,23 @@ public class GoodsController {
             }
             Map<String, Object> m = new HashMap<>();
             String[] args = key.split("_");
+            if ("".equals(args[2])) {
+                continue;
+            }
             m.put("id", key);
             m.put("sTime", args[0]);
             m.put("eTime", args[1]);
-            m.put("discount", args[3]);
             List<PhGoods> goodsList = new ArrayList<>();
             String[] gids = args[2].split(",");
-            for (String id : gids) {
-                goodsList.add(goodsService.findOne(Long.valueOf(id)));
+            if (key.contains("DirectChange")) {
+                m.put("type", "change");
+                goodsList.add(goodsService.findOne(Long.valueOf(gids[0])));
+            } else {
+                m.put("type", "discount");
+                m.put("discount", args[3]);
+                for (String id : gids) {
+                    goodsList.add(goodsService.findOne(Long.valueOf(id)));
+                }
             }
             m.put("subList", goodsList);
             list.add(m);
