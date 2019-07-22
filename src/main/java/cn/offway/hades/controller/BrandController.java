@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,14 +48,15 @@ public class BrandController {
 
     @ResponseBody
     @RequestMapping("/brand_list")
-    public Map<String, Object> getList(HttpServletRequest request) {
+    public Map<String, Object> getList(HttpServletRequest request, String status) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         String name = request.getParameter("name");
         String type = request.getParameter("type");
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "isRecommend"), new Sort.Order(Sort.Direction.ASC, "sort"), new Sort.Order(Sort.Direction.ASC, "id"));
-        Page<PhBrand> pages = brandService.findAll(name, type, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
+        Page<PhBrand> pages = brandService.findAll(name, type, status, pr);
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
@@ -69,6 +71,34 @@ public class BrandController {
     public boolean delete(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {
             brandService.del(id);
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @Transactional
+    @RequestMapping("/brand_up")
+    public boolean up(@RequestParam("ids[]") Long[] ids) {
+        for (Long id : ids) {
+            PhBrand brand = brandService.findOne(id);
+            if (brand != null) {
+                brand.setStatus("1");
+                brandService.save(brand);
+            }
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @Transactional
+    @RequestMapping("/brand_down")
+    public boolean down(@RequestParam("ids[]") Long[] ids) {
+        for (Long id : ids) {
+            PhBrand brand = brandService.findOne(id);
+            if (brand != null) {
+                brand.setStatus("0");
+                brandService.save(brand);
+            }
         }
         return true;
     }

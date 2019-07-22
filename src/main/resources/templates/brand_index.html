@@ -57,6 +57,13 @@
 									<option value="0">国内品牌</option>
 								</select>
 							</div>
+							<div class="input-group">
+								<select name="status" class="form-control" style="height:35px">
+									<option value="" selected="selected">全部</option>
+									<option value="1">已上架</option>
+									<option value="0">未上架</option>
+								</select>
+							</div>
 						</div>
 						<div class="form-group">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
@@ -76,6 +83,8 @@
                 <button class="btn btn-danger pinToBanner">推荐至首页Banner</button>
                 <button class="btn btn-info pinLogoList">首页LOGO推荐列表</button>
                 <button class="btn btn-info pinBannerList">首页Banner推荐列表</button>
+				<button class="btn btn-danger up">上架</button>
+				<button class="btn btn-danger down">下架</button>
 			</div>
 			
 					
@@ -612,13 +621,21 @@
                         return (data == "0" || data == undefined) ? "否" : "是";
                     }
                 },
+				{
+					targets: 14,
+					data: "status",
+					title: "是否上架",
+					render: function (data, type, row, meta) {
+						return (data == "0" || data == undefined) ? "未上架" : "已上架";
+					}
+				},
                 {
-                    targets: 14,
+                    targets: 15,
                     data: "sort",
                     title: "排序"
                 },
                 {
-                    targets: 15,
+                    targets: 16,
                     data: "id",
                     orderable: false,
                     title: "操作",
@@ -627,7 +644,7 @@
                     }
                 },
 				{
-					targets: 16,
+					targets: 17,
 					data: "id",
 					orderable: false,
 					title: "操作",
@@ -638,7 +655,7 @@
 					}
 				},
                 {
-                    targets: 17,
+                    targets: 18,
                     data: "id",
                     orderable: false,
                     title: "操作",
@@ -899,45 +916,45 @@
             });
         });
 
-        $(".btn.btn-info.up").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
+		$(".btn.btn-danger.up").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
 
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
 
-            $.post("/banner_up",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
+			$.post("/brand_up", {ids: ids}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			});
+		});
 
-        $(".btn.btn-info.down").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
+		$(".btn.btn-danger.down").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
 
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
 
-            $.post("/banner_down",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
+			$.post("/brand_down", {ids: ids}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			});
+		});
 	});
 	/*]]>*/
 	</script>

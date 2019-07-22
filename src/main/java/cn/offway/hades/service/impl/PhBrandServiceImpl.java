@@ -54,7 +54,7 @@ public class PhBrandServiceImpl implements PhBrandService {
     }
 
     @Override
-    public Page<PhBrand> findAll(String name, String type, Pageable pageable) {
+    public Page<PhBrand> findAll(String name, String type, String status, Pageable pageable) {
         return phBrandRepository.findAll(new Specification<PhBrand>() {
             @Override
             public Predicate toPredicate(Root<PhBrand> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -62,6 +62,9 @@ public class PhBrandServiceImpl implements PhBrandService {
                 params.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
                 if (!"".equals(type)) {
                     params.add(criteriaBuilder.equal(root.get("type"), type));
+                }
+                if (!"".equals(status)) {
+                    params.add(criteriaBuilder.equal(root.get("status"), status));
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));

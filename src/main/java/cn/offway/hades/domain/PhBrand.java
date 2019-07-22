@@ -59,6 +59,8 @@ public class PhBrand implements Serializable {
     /** 备注 **/
     private String remark;
 
+    /** 状态[0-未上架,1-已上架] **/
+    private String status;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -196,5 +198,14 @@ public class PhBrand implements Serializable {
 
     public void setBannerBig(String bannerBig) {
         this.bannerBig = bannerBig;
+    }
+
+    @Column(name = "status", length = 2)
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
