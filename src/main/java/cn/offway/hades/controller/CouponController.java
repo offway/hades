@@ -121,7 +121,7 @@ public class CouponController {
 
     @ResponseBody
     @RequestMapping("/coupon_list")
-    public Map<String, Object> getStockList(HttpServletRequest request) {
+    public Map<String, Object> getStockList(HttpServletRequest request, String isPrivate) {
         ObjectMapper objectMapper = new ObjectMapper();
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
@@ -143,7 +143,7 @@ public class CouponController {
         }
         Sort sort = new Sort("id");
         PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
-        Page<PhVoucherProject> pages = voucherProjectService.list(type, name, Long.valueOf(merchantId), beginTime, endTime, remark, pr);
+        Page<PhVoucherProject> pages = voucherProjectService.list(type, name, Long.valueOf(merchantId), beginTime, endTime, remark, isPrivate, pr);
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);

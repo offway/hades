@@ -18,7 +18,7 @@ public interface PhVoucherProjectService {
 
     PhVoucherProject findOne(Long id);
 
-    Page<PhVoucherProject> list(String type, String name, Long merchantId, Date beginTime, Date endTime, String remark, Pageable pageable);
+    Page<PhVoucherProject> list(String type, String name, Long merchantId, Date beginTime, Date endTime, String remark, String isPrivate, Pageable pageable);
 
     void del(Long id);
 }

@@ -40,13 +40,16 @@ public class PhVoucherProjectServiceImpl implements PhVoucherProjectService {
     }
 
     @Override
-    public Page<PhVoucherProject> list(String type, String name, Long merchantId, Date beginTime, Date endTime, String remark, Pageable pageable) {
+    public Page<PhVoucherProject> list(String type, String name, Long merchantId, Date beginTime, Date endTime, String remark, String isPrivate, Pageable pageable) {
         return phVoucherProjectRepository.findAll(new Specification<PhVoucherProject>() {
             @Override
             public Predicate toPredicate(Root<PhVoucherProject> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
                 if (!"".equals(type)) {
                     params.add(criteriaBuilder.equal(root.get("type"), type));
+                }
+                if (!"".equals(isPrivate)) {
+                    params.add(criteriaBuilder.equal(root.get("isPrivate"), isPrivate));
                 }
                 if (!"".equals(name)) {
                     params.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
