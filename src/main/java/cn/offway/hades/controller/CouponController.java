@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,8 +54,11 @@ public class CouponController {
                 voucherProject.setMerchantName(merchant.getName());
             }
         }
-        voucherProject.setCreateTime(new Date());
-        voucherProject.setLimit(0L);
+        if (voucherProject.getId() == null) {
+            voucherProject.setCreateTime(new Date());
+            voucherProject.setLimit(0L);
+            voucherProject.setIsPrivate("0");
+        }
         voucherProjectService.save(voucherProject);
         return true;
     }
@@ -65,6 +69,34 @@ public class CouponController {
         for (Long id : ids) {
             voucherProjectService.del(id);
             voucherInfoService.delByPid(id);
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @Transactional
+    @RequestMapping("/coupon_markAsPrivate")
+    public boolean markAsPrivate(@RequestParam("ids[]") Long[] ids) {
+        for (Long id : ids) {
+            PhVoucherProject voucherProject = voucherProjectService.findOne(id);
+            if (voucherProject != null) {
+                voucherProject.setIsPrivate("1");
+                voucherProjectService.save(voucherProject);
+            }
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @Transactional
+    @RequestMapping("/coupon_markAsPublic")
+    public boolean markAsPublic(@RequestParam("ids[]") Long[] ids) {
+        for (Long id : ids) {
+            PhVoucherProject voucherProject = voucherProjectService.findOne(id);
+            if (voucherProject != null) {
+                voucherProject.setIsPrivate("0");
+                voucherProjectService.save(voucherProject);
+            }
         }
         return true;
     }
@@ -98,7 +130,6 @@ public class CouponController {
         String name = request.getParameter("name");
         String merchantId = request.getParameter("merchantId");
         String remark = request.getParameter("remark");
-        Sort sort = new Sort("id");
         DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         String beginTimeStr = request.getParameter("beginTime");
         String endTimeStr = request.getParameter("endTime");
@@ -110,7 +141,9 @@ public class CouponController {
         if (!"".equals(endTimeStr)) {
             endTime = DateTime.parse(endTimeStr, format).toDate();
         }
-        Page<PhVoucherProject> pages = voucherProjectService.list(type, name, Long.valueOf(merchantId), beginTime, endTime, remark, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Sort sort = new Sort("id");
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
+        Page<PhVoucherProject> pages = voucherProjectService.list(type, name, Long.valueOf(merchantId), beginTime, endTime, remark, pr);
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);

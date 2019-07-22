@@ -101,6 +101,8 @@
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
 				<button class="btn btn-danger sendCode">派发优惠券</button>
+				<button class="btn btn-danger up">上架</button>
+				<button class="btn btn-danger down">下架</button>
 			</div>
 			
 					
@@ -381,6 +383,7 @@
 		}
 	}
 
+	var qiniuUrl = [[${qiniuUrl}]];
     jQuery(document).ready(function($)
 	{
         var oTable;
@@ -390,9 +393,6 @@
                 language: {
                     url: "../assets/Chinese.txt"
                 },
-                aLengthactivity: [
-                    [10, 25, 50, 100], [10, 25, 50, 100]
-                ],
                 bFilter: false,
                 bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
                 sAjaxDataProp: "aData",//是服务器分页的标志，必须有
@@ -401,7 +401,6 @@
                     var searchArray = $(".form-inline").serializeArray();
                     $.merge(aData, searchArray);
                 },
-                order: [[6, "desc"]],
                 columnDefs: [
                     {
                         targets: 0,
@@ -483,20 +482,32 @@
                             return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
                         }
                     },
-                    {
-                        targets: 12,
-                        data: "remark",
-                        title: "备注"
-                    },
-                    {
-                        targets: 13,
-                        data: "id",
-                        orderable: false,
-                        title: "操作",
-                        render: function (data, type, full, meta) {
-                            return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-                        }
-                    }
+					{
+						targets: 12,
+						data: "remark",
+						title: "备注"
+					},
+					{
+						targets: 13,
+						data: "isPrivate",
+						title: "上下架",
+						render: function (data, type, row, meta) {
+							if (data == "1") {
+								return "下架";
+							} else {
+								return "上架";
+							}
+						}
+					},
+					{
+						targets: 14,
+						data: "id",
+						orderable: false,
+						title: "操作",
+						render: function (data, type, full, meta) {
+							return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+						}
+					}
                 ]
             });
             table_global = oTable;
@@ -598,9 +609,6 @@
 				}
 			}
 		});
-
-			 
-		var qiniuUrl = [[${qiniuUrl}]];
 		//保存
 		$(".btn.btn-info.save").click(function () {
 			var footer = $(this).parent(".modal-footer");
@@ -727,45 +735,45 @@
 			})
 		});
 
-        $(".btn.btn-info.up").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
+		$(".btn.btn-danger.up").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
 
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
 
-            $.post("/banner_up",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
+			$.post("/coupon_markAsPublic", {ids: ids}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			});
+		});
 
-        $(".btn.btn-info.down").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
+		$(".btn.btn-danger.down").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
 
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
 
-            $.post("/banner_down",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
+			$.post("/coupon_markAsPrivate", {ids: ids}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			});
+		});
 	});
 	/*]]>*/
 	</script>

@@ -57,6 +57,9 @@ public class PhVoucherProject implements Serializable {
     /** 商户名称 **/
     private String merchantName;
 
+    /** 是否指定发放[0-否，1-是] **/
+    private String isPrivate;
+
     @Column(name = "merchant_name", length = 100)
     public String getMerchantName() {
         return merchantName;
@@ -179,4 +182,12 @@ public class PhVoucherProject implements Serializable {
         this.remark = remark;
     }
 
+    @Column(name = "is_private", length = 2)
+    public String getIsPrivate() {
+        return isPrivate;
+    }
+
+    public void setIsPrivate(String isPrivate) {
+        this.isPrivate = isPrivate;
+    }
 }
