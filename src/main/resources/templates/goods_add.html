@@ -1135,6 +1135,11 @@
 				break;
 			}
 		}
+		if (selectedId == "18") {
+			$("input[name='style']").attr("disabled", "disabled");
+		} else {
+			$("input[name='style']").removeAttr("disabled");
+		}
 	}
 
     function bindBrandSelector(data) {
