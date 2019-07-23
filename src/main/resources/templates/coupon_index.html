@@ -78,8 +78,8 @@
 								<label for="isPrivate" class="control-label">状态</label>
 								<select id="isPrivate" name="isPrivate" class="form-control" style="height:35px">
 									<option value="" selected="selected">全部</option>
-									<option value="0">上架</option>
-									<option value="1">下架</option>
+									<option value="0">展示</option>
+									<option value="1">不展示</option>
 								</select>
 							</div>
 						</div>
@@ -96,8 +96,8 @@
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
 				<button class="btn btn-danger sendCode">派发优惠券</button>
-				<button class="btn btn-danger up">上架</button>
-				<button class="btn btn-danger down">下架</button>
+				<button class="btn btn-danger up">展示</button>
+				<button class="btn btn-danger down">不展示</button>
 			</div>
 			
 					
@@ -485,12 +485,12 @@
 					{
 						targets: 13,
 						data: "isPrivate",
-						title: "上下架",
+						title: "是否展示",
 						render: function (data, type, row, meta) {
 							if (data == "1") {
-								return "下架";
+								return "展示";
 							} else {
-								return "上架";
+								return "不展示";
 							}
 						}
 					},
