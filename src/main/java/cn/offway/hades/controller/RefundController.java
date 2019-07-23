@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.checkerframework.checker.units.qual.A;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -62,6 +63,12 @@ public class RefundController {
     private PhAddressService addressService;
     @Autowired
     private PhMerchantService merchantService;
+    @Autowired
+    private PhUserInfoService userInfoService;
+    @Autowired
+    private PhCapitalFlowService capitalFlowService;
+    @Autowired
+    private PhVoucherInfoService voucherInfoService;
 
     @RequestMapping("/refund.html")
     public String index(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
@@ -397,6 +404,34 @@ public class RefundController {
                         /* 状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
                         orderInfo.setStatus("4");
                         orderInfoService.save(orderInfo);
+
+                        //恢复钱包余额
+                        PhUserInfo userInfo = userInfoService.findOne(orderInfo.getUserId());
+                        userInfo.setBalance((userInfo.getBalance() + orderInfo.getWalletAmount()));
+                        userInfoService.save(userInfo);
+                        if (Double.compare(orderInfo.getWalletAmount(), 0.0) > 0) {
+                            PhCapitalFlow capitalFlow = new PhCapitalFlow();
+                            capitalFlow.setAmount(orderInfo.getWalletAmount());
+                            capitalFlow.setBusinessType("2");
+                            capitalFlow.setUserId(orderInfo.getUserId());
+                            capitalFlow.setType("1");
+                            capitalFlow.setCreateTime(new Date());
+                            capitalFlow.setRemark("退款返回");
+                            capitalFlow.setOrderNo(orderInfo.getOrderNo());
+                            capitalFlowService.save(capitalFlow);
+                        }
+                        //恢复优惠卷
+                        if (orderInfo.getMVoucherId() != null) {
+                            PhVoucherInfo voucherInfo = voucherInfoService.findOne(orderInfo.getMVoucherId());
+                            voucherInfo.setStatus("0");
+                            voucherInfoService.save(voucherInfo);
+                        }
+                        if (orderInfo.getPVoucherId() != null) {
+                            PhVoucherInfo voucherInfo = voucherInfoService.findOne(orderInfo.getPVoucherId());
+                            voucherInfo.setStatus("0");
+                            voucherInfoService.save(voucherInfo);
+                        }
+
                     }
                 }
                 break;
