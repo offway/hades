@@ -124,6 +124,12 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
     /** 确认收货时间  **/
     private Date receiptTime;
 
+    /** 商户促销优惠金额  **/
+    private Double promotionAmount;
+
+    /** 平台促销优惠金额  **/
+    private Double platformPromotionAmount;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -393,6 +399,24 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
 
     public void setOrderNoCopy(String orderNoCopy) {
         this.orderNoCopy = orderNoCopy;
+    }
+
+    @Column(name = "promotion_amount", precision = 15, scale = 2)
+    public Double getPromotionAmount() {
+        return promotionAmount;
+    }
+
+    public void setPromotionAmount(Double promotionAmount) {
+        this.promotionAmount = promotionAmount;
+    }
+
+    @Column(name = "platform_promotion_amount", precision = 15, scale = 2)
+    public Double getPlatformPromotionAmount() {
+        return platformPromotionAmount;
+    }
+
+    public void setPlatformPromotionAmount(Double platformPromotionAmount) {
+        this.platformPromotionAmount = platformPromotionAmount;
     }
 
 }
