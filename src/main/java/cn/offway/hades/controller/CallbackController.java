@@ -1,11 +1,18 @@
 package cn.offway.hades.controller;
 
-import java.security.SignatureException;
-import java.util.HashMap;
-import java.util.Map;
-
+import cn.offway.hades.domain.PhConfig;
+import cn.offway.hades.domain.PhRefund;
 import cn.offway.hades.repository.PhArticleRepository;
+import cn.offway.hades.runner.InitRunner;
+import cn.offway.hades.service.JPushService;
+import cn.offway.hades.service.PhConfigService;
+import cn.offway.hades.service.PhOrderInfoService;
+import cn.offway.hades.service.PhRefundService;
+import cn.offway.hades.utils.MeiqiaSigner;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +20,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
-import cn.offway.hades.domain.PhRefund;
-import cn.offway.hades.service.JPushService;
-import cn.offway.hades.service.PhRefundService;
-import cn.offway.hades.utils.MeiqiaSigner;
+import java.security.SignatureException;
+import java.text.MessageFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/callback")
@@ -29,10 +34,13 @@ public class CallbackController {
     private JPushService jPushService;
     @Autowired
     private PhRefundService refundService;
-
     @Autowired
     private PhArticleRepository phArticleRepository;
-    
+    @Autowired
+    private PhOrderInfoService orderInfoService;
+    @Autowired
+    private PhConfigService configService;
+
     @Value("${meqia.key}")
     private String meqiaKey;
 
@@ -49,6 +57,35 @@ public class CallbackController {
             args.put("id", oid);
             args.put("url", "");
             jPushService.sendPushUser("派送中", "准备收货：亲，您购买的商品已经在路上啦，注意签收哦！", args, uid);
+        } else if (state == 3) {
+            String key = "{0}_{1}_{2}_ConfirmPackage";//beginTime + "_" + endTime + "_" + ids + "_" + discount;
+            DateTime oneWeekLater = new DateTime().plusDays(7);
+            DateTime twoWeeksLater = oneWeekLater.plusDays(7);
+            JSONArray jsonArray = new JSONArray();
+            JSONObject map = new JSONObject();
+            map.put("id", oid);
+            map.put("type", "confirmPackage");
+            map.put("sTime", oneWeekLater);
+            map.put("eTime", twoWeeksLater);
+            jsonArray.add(map);
+            key = MessageFormat.format(key, oneWeekLater.toString("yyyy-MM-dd HH:mm:ss"), twoWeeksLater.toString("yyyy-MM-dd HH:mm:ss"), oid);
+            //save to DB
+            String jsonStr = configService.findContentByName("CRONJOB");
+            JSONObject jsonObjectSaved;
+            if (jsonStr == null || "".equals(jsonStr.trim())) {
+                jsonObjectSaved = new JSONObject();
+                jsonObjectSaved.put(key, jsonArray);
+            } else {
+                jsonObjectSaved = JSON.parseObject(jsonStr);
+                if (!jsonObjectSaved.containsKey(key)) {
+                    jsonObjectSaved.put(key, jsonArray);
+                }
+            }
+            PhConfig config = configService.findOne("CRONJOB");
+            config.setContent(jsonObjectSaved.toJSONString());
+            configService.save(config);
+            //launch the job
+            InitRunner.createJob(jsonArray, key, oneWeekLater.toDate(), twoWeeksLater.toDate(), new Date(), null, null, orderInfoService, configService);
         }
         Map<String, Object> ret = new HashMap<>();
         ret.put("result", true);
@@ -78,44 +115,45 @@ public class CallbackController {
         ret.put("message", "接收成功");
         return ret;
     }
-    
+
     /**
      * 美洽服务端发送消息
+     *
      * @param content
      * @return
-     * @throws SignatureException 
+     * @throws SignatureException
      */
     @ResponseBody
     @PostMapping("/meiqia")
-	public String meiqia(@RequestHeader("authorization") String authorization,  @RequestBody String content) throws SignatureException{
-    	logger.info("美洽服务端发送消息,authorization="+authorization+";content="+content);
-    	//{"contentType": "text", "customizedData": {"avatar": "https://static.runoob.com/images/demo/demo1.jpg", "name": "OFFWAY_739441"}, "messageTime": "2019-06-24T07:46:54.104220", "messageId": 628173038, "clientId": "1N4vhKdSSD5bYIWBVwcY4HWkynE", "content": "1", "customizedId": "14", "fromName": "\u5f88\u6f6e\u5c0f\u52a9\u624b", "deviceOS": "Android", "type": "message", "deviceToken": null}
-    	//验签
-    	MeiqiaSigner signer =  new MeiqiaSigner(meqiaKey);
+    public String meiqia(@RequestHeader("authorization") String authorization, @RequestBody String content) throws SignatureException {
+        logger.info("美洽服务端发送消息,authorization=" + authorization + ";content=" + content);
+        //{"contentType": "text", "customizedData": {"avatar": "https://static.runoob.com/images/demo/demo1.jpg", "name": "OFFWAY_739441"}, "messageTime": "2019-06-24T07:46:54.104220", "messageId": 628173038, "clientId": "1N4vhKdSSD5bYIWBVwcY4HWkynE", "content": "1", "customizedId": "14", "fromName": "\u5f88\u6f6e\u5c0f\u52a9\u624b", "deviceOS": "Android", "type": "message", "deviceToken": null}
+        //验签
+        MeiqiaSigner signer = new MeiqiaSigner(meqiaKey);
         String sign = signer.sign(content);
-        if(authorization.equals(sign)){
-        	JSONObject jsonObject = JSON.parseObject(content);
-        	String msg = jsonObject.getString("content");
-        	String customizedId = jsonObject.getString("customizedId");
-        	Map<String, String> extras = new HashMap<>();
-			extras.put("type", "99");//0-H5,1-精选文章,2-活动
-			extras.put("id", null);
-			extras.put("url", null);
-			jPushService.sendPushUser("客服消息", msg, extras, customizedId);
+        if (authorization.equals(sign)) {
+            JSONObject jsonObject = JSON.parseObject(content);
+            String msg = jsonObject.getString("content");
+            String customizedId = jsonObject.getString("customizedId");
+            Map<String, String> extras = new HashMap<>();
+            extras.put("type", "99");//0-H5,1-精选文章,2-活动
+            extras.put("id", null);
+            extras.put("url", null);
+            jPushService.sendPushUser("客服消息", msg, extras, customizedId);
         }
-    	return "success";
-	}
+        return "success";
+    }
 
     @ResponseBody
     @PostMapping("/qiniu/avthumb")
-    public String avthumb(@RequestBody String content){
-        logger.info("七牛视频处理结果："+content);
+    public String avthumb(@RequestBody String content) {
+        logger.info("七牛视频处理结果：" + content);
         JSONObject jsonObject = JSON.parseObject(content);
-        JSONArray jsonArray =  jsonObject.getJSONArray("items");
+        JSONArray jsonArray = jsonObject.getJSONArray("items");
         String key = jsonArray.getJSONObject(0).getString("key");
         System.out.println(key);
         String inputKey = jsonObject.getString("inputKey");
-        phArticleRepository.updateVideoUrl("http://qiniu.offway.cn/"+inputKey,"http://qiniu.offway.cn/"+key);
+        phArticleRepository.updateVideoUrl("http://qiniu.offway.cn/" + inputKey, "http://qiniu.offway.cn/" + key);
 
         return "success";
     }

@@ -1,10 +1,13 @@
 package cn.offway.hades.runner;
 
+import cn.offway.hades.domain.PhConfig;
 import cn.offway.hades.domain.PhGoods;
 import cn.offway.hades.domain.PhGoodsStock;
+import cn.offway.hades.domain.PhOrderInfo;
 import cn.offway.hades.service.PhConfigService;
 import cn.offway.hades.service.PhGoodsService;
 import cn.offway.hades.service.PhGoodsStockService;
+import cn.offway.hades.service.PhOrderInfoService;
 import cn.offway.hades.singleton.JobHolder;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -35,6 +38,8 @@ public class InitRunner implements ApplicationRunner {
     private PhGoodsService goodsService;
     @Autowired
     private PhGoodsStockService stockService;
+    @Autowired
+    private PhOrderInfoService orderInfoService;
     private static Logger logger = LoggerFactory.getLogger(ApplicationRunner.class);
 
     @Override
@@ -60,18 +65,20 @@ public class InitRunner implements ApplicationRunner {
                 Date eTime = DateTime.parse(eTimeStr, format).toDate();
                 Date now = new Date();
                 if (sTime.compareTo(now) < 0 && eTime.compareTo(now) < 0) {
+                    removeTaskFormDB(key, configService);
                     continue;
                 }
                 if ("".equals(goodIds.trim())) {
+                    removeTaskFormDB(key, configService);
                     continue;
                 }
                 JSONArray taskList = jsonObject.getJSONArray(key);
-                createJob(taskList, key, sTime, eTime, now, goodsService, stockService);
+                createJob(taskList, key, sTime, eTime, now, goodsService, stockService, orderInfoService, configService);
             }
         }
     }
 
-    public static void createJob(JSONArray taskList, String key, Date sTime, Date eTime, Date now, PhGoodsService goodsService, PhGoodsStockService stockService) {
+    public static void createJob(JSONArray taskList, String key, Date sTime, Date eTime, Date now, PhGoodsService goodsService, PhGoodsStockService stockService, PhOrderInfoService orderInfoService, PhConfigService configService) {
         ThreadFactory factory = new ThreadFactoryBuilder()
                 .setDaemon(true)
                 .setNameFormat("Orders-%d")
@@ -138,8 +145,16 @@ public class InitRunner implements ApplicationRunner {
                                     stockService.save(goodsStock);
                                 }
                                 break;
+                            case "confirmPackage":
+                                long oid = task.getLongValue("id");
+                                PhOrderInfo orderInfo = orderInfoService.findOne(oid);
+                                if (orderInfo != null) {
+                                    orderInfo.setStatus("3");
+                                    orderInfoService.save(orderInfo);
+                                }
+                                break;
                         }
-                        checkAndPurgeTask(key);
+                        checkAndPurgeTask(key, configService);
                         return null;
                     }
                 }, delaySeconds, TimeUnit.MILLISECONDS);
@@ -200,7 +215,7 @@ public class InitRunner implements ApplicationRunner {
                                 }
                                 break;
                         }
-                        checkAndPurgeTask(key + "_REVERSE");
+                        checkAndPurgeTask(key + "_REVERSE", configService);
                         return null;
                     }
                 }, delaySecondsReverse, TimeUnit.MILLISECONDS);
@@ -243,7 +258,7 @@ public class InitRunner implements ApplicationRunner {
         }).start();
     }
 
-    private static void checkAndPurgeTask(String key) {
+    private static void checkAndPurgeTask(String key, PhConfigService configService) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -253,10 +268,12 @@ public class InitRunner implements ApplicationRunner {
                         ExecutorService service = JobHolder.getHolder().get(key);
                         if (service.isShutdown() || service.isTerminated()) {
                             JobHolder.getHolder().remove(key);
+                            removeTaskFormDB(key, configService);
                         } else {
                             service.shutdown();
                             if (service.awaitTermination(5, TimeUnit.SECONDS)) {
                                 JobHolder.getHolder().remove(key);
+                                removeTaskFormDB(key, configService);
                             }
                         }
                     }
@@ -265,5 +282,19 @@ public class InitRunner implements ApplicationRunner {
                 }
             }
         }).start();
+    }
+
+    private static void removeTaskFormDB(String key, PhConfigService configService) {
+        //save to DB
+        PhConfig config = configService.findOne("CRONJOB");
+        if (config.getContent() != null && !"".equals(config.getContent())) {
+            JSONObject jsonObject = JSONObject.parseObject(config.getContent());
+            if (jsonObject.containsKey(key)) {
+                logger.info("检测到已完成任务，从数据库删除");
+                jsonObject.remove(key);
+                config.setContent(jsonObject.toJSONString());
+                configService.save(config);
+            }
+        }
     }
 }
