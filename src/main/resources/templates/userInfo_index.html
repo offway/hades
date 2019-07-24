@@ -381,7 +381,7 @@
 						data: "birthday",
 						title: "生日",
 						render: function (data, type, row, meta) {
-							return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+							return data == null ? "" : new Date(data).Format("yyyy-MM-dd hh:mm:ss");
 						}
 					},
 					{

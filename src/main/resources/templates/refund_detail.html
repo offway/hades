@@ -843,7 +843,7 @@
 					data: "checkTime",
 					title: "操作时间",
 					render: function (data, type, row, meta) {
-						return data == '' ? "无" : new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+						return data == null ? "无" : new Date(data).Format("yyyy-MM-dd hh:mm:ss");
 					}
 				}
 			]
