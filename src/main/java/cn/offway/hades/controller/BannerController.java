@@ -87,6 +87,7 @@ public class BannerController {
             PhBanner bannernew = bannerService.findOne(banner.getId());
             banner.setStatus(bannernew.getStatus());
             banner.setSort(bannernew.getSort());
+            banner.setCreateTime(bannernew.getCreateTime());
         }
         bannerService.save(banner);
         return true;
