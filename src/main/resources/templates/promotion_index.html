@@ -527,23 +527,42 @@
 
 	function queryBrandList(id) {
 		if (typeof id == "object") {
-			id = $(id).val();
-		}
-		$.post("/promotion_getBrandList", {"id": id}, function (data) {
-			if (data) {
-				var str = "";
-				for (var i in data) {
-					var brand = data[i];
-					if (i == 0) {
-						queryGoodsList(brand["brandId"]);
+			//id = $(id).val();
+			setTimeout(function () {
+				id = $(self).parent().find("li.es-visible").val();
+				$.post("/promotion_getBrandList", {"id": id}, function (data) {
+					if (data) {
+						var str = "";
+						for (var i in data) {
+							var brand = data[i];
+							if (i == 0) {
+								queryGoodsList(brand["brandId"]);
+							}
+							str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
+						}
+						$("#brandSelectAlt").html(str);
+					} else {
+						$("#brandSelectAlt").html("");
 					}
-					str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
+				});
+			});
+		} else {
+			$.post("/promotion_getBrandList", {"id": id}, function (data) {
+				if (data) {
+					var str = "";
+					for (var i in data) {
+						var brand = data[i];
+						if (i == 0) {
+							queryGoodsList(brand["brandId"]);
+						}
+						str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
+					}
+					$("#brandSelectAlt").html(str);
+				} else {
+					$("#brandSelectAlt").html("");
 				}
-				$("#brandSelectAlt").html(str);
-			} else {
-				$("#brandSelectAlt").html("");
-			}
-		});
+			});
+		}
 	}
 
 	function queryGoodsList(id) {
