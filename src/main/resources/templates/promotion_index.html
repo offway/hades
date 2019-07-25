@@ -111,7 +111,7 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">减价类型</label>
-									<label><input name="mode" class="notMe" type="radio" value="0"/>折扣</label>
+									<label><input id="modezk" name="mode" class="notMe" type="radio" value="0"/>折扣</label>
 									<label id="modemj" ><input name="mode" class="notMe" type="radio" value="1"/>满减</label>
 									<label id="modezp" ><input name="mode" class="notMe" type="radio" value="2" checked="checked"/>赠品</label>
 								</div>
@@ -370,6 +370,7 @@
 		if (parseInt(value) == 0) {
 			$('#modemj').hide();
 			$('#modezp').hide();
+			$('#gift').hide();
 			$('#merchantId').hide();
 			$('#goodsInput').show();
 			$('#fullInput').show();
