@@ -569,7 +569,7 @@
 		if (isNaN(id)) {
 			id = $(id).val();
 		}
-		var mid = $("#merchantSelectAlt").val();
+		var mid = $("#merchantSelectAlt").parent().find("li.es-visible").val();
 		console.log(id);
 		console.log(mid);
 		var param = {"bid": id};
@@ -866,7 +866,7 @@
 		if($("input[name='type']:checked").val() == "0"){
 
 		}else {
-			$("input[name = 'merchantId']").val($('#merchantSelectAlt').val());
+			$("input[name = 'merchantId']").val($("#merchantSelectAlt").parent().find("li.es-visible").val());
 		}
 		if (all) {
 			ele.children().each(function () {
