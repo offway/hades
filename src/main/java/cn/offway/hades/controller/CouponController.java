@@ -57,7 +57,7 @@ public class CouponController {
         if (voucherProject.getId() == null) {
             voucherProject.setCreateTime(new Date());
             voucherProject.setLimit(0L);
-            voucherProject.setIsPrivate("0");
+            voucherProject.setIsPrivate("1");
         }
         voucherProjectService.save(voucherProject);
         return true;
