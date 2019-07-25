@@ -42,6 +42,46 @@
 			</div>
 			
 			<div class="panel panel-default">
+				<div class="panel-heading">
+					<form role="form" class="form-inline">
+						<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+							<div class="input-group">
+								<label for="type" class="control-box">促销类型</label>
+							</div>
+							<div class="input-group">
+								<select id="type" name="type" class="form-control" style="height:35px">
+									<option value="" selected="selected">全部</option>
+									<option value="0">平台促销</option>
+									<option value="1">商户促销</option>
+								</select>
+							</div>
+							<div class="input-group">
+								<label for="type" class="control-box">减价类型</label>
+							</div>
+							<div class="input-group">
+								<select id="mode" name="mode" class="form-control" style="height:35px">
+									<option value="" selected="selected">全部</option>
+									<option value="0">折扣</option>
+									<option value="1">满减</option>
+									<option value="2">赠品</option>
+								</select>
+							</div>
+							<div class="input-group">
+								<label for="status" class="control-box">状态</label>
+							</div>
+							<div class="input-group">
+								<select id="status" name="status" class="form-control" style="height:35px">
+									<option value="" selected="selected">全部</option>
+									<option value="1">已上架</option>
+									<option value="0">未上架</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+						</div>
+					</form>
+				</div>
 				<div class="panel-body">
 					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
 					</table>
@@ -978,8 +1018,9 @@
 					data: "status",
 					title: "状态",
 					render: function (data, type, row, meta) {
-						var map = ["未上架", "已上架"];
-						return map[parseInt(data)];
+						// var map = ["未上架", "已上架"];
+						// return map[parseInt(data)];
+						return (data == "0" || data == undefined) ? "<font color='red'>未上架</font>" : "已上架";
 					}
 				},
 				{

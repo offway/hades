@@ -16,7 +16,7 @@ public interface PhPromotionInfoService{
 	
 	PhPromotionInfo findOne(Long id);
 
-	Page<PhPromotionInfo> findAll(Pageable pageable);
+	Page<PhPromotionInfo> findAll(String type,String status,String mode,Pageable pageable);
 
 	void del(Long id);
 }

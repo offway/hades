@@ -160,12 +160,12 @@ public class PromotionController {
 
     @ResponseBody
     @RequestMapping("/promotion_list")
-    public Map<String, Object> getPromotionList(HttpServletRequest request) {
+    public Map<String, Object> getPromotionList(HttpServletRequest request,String type,String status,String mode) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "id"));
-        Page<PhPromotionInfo> pages = promotionInfoService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength));
+        Page<PhPromotionInfo> pages = promotionInfoService.findAll(type,status,mode,new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);

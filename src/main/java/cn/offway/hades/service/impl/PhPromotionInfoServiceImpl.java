@@ -1,5 +1,6 @@
 package cn.offway.hades.service.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -44,10 +47,22 @@ public class PhPromotionInfoServiceImpl implements PhPromotionInfoService {
 	}
 
 	@Override
-	public Page<PhPromotionInfo> findAll(Pageable pageable) {
+	public Page<PhPromotionInfo> findAll(String type,String status,String mode,Pageable pageable) {
 		return phPromotionInfoRepository.findAll(new Specification<PhPromotionInfo>() {
 			@Override
 			public Predicate toPredicate(Root<PhPromotionInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+				List<Predicate> promotionInfos = new ArrayList<>();
+				if (StringUtils.isNotBlank(type)){
+					promotionInfos.add(criteriaBuilder.like(root.get("type"), "%" + type + "%"));
+				}
+				if (StringUtils.isNotBlank(status)){
+					promotionInfos.add(criteriaBuilder.like(root.get("status"), "%" + status + "%"));
+				}
+				if (StringUtils.isNotBlank(mode)){
+					promotionInfos.add(criteriaBuilder.like(root.get("mode"), "%" + mode + "%"));
+				}
+				Predicate[] predicates = new Predicate[promotionInfos.size()];
+				criteriaQuery.where(promotionInfos.toArray(predicates));
 				return null;
 			}
 		},pageable);
