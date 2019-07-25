@@ -529,7 +529,7 @@
 		if (typeof id == "object") {
 			//id = $(id).val();
 			setTimeout(function () {
-				id = $(self).parent().find("li.es-visible").val();
+				id = $(id).parent().find("li.es-visible").val();
 				$.post("/promotion_getBrandList", {"id": id}, function (data) {
 					if (data) {
 						var str = "";
