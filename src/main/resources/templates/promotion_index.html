@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-editable-select.min.css"/>
     <link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
     <link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
     <link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
@@ -77,8 +78,8 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">促销类型</label>
-									<label><input name="type" class="notMe" type="radio" value="0" checked="checked" />平台促销 </label>
-									<label><input name="type" class="notMe" type="radio" value="1" />商户促销</label>
+									<label><input name="type" class="notMe" type="radio" value="0"/>平台促销 </label>
+									<label><input name="type" class="notMe" type="radio" value="1" checked="checked"/>商户促销</label>
 								</div>
 							</div>
 						</div>
@@ -110,9 +111,9 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">减价类型</label>
-									<label><input name="mode" class="notMe" type="radio" value="0" />折扣</label>
-									<label><input name="mode" class="notMe" type="radio" value="1" />满减</label>
-									<label><input name="mode" class="notMe" type="radio" value="2" checked="checked" />赠品</label>
+									<label><input name="mode" class="notMe" type="radio" value="0"/>折扣</label>
+									<label id="modemj" ><input name="mode" class="notMe" type="radio" value="1"/>满减</label>
+									<label id="modezp" ><input name="mode" class="notMe" type="radio" value="2" checked="checked"/>赠品</label>
 								</div>
 							</div>
 						</div>
@@ -311,6 +312,7 @@
 	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
     <script src="assets/js/jquery-ui.min.js"></script>
+	<script src="assets/js/jquery-editable-select.min.js"></script>
     <script src="assets/js/selectbox-min.js"></script>
     <script src="assets/js/async.min.js"></script>
 	<script th:inline="javascript">
@@ -366,12 +368,16 @@
 
 	function toggleMerchant(value) {
 		if (parseInt(value) == 0) {
+			$('#modemj').hide();
+			$('#modezp').hide();
 			$('#merchantId').hide();
 			$('#goodsInput').show();
 			$('#fullInput').show();
 			$('#brandInput').show();
 			$('#chooseInput').show();
 		} else {
+			$('#modemj').show();
+			$('#modezp').show();
 			$('#merchantId').hide();
 			$('#goodsInput').hide();
 			$('#fullInput').hide();
@@ -428,17 +434,17 @@
 		switch (parseInt(value)) {
 			case 0:
 				$('#gift').hide();
-				saveCfg(false);
 				$('#cfgDetail').find("div.row").remove();
-				restoreCfg(true);
 				$('#cfgDetail').show();
+				saveCfg(false);
+				restoreCfg(true);
 				break;
 			case 1:
 				$('#gift').hide();
-				saveCfg(true);
 				$('#cfgDetail').find("div.row").remove();
-				restoreCfg(false);
 				$('#cfgDetail').show();
+				saveCfg(true);
+				restoreCfg(false);
 				break;
 			case 2:
 				$('#gift').show();
@@ -513,6 +519,7 @@
 					str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
 				}
 				$("#merchantSelectAlt").html(str);
+				$('#merchantSelectAlt').editableSelect();
 			}
 		});
 	}
