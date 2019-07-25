@@ -30,9 +30,9 @@ public interface PhGoodsRepository extends JpaRepository<PhGoods, Long>, JpaSpec
     @Query(nativeQuery = true, value = "UPDATE `ph_goods` SET `brand_logo` = ?2 , `brand_name` = ?3 WHERE (`brand_id` = ?1)")
     void updateBrandInfo(Long bid, String bLogo, String bName);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM `ph_goods` where `id` not in (SELECT `goods_id` FROM `ph_pick_goods`) and `merchant_id` = ?1 and `brand_id` = ?2")
+    @Query(nativeQuery = true, value = "SELECT * FROM `ph_goods` where `id` not in (SELECT `goods_id` FROM `ph_promotion_goods`) and `merchant_id` = ?1 and `brand_id` = ?2")
     Optional<List<PhGoods>> findAllRestGoods(Long mid, Long bid);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM `ph_goods` where `id` not in (SELECT `goods_id` FROM `ph_pick_goods`) and `brand_id` = ?1")
+    @Query(nativeQuery = true, value = "SELECT * FROM `ph_goods` where `id` not in (SELECT `goods_id` FROM `ph_promotion_goods`) and `brand_id` = ?1")
     Optional<List<PhGoods>> findAllRestGoods(Long bid);
 }
