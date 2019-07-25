@@ -164,8 +164,9 @@ public class PromotionController {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "id"));
-        Page<PhPromotionInfo> pages = promotionInfoService.findAll(type,status,mode,new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength));
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "status"));
+        Page<PhPromotionInfo> pages = promotionInfoService.findAll(type,status,mode,new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength,sort));
+        //
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
