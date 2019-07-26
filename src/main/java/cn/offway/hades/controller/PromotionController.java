@@ -5,6 +5,7 @@ import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping
@@ -60,14 +58,14 @@ public class PromotionController {
 
     @ResponseBody
     @RequestMapping("/promotion_save")
-    public boolean save(PhPromotionInfo promotionInfo, @AuthenticationPrincipal PhAdmin admin, String discountJSONStr, String reduceJSONStr, @RequestParam(name = "goodsId", required = true) String[] goodsId, String gift,String giftLimit) {
+    public boolean save(PhPromotionInfo promotionInfo, @AuthenticationPrincipal PhAdmin admin, String discountJSONStr, String reduceJSONStr, @RequestParam(name = "goodsId", required = true) String[] goodsId, String gift, String giftLimit) {
         PhPromotionInfo infoSaved;
-        if (promotionInfo.getId() == null){
+        if (promotionInfo.getId() == null) {
             promotionInfo.setCreateTime(new Date());
             promotionInfo.setStatus("0");
             promotionInfo.setRemark(admin.getNickname());
             infoSaved = promotionInfoService.save(promotionInfo);
-        }else {
+        } else {
             PhPromotionInfo getphPromotionInfo = promotionInfoService.findOne(promotionInfo.getId());
             getphPromotionInfo.setName(promotionInfo.getName());
             getphPromotionInfo.setType(promotionInfo.getType());
@@ -160,19 +158,34 @@ public class PromotionController {
 
     @ResponseBody
     @RequestMapping("/promotion_list")
-    public Map<String, Object> getPromotionList(HttpServletRequest request,String type,String status,String mode) {
+    public Map<String, Object> getPromotionList(HttpServletRequest request, String type, String status, String mode) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "status"));
-        Page<PhPromotionInfo> pages = promotionInfoService.findAll(type,status,mode,new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength,sort));
-        //
+        Page<PhPromotionInfo> pages = promotionInfoService.findAll(type, status, mode, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        List<Map> list = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
+        for (PhPromotionInfo obj : pages.getContent()) {
+            Map map = mapper.convertValue(obj, Map.class);
+            if (obj.getMerchantId() != null) {
+                PhMerchant merchant = merchantService.findOne(Long.valueOf(String.valueOf(map.get("merchantId"))));
+                if (merchant != null) {
+                    map.put("merchantName", merchant.getName());
+                } else {
+                    map.put("merchantName", "");
+                }
+            } else {
+                map.put("merchantName", "");
+            }
+            list.add(map);
+        }
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
-        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
-        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
-        map.put("aData", pages.getContent());//数据集合
+        map.put("iTotalRecords", list.size());//数据总条数
+        map.put("iTotalDisplayRecords", list.size());//显示的条数
+        map.put("aData", list);//数据集合
         return map;
     }
 
@@ -185,7 +198,7 @@ public class PromotionController {
             List<PhPromotionGoods> promotionGoodsList = promotionGoodsService.findAllByPid(promotionInfo.getId());
             List<PhPromotionRule> promotionRuleList = promotionRuleService.findAllByPid(promotionInfo.getId());
             map.put("main", promotionInfo);
-            map.put("promotionGoodsList",promotionGoodsList);
+            map.put("promotionGoodsList", promotionGoodsList);
             map.put("promotionRuleList", promotionRuleList);
         }
         return map;
