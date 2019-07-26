@@ -641,7 +641,7 @@
 		$(".btn.btn-info.add").click(function () {
 			var form = $("#saveForm");
 			form.find("input:not(.notMe)").val("");
-			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 		});
 
 
