@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title>提现管理</title>
+	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
+	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+    <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<style type="text/css">
+	.form-group img{
+		max-width:400px;
+		max-height:300px;
+	}
+	</style>
+</head>
+<body class="page-body">
+
+	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+			
+		<div th:replace="sidebar-menu"></div>
+		<div class="main-content">
+			<!-- User Info, Notifications and activity Bar -->
+			<nav th:replace="navbar"></nav>
+			<div class="page-title">
+				
+				<div class="title-env">
+					<h1 class="title">提现管理</h1>
+					<p class="activityDescription"></p>
+				</div>
+
+				<div class="breadcrumb-env">
+
+					<ol class="breadcrumb bc-1">
+						<li><a href="/"><i class="fa-home"></i>Home</a></li>
+						<li><a>系统管理</a></li>
+						<li class="active"><strong>提现管理</strong></li>
+					</ol>
+
+				</div>
+
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					</table>
+				</div>
+				<!--<button class="btn btn-info add" >添加</button>-->
+				<!--<button class="btn btn-info edit">修改</button>-->
+				<!--<button class="btn btn-info del">删除</button>-->
+			</div>
+			
+					
+			<footer th:replace="footer"></footer>
+		</div>
+	</div>
+	
+	<div th:replace="body-under"></div>
+	
+	<div class="modal fade in" id="modal-6">
+		<div class="modal-dialog">
+			<div class="modal-content" style="width: 800px;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">发货</h4>
+				</div>
+				
+				<div class="modal-footer">
+				 	<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info save">保存</button>
+					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+		<div class="modal-dialog">
+			<div class="modal-content">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">查看详情</h4>
+				</div>
+
+				<div class="modal-body" id="preview_body"></div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<input type="hidden" id="type_and_category_list"/>
+	<script src="js/common.js"></script>
+	<script src="assets/js/moment.min.js"></script>
+    <script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+	<script src="assets/js/select2/select2.min.js"></script>
+	<script src="assets/js/async.min.js"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+
+    function addMoreImg(self) {
+        var that = $(self);
+        that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
+    }
+
+    function addMoreText(self) {
+        var that = $(self);
+        that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
+    }
+
+    function closeIt(self) {
+        var that = $(self);
+        that.hide();
+    }
+
+    function formatTime(time) {
+        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+    }
+
+    function buildImg(url) {
+        return "<img width='100px' height='100px' src='#' />".replace("#", url);
+    }
+
+	function appendToPreview(key, value) {
+		return '<div class="row">' +
+				'<div class="col-md-2">' +
+				key +
+				'</div>' +
+				'<div class="col-md-10">' +
+				value +
+				'</div>' +
+				'</div>';
+	}
+
+    function checkIt(data) {
+        var preview = $("#preview_body");
+        var contentStr = "";
+        contentStr += appendToPreview("信息:", data["message"]);
+        contentStr += "<hr/>";
+        for (var a in data["data"]) {
+            a = data["data"][a];
+            contentStr += appendToPreview("内容:", a["context"]);
+            contentStr += appendToPreview("时间:", a["time"]);
+        }
+        preview.html(contentStr);
+        jQuery('#preview').modal('show', {backdrop: 'fade'});
+    }
+
+	function checkSku(id) {
+		window.location.href = '/goods_stock_index.html?id=' + id;
+	}
+
+	var table_global;
+
+	function closeOrder(id) {
+		$.post("/order_closeOrder", {"id": id}, function (data) {
+			if (data) {
+				table_global.fnDraw();
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	function cancelOrder(id) {
+		var confirm = window.confirm("你确定要这么做？");
+		if (confirm == false) {
+			return;
+		}
+		$.post("/order_cancelOrder", {"id": id}, function (data) {
+			if (data.hasOwnProperty("msg")) {
+				table_global.fnDraw();
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败" + data["error"], "温馨提示");
+			}
+		});
+	}
+
+    function deliverOrder(id) {
+        var form = $("#saveForm");
+        form.find("input").val("");
+        form.find("[name='id']").val(id);
+        form.find("[name='action']").val("create");
+        jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+    }
+
+    function trackOrder(id) {
+        $.post("/order_trackRefund", {"id": id}, function (data) {
+            console.log(data);
+            if (data != '') {
+                checkIt(JSON.parse(data));
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
+
+	function confirmDelivery(id) {
+		$.post("/refund_confirmDelivery", {"id": id}, function (data) {
+			if (data) {
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
+	function bindMerchantSelector(data) {
+		var brandStr = "";
+		for (var brand in data) {
+			brand = data[brand];
+			if (parseInt(brand["id"]) == 0) {
+				brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			} else {
+				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			}
+		}
+		$("#merchantId").html(brandStr);
+	}
+
+	function bindTypeSelector(data) {
+		var typeStr = "<option value=\"\" selected=\"selected\">全部</option>";
+		for (var type in data) {
+			type = data[type];
+			typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["name"]).replace("KEY", type["name"]);
+		}
+		$("#type").html(typeStr);
+		bindCategorySelector(data[0]["sub"]);
+	}
+
+	function bindCategorySelector(data) {
+		var categoryStr = "<option value=\"\" selected=\"selected\">全部</option>";
+		for (var category in data) {
+			category = data[category];
+			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
+		}
+		$("#category").html(categoryStr);
+	}
+
+	function renderCategory(self) {
+		var jsonStr = $("#type_and_category_list").val();
+		var list = JSON.parse(jsonStr);
+		var selectedId = $(self).val();
+		for (var type in list) {
+			if (selectedId == list[type]["name"]) {
+				bindCategorySelector(list[type]["sub"]);
+				break;
+			}
+		}
+	}
+
+	function confirmPass(id,self) {
+		if (confirm("是否确定给该用户打款")){
+			$.post("/transfer_confirm",{"id":id},function (data) {
+				if (data) {
+					$(self).hide();
+					//remove old handler
+					$(self).prop("onclick", null);
+					$(self).removeAttr("onclick");
+					$(self).off("click");
+					//bind new
+					$(self).on("click", function () {
+						downIt(id, self);
+					});
+					toastr.success("操作已成功！", "温馨提示");
+					table_global.fnDraw();
+				} else {
+					toastr.error("非管理员无权操作", "温馨提示");
+				}
+			})
+		}
+	}
+	
+	function refuse(id,self) {
+		var reason = prompt("请输入拒绝原因","原因")
+		if (reason!=null){
+			$.post("/transfer_refuse",{"id":id,"reason":reason},function (data) {
+				if (data) {
+					$(self).hide();
+					//remove old handler
+					$(self).prop("onclick", null);
+					$(self).removeAttr("onclick");
+					$(self).off("click");
+					//bind new
+					$(self).on("click", function () {
+						downIt(id, self);
+					});
+					toastr.success("操作已成功！", "温馨提示");
+					table_global.fnDraw();
+				} else {
+					toastr.error("非管理员无权操作", "温馨提示");
+				}
+			})
+		}
+	}
+
+	var qiniuUrl = [[${qiniuUrl}]];
+
+	var isAdmin = [[${isAdmin}]];
+
+    jQuery(document).ready(function($)
+	{
+		jQuery.datetimepicker.setLocale('zh');
+		jQuery('#sTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#eTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#sTimeCheck').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#eTimeCheck').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+
+        var oTable;
+		oTable = $("#example-1").dataTable({
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			aLengthactivity: [
+				[10, 25, 50, 100], [10, 25, 50, 100]
+			],
+			bFilter: false,
+			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+			sAjaxSource: "/transfer_list",//通过ajax实现分页的url路径。
+			fnServerParams: function (aData) {
+				var searchArray = $(".form-inline").serializeArray();
+				$.merge(aData, searchArray);
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "id",
+					width: "5%",
+					orderable: false,
+					className: 'select-checkbox',
+					title: '<input type="checkbox" id="checkbox-all"/>',
+					render: function (data, type, full, meta) {
+						return '<input type="checkbox" name="activityId" value="' + data + '" />';
+					}
+				},
+				{
+					targets: 1,
+					data: "id",
+					title: "序号"
+				},
+				{
+					targets: 2,
+					data: "orderNo",
+					title: "订单号"
+				},
+				{
+					targets: 3,
+					data: "userId",
+					title: "用户ID"
+				},
+				{
+					targets: 4,
+					data: "amount",
+					title: "金额"
+				},
+				{
+					targets: 5,
+					data: "status",
+					title: "状态",
+					render: function (data, type, row, meta) {
+						/** 状态[0-申请,1-审核成功,2-审核失败,3-提现成功,4-提现失败] **/
+						var map = ["申请", "审核成功", "审核失败", "提现成功", "提现失败"];
+						return map[parseInt(data)];
+					}
+				},
+				{
+					targets: 6,
+					data: "checkName",
+					title: "审核人"
+				},
+				{
+					targets: 7,
+					data: "checkTime",
+					title: "审核时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 8,
+					data: "checkReason",
+					title: "拒绝原因"
+				},
+				{
+					targets: 9,
+					data: "createTime",
+					title: "创建时间"
+				},
+				{
+					targets: 10,
+					data: "remark",
+					title: "备注"
+				},
+				{
+					targets: 11,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						var str = "";
+						if (full["status"] != null) {
+							str += '<input type="button" name="checkIt" onclick="goToDetail(' + data + ',this)" value="查看详情"/>';
+							str += '<input type="button" name="checkIt" onclick="confirmPass(' + data + ',this)" value="确认打款"/>';
+							str += '<input type="button" name="checkIt" onclick="refuse(' + data + ',this)" value="拒绝打款"/>';
+						} else {
+
+						}
+						return str;
+					}
+				}
+			]
+		});
+		table_global = oTable;
+
+		// $('.js-example-basic-multiple').select2();
+		
+		$(".searchBtn").click(function(){
+			$("#checkbox-all").attr("checked", false);
+			oTable.fnDraw(); //or fnReloadAjax()  
+			return false;
+		});
+
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='activityId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
+        });
+
+		$(".exportBtn").click(function () {
+			var searchArray = $(".form-inline").serialize();
+			window.open('/refund_list_export.html?' + searchArray, "_blank");
+			return false;
+		});
+
+        $(".btn.btn-info.add").click(function(){
+			window.location.href = '/goods_add.html';
+        });
+
+
+		//保存
+		$(".btn.btn-info.save").click(function () {
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+			var form = $("#saveForm");
+			var expressCode = form.find("input[name='expressCode']").val();
+			var mailNo = form.find("input[name='mailNo']").val();
+
+			if (expressCode == '' || mailNo == '') {
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return;
+			}
+
+			//获取token
+			$.get("/qiniu/token", {}, function (token) {
+				if (token != '') {
+					async.series({
+						one: function (callback) {
+							callback();
+						},
+						two: function (callback) {
+							callback();
+						},
+						three: function (callback) {
+							//提交保存
+							$.post("/order_deliverOrder", $("#saveForm").serialize(), function (data) {
+								if (data) {
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									jQuery('#modal-6').modal('hide');
+									toastr.success("操作已成功！", "温馨提示");
+									oTable.fnDraw();
+								} else {
+									footer.find("button").show();
+									footer.find(".bg-lg").hide();
+									toastr.error("操作失败", "温馨提示");
+								}
+								callback();
+							});
+						}
+					}, function (err, results) {
+						console.log("OK");
+					});
+				} else {
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
+					toastr.error("错误，请联系管理员", "温馨提示");
+				}
+			});
+		});
+
+		$(".btn.btn-info.edit").click(function(){
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length != 1) {
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return;
+			}
+
+			$.post("/brand_get", {id: activityId.val()}, function (data) {
+				var form = $("#saveForm");
+				form.find("input:not(.notMe)").val("");
+				for (var i in data) {
+					var ele = form.find("input[name='" + i + "']");
+					switch (ele.attr("type")) {
+						case "radio":
+							ele.val([data[i]]);
+							break;
+						default:
+							ele.val(data[i]);
+					}
+					form.find("img[name='" + i + "Img']").attr("src", data[i]);
+					form.find("img[name='" + i + "Img']").show();
+				}
+				form.find(".btn.image").show();
+				jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+			});
+		});
+
+		$(".btn.btn-info.del").click(function(){
+			var activityId = $("input[name='activityId']:checked");
+			if(activityId.length < 1){
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return ;
+			}
+
+			var ids = [];
+			activityId.each(function(i,e){
+				ids.push(e.value);
+			});
+
+			$.post("/goods_del",{ids:ids},function(data){
+				if(data){
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			})
+		});
+
+        $(".btn.btn-info.up").click(function(){
+            var activityId = $("input[name='activityId']:checked");
+            if(activityId.length < 1){
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return ;
+            }
+
+            var ids = [];
+            activityId.each(function(i,e){
+                ids.push(e.value);
+            });
+
+            $.post("/banner_up",{ids:ids},function(data){
+                if(data){
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            })
+        });
+
+        $(".btn.btn-info.down").click(function(){
+            var activityId = $("input[name='activityId']:checked");
+            if(activityId.length < 1){
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return ;
+            }
+
+            var ids = [];
+            activityId.each(function(i,e){
+                ids.push(e.value);
+            });
+
+            $.post("/banner_down",{ids:ids},function(data){
+                if(data){
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            })
+        });
+	});
+	/*]]>*/
+	</script>
+</body>
+
+</html>

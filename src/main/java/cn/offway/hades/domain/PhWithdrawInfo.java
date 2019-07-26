@@ -1,7 +1,7 @@
 package cn.offway.hades.domain;
 
-import java.io.Serializable;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,37 +14,64 @@ import java.util.Date;
 @Table(name = "ph_withdraw_info")
 public class PhWithdrawInfo implements Serializable {
 
-    /** ID **/
+    /**
+     * ID
+     **/
     private Long id;
 
-    /** 订单号 **/
+    /**
+     * 订单号
+     **/
     private String orderNo;
 
-    /** 用户ID **/
+    /**
+     * 用户ID
+     **/
     private Long userId;
 
-    /** 金额 **/
+    /**
+     * 金额
+     **/
     private Double amount;
 
-    /** 状态[0-申请,1-审核成功,2-审核失败,3-提现成功,4-提现失败] **/
+    /**
+     * 状态[0-申请,1-提现成功,2-提现失败]
+     **/
     private String status;
 
-    /** 审核人 **/
+    /**
+     * 支付宝用户ID
+     **/
+    private String alipayUserId;
+
+    /**
+     * 审核人
+     **/
     private String checkName;
 
-    /** 审核时间 **/
+    /**
+     * 审核时间
+     **/
     private Date checkTime;
 
-    /** 拒绝原因 **/
+    /**
+     * 拒绝原因
+     **/
     private String checkReason;
 
-    /** 创建时间 **/
+    /**
+     * 创建时间
+     **/
     private Date createTime;
 
-    /** 备注 **/
+    /**
+     * 备注
+     **/
     private String remark;
 
-    /** 版本号 **/
+    /**
+     * 版本号
+     **/
     private Long version;
 
 
@@ -149,6 +176,15 @@ public class PhWithdrawInfo implements Serializable {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    @Column(name = "alipay_user_id", length = 50)
+    public String getAlipayUserId() {
+        return alipayUserId;
+    }
+
+    public void setAlipayUserId(String alipayUserId) {
+        this.alipayUserId = alipayUserId;
     }
 
 }
