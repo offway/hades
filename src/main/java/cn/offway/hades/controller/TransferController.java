@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -61,12 +62,12 @@ public class TransferController {
 
     @ResponseBody
     @RequestMapping("/transfer_list")
-    public Map<String, Object> getList(HttpServletRequest request, String name, String tag, String status, String title, String type) {
+    public Map<String, Object> getList(HttpServletRequest request, String userId, Double miniamount, Double maxamount, String status, @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startTime,@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date endTime) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "id"), new Sort.Order(Sort.Direction.ASC, "sort"));
-        Page<PhWithdrawInfo> pages = withdrawInfoService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength));
+        Page<PhWithdrawInfo> pages = withdrawInfoService.findAll(userId,miniamount,maxamount,status,startTime,endTime,new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength));
         int initEcho = sEcho + 1;
         return echoBody(initEcho, pages.getTotalElements(), pages.getTotalElements(), pages.getContent());
     }
@@ -90,7 +91,7 @@ public class TransferController {
                 "\"out_biz_no\":\"" + phWithdrawInfo.getOrderNo() + "\"," +
                 "\"payee_type\":\"ALIPAY_USERID\"," +
                 "\"payee_account\":\"" + phWithdrawInfo.getAlipayUserId() + "\"," +
-                "\"amount\":\""+phWithdrawInfo.getAmount()+"\"," +
+                "\"amount\":\"" + phWithdrawInfo.getAmount() + "\"," +
                 "\"payer_show_name\":\"很潮app\"," +
                 "\"remark\":\"很潮App金额提现\"" +
                 "  }");
@@ -112,7 +113,7 @@ public class TransferController {
 
     @ResponseBody
     @RequestMapping("/transfer_refuse")
-    public boolean refuse(Long id,String reason, @AuthenticationPrincipal PhAdmin admin){
+    public boolean refuse(Long id, String reason, @AuthenticationPrincipal PhAdmin admin) {
         PhWithdrawInfo phWithdrawInfo = withdrawInfoService.findOne(id);
         phWithdrawInfo.setStatus("2");
         phWithdrawInfo.setCheckTime(new Date());

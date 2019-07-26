@@ -42,6 +42,44 @@
 			</div>
 			
 			<div class="panel panel-default">
+                <div class="panel-heading">
+                    <form role="form" class="form-inline">
+                        <div class="form-group ">
+                            <div class="input-group">
+                                <label class="control-label">用户ID</label>
+                                <input id="userId" type="text" name="userId" class="form-control" style="height:35px" placeholder=""/>
+                            </div>
+                            <div class="input-group">
+                                <label class="control-label">最小奖励金额</label>
+                                <input id="miniamount" type="text" name="miniamount" class="form-control" style="height:35px" placeholder=""/>
+							</div>
+							<div class="input-group">
+                                <label class="control-label">最大奖励金额</label>
+                                <input id="maxamount" type="text" name="maxamount" class="form-control" style="height:35px" placeholder=""/>
+                            </div>
+                            <div class="input-group">
+                                <label class="control-label">状态</label>
+                                <select id="status" name="status" class="form-control" style="height:35px">
+                                    <option value="" selected="selected">全部</option>
+                                    <option value="0">申请</option>
+                                    <option value="1">提现成功</option>
+                                    <option value="2">提现失败</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label class="control-label">开始时间</label>
+                                <input id="startTime" type="text" name="startTime" class="form-control" style="height:35px" placeholder="开始时间"/>
+							</div>
+							<div class="input-group">
+                                <label class="control-label">结束时间</label>
+                                <input id="endTime" type="text" name="endTime" class="form-control" style="height:35px" placeholder="结束时间"/>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-left: 0;margin-top: 15px;display: block;">
+                            <button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+                        </div>
+                    </form>
+                </div>
 				<div class="panel-body">
 					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
 					</table>
@@ -305,6 +343,27 @@
 	var qiniuUrl = [[${qiniuUrl}]];
 
 	var isAdmin = [[${isAdmin}]];
+	jQuery.datetimepicker.setLocale('zh');
+	jQuery('#startTime').datetimepicker(
+			{
+				"lang": "zh",
+				"format": "Y-m-d H:i:s",
+				"timepicker": true,
+				"datepicker": true,
+				"defaultDate": new Date(),
+				"defaultTime": "00:00:00"
+			}
+	);
+	jQuery('#endTime').datetimepicker(
+			{
+				"lang": "zh",
+				"format": "Y-m-d H:i:s",
+				"timepicker": true,
+				"datepicker": true,
+				"defaultDate": new Date(),
+				"defaultTime": "00:00:00"
+			}
+	);
 
     jQuery(document).ready(function($)
 	{
@@ -403,8 +462,8 @@
 					data: "status",
 					title: "状态",
 					render: function (data, type, row, meta) {
-						/** 状态[0-申请,1-审核成功,2-审核失败,3-提现成功,4-提现失败] **/
-						var map = ["申请", "审核成功", "审核失败", "提现成功", "提现失败"];
+						/** 状态[0-申请,1-提现成功,2-提现失败] **/
+						var map = ["申请", "提现成功", "提现失败"];
 						return map[parseInt(data)];
 					}
 				},
@@ -429,7 +488,10 @@
 				{
 					targets: 9,
 					data: "createTime",
-					title: "创建时间"
+					title: "创建时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
 				},
 				{
 					targets: 10,
