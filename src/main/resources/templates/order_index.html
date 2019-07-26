@@ -294,13 +294,19 @@
 		});
 	}
 
-    function deliverOrder(id) {
-        var form = $("#saveForm");
-        form.find("input").val("");
-        form.find("[name='id']").val(id);
-        form.find("[name='action']").val("create");
-        jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-    }
+	function deliverOrder(id, orderNo) {
+		$.post("/refund_find", {"orderNo": orderNo}, function (data) {
+			if (data) {
+				toastr.error("该笔订单正在申请退款，不能进行发货操作", "温馨提示");
+			} else {
+				var form = $("#saveForm");
+				form.find("input").val("");
+				form.find("[name='id']").val(id);
+				form.find("[name='action']").val("create");
+				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			}
+		});
+	}
 
     function editDeliveredOrder(id) {
         $.post("/order_getDeliveredOrder", {"id": id}, function (data) {
@@ -579,9 +585,9 @@
                             if (status == 0) {
                                 str += '<input type="button" onclick="closeOrder(' + data + ')" value="关闭订单"/>';
                             }
-                            if (status == 1) {
-                                str += '<input type="button" onclick="deliverOrder(' + data + ')" value="订单发货"/>';
-                            }
+							if (status == 1) {
+								str += '<input type="button" onclick="deliverOrder(' + data + ',\'' + full["orderNo"] + '\')" value="订单发货"/>';
+							}
                             if (status == 1 || status == 2 || status == 3) {
                                 // str += '<input type="button" onclick="cancelOrder(' + data + ')" value="紧急退款"/>';
                             }
