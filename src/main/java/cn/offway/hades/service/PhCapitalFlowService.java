@@ -17,4 +17,6 @@ public interface PhCapitalFlowService{
 	PhCapitalFlow findOne(Long id);
 
 	List<PhCapitalFlow> finAllByuseridList(Long userid);
+
+	List<PhCapitalFlow> finAllByamountFlowing();
 }

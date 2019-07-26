@@ -150,4 +150,10 @@ public class TransferController {
     public List<PhCapitalFlow> get(Long id) {
         return capitalFlowService.finAllByuseridList(id);
     }
+
+    @ResponseBody
+    @RequestMapping("/transfer_amountFlowing")
+    public List<PhCapitalFlow> amountFlowing() {
+        return capitalFlowService.finAllByamountFlowing();
+    }
 }
