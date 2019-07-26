@@ -2,6 +2,8 @@ package cn.offway.hades.service;
 
 import cn.offway.hades.domain.PhCapitalFlow;
 
+import java.util.List;
+
 /**
  * 资金流水Service接口
  *
@@ -13,4 +15,6 @@ public interface PhCapitalFlowService{
 	PhCapitalFlow save(PhCapitalFlow phCapitalFlow);
 	
 	PhCapitalFlow findOne(Long id);
+
+	List<PhCapitalFlow> finAllByuseridList(Long userid);
 }

@@ -175,19 +175,6 @@
 				'</div>';
 	}
 
-    function checkIt(data) {
-        var preview = $("#preview_body");
-        var contentStr = "";
-        contentStr += appendToPreview("信息:", data["message"]);
-        contentStr += "<hr/>";
-        for (var a in data["data"]) {
-            a = data["data"][a];
-            contentStr += appendToPreview("内容:", a["context"]);
-            contentStr += appendToPreview("时间:", a["time"]);
-        }
-        preview.html(contentStr);
-        jQuery('#preview').modal('show', {backdrop: 'fade'});
-    }
 
 	function checkSku(id) {
 		window.location.href = '/goods_stock_index.html?id=' + id;
@@ -229,17 +216,6 @@
         jQuery('#modal-6').modal('show', {backdrop: 'fade'});
     }
 
-    function trackOrder(id) {
-        $.post("/order_trackRefund", {"id": id}, function (data) {
-            console.log(data);
-            if (data != '') {
-                checkIt(JSON.parse(data));
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
 
 	function confirmDelivery(id) {
 		$.post("/refund_confirmDelivery", {"id": id}, function (data) {
@@ -315,6 +291,48 @@
 				}
 			})
 		}
+	}
+	function checkIt(id) {
+		$.post("/transfer_idlist", {"id": id}, function (data) {
+			if (data) {
+				var preview = $("#preview_body");
+				var contentStr = "";
+				for (var i in data){
+					var mainObj = data[i];
+					var businessType = "";
+					//[0-邀请返现,1-钱包支付,2-退款,3-提现]
+					switch (mainObj["businessType"]) {
+						case '1':
+							businessType="邀请返现";
+							break;
+						case '2':
+							businessType="钱包支付";
+							break;
+						case '3':
+							businessType="退款";
+							break;
+						case '4':
+							businessType="提现";
+							break;
+					}
+					contentStr += appendToPreview("编号:", mainObj["id"]);
+					contentStr += appendToPreview("用户ID:", mainObj["userId"]);
+					contentStr += appendToPreview("业务类型:", businessType);
+					contentStr += appendToPreview("订单号:", mainObj["orderNo"]);
+					contentStr += appendToPreview("类型:",mainObj["type"]=='0'?'加':'减');
+					contentStr += appendToPreview("金额:", mainObj["amount"]);
+					contentStr += appendToPreview("创建时间:", mainObj["createTime"]);
+					contentStr += appendToPreview("备注:", mainObj["remark"]);
+					contentStr += "<hr/>";
+				}
+				preview.html(contentStr);
+				$("#savePin").hide();
+				jQuery('#preview').modal('show', {backdrop: 'fade'});
+				toastr.success("操作已成功！", "温馨提示");
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
 	}
 	
 	function refuse(id,self) {
@@ -459,13 +477,8 @@
 				},
 				{
 					targets: 5,
-					data: "status",
-					title: "状态",
-					render: function (data, type, row, meta) {
-						/** 状态[0-申请,1-提现成功,2-提现失败] **/
-						var map = ["申请", "提现成功", "提现失败"];
-						return map[parseInt(data)];
-					}
+					data: "remark",
+					title: "备注"
 				},
 				{
 					targets: 6,
@@ -495,8 +508,13 @@
 				},
 				{
 					targets: 10,
-					data: "remark",
-					title: "备注"
+					data: "status",
+					title: "状态",
+					render: function (data, type, row, meta) {
+						/** 状态[0-申请,1-提现成功,2-提现失败] **/
+						var map = ["申请", "提现成功", "提现失败"];
+						return map[parseInt(data)];
+					}
 				},
 				{
 					targets: 11,
@@ -504,13 +522,16 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
+						/** 状态[0-申请,1-提现成功,2-提现失败] **/
 						var str = "";
-						if (full["status"] != null) {
-							str += '<input type="button" name="checkIt" onclick="goToDetail(' + data + ',this)" value="查看详情"/>';
-							str += '<input type="button" name="checkIt" onclick="confirmPass(' + data + ',this)" value="确认打款"/>';
-							str += '<input type="button" name="checkIt" onclick="refuse(' + data + ',this)" value="拒绝打款"/>';
-						} else {
-
+						if (full["status"] != null && full["status"] == '0') {
+							str += '<input type="button" name="checkIt" onclick="checkIt(' + full["userId"] + ')" value="查看详情"/>';
+							str += '<input type="button" name="confirmPass" onclick="confirmPass(' + data + ',this)" value="确认打款"/>';
+							str += '<input type="button" name="refuse" onclick="refuse(' + data + ',this)" value="拒绝打款"/>';
+						} else if (full["status"] == '1') {
+							str += '<input type="button" name="checkIt" onclick="checkIt(' + full["userId"] + ')" value="查看详情"/>';
+						}else if (full["status"] == '2') {
+							str += '<input type="button" name="checkIt" onclick="checkIt(' + full["userId"] + ')" value="查看详情"/>';
 						}
 						return str;
 					}

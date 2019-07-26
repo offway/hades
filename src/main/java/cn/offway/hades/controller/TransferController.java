@@ -2,9 +2,11 @@ package cn.offway.hades.controller;
 
 import cn.offway.hades.domain.PhAdmin;
 import cn.offway.hades.domain.PhCapitalFlow;
+import cn.offway.hades.domain.PhUserInfo;
 import cn.offway.hades.domain.PhWithdrawInfo;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhCapitalFlowService;
+import cn.offway.hades.service.PhUserInfoService;
 import cn.offway.hades.service.PhWithdrawInfoService;
 import cn.offway.hades.service.QiniuService;
 import com.alipay.api.AlipayApiException;
@@ -45,6 +47,8 @@ public class TransferController {
     private QiniuService qiniuService;
     @Autowired
     private PhCapitalFlowService capitalFlowService;
+    @Autowired
+    private PhUserInfoService userInfoService;
 
 
     @Value("${ph.url}")
@@ -114,6 +118,9 @@ public class TransferController {
             phWithdrawInfo.setCheckTime(new Date());
 
         } else {
+            PhUserInfo userInfo = userInfoService.findOne(phWithdrawInfo.getUserId());
+            userInfo.setBalance(userInfo.getBalance()+phWithdrawInfo.getAmount());
+            userInfoService.save(userInfo);
             phWithdrawInfo.setStatus("2");
             phWithdrawInfo.setCheckName(admin.getNickname());
             phWithdrawInfo.setCheckTime(new Date());
@@ -127,11 +134,20 @@ public class TransferController {
     @RequestMapping("/transfer_refuse")
     public boolean refuse(Long id, String reason, @AuthenticationPrincipal PhAdmin admin) {
         PhWithdrawInfo phWithdrawInfo = withdrawInfoService.findOne(id);
+        PhUserInfo userInfo = userInfoService.findOne(phWithdrawInfo.getUserId());
+        userInfo.setBalance(userInfo.getBalance()+phWithdrawInfo.getAmount());
+        userInfoService.save(userInfo);
         phWithdrawInfo.setStatus("2");
         phWithdrawInfo.setCheckTime(new Date());
         phWithdrawInfo.setCheckName(admin.getNickname());
         phWithdrawInfo.setCheckReason(reason);
         withdrawInfoService.save(phWithdrawInfo);
         return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/transfer_idlist")
+    public List<PhCapitalFlow> get(Long id) {
+        return capitalFlowService.finAllByuseridList(id);
     }
 }

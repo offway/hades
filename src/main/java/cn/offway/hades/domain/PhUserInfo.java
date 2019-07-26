@@ -210,6 +210,7 @@ public class PhUserInfo implements Serializable {
         this.createTime = createTime;
     }
 
+    @Version
     @Column(name = "version", length = 11)
     public Long getVersion() {
         return version;
