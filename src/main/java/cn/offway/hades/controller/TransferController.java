@@ -1,8 +1,10 @@
 package cn.offway.hades.controller;
 
 import cn.offway.hades.domain.PhAdmin;
+import cn.offway.hades.domain.PhCapitalFlow;
 import cn.offway.hades.domain.PhWithdrawInfo;
 import cn.offway.hades.properties.QiniuProperties;
+import cn.offway.hades.service.PhCapitalFlowService;
 import cn.offway.hades.service.PhWithdrawInfoService;
 import cn.offway.hades.service.QiniuService;
 import com.alipay.api.AlipayApiException;
@@ -41,6 +43,8 @@ public class TransferController {
     private QiniuProperties qiniuProperties;
     @Autowired
     private QiniuService qiniuService;
+    @Autowired
+    private PhCapitalFlowService capitalFlowService;
 
 
     @Value("${ph.url}")
@@ -97,6 +101,14 @@ public class TransferController {
                 "  }");
         AlipayFundTransToaccountTransferResponse response = alipayClient.execute(request);
         if (response.isSuccess()) {
+            PhCapitalFlow capitalFlow = new PhCapitalFlow();
+            capitalFlow.setUserId(id);
+            capitalFlow.setOrderNo(phWithdrawInfo.getOrderNo());
+            capitalFlow.setCreateTime(new Date());
+            capitalFlow.setType("1");
+            capitalFlow.setBusinessType("3");
+            capitalFlow.setAmount(phWithdrawInfo.getAmount());
+            capitalFlowService.save(capitalFlow);
             phWithdrawInfo.setStatus("1");
             phWithdrawInfo.setCheckName(admin.getNickname());
             phWithdrawInfo.setCheckTime(new Date());

@@ -20,7 +20,7 @@ public class PhCapitalFlow implements Serializable {
     /** 用户ID **/
     private Long userId;
 
-    /** 业务类型[0-邀请返现,1-钱包支付,2-退款] **/
+    /** 业务类型[0-邀请返现,1-钱包支付,2-退款,3-提现] **/
     private String businessType;
 
     /** 订单号 **/
