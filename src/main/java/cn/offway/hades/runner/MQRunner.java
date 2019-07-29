@@ -122,6 +122,7 @@ public class MQRunner implements ApplicationRunner {
     }
 
     public void save(String preorderNo) {
+        logger.info("收到新支付订单:" + preorderNo);
         List<PhOrderInfo> phOrderInfos = phOrderInfoService.findByPreorderNoAndStatus(preorderNo, "1");
         List<PhSettlementDetail> phSettlementDetails = new ArrayList<>();
         List<PhSettlementInfo> phSettlementInfos = new ArrayList<>();
@@ -176,10 +177,12 @@ public class MQRunner implements ApplicationRunner {
         }
         //入库
         for (PhSettlementDetail detail : phSettlementDetails) {
-            phSettlementDetailService.save(detail);
+            PhSettlementDetail settlementDetailSaved = phSettlementDetailService.save(detail);
+            logger.info("保存的对账明细ID:" + settlementDetailSaved.getId());
         }
         for (PhSettlementInfo info : phSettlementInfos) {
-            phSettlementInfoService.save(info);
+            PhSettlementInfo settlementInfoSaved = phSettlementInfoService.save(info);
+            logger.info("保存的对账统计ID:" + settlementInfoSaved.getId());
         }
     }
 }
