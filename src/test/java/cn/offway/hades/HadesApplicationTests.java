@@ -8,7 +8,9 @@ import cn.offway.hades.service.PhMerchantService;
 import cn.offway.hades.service.PhOrderInfoService;
 import cn.offway.hades.service.PhSettlementDetailService;
 import cn.offway.hades.service.PhSettlementInfoService;
+import cn.offway.hades.utils.HttpClientUtil;
 import cn.offway.hades.utils.MathUtils;
+import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -102,5 +102,24 @@ public class HadesApplicationTests {
         for (PhSettlementInfo info : phSettlementInfos) {
             phSettlementInfoService.save(info);
         }
+    }
+
+    @Test
+    public void testKuaiDi100() {
+        String key = "uyUDaSuE5009";
+        Map<String, String> innerInnerParam = new HashMap<>();
+        innerInnerParam.put("callbackurl", "https://admin.offway.cn/callback/express?uid=1111&oid=2222");
+        String innerInnerParamStr = JSON.toJSONString(innerInnerParam);
+        Map<String, Object> innerParam = new HashMap<>();
+        innerParam.put("company", "shunfeng");
+        innerParam.put("number", "356570849910");
+        innerParam.put("key", key);
+        innerParam.put("parameters", innerInnerParam);
+        String innerParamStr = JSON.toJSONString(innerParam);
+        Map<String, String> param = new HashMap<>();
+        param.put("schema", "json");
+        param.put("param", innerParamStr);
+        String body = HttpClientUtil.post("https://poll.kuaidi100.com/poll", param);
+        System.out.println(body);
     }
 }
