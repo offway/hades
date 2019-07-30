@@ -645,12 +645,11 @@ public class OrderController {
         String key = "uyUDaSuE5009";
         Map<String, String> innerInnerParam = new HashMap<>();
         innerInnerParam.put("callbackurl", "https://admin.offway.cn/callback/express?uid=" + orderInfo.getUserId() + "&oid=" + orderInfo.getOrderNo());
-        String innerInnerParamStr = JSON.toJSONString(innerInnerParam);
-        Map<String, String> innerParam = new HashMap<>();
+        Map<String, Object> innerParam = new HashMap<>();
         innerParam.put("company", orderExpressInfo.getExpressCode());
         innerParam.put("number", orderExpressInfo.getMailNo());
         innerParam.put("key", key);
-        innerParam.put("parameters", innerInnerParamStr);
+        innerParam.put("parameters", innerInnerParam);
         String innerParamStr = JSON.toJSONString(innerParam);
         Map<String, String> param = new HashMap<>();
         param.put("schema", "json");
