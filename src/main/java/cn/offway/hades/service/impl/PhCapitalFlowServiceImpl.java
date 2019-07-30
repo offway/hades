@@ -62,10 +62,10 @@ public class PhCapitalFlowServiceImpl implements PhCapitalFlowService {
         return phCapitalFlowRepository.findAll(new Specification<PhCapitalFlow>() {
             @Override
             public Predicate toPredicate(Root<PhCapitalFlow> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                List<Predicate> params = new ArrayList<Predicate>();
-                params.add(criteriaBuilder.equal(root.get("businessType"), "3"));
-                Predicate[] predicates = new Predicate[params.size()];
-                criteriaQuery.where(params.toArray(predicates));
+//                List<Predicate> params = new ArrayList<Predicate>();
+//                params.add(criteriaBuilder.equal(root.get("businessType"), "0"));
+//                Predicate[] predicates = new Predicate[params.size()];
+//                criteriaQuery.where(params.toArray(predicates));
                 return null;
             }
         });

@@ -321,16 +321,16 @@
 					var businessType = "";
 					//[0-邀请返现,1-钱包支付,2-退款,3-提现]
 					switch (mainObj["businessType"]) {
-						case '1':
+						case '0':
 							businessType="邀请返现";
 							break;
-						case '2':
+						case '1':
 							businessType="钱包支付";
 							break;
-						case '3':
+						case '2':
 							businessType="退款";
 							break;
-						case '4':
+						case '3':
 							businessType="提现";
 							break;
 					}
@@ -340,7 +340,7 @@
 					contentStr += appendToPreview("订单号:", mainObj["orderNo"]);
 					contentStr += appendToPreview("类型:",mainObj["type"]=='0'?'加':'减');
 					contentStr += appendToPreview("金额:", mainObj["amount"]);
-					contentStr += appendToPreview("创建时间:", mainObj["createTime"]);
+					contentStr += appendToPreview("创建时间:", new Date(mainObj["createTime"]).Format("yyyy-MM-dd hh:mm:ss"));
 					contentStr += appendToPreview("备注:", mainObj["remark"]);
 					contentStr += "<hr/>";
 				}
@@ -577,11 +577,61 @@
 						return str;
 					}
 				}
-			]
-		});
-		table_global = oTable;
+			],
+			"footerCallback": function (row, data, start, end, display) {
+				var api = this.api();
+				// Remove the formatting to get integer data for summation
+				var intVal = function (i) {
+					return parseFloat(i);
+				};
+				// Total over all pages
+				var total = api
+						.column(4)
+						.data()
+						.reduce(function (a, b) {
+							return intVal(a) + intVal(b);
+						}, 0);
+				// Update footer part 1
+				$(this).find("#tfoot1").html(
+						'当页提现申请总计￥' + total.toFixed(2) + '元' + "&nbsp;&nbsp;&nbsp;"
+				);
+				$.post("/transfer_amountFlowing", {}, function (data) {
+					/*
+                    *
+        map.put("price", price);
+        map.put("mVoucherAmount", mVoucherAmount);
+        map.put("settledAmount", settledAmount);
+        map.put("settledAmount_a", settledAmount_a);
+        map.put("settledAmount_b", settledAmount_b);
+        map.put("cutAmount", cutAmount);
+        map.put("mailFee", mailFee);
+        map.put("mailFee_a", mailFee_a);
+        map.put("mailFee_b", mailFee_b);
+                    *
+                    * */
+					var totalamount = 0.00;
+					for (var aa in data) {
+						aa = data[aa];
+						if (aa["businessType"] == "0") {
 
-		// $('.js-example-basic-multiple').select2();
+							totalamount += aa["amount"];
+						}
+					}
+					// Update footer part 2
+					$("#tfoot2").html(
+							'总奖励金额￥' + totalamount + '元'
+					);
+				});
+			}
+		});
+		setTimeout(function () {
+			// $("#example-1").append(
+			// 		$('<tfoot/>').append($("#example-1 thead tr").clone())
+			// );
+			$("#example-1").append('<tfoot><tr><td id="tfoot1" colspan="9"></td><td id="tfoot2" colspan="7"></td></tr></tfoot>');
+			oTable.fnDraw(); //or fnReloadAjax()
+		}, 500);
+		table_global = oTable;
 		
 		$(".searchBtn").click(function(){
 			$("#checkbox-all").attr("checked", false);
@@ -606,19 +656,25 @@
 			window.location.href = '/goods_add.html';
         });
 
-		$(".btn.btn-info.amountFlowing").click(function(){
-			$.post("/transfer_amountFlowing",{},function (data) {
+		$(".btn.btn-info.amountFlowing").click(function () {
+			$.post("/transfer_amountFlowing", {}, function (data) {
 				if (data) {
 					var preview = $("#modal-7");
 					var contentStr = "<form id='priceForm'>";
+					var sum = 0.00;
 					contentStr += "<hr/>";
 					for (var a in data) {
+						var type = "+";
 						a = data[a];
-						var skuEle = '时间:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["createTime"]);
-						var remarkEle = '用户id:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["userId"]);
-						var priceEle = '流水:<input type="number" name="stockPrice" value="VV" />'.replace("VV", a["amount"]);
-						var priceEle = '钱包余额:<input type="number" name="stockPrice" value="VV" />'.replace("VV", a["amount"]);
-						contentStr += appendToPreviewList(skuEle, remarkEle, priceEle, priceEle, "", "");
+						sum += a["amount"];
+						var skuEle = '时间:<label class="control-label">VV</label>'.replace("VV", new Date(a["createTime"]).Format("yyyy-MM-dd hh:mm:ss"));
+						var remarkEle = '用户id:<label class="control-label">VV</label>'.replace("VV", a["userId"]);
+						if (a["type"] == "1") {
+							type = "-";
+						}
+						var moneyEle = '流水:<label class="control-label">VV</label>'.replace("VV", type + a["amount"]);
+						// var priceEle = '总奖励金:<label class="control-label">VV</label>	'.replace("VV", sum);
+						contentStr += appendToPreviewList(skuEle, remarkEle, moneyEle, "", "", "");
 						contentStr += "<hr/>";
 					}
 					preview.html(contentStr + "</form>");
