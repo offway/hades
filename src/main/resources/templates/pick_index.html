@@ -9,12 +9,13 @@
 	<link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
 	<link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
 	<link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
+	<link rel="stylesheet" href="assets/css/dd.css"/>
 	<link rel="stylesheet" href="assets/css/ui-selectbox.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
-		max-width:400px;
-		max-height:300px;
+		max-width:40px;
+		max-height:30px;
 	}
 	</style>
 </head>
@@ -215,6 +216,7 @@
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/selectbox-min.js"></script>
 	<script src="assets/js/async.min.js"></script>
+	<script src="assets/js/jquery.dd.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -452,20 +454,26 @@
 		});
 	}
 
+	var msDropDownEle = null;
+
 	function bindGoods(data) {
 		var str = "";
 		var imgList = {};
 		for (var i in data) {
 			var brand = data[i];
-			str += '<option value="VALUE" data-icon="ICON" data-goodsNo="CODE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]).replace("ICON", brand["image"]).replace("CODE", brand["code"]);
+			str += '<option value="VALUE" data-image="ICON" data-goodsNo="CODE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["id"]+"  `"+brand["name"]).replace("ICON", brand["image"]).replace("CODE", brand["code"]);
 			imgList[brand["id"]] = brand["image"];
 		}
 		var ele = $("#goodsSelect");
 		ele.html(str);
 		$("#IMGHOLDER").val(JSON.stringify(imgList));
-		selectbox(ele, {
-			optionHtml: '<dd class="ui-selectbox-option {{className}}" data-option="{{index}}" tabindex="-1"><label>{{goodsno}}-</label><img src="{{icon}}" alt="icon" style="width:30px;height:30px;vertical-align:middle" /> {{textContent}}</dd>'
-		});
+		if(msDropDownEle){
+			msDropDownEle.data("dd").destroy();
+		}
+		msDropDownEle = ele.msDropDown();
+		// selectbox(ele, {
+		// 	optionHtml: '<dd class="ui-selectbox-option {{className}}" data-option="{{index}}" tabindex="-1"><label>{{goodsno}}-</label><img src="{{icon}}" alt="icon" style="width:30px;height:30px;vertical-align:middle" /> {{textContent}}</dd>'
+		// });
 	}
 
 	function renderBrandSelect(key) {
