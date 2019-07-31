@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qiniu.util.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.joda.time.DateTime;
@@ -873,8 +874,9 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_discount_list_detail")
-    public Map<String, Object> discountListDetail(int sEcho) {
+    public Map<String, Object> discountListDetail(int sEcho,Long brandId) {
         List<Object> list = new ArrayList<>();
+        int i =0;
         //2019-05-24 03:00:01_2019-06-01 03:00:01_59,62
         for (String key : JobHolder.getHolder().keySet()) {
             if (key.endsWith("REVERSE")) {
@@ -885,22 +887,51 @@ public class GoodsController {
             if ("".equals(args[2])) {
                 continue;
             }
-            m.put("id", key);
-            m.put("sTime", args[0]);
-            m.put("eTime", args[1]);
             List<PhGoods> goodsList = new ArrayList<>();
             String[] gids = args[2].split(",");
             if (key.contains("DirectChange")) {
-                m.put("type", "change");
-                goodsList.add(goodsService.findOne(Long.valueOf(gids[0])));
+                i=1;
+                PhGoods goods = goodsService.findOne(Long.valueOf(gids[0]));
+                if (brandId != null){
+                    if (goods.getBrandId() == brandId){
+                        goodsList.add(goods);
+                    }else {
+                        i=3;
+                    }
+                }else {
+                    goodsList.add(goods);
+                }
+
             } else {
-                m.put("type", "discount");
-                m.put("discount", args[3]);
+                i=2;
                 for (String id : gids) {
-                    goodsList.add(goodsService.findOne(Long.valueOf(id)));
+                    PhGoods goods = goodsService.findOne(Long.valueOf(id));
+                    if (brandId != null){
+                        if (goods.getBrandId() == brandId){
+                            goodsList.add(goods);
+                        }else {
+                            i=3;
+                        }
+                    }else {
+                        goodsList.add(goods);
+                    }
                 }
             }
-            m.put("subList", goodsList);
+            if (i==3){
+                continue;
+            }
+            if (goodsList.size() >0){
+                m.put("id", key);
+                m.put("sTime", args[0]);
+                m.put("eTime", args[1]);
+                m.put("subList", goodsList);
+                if (i==1){
+                    m.put("type", "change");
+                }else if (i==2){
+                    m.put("type", "discount");
+                    m.put("discount", args[3]);
+                }
+            }
             list.add(m);
         }
         int initEcho = sEcho + 1;

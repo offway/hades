@@ -44,6 +44,15 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<form role="form" class="form-inline">
+						<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+							<div class="input-group">
+								<label class="control-label">品牌</label>
+								<input id="brandId" type="text" name="brandId" class="form-control" style="height:35px" placeholder="输入品牌ID"/>
+							</div>
+						</div>
+						<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+						</div>
 					</form>
 				</div>
 				<div class="panel-body">
@@ -481,7 +490,7 @@
 					render: function (data, type, full, meta) {
 						if (data == "discount") {
 							return "打折";
-						} else {
+						} else if (data == "change") {
 							return "改价";
 						}
 					}
