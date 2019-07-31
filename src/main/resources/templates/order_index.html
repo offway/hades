@@ -379,6 +379,38 @@
 		}
 	}
 
+	function toDec(self) {
+		var btn = $(self);
+		var div = btn.parent().find("div");
+		var num = parseInt(div[0].innerHTML, 8);
+		div.html(num);
+		btn.val("加密");
+		//remove old handler
+		btn.prop("onclick", null);
+		btn.removeAttr("onclick");
+		btn.off("click");
+		//bind new
+		btn.on("click", function () {
+			toOct(self);
+		});
+	}
+
+	function toOct(self) {
+		var btn = $(self);
+		var div = btn.parent().find("div");
+		var num = parseInt(div[0].innerHTML);
+		div.html(num.toString(8));
+		btn.val("解密");
+		//remove old handler
+		btn.prop("onclick", null);
+		btn.removeAttr("onclick");
+		btn.off("click");
+		//bind new
+		btn.on("click", function () {
+			toDec(self);
+		});
+	}
+
     jQuery(document).ready(function($)
 	{
         var qiniuUrl = [[${qiniuUrl}]];
@@ -449,7 +481,16 @@
 					{
 						targets: 2,
 						data: "orderNo",
-						title: "订单号"
+						title: "订单号",
+						render: function (data, type, row, meta) {
+							var btn = '<input type="button" value="解密" onclick="toDec(this)">';
+							var div = '<div>VALUE</div>'.replace("VALUE", data);
+							if (isNaN(data)) {
+								return "<div>" + div + "</div>";
+							} else {
+								return "<div>" + div + btn + "</div>";
+							}
+						}
 					},
 					{
 						targets: 3,
