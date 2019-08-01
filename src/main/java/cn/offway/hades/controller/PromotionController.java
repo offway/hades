@@ -58,7 +58,7 @@ public class PromotionController {
 
     @ResponseBody
     @RequestMapping("/promotion_save")
-    public boolean save(PhPromotionInfo promotionInfo, @AuthenticationPrincipal PhAdmin admin, String discountJSONStr, String reduceJSONStr, @RequestParam(name = "goodsId", required = true) String[] goodsId, String gift, String giftLimit) {
+    public boolean save(PhPromotionInfo promotionInfo, @AuthenticationPrincipal PhAdmin admin, String discountJSONStr, String reduceJSONStr, @RequestParam(name = "goodsId", required = true) String[] goodsId, String gift, double giftLimit) {
         PhPromotionInfo infoSaved;
         if (promotionInfo.getId() == null) {
             promotionInfo.setCreateTime(new Date());

@@ -14,35 +14,55 @@ import java.util.Date;
 @Table(name = "ph_promotion_rule")
 public class PhPromotionRule implements Serializable {
 
-    /** ID **/
+    /**
+     * ID
+     **/
     private Long id;
 
-    /** 促销活动ID **/
+    /**
+     * 促销活动ID
+     **/
     private Long promotionId;
 
-    /** 折扣件数 **/
+    /**
+     * 折扣件数
+     **/
     private Long discountNum;
 
-    /** 折扣率 **/
+    /**
+     * 折扣率
+     **/
     private Double discountRate;
 
-    /** 满减条件金额 **/
+    /**
+     * 满减条件金额
+     **/
     private Double reduceLimit;
 
-    /** 满减优惠金额 **/
+    /**
+     * 满减优惠金额
+     **/
     private Double reduceAmount;
 
-    /** 创建时间 **/
+    /**
+     * 创建时间
+     **/
     private Date createTime;
 
-    /** 备注 **/
+    /**
+     * 备注
+     **/
     private String remark;
 
-    /** 赠品 **/
+    /**
+     * 赠品
+     **/
     private String gift;
 
-    /** 赠品条件金额 **/
-    private String giftLimit;
+    /**
+     * 赠品条件金额
+     **/
+    private double giftLimit;
 
 
     @Id
@@ -130,11 +150,11 @@ public class PhPromotionRule implements Serializable {
     }
 
     @Column(name = "gift_limit", precision = 15, scale = 2)
-    public String getGiftLimit() {
+    public double getGiftLimit() {
         return giftLimit;
     }
 
-    public void setGiftLimit(String giftLimit) {
+    public void setGiftLimit(double giftLimit) {
         this.giftLimit = giftLimit;
     }
 }
