@@ -1,3 +1,4 @@
+debug: false
 is-prd: true
 #服务相关配置
 server: 
@@ -6,7 +7,14 @@ server:
   session:  
     #session超时时间，单位秒
     timeout:  3600
-      
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
 spring:
   #集群session存储方式
   session:  
@@ -43,6 +51,10 @@ spring:
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
     #合并多个DruidDataSource的监控数据
     useGlobalDataSourceStat:  true
+  boot:
+    admin:
+      client:
+        url: 'http://127.0.0.1:8888'
 #jpa相关配置
   jpa:  
   #是否自动生成/修改数据库表
