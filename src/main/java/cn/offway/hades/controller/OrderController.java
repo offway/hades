@@ -181,6 +181,8 @@ public class OrderController {
             feeInfo.put("price", orderInfo.getPrice());
             feeInfo.put("pVoucherAmount", orderInfo.getPVoucherAmount());
             feeInfo.put("mVoucherAmount", orderInfo.getMVoucherAmount());
+            feeInfo.put("platformPromotionAmount", orderInfo.getPlatformPromotionAmount());
+            feeInfo.put("promotionAmount", orderInfo.getPromotionAmount());
             feeInfo.put("walletAmount", orderInfo.getWalletAmount());
             feeInfo.put("mailFee", orderInfo.getMailFee());
             feeInfo.put("amount", orderInfo.getAmount());
