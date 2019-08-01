@@ -599,7 +599,7 @@
 						/* 类型[0-仅退款,1-退货退款,2-换货] **/
 						var type = parseInt(full["type"]);
 						if (status == 0) {
-							if (type == 0 && isAdmin == 1) {
+							if (type == 0) {
 								str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="退款审核"/>';
 							} else if (type == 1) {
 								str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="退货退款审核"/>';
