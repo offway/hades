@@ -155,22 +155,22 @@ public class OrderController {
                 if (stock == null || goods == null) {
                     continue;
                 }
-                List<PhGoodsProperty> properties = goodsPropertyService.findByStockId(stock.getId());
                 goodsInfo.put("sku", stock.getSku());
-                goodsInfo.put("goodsId", stock.getGoodsId());
-                goodsInfo.put("goodsName", stock.getGoodsName());
-                goodsInfo.put("image", stock.getImage());
+                goodsInfo.put("goodsId", obj.getGoodsId());
+                goodsInfo.put("goodsName", obj.getGoodsName());
+                goodsInfo.put("image", obj.getGoodsImage());
                 goodsInfo.put("code", goods.getCode());
-                goodsInfo.put("price", stock.getPrice());
-                goodsInfo.put("brandName", goods.getBrandName());
-                StringBuilder sb = new StringBuilder();
-                for (PhGoodsProperty p : properties) {
-                    sb.append(p.getName());
-                    sb.append(":");
-                    sb.append(p.getValue());
-                    sb.append(" ");
-                }
-                goodsInfo.put("skuStr", sb.toString());
+                goodsInfo.put("price", obj.getPrice());
+                goodsInfo.put("brandName", obj.getBrandName());
+//                List<PhGoodsProperty> properties = goodsPropertyService.findByStockId(stock.getId());
+//                StringBuilder sb = new StringBuilder();
+//                for (PhGoodsProperty p : properties) {
+//                    sb.append(p.getName());
+//                    sb.append(":");
+//                    sb.append(p.getValue());
+//                    sb.append(" ");
+//                }
+                goodsInfo.put("skuStr", obj.getRemark());
                 goodsInfo.put("goodsCount", obj.getGoodsCount());
                 goodsInfoList.add(goodsInfo);
             }
