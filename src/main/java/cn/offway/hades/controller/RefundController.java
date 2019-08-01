@@ -9,6 +9,7 @@ import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.joda.time.DateTime;
@@ -101,7 +102,7 @@ public class RefundController {
 
     @ResponseBody
     @RequestMapping("/refund_list")
-    public Map<String, Object> getList(HttpServletRequest request, String orderNo, String sTime, String eTime, String userId, String sTimeCheck, String eTimeCheck, String type, String status, @AuthenticationPrincipal PhAdmin admin) {
+    public Map<String, Object> getList(HttpServletRequest request, String orderNo, String sTime, String eTime, String userId, String sTimeCheck, String eTimeCheck, String type, String status, String merchantId, @AuthenticationPrincipal PhAdmin admin) {
         Object mid = null;
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
@@ -114,6 +115,8 @@ public class RefundController {
             if (merchant != null) {
                 mid = merchant.getId();
             }
+        } else {
+            mid = StringUtils.isNotBlank(merchantId) ? merchantId : null;
         }
         Page<PhRefund> pages = refundService.list(mid, orderNo, strToDate(sTime), strToDate(eTime), userId, strToDate(sTimeCheck), strToDate(eTimeCheck), type, status, pr);
         ObjectMapper objectMapper = new ObjectMapper();
