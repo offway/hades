@@ -97,9 +97,14 @@
 									<option value="6">审核失败</option>
                                 </select>
                             </div>
+<!--							<div class="input-group">-->
+<!--								<label for="status" class="control-label">商户ID</label>-->
+<!--								<input type="text" name="merchantId" class="form-control" style="height:35px" placeholder="商户ID"/>-->
+<!--							</div>-->
 							<div class="input-group">
-								<label for="status" class="control-label">商户ID</label>
-								<input type="text" name="merchantId" class="form-control" style="height:35px" placeholder="商户ID"/>
+								<label for="merchantId" class="control-label">商户</label>
+								<select id="merchantId" name="merchantId" class="form-control" style="height:35px" >
+								</select>
 							</div>
                         </div>
                         <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
@@ -337,19 +342,6 @@
 		});
 	}
 
-	function bindMerchantSelector(data) {
-		var brandStr = "";
-		for (var brand in data) {
-			brand = data[brand];
-			if (parseInt(brand["id"]) == 0) {
-				brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-			} else {
-				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-			}
-		}
-		$("#merchantId").html(brandStr);
-	}
-
 	function bindTypeSelector(data) {
 		var typeStr = "<option value=\"\" selected=\"selected\">全部</option>";
 		for (var type in data) {
@@ -379,6 +371,25 @@
 				break;
 			}
 		}
+	}
+
+	function renderBrand() {
+		$.getJSON("/merchant_list_all", {}, function (data) {
+			bindMerchantSelector(data);
+		});
+	}
+
+	function bindMerchantSelector(data) {
+		var brandStr = "";
+		for (var brand in data) {
+			brand = data[brand];
+			if (parseInt(brand["id"]) == 0) {
+				brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", " ").replace("KEY", brand["name"]);
+			} else {
+				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+			}
+		}
+		$("#merchantId").html(brandStr);
 	}
 
 	var qiniuUrl = [[${qiniuUrl}]];
@@ -430,6 +441,7 @@
 		);
 
         var oTable;
+		renderBrand();
 		oTable = $("#example-1").dataTable({
 			language: {
 				url: "../assets/Chinese.txt"
@@ -465,7 +477,16 @@
 				{
 					targets: 2,
 					data: "preorderNo",
-					title: "总订单号"
+					title: "总订单号",
+					render: function (data, type, row, meta) {
+						var btn = '<input type="button" value="解密" onclick="toDec(this)">';
+						var div = '<div>VALUE</div>'.replace("VALUE", data);
+						if (isNaN(data)) {
+							return "<div>" + div + "</div>";
+						} else {
+							return "<div>" + div + btn + "</div>";
+						}
+					}
 				},
 				{
 					targets: 3,
@@ -617,6 +638,7 @@
 				}
 			]
 		});
+
 		table_global = oTable;
 
 		// $('.js-example-basic-multiple').select2();
