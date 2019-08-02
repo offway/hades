@@ -130,6 +130,9 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
     /** 平台促销优惠金额  **/
     private Double platformPromotionAmount;
 
+    /** 赠品 **/
+    private String gift;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -417,6 +420,15 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
 
     public void setPlatformPromotionAmount(Double platformPromotionAmount) {
         this.platformPromotionAmount = platformPromotionAmount;
+    }
+
+    @Column(name = "gift", length = 500)
+    public String getGift() {
+        return gift;
+    }
+
+    public void setGift(String gift) {
+        this.gift = gift;
     }
 
 }

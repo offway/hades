@@ -540,8 +540,13 @@
 						data: "platformPromotionAmount",
 						title: "平台促销优惠金额"
 					},
+					{
+						targets: 11,
+						data: "gift",
+						title: "赠品"
+					},
                     {
-                        targets: 11,
+                        targets: 12,
                         data: "sub",
                         title: "订单内商品",
 						render: function (data, type, row, meta) {
@@ -563,7 +568,7 @@
 						}
                     },
 					{
-						targets: 12,
+						targets: 13,
 						data: "status",
 						title: "状态",
 						render: function (data, type, row, meta) {
@@ -573,7 +578,7 @@
 						}
 					},
 					{
-						targets: 13,
+						targets: 14,
 						data: "payChannel",
 						title: "支付渠道",
 						render: function (data, type, row, meta) {
@@ -583,12 +588,21 @@
 						}
 					},
 					{
-						targets: 14,
+						targets: 15,
 						data: "preorderNo",
-						title: "总订单号"
+						title: "总订单号",
+						render: function (data, type, row, meta) {
+							var btn = '<input type="button" value="解密" onclick="toDec(this)">';
+							var div = '<div>VALUE</div>'.replace("VALUE", data);
+							if (isNaN(data)) {
+								return "<div>" + div + "</div>";
+							} else {
+								return "<div>" + div + btn + "</div>";
+							}
+						}
 					},
 					{
-						targets: 15,
+						targets: 16,
 						data: "createTime",
 						title: "创建时间",
 						render: function (data, type, row, meta) {
@@ -596,17 +610,17 @@
 						}
 					},
 					{
-						targets: 16,
+						targets: 17,
 						data: "remark",
 						title: "备注"
 					},
 					{
-						targets: 17,
+						targets: 18,
 						data: "merchantName",
 						title: "商户名"
 					},
 					{
-						targets: 18,
+						targets: 19,
 						data: "id",
 						orderable: false,
 						title: "操作",
@@ -615,7 +629,7 @@
 						}
 					},
 					{
-						targets: 19,
+						targets: 20,
 						data: "id",
 						orderable: false,
 						title: "操作",
