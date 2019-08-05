@@ -9,6 +9,7 @@ import com.alibaba.excel.event.WriteHandler;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.joda.time.DateTime;
@@ -217,7 +218,7 @@ public class SettlementController {
 
     @ResponseBody
     @RequestMapping("/settle_list")
-    public Map<String, Object> getSettleList(HttpServletRequest request, @AuthenticationPrincipal PhAdmin admin) {
+    public Map<String, Object> getSettleList(HttpServletRequest request,String merchantId, @AuthenticationPrincipal PhAdmin admin) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
@@ -229,6 +230,9 @@ public class SettlementController {
             if (merchant != null) {
                 mid = merchant.getId();
             }
+        }
+        if (StringUtils.isNotBlank(merchantId)){
+            mid = merchantId;
         }
         Page<PhSettlementInfo> pages = settlementInfoService.findAll(mid, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
