@@ -230,8 +230,7 @@ public class SettlementController {
             if (merchant != null) {
                 mid = merchant.getId();
             }
-        }
-        if (StringUtils.isNotBlank(merchantId)){
+        }if (StringUtils.isNotBlank(merchantId)){
             mid = merchantId;
         }
         Page<PhSettlementInfo> pages = settlementInfoService.findAll(mid, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));

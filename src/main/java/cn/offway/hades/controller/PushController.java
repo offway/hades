@@ -4,7 +4,6 @@ import cn.offway.hades.domain.PhPush;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.JPushService;
 import cn.offway.hades.service.PhPushService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -48,11 +47,6 @@ public class PushController {
     @ResponseBody
     @RequestMapping("/push_list")
     public Map<String, Object> usersData(HttpServletRequest request) {
-        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        ObjectMapper objectMapper = new ObjectMapper();
-        String sortCol = request.getParameter("iSortCol_0");
-        String sortName = request.getParameter("mDataProp_" + sortCol);
-        String sortDir = request.getParameter("sSortDir_0");
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
@@ -61,13 +55,15 @@ public class PushController {
         String eTimeStr = request.getParameter("eTime");
         Date sTime = null, eTime = null;
         if (!"".equals(sTimeStr) && !"".equals(eTimeStr)) {
+            DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
             sTime = DateTime.parse(sTimeStr, format).toDate();
             eTime = DateTime.parse(eTimeStr, format).toDate();
         }
         String name = request.getParameter("name");
         String content = request.getParameter("content");
         String type = request.getParameter("type");
-        Page<PhPush> pages = pushService.list(name, content, type, sTime, eTime, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Sort.Direction.fromString(sortDir), sortName));
+        Sort sort = new Sort(Sort.Direction.DESC, "createTime");
+        Page<PhPush> pages = pushService.list(name, content, type, sTime, eTime, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         // 为操作次数加1，必须这样做
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();

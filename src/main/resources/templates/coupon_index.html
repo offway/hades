@@ -379,6 +379,7 @@
 	}
 
 	var qiniuUrl = [[${qiniuUrl}]];
+	var urlApi = [[${urlApi}]];
     jQuery(document).ready(function($)
 	{
         var oTable;
@@ -593,7 +594,7 @@
 				if (isNaN(code) || code == null) {
 					alert("请输入数字！");
 				} else {
-					var url = "https://zeus.offway.cn/voucher/giveByVpId?userId=AAA&voucherProjectId=BBB".replace("AAA", userId).replace("BBB", code);
+					var url = urlApi + "/voucher/giveByVpId?userId=AAA&voucherProjectId=BBB".replace("AAA", userId).replace("BBB", code);
 					$.post(url, {}, function (data) {
 						if (data) {
 							toastr.success("操作已成功！", "温馨提示");
