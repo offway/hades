@@ -8,10 +8,13 @@
     <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
+		.form-group img {
+			max-width: 400px;
+			max-height: 300px;
+		}
+		.page-container .main-content {
+			word-break: keep-all;
+		}
 	</style>
 </head>
 <body class="page-body">
@@ -111,9 +114,9 @@
 					</form>
 				</div>
 				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					<table id="example-1" class="display nowrap table table-striped table-bordered" cellspacing="0"
+						   style="width:100%">
 					</table>
-					
 				</div>
 				<!--<button class="btn btn-info add" >添加</button>-->
 				<!--<button class="btn btn-info edit">修改</button>-->
@@ -450,9 +453,8 @@
 				language: {
 					url: "../assets/Chinese.txt"
 				},
-				aLengthactivity: [
-					[10, 25, 50, 100], [10, 25, 50, 100]
-				],
+				scrollX: true,
+				// responsive: true,
 				bFilter: false,
 				bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
 				sAjaxDataProp: "aData",//是服务器分页的标志，必须有
@@ -465,7 +467,6 @@
 					{
 						targets: 0,
 						data: "id",
-						width: "5%",
 						orderable: false,
 						className: 'select-checkbox',
 						title: '<input type="checkbox" id="checkbox-all"/>',
@@ -475,11 +476,13 @@
 					},
 					{
 						targets: 1,
+						orderable: false,
 						data: "id",
 						title: "序号"
 					},
 					{
 						targets: 2,
+						orderable: false,
 						data: "orderNo",
 						title: "订单号",
 						render: function (data, type, row, meta) {
@@ -494,51 +497,61 @@
 					},
 					{
 						targets: 3,
+						orderable: false,
 						data: "userId",
 						title: "用户ID"
 					},
 					{
 						targets: 4,
+						orderable: false,
 						data: "price",
 						title: "商品总价"
 					},
 					{
 						targets: 5,
+						orderable: false,
 						data: "amount",
 						title: "实付金额"
 					},
                     {
                         targets: 6,
+						orderable: false,
                         data: "mailFee",
                         title: "运费"
                     },
                     {
                         targets: 7,
+						orderable: false,
                         data: "pvoucherAmount",
                         title: "平台优惠券金额"
                     },
                     {
                         targets: 8,
+						orderable: false,
                         data: "mvoucherAmount",
                         title: "店铺优惠券金额"
                     },
 					{
 						targets: 9,
+						orderable: false,
 						data: "promotionAmount",
 						title: "商户促销优惠金额"
 					},
 					{
 						targets: 10,
+						orderable: false,
 						data: "platformPromotionAmount",
 						title: "平台促销优惠金额"
 					},
 					{
 						targets: 11,
+						orderable: false,
 						data: "gift",
 						title: "赠品"
 					},
                     {
                         targets: 12,
+						orderable: false,
                         data: "sub",
                         title: "订单内商品",
 						render: function (data, type, row, meta) {
@@ -561,6 +574,7 @@
                     },
 					{
 						targets: 13,
+						orderable: false,
 						data: "status",
 						title: "状态",
 						render: function (data, type, row, meta) {
@@ -571,6 +585,7 @@
 					},
 					{
 						targets: 14,
+						orderable: false,
 						data: "payChannel",
 						title: "支付渠道",
 						render: function (data, type, row, meta) {
@@ -581,6 +596,7 @@
 					},
 					{
 						targets: 15,
+						orderable: false,
 						data: "preorderNo",
 						title: "总订单号",
 						render: function (data, type, row, meta) {
@@ -595,6 +611,7 @@
 					},
 					{
 						targets: 16,
+						orderable: false,
 						data: "createTime",
 						title: "创建时间",
 						render: function (data, type, row, meta) {
@@ -603,18 +620,20 @@
 					},
 					{
 						targets: 17,
+						orderable: false,
 						data: "remark",
 						title: "备注"
 					},
 					{
 						targets: 18,
+						orderable: false,
 						data: "merchantName",
 						title: "商户名"
 					},
 					{
 						targets: 19,
-						data: "id",
 						orderable: false,
+						data: "id",
 						title: "操作",
 						render: function (data, type, full, meta) {
 							return '<input type="button" name="checkIt" onclick="goToDetail(' + data + ')" value="查看详情"/>';
@@ -622,8 +641,8 @@
 					},
 					{
 						targets: 20,
-						data: "id",
 						orderable: false,
+						data: "id",
 						title: "操作",
 						render: function (data, type, full, meta) {
                             var str = "";
