@@ -414,6 +414,18 @@
 		});
 	}
 
+	function buildImg(url, h, w) {
+		if (url == null || url == '') {
+			return "";
+		} else {
+			if (h != null && w != null) {
+				return "<img width='WWWpx' height='HHHpx' src='#' />".replace("#", url).replace("WWW", w).replace("HHH", h);
+			} else {
+				return "<img width='375px' height='223px' src='#' />".replace("#", url);
+			}
+		}
+	}
+
     jQuery(document).ready(function($)
 	{
         var qiniuUrl = [[${qiniuUrl}]];
@@ -525,8 +537,21 @@
 						data: "gift",
 						title: "赠品"
 					},
+					{
+						targets: 8,
+						orderable: false,
+						data: "sub",
+						title: "商品图片",
+						render:function (data, type, full, meta) {
+							var img = "";
+							for (var i in data){
+								img+= buildImg(data[i]["goodsImage"]);
+							}
+							return img;
+						}
+					},
                     {
-                        targets: 8,
+                        targets: 9,
 						orderable: false,
                         data: "sub",
                         title: "订单内商品",
@@ -549,7 +574,7 @@
 						}
                     },
 					{
-						targets: 9,
+						targets: 10,
 						orderable: false,
 						data: "status",
 						title: "状态",
@@ -560,7 +585,7 @@
 						}
 					},
 					{
-						targets: 10,
+						targets: 11,
 						orderable: false,
 						data: "payChannel",
 						title: "支付渠道",
@@ -571,7 +596,7 @@
 						}
 					},
 					{
-						targets: 11,
+						targets: 12,
 						orderable: false,
 						data: "preorderNo",
 						title: "总订单号",
@@ -586,7 +611,7 @@
 						}
 					},
 					{
-						targets: 12,
+						targets: 13,
 						orderable: false,
 						data: "createTime",
 						title: "创建时间",
@@ -594,20 +619,14 @@
 							return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
 						}
 					},
-					{
-						targets: 13,
-						orderable: false,
-						data: "remark",
-						title: "备注"
-					},
+					// {
+					// 	targets: 14,
+					// 	orderable: false,
+					// 	data: "merchantName",
+					// 	title: "商户名"
+					// },
 					{
 						targets: 14,
-						orderable: false,
-						data: "merchantName",
-						title: "商户名"
-					},
-					{
-						targets: 15,
 						orderable: false,
 						data: "id",
 						title: "操作",
@@ -616,7 +635,7 @@
 						}
 					},
 					{
-						targets: 16,
+						targets: 15,
 						orderable: false,
 						data: "id",
 						title: "操作",
