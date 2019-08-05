@@ -151,6 +151,7 @@
 									<label class="control-label">选择方式</label>
 									<label><input name="method" class="notMe" type="radio" checked="checked" value="0"/>品牌首字母索引</label>
 									<label><input name="method" class="notMe" type="radio" value="1"/>按分类索引</label>
+									<label><input name="method" class="notMe" type="radio" value="2"/>按关键字索引</label>
 								</div>
 							</div>
 						</div>
@@ -174,6 +175,18 @@
 								<div class="form-group">
 									<label class="control-label">二级分类</label>
 									<select class="form-control" id="categorySelect" onchange="renderGoods(this)"></select>
+								</div>
+							</div>
+						</div>
+						<div class="row" id="searchDiv" style="display: none">
+							<div class="col-md-8">
+								<div class="form-group">
+									<input type="text" class="form-control" name="keyword" placeholder="商品名关键字"/>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<input type="button" onclick="renderKeywordGoodsSelect()" class="notMe form-control" value="查询" />
 								</div>
 							</div>
 						</div>
@@ -454,6 +467,14 @@
 		});
 	}
 
+	function renderKeywordGoodsSelect() {
+		var that = $("input[name='keyword']");
+		var value = that.val();
+		$.post("/pick_getGoods", {"value": value, "type": 3}, function (data) {
+			bindGoods(data);
+		});
+	}
+
 	var msDropDownEle = null;
 
 	function bindGoods(data) {
@@ -674,14 +695,22 @@
 			var value = $(this).val();  //获取选中的radio的值
 			var azBarDiv = $("#azBarDiv");
 			var typeAndCategoryDiv = $("#typeAndCategoryDiv");
+			var searchDiv = $("#searchDiv");
 			switch (parseInt(value)) {
 				case 0:
 					azBarDiv.show();
 					typeAndCategoryDiv.hide();
+					searchDiv.hide();
+					break;
+				case 1:
+					azBarDiv.hide();
+					typeAndCategoryDiv.show();
+					searchDiv.hide();
 					break;
 				default:
 					azBarDiv.hide();
-					typeAndCategoryDiv.show();
+					typeAndCategoryDiv.hide();
+					searchDiv.show();
 					break;
 			}
 		});

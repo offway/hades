@@ -110,6 +110,8 @@ public class PickController {
                 return goodsService.findAll("type", value);
             case 2:
                 return goodsService.findAll("category", value);
+            case 3:
+                return goodsService.findAll("keyword", value);
             default:
                 return null;
         }
