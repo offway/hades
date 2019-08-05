@@ -1,3 +1,6 @@
+setTimeout(function () {
+    document.getElementsByTagName('body')[0].style.zoom = 0.8
+}, 1000);
 // 虚拟表单提交
 function post(URL, PARAMS) {
     var temp = $("<form>");
