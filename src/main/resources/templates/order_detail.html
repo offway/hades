@@ -620,7 +620,7 @@
 					title: "收货人",
 					render: function (data, type, row, meta) {
 						if (data) {
-							return data;
+							return '<font size="+2">'+data+'</font>';
 						} else {
 							return "暂无";
 						}
@@ -632,7 +632,7 @@
 					title: "手机号码",
 					render: function (data, type, row, meta) {
 						if (data) {
-							return data;
+							return '<font size="+2">'+data+'</font>';
 						} else {
 							return "暂无";
 						}
@@ -644,7 +644,7 @@
 					title: "收货地址",
 					render: function (data, type, row, meta) {
 						if (data) {
-							return data;
+							return '<font size="+2">'+data+'</font>';
 						} else {
 							return "暂无";
 						}
@@ -771,7 +771,10 @@
 				{
 					targets: 0,
 					data: "price",
-					title: "商品合计"
+					title: "商品合计",
+					render:function (data, type, row, meta) {
+						return '<font size="+6">'+data+'</font>';
+					}
 				},
 				{
 					targets: 1,
@@ -795,18 +798,26 @@
 				},
 				{
 					targets: 5,
+					data: "gift",
+					title: "赠品"
+				},
+				{
+					targets: 6,
 					data: "walletAmount",
 					title: "钱包"
 				},
 				{
-					targets: 6,
+					targets: 7,
 					data: "mailFee",
 					title: "运费"
 				},
 				{
-					targets: 7,
+					targets: 8,
 					data: "amount",
-					title: "实付金额"
+					title: "实付金额",
+					render:function (data, type, row, meta) {
+						return '<font size="+6">'+data+'</font>';
+					}
 				}
 			]
 		});
