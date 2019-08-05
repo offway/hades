@@ -112,7 +112,11 @@ public class PhGoodsServiceImpl implements PhGoodsService {
             public Predicate toPredicate(Root<PhGoods> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
                 params.add(criteriaBuilder.equal(root.get("status"), "1"));
-                params.add(criteriaBuilder.equal(root.get(name), value));
+                if ("keyword".equals(name)) {
+                    params.add(criteriaBuilder.like(root.get("name"), "%" + value + "%"));
+                } else {
+                    params.add(criteriaBuilder.equal(root.get(name), value));
+                }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
                 return null;
