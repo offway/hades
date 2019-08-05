@@ -113,7 +113,9 @@ public class PhGoodsServiceImpl implements PhGoodsService {
                 List<Predicate> params = new ArrayList<Predicate>();
                 params.add(criteriaBuilder.equal(root.get("status"), "1"));
                 if ("keyword".equals(name)) {
-                    params.add(criteriaBuilder.like(root.get("name"), "%" + value + "%"));
+                    Predicate like = criteriaBuilder.like(root.get("name"), "%" + value + "%");
+                    Predicate or = criteriaBuilder.equal(root.get("id"), value);
+                    params.add(criteriaBuilder.or(like, or));
                 } else {
                     params.add(criteriaBuilder.equal(root.get(name), value));
                 }
