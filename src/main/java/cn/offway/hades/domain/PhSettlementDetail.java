@@ -53,6 +53,12 @@ public class PhSettlementDetail extends BaseRowModel implements Serializable {
     /** 平台优惠券金额 **/
     private Double pVoucherAmount;
 
+    /** 商户促销优惠金额  **/
+    private Double promotionAmount;
+
+    /** 平台促销优惠金额  **/
+    private Double platformPromotionAmount;
+
     /** 钱包金额 **/
     private Double walletAmount;
 
@@ -311,5 +317,23 @@ public class PhSettlementDetail extends BaseRowModel implements Serializable {
 
     public void setOrderNoCopy(String orderNoCopy) {
         this.orderNoCopy = orderNoCopy;
+    }
+
+    @Transient
+    public Double getPromotionAmount() {
+        return promotionAmount;
+    }
+
+    public void setPromotionAmount(Double promotionAmount) {
+        this.promotionAmount = promotionAmount;
+    }
+
+    @Transient
+    public Double getPlatformPromotionAmount() {
+        return platformPromotionAmount;
+    }
+
+    public void setPlatformPromotionAmount(Double platformPromotionAmount) {
+        this.platformPromotionAmount = platformPromotionAmount;
     }
 }

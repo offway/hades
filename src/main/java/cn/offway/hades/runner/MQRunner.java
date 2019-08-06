@@ -121,9 +121,9 @@ public class MQRunner implements ApplicationRunner {
         } while (true);
     }
 
-    public void save(String preorderNo) {
-        logger.info("收到新支付订单:" + preorderNo);
-        List<PhOrderInfo> phOrderInfos = phOrderInfoService.findByPreorderNoAndStatus(preorderNo, "1");
+    public void save(String preOrderNo) {
+        logger.info("收到新支付订单:" + preOrderNo);
+        List<PhOrderInfo> phOrderInfos = phOrderInfoService.findByPreorderNoAndStatus(preOrderNo, "1");
         List<PhSettlementDetail> phSettlementDetails = new ArrayList<>();
         List<PhSettlementInfo> phSettlementInfos = new ArrayList<>();
         for (PhOrderInfo orderInfo : phOrderInfos) {
@@ -140,6 +140,8 @@ public class MQRunner implements ApplicationRunner {
             settlementDetail.setMerchantName(orderInfo.getMerchantName());
             settlementDetail.setMVoucherAmount(orderInfo.getMVoucherAmount());
             settlementDetail.setPVoucherAmount(orderInfo.getPVoucherAmount());
+            settlementDetail.setPromotionAmount(orderInfo.getPromotionAmount());
+            settlementDetail.setPlatformPromotionAmount(orderInfo.getPlatformPromotionAmount());
             settlementDetail.setOrderNo(orderInfo.getOrderNo());
             settlementDetail.setPayChannel(orderInfo.getPayChannel());
             settlementDetail.setPayFee(String.format("%.2f", orderInfo.getAmount() * 0.003));//千分之三的手续费
@@ -147,7 +149,7 @@ public class MQRunner implements ApplicationRunner {
             settlementDetail.setWalletAmount(orderInfo.getWalletAmount());
             //计算结算金额
 //            double amount = settlementDetail.getAmount() - settlementDetail.getCutAmount() - Double.valueOf(settlementDetail.getPayFee()) - settlementDetail.getMailFee();
-            double amount = (settlementDetail.getPrice() - settlementDetail.getMVoucherAmount()) * (1D - phMerchant.getRatio() / 100);
+            double amount = (settlementDetail.getPrice() - settlementDetail.getMVoucherAmount() - settlementDetail.getPromotionAmount()) * (1D - phMerchant.getRatio() / 100);
             settlementDetail.setSettledAmount(amount);
             /* 状态[0-待结算,1-结算中,2-已结算] */
             settlementDetail.setStatus("0");
