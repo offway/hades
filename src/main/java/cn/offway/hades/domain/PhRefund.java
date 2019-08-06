@@ -88,6 +88,15 @@ public class PhRefund extends BaseRowModel implements Serializable {
     @ExcelProperty(value = "退款商品件数",index = 13)
     private Long goodsCount;
 
+    /** 换货地址ID **/
+    private Long addrId;
+
+    /** 商家发货快递运单号 **/
+    private String shipMailNo;
+
+    /** 商家发货快递公司编码 **/
+    private String shipExpressCode;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -262,5 +271,32 @@ public class PhRefund extends BaseRowModel implements Serializable {
 
     public void setExpressCode(String expressCode) {
         this.expressCode = expressCode;
+    }
+
+    @Column(name = "addr_id", length = 11)
+    public Long getAddrId() {
+        return addrId;
+    }
+
+    public void setAddrId(Long addrId) {
+        this.addrId = addrId;
+    }
+
+    @Column(name = "ship_mail_no", length = 50)
+    public String getShipMailNo() {
+        return shipMailNo;
+    }
+
+    public void setShipMailNo(String shipMailNo) {
+        this.shipMailNo = shipMailNo;
+    }
+
+    @Column(name = "ship_express_code", length = 50)
+    public String getShipExpressCode() {
+        return shipExpressCode;
+    }
+
+    public void setShipExpressCode(String shipExpressCode) {
+        this.shipExpressCode = shipExpressCode;
     }
 }
