@@ -1,5 +1,5 @@
 setTimeout(function () {
-    document.getElementsByTagName('body')[0].style.zoom = 0.8
+    document.getElementsByTagName('body')[0].style.zoom = 0.85
 }, 1000);
 // 虚拟表单提交
 function post(URL, PARAMS) {
