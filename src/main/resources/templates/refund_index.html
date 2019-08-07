@@ -305,21 +305,6 @@
         jQuery('#modal-6').modal('show', {backdrop: 'fade'});
     }
 
-    function editDeliveredOrder(id) {
-        $.post("/order_getDeliveredOrder", {"id": id}, function (data) {
-            if (data != '') {
-                var form = $("#saveForm");
-                form.find("select[name='expressCode']").val(data["expressCode"]);
-                form.find("input[name='mailNo']").val(data["mailNo"]);
-                form.find("[name='id']").val(id);
-                form.find("[name='action']").val("update");
-                jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
-
     function trackOrder(id) {
         $.post("/order_trackRefund", {"id": id}, function (data) {
             console.log(data);
@@ -423,6 +408,13 @@
 		btn.on("click", function () {
 			toDec(self);
 		});
+	}
+	
+	function delivery(id) {
+		$('#modal-6').show();
+		var form = $("#saveForm");
+		form.find("[name='id']").val(id);
+		jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 	}
 
 	var qiniuUrl = [[${qiniuUrl}]];
@@ -556,9 +548,16 @@
 					data: "status",
 					title: "状态",
 					render: function (data, type, row, meta) {
-						/** 状态[0-审核中,1-待退货,2-退货中,3-退款中,4-退款成功,5-退款取消,6-审核失败] **/
-						var map = ["审核中", "待退货", "退货中", "退款中", "退款成功", "退款取消", "审核失败"];
-						return map[parseInt(data)];
+						/** 状态[0-审核中,1-待退货,2-退货中,3-退款中/换货中,4-退款成功/换货成功,5-退款取消,6-审核失败,7-已寄出] **/
+						if (row["type"] == "2" && data == "3") {
+							return "换货中"
+						} else if (row["type"] == "2" && data == "4") {
+							return "换货成功"
+						} else {
+							var map = ["审核中", "待退货", "退货中", "退款中", "退款成功", "退款取消", "审核失败", "已寄出"];
+							return map[parseInt(data)];
+						}
+
 					}
 				},
 				{
@@ -663,8 +662,10 @@
 						} else if (status == 2) {
 							str += '<input type="button" onclick="trackOrder(' + data + ')" value="退货追踪"/>';
 							str += '<input type="button" onclick="confirmDelivery(' + data + ')" value="确认收货"/>';
-						} else if (status == 3 && isAdmin == 1) {
+						} else if (status == 3 && isAdmin == 1 && type != 2) {
 							str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="确认打款"/>';
+						} else if (type == 2 && status == 3) {
+							str += '<input type="button" onclick="delivery(' + data + ')" value="确认发货"/>';
 						}
 						return str;
 					}
@@ -702,10 +703,10 @@
 
 		//保存
 		$(".btn.btn-info.save").click(function () {
-			var footer = $(this).parent(".modal-footer");
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var form = $("#saveForm");
+            var footer = $(this).parent(".modal-footer");
+            footer.find("button").hide();
+            footer.find(".bg-lg").show();
+            var form = $("#saveForm");
 			var expressCode = form.find("input[name='expressCode']").val();
 			var mailNo = form.find("input[name='mailNo']").val();
 
@@ -715,7 +716,6 @@
 				footer.find(".bg-lg").hide();
 				return;
 			}
-
 			//获取token
 			$.get("/qiniu/token", {}, function (token) {
 				if (token != '') {
@@ -728,7 +728,7 @@
 						},
 						three: function (callback) {
 							//提交保存
-							$.post("/order_deliverOrder", $("#saveForm").serialize(), function (data) {
+							$.post("/refund_delivery", $("#saveForm").serialize(), function (data) {
 								if (data) {
 									footer.find("button").show();
 									footer.find(".bg-lg").hide();

@@ -44,7 +44,7 @@ public class PhRefund extends BaseRowModel implements Serializable {
     @ExcelProperty(value = "类型",index = 5)
     private String type;
 
-    /** 状态[0-审核中,1-待退货,2-退货中,3-退款中,4-退款成功,5-退款取消,6-审核失败] **/
+    /** 状态[0-审核中,1-待退货,2-退货中,3-退款中/换货中,4-退款成功/换货成功,5-退款取消,6-审核失败,7-已寄出] **/
     @ExcelProperty(value = "状态",index = 6)
     private String status;
 

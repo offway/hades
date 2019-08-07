@@ -588,7 +588,14 @@
 				{
 					targets: 6,
 					data: "refundAmount",
-					title: "申请退款金额"
+					title: "申请退款金额",
+					render:function (data, type, row, meta) {
+						if ((data == null)){
+							return '无'
+						}else {
+							return data;
+						}
+					}
 				}
 			]
 		});
@@ -620,7 +627,14 @@
 				{
 					targets: 3,
 					data: "zipCode",
-					title: "邮政编码"
+					title: "邮政编码",
+					render:function (data, type, row, meta) {
+						if ((data == null)){
+							return '无'
+						}else {
+							return data;
+						}
+					}
 				},
 				{
 					targets: 4,
@@ -670,7 +684,14 @@
 				{
 					targets: 4,
 					data: "amount",
-					title: "退款金额"
+					title: "退款金额",
+					render:function (data, type, row, meta) {
+						if ((data == null)){
+							return '无'
+						}else {
+							return data;
+						}
+					}
 				},
 				{
 					targets: 5,
@@ -700,7 +721,14 @@
 				{
 					targets: 8,
 					data: "reason",
-					title: "售后原因"
+					title: "售后原因",
+					render:function (data, type, row, meta) {
+						if ((data == null)){
+							return '无'
+						}else {
+							return data;
+						}
+					}
 				}
 			]
 		});

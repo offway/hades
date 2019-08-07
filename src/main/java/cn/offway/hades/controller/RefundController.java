@@ -215,7 +215,7 @@ public class RefundController {
             }
             WeakHashMap<Long, PhOrderGoods> holder = new WeakHashMap<>();
             for (PhOrderGoods orderGoods : orderGoodsList) {
-                holder.put(orderGoods.getGoodsId(), orderGoods);
+                holder.put(orderGoods.getId(), orderGoods);
                 if (needClone) {
                     PhRefundGoods obj = new PhRefundGoods();
                     obj.setOrderGoodsId(orderGoods.getGoodsId());
@@ -453,5 +453,16 @@ public class RefundController {
         refund.setCheckReason("");
         refundService.save(refund);
         return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/refund_delivery")
+    public boolean delivery(PhRefund refund,@AuthenticationPrincipal PhAdmin admin){
+        PhRefund refund0 = refundService.findOne(refund.getId());
+        refund0.setMailNo(refund.getMailNo());
+        refund0.setExpressCode(refund.getExpressCode());
+        refund0.setStatus("7");
+        refundService.save(refund0);
+        return  true;
     }
 }
