@@ -47,6 +47,11 @@ public class PhLimitedSale implements Serializable {
     /** 备注 **/
     private String remark;
 
+    /** 市场价 **/
+    private String originalPrice;
+
+    /** 数量 **/
+    private String saleCount;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -152,4 +157,21 @@ public class PhLimitedSale implements Serializable {
         this.remark = remark;
     }
 
+    @Column(name = "original_price", length = 50)
+    public String getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public void setOriginalPrice(String originalPrice) {
+        this.originalPrice = originalPrice;
+    }
+
+    @Column(name = "sale_count", length = 50)
+    public String getSaleCount() {
+        return saleCount;
+    }
+
+    public void setSaleCount(String saleCount) {
+        this.saleCount = saleCount;
+    }
 }
