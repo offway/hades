@@ -133,6 +133,14 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
+									<label class="control-label">目标助力次数</label>
+									<input type="text" class="form-control" name="boostCount" placeholder="目标助力次数"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
 									<label class="control-label">发售详情</label>
 									<textarea id="editor_id" name="info" style="width:700px;height:300px;" placeholder="发售详情">
 									</textarea>
@@ -602,8 +610,13 @@
 					data: "saleCount",
 					title: "数量"
 				},
+				{
+					targets: 13,
+					data: "boostCount",
+					title: "目标助力次数"
+				},
                 {
-                    targets: 13,
+                    targets: 14,
                     data: "goodsId",
                     orderable: false,
                     title: "操作",
@@ -614,7 +627,7 @@
                     }
                 },
                 {
-                    targets: 14,
+                    targets: 15,
                     data: "id",
                     orderable: false,
                     title: "操作",
@@ -712,9 +725,10 @@
 			var name = form.find("input[name='name']").val();
 			var image = form.find("input[name='image']").val();
 			var status = form.find("input[name='status']:checked").val();
+			var boostCount = form.find("input[name='boostCount']:checked").val();
 			var info = editor.html();
 
-            if (beginTime == '' || endTime == '' || name == '' || image == '' || status == '' || info == '') {
+            if (beginTime == '' || endTime == '' || name == '' || image == '' || status == '' || info == '' || boostCount == '') {
                 toastr.error("请填写完整数据后提交", "温馨提示");
                 footer.find("button").show();
                 footer.find(".bg-lg").hide();

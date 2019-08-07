@@ -53,6 +53,9 @@ public class PhLimitedSale implements Serializable {
     /** 数量 **/
     private String saleCount;
 
+    /** 目标助力次数 **/
+    private Long boostCount;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -173,5 +176,14 @@ public class PhLimitedSale implements Serializable {
 
     public void setSaleCount(String saleCount) {
         this.saleCount = saleCount;
+    }
+
+    @Column(name = "boost_count", length = 11)
+    public Long getBoostCount() {
+        return boostCount;
+    }
+
+    public void setBoostCount(Long boostCount) {
+        this.boostCount = boostCount;
     }
 }
