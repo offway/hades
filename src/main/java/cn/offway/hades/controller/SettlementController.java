@@ -9,6 +9,9 @@ import com.alibaba.excel.event.WriteHandler;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yunpian.sdk.YunpianClient;
+import com.yunpian.sdk.model.Result;
+import com.yunpian.sdk.model.SmsSingleSend;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -218,7 +221,7 @@ public class SettlementController {
 
     @ResponseBody
     @RequestMapping("/settle_list")
-    public Map<String, Object> getSettleList(HttpServletRequest request,String merchantId, @AuthenticationPrincipal PhAdmin admin) {
+    public Map<String, Object> getSettleList(HttpServletRequest request, String merchantId, @AuthenticationPrincipal PhAdmin admin) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
@@ -230,7 +233,8 @@ public class SettlementController {
             if (merchant != null) {
                 mid = merchant.getId();
             }
-        }if (StringUtils.isNotBlank(merchantId)){
+        }
+        if (StringUtils.isNotBlank(merchantId)) {
             mid = merchantId;
         }
         Page<PhSettlementInfo> pages = settlementInfoService.findAll(mid, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
@@ -388,6 +392,9 @@ public class SettlementController {
         if (info != null) {
             info.setStatisticalTime(new Date());
             settlementInfoService.save(info);
+            if (totalAmount > 0) {
+                sendSMS();
+            }
         }
         return totalAmount;
     }
@@ -423,8 +430,25 @@ public class SettlementController {
         if (info != null) {
             info.setStatisticalTime(new Date());
             settlementInfoService.save(info);
+            if (totalAmount > 0) {
+                sendSMS();
+            }
         }
         return totalAmount;
+    }
+
+    private void sendSMS() {
+        //初始化clnt,使用单例方式
+        YunpianClient client = new YunpianClient("d7c58b5d229428d28434533b17ff084a").init();
+        //发送短信API
+        Map<String, String> param = client.newParam(2);
+        param.put(YunpianClient.MOBILE, "+8613918021859");
+        param.put(YunpianClient.TEXT, "【很潮】您好，有一笔退款审核已通过，请通过后台确认打款~");
+        Result<SmsSingleSend> r = client.sms().single_send(param);
+        //获取返回结果，返回码:r.getCode(),返回码描述:r.getMsg(),API结果:r.getData(),其他说明:r.getDetail(),调用异常:r.getThrowable()
+        //账户:clnt.user().* 签名:clnt.sign().* 模版:clnt.tpl().* 短信:clnt.sms().* 语音:clnt.voice().* 流量:clnt.flow().* 隐私通话:clnt.call().*
+        //释放clnt
+        client.close();
     }
 
     @RequestMapping("/settle_inner_export.html")
