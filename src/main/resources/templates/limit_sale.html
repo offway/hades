@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 	<head th:replace="head"></head>
+	<meta name="referrer" content="no-referrer"/>
 	<title>限时商品管理</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
@@ -177,6 +178,7 @@
 		</div>
 	</div>
 	<input type="hidden" id="type_and_category_list"/>
+	<a id="url" href="#" target="_blank" rel="noopener noreferrer"></a>
 	<script src="js/common.js"></script>
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
@@ -764,10 +766,13 @@
 						footer.find("button").show();
 						footer.find(".bg-lg").hide();
 						jQuery('#modal-6').modal('hide');
+						var url = $("#url");
 						if (action == 'edit') {
-							window.open('/limit_sale_edit.html?args=' + args, "_blank");
+							url.attr("href", '/limit_sale_edit.html?args=' + args);
+							url[0].click();
 						} else {
-							window.open('/limit_sale_add.html?args=' + args, "_blank");
+							url.attr("href", '/limit_sale_add.html?args=' + args);
+							url[0].click();
 						}
                     });
                 } else {
