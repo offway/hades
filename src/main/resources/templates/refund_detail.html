@@ -542,6 +542,54 @@
 					render: function (data, type, row, meta) {
 						return buildImg(data);
 					}
+				},
+				{
+					targets: 11,
+					data: "toStockId",
+					title: "换货商品SKU",
+					render:function (data, type, row, meta) {
+						if (data == null){
+							return "无";
+						}else {
+							return data;
+						}
+					}
+				},
+				{
+					targets: 12,
+					data: "toStockImage",
+					title: "换货商品图",
+					render:function (data, type, row, meta) {
+						if (data == null){
+							return "无";
+						}else {
+							return buildImg(data);
+						}
+					}
+				},
+				{
+					targets: 13,
+					data: "toStockDesc",
+					title: "换货规格",
+					render:function (data, type, row, meta) {
+						if (data == null){
+							return "无";
+						}else {
+							return data;
+						}
+					}
+				},
+				{
+					targets: 14,
+					data: "reason",
+					title: "换货理由",
+					render:function (data, type, row, meta) {
+						if (data == null){
+							return "无";
+						}else {
+							return data;
+						}
+					}
 				}
 			]
 		});

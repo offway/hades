@@ -241,6 +241,10 @@ public class RefundController {
                     goodsInfo.put("type", goods.getType() + goods.getCategory());
                     goodsInfo.put("merchantName", goods.getMerchantName());
                     goodsInfo.put("stockImg", goodsStock.getImage());
+                    goodsInfo.put("toStockImage",refundGoods.getToStockImage());
+                    goodsInfo.put("toStockDesc",refundGoods.getToStockDesc());
+                    goodsInfo.put("toStockId",refundGoods.getToStockId());
+                    goodsInfo.put("reason",refundGoods.getReason());
                     StringBuilder sb = new StringBuilder();
                     for (PhGoodsProperty p : propertyList) {
                         sb.append(p.getName());
@@ -459,8 +463,8 @@ public class RefundController {
     @RequestMapping("/refund_delivery")
     public boolean delivery(PhRefund refund,@AuthenticationPrincipal PhAdmin admin){
         PhRefund refund0 = refundService.findOne(refund.getId());
-        refund0.setMailNo(refund.getMailNo());
-        refund0.setExpressCode(refund.getExpressCode());
+        refund0.setShipMailNo(refund.getMailNo());
+        refund0.setShipExpressCode(refund.getExpressCode());
         refund0.setStatus("7");
         refundService.save(refund0);
         return  true;

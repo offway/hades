@@ -548,8 +548,8 @@
 					data: "status",
 					title: "状态",
 					render: function (data, type, row, meta) {
-						/** 状态[0-审核中,1-待退货,2-退货中,3-退款中/换货中,4-退款成功/换货成功,5-退款取消,6-审核失败,7-已寄出] **/
-						if (row["type"] == "2" && data == "3") {
+						/** 状态[0-审核中,1-待退货,2-退货中/换货中,3-退款中,4-退款成功/换货成功,5-退款取消,6-审核失败,7-已寄出] **/
+						if (row["type"] == "2" && data == "2") {
 							return "换货中"
 						} else if (row["type"] == "2" && data == "4") {
 							return "换货成功"
@@ -661,11 +661,13 @@
 							}
 						} else if (status == 2) {
 							str += '<input type="button" onclick="trackOrder(' + data + ')" value="退货追踪"/>';
-							str += '<input type="button" onclick="confirmDelivery(' + data + ')" value="确认收货"/>';
+							if(type == 2){
+								str += '<input type="button" onclick="delivery(' + data + ')" value="确认收货并发货"/>';
+							}else {
+								str += '<input type="button" onclick="confirmDelivery(' + data + ')" value="确认收货"/>';
+							}
 						} else if (status == 3 && isAdmin == 1 && type != 2) {
 							str += '<input type="button" onclick="goToDetail(' + data + ',0)" value="确认打款"/>';
-						} else if (type == 2 && status == 3) {
-							str += '<input type="button" onclick="delivery(' + data + ')" value="确认发货"/>';
 						}
 						return str;
 					}
