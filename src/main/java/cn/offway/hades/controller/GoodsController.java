@@ -998,7 +998,8 @@ public class GoodsController {
             PhLimitedSale limitedSaleSaved = limitedSaleService.findOne(limitedSale.getId());
             limitedSale.setCreateTime(limitedSaleSaved.getCreateTime());
         }
-        String newInfoStr = new String(jsonStrInfo, Charset.forName("utf-8")).replaceAll("(?<=(<img.{1,500}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,500}))height:\\d+px(?=(.+>))", "");
+        String newInfoStr = new String(jsonStrInfo, Charset.forName("utf-8")).replaceAll("(?<=(<img.{1,500}))style=\".+\"(?=(.+>))", "style=\"width:100% !important\"");
+//        newInfoStr = newInfoStr.replaceAll("height:auto", "height:100%").replaceAll("width:auto", "width:100%");
         limitedSale.setInfo(ArticleController.filterWxPicAndReplace(newInfoStr, qiniuService));
         limitedSale.setPrice(goodsSaved.getPrice());
         if ("1".equals(limitedSale.getStatus())) {
