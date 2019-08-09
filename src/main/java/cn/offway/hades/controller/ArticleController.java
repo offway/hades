@@ -212,12 +212,12 @@ public class ArticleController {
     @RequestMapping("/article_save")
     public boolean save(PhArticle brand) throws IOException {
         if (brand.getId() == null) {
-            brand.setContent(filterWxPicAndReplace(brand.getContent().replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))","").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))","")));
+            brand.setContent(filterWxPicAndReplace(brand.getContent().replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))", ""), qiniuService));
             brand.setCreateTime(new Date());
             brand.setStatus("0");
         } else {
             PhArticle article = articleService.findOne(brand.getId());
-            brand.setContent(filterWxPicAndReplace(brand.getContent().replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))","").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))","")));
+            brand.setContent(filterWxPicAndReplace(brand.getContent().replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))", ""), qiniuService));
             brand.setStatus(article.getStatus());
             brand.setCreateTime(article.getCreateTime());
             brand.setApprover(article.getApprover());
@@ -345,7 +345,7 @@ public class ArticleController {
         return true;
     }
 
-    private String filterWxPicAndReplace(String content) throws IOException {
+    public static String filterWxPicAndReplace(String content, QiniuService qiniuService) throws IOException {
         Pattern p_image;
         Matcher m_image;
         String regEx_img = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
@@ -363,7 +363,7 @@ public class ArticleController {
                 String oldImgSrc = m.group(1);
                 String newImgSrc = "";
                 if (null != oldImgSrc && !"".equals(oldImgSrc) && !oldImgSrc.contains("http://qiniu.offway.cn") && (oldImgSrc.startsWith("http://") || oldImgSrc.startsWith("https://"))) {
-                    newImgSrc = getQiniuImg(oldImgSrc);
+                    newImgSrc = getQiniuImg(oldImgSrc, qiniuService);
                     m.appendReplacement(imgBuffer, "src=\"" + newImgSrc + "\"");
                     System.out.println("newImgSrc:::::::::::::::" + newImgSrc);
                 } else {
@@ -379,12 +379,12 @@ public class ArticleController {
         return m_imageBuffer.toString();
     }
 
-    private String getQiniuImg(String url) throws IOException {
+    private static String getQiniuImg(String url, QiniuService qiniuService) throws IOException {
         InputStream file = parseFile(new URL(url));
-        return uploadImg(file);
+        return uploadImg(file, qiniuService);
     }
 
-    private InputStream parseFile(URL url) throws IOException {
+    private static InputStream parseFile(URL url) throws IOException {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         //设置超时间为3秒
         conn.setConnectTimeout(3 * 1000);
@@ -394,7 +394,7 @@ public class ArticleController {
         return conn.getInputStream();
     }
 
-    private String uploadImg(InputStream file) {
+    private static String uploadImg(InputStream file, QiniuService qiniuService) {
         return qiniuService.qiniuUpload(file);
     }
 }

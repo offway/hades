@@ -14,7 +14,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qiniu.util.Base64;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.joda.time.DateTime;
@@ -83,6 +82,8 @@ public class GoodsController {
     private PhConfigService configService;
     @Autowired
     private PhLimitedSaleService limitedSaleService;
+    @Autowired
+    private QiniuService qiniuService;
 
     @RequestMapping("/goods.html")
     public String index(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
@@ -980,7 +981,7 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_add_limit_sale")
-    public boolean addLimitSale(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount, String args) throws UnsupportedEncodingException {
+    public boolean addLimitSale(PhGoods goods, @RequestParam("stocks") String stocks, @RequestParam("banners") String[] banners, @RequestParam("intros") String[] intros, String isDiscount, String args) throws IOException {
         PhGoods goodsSaved = null;
         Object object = add(goods, stocks, banners, intros, isDiscount, true, new Long[]{}, new String[]{});
         if (object instanceof PhGoods) {
@@ -997,7 +998,8 @@ public class GoodsController {
             PhLimitedSale limitedSaleSaved = limitedSaleService.findOne(limitedSale.getId());
             limitedSale.setCreateTime(limitedSaleSaved.getCreateTime());
         }
-        limitedSale.setInfo(new String(jsonStrInfo, Charset.forName("utf-8")).replaceAll("(?<=(<img.{1,500}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,500}))height:\\d+px(?=(.+>))", ""));
+        String newInfoStr = new String(jsonStrInfo, Charset.forName("utf-8")).replaceAll("(?<=(<img.{1,500}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,500}))height:\\d+px(?=(.+>))", "");
+        limitedSale.setInfo(ArticleController.filterWxPicAndReplace(newInfoStr, qiniuService));
         limitedSale.setPrice(goodsSaved.getPrice());
         if ("1".equals(limitedSale.getStatus())) {
             goodsSaved.setStatus("1");
