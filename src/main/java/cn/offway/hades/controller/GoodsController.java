@@ -997,7 +997,7 @@ public class GoodsController {
             PhLimitedSale limitedSaleSaved = limitedSaleService.findOne(limitedSale.getId());
             limitedSale.setCreateTime(limitedSaleSaved.getCreateTime());
         }
-        limitedSale.setInfo(new String(jsonStrInfo, Charset.forName("utf-8")).replaceAll("(?<=(<img.{1,200}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,200}))height:\\d+px(?=(.+>))", ""));
+        limitedSale.setInfo(new String(jsonStrInfo, Charset.forName("utf-8")).replaceAll("(?<=(<img.{1,500}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,500}))height:\\d+px(?=(.+>))", ""));
         limitedSale.setPrice(goodsSaved.getPrice());
         if ("1".equals(limitedSale.getStatus())) {
             goodsSaved.setStatus("1");
