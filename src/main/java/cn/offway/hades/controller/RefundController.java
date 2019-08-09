@@ -403,12 +403,10 @@ public class RefundController {
                 switch (refund.getType()) {
                     case "0":
                         refund.setStatus("3");
-                        refundOrderGoodsService.update(refund,refund.getOrderNo(),"0");
                         break;
                     case "1":
                     case "2":
                         refund.setStatus("1");
-                        refundOrderGoodsService.update(refund,refund.getOrderNo(),"2");
                         break;
                 }
                 break;
@@ -460,6 +458,7 @@ public class RefundController {
         refund.setCheckTime(new Date());
         refund.setCheckReason("");
         refundService.save(refund);
+        refundOrderGoodsService.updateByRefund(refund);
         return true;
     }
 
