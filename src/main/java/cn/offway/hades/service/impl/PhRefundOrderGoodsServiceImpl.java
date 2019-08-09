@@ -65,7 +65,7 @@ public class PhRefundOrderGoodsServiceImpl implements PhRefundOrderGoodsService 
             //检查是否发生过退换货
             if (count == 0) {
                 //同步订单商品
-                phRefundOrderGoodsRepository.insertOrderGoods(orderNo);
+                phRefundOrderGoodsRepository.insertOrderGoods(orderNo,phRefund.getId());
             }
             for (PhRefundGoods phRefundGoods : phRefundGoodsList) {
                 Long orderGoodsId = phRefundGoods.getOrderGoodsId();
@@ -75,13 +75,13 @@ public class PhRefundOrderGoodsServiceImpl implements PhRefundOrderGoodsService 
                 if ("2".equals(type)) {
                     //换货
                     //增加换货商品
-                    phRefundOrderGoodsRepository.insertGoodsStock(orderGoodsId);
+                    phRefundOrderGoodsRepository.insertGoodsStock(orderGoodsId,phRefund.getId());
                     //修改换货商品
                     phRefundOrderGoodsRepository.updateGoodsStock(orderNo, phRefundGoods.getFromStockId(), goodsCount, phRefundGoods.getToStockId(), phRefundGoods.getToStockImage(), phRefundGoods.getToStockDesc());
                 }
             }
             //删掉退光的商品
-            phRefundOrderGoodsRepository.deleteByNoMore(orderNo);
+            //phRefundOrderGoodsRepository.deleteByNoMore(orderNo);
         }
     }
 
