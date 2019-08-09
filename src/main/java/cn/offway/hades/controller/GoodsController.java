@@ -874,9 +874,9 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_discount_list_detail")
-    public Map<String, Object> discountListDetail(int sEcho,Long brandId) {
+    public Map<String, Object> discountListDetail(int sEcho, Long brandId) {
         List<Object> list = new ArrayList<>();
-        int i =0;
+        int i = 0;
         //2019-05-24 03:00:01_2019-06-01 03:00:01_59,62
         for (String key : JobHolder.getHolder().keySet()) {
             if (key.endsWith("REVERSE")) {
@@ -890,44 +890,44 @@ public class GoodsController {
             List<PhGoods> goodsList = new ArrayList<>();
             String[] gids = args[2].split(",");
             if (key.contains("DirectChange")) {
-                i=1;
+                i = 1;
                 PhGoods goods = goodsService.findOne(Long.valueOf(gids[0]));
-                if (brandId != null){
-                    if (goods.getBrandId() == brandId){
+                if (brandId != null) {
+                    if (goods.getBrandId() == brandId) {
                         goodsList.add(goods);
-                    }else {
-                        i=3;
+                    } else {
+                        i = 3;
                     }
-                }else {
+                } else {
                     goodsList.add(goods);
                 }
 
             } else {
-                i=2;
+                i = 2;
                 for (String id : gids) {
                     PhGoods goods = goodsService.findOne(Long.valueOf(id));
-                    if (brandId != null){
-                        if (goods.getBrandId() == brandId){
+                    if (brandId != null) {
+                        if (goods.getBrandId() == brandId) {
                             goodsList.add(goods);
-                        }else {
-                            i=3;
+                        } else {
+                            i = 3;
                         }
-                    }else {
+                    } else {
                         goodsList.add(goods);
                     }
                 }
             }
-            if (i==3){
+            if (i == 3) {
                 continue;
             }
-            if (goodsList.size() >0){
+            if (goodsList.size() > 0) {
                 m.put("id", key);
                 m.put("sTime", args[0]);
                 m.put("eTime", args[1]);
                 m.put("subList", goodsList);
-                if (i==1){
+                if (i == 1) {
                     m.put("type", "change");
-                }else if (i==2){
+                } else if (i == 2) {
                     m.put("type", "discount");
                     m.put("discount", args[3]);
                 }
@@ -992,9 +992,11 @@ public class GoodsController {
         if (limitedSale.getId() == null) {
             limitedSale.setCreateTime(new Date());
             limitedSale.setGoodsId(goodsSaved.getId());
+            limitedSale.setInfo(limitedSale.getInfo().replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))", ""));
         } else {
             PhLimitedSale limitedSaleSaved = limitedSaleService.findOne(limitedSale.getId());
             limitedSale.setCreateTime(limitedSaleSaved.getCreateTime());
+            limitedSale.setInfo(limitedSale.getInfo().replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))", ""));
         }
         limitedSale.setInfo(new String(jsonStrInfo));
         limitedSale.setPrice(goodsSaved.getPrice());

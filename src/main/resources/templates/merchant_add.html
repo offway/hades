@@ -314,7 +314,7 @@
 		var c = that.find("select[name='c']").val();
 		var d = that.find("select[name='d']").val();
 		var location = that.find("input[name='location']").val();
-		var telephone = that.find("input[name='telephone']").val();
+		var telephone = that.find("select[name='telephone']").val().join(",");
 		var real_name = that.find("input[name='real_name']").val();
 		var json = {
 			"realName": real_name,
@@ -349,7 +349,9 @@
 				"\t\t<select name='c' ></select>\n" +
 				"\t\t<select name='d' ></select>\n" +
 				"\t\t<input type=\"text\" name='location' placeholder='详细地址'/><br/>\n" +
-				"\t\t<input type=\"text\" name='telephone' placeholder='手机号'/>\n" +
+				// "\t\t<input type=\"text\" name='telephone' placeholder='手机号'/>\n" +
+				"\t\t<select style='height: 35px;width: 300px' name=\"telephone\" id=\"telephone\"\n" +
+				"\t\tmultiple=\"multiple\"></select>" +
 				"\t\t<input type=\"text\" name='real_name' placeholder='XXX'/>\n".replace("XXX", isBack ? "收件人" : "发件人") +
 				"\t</div>";
 		if (isBack) {
@@ -366,11 +368,19 @@
 		} else {
 			jsonStr = $("input[name='address_send_jsonStr']").val();
 		}
+		var phoneEle = preview.find("select[name='telephone']");
+		var phoneStr = "";
+		var phoneArr = [];
 		if (jsonStr != '') {
 			var jsonObj = JSON.parse(jsonStr);
 			preview.find("input[name='location']").val(jsonObj["content"]);
 			preview.find("input[name='real_name']").val(jsonObj["realName"]);
-			preview.find("input[name='telephone']").val(jsonObj["phone"]);
+			phoneArr = jsonObj["phone"].split(",");
+			for (var i in phoneArr) {
+				i = phoneArr[i];
+				phoneStr += '<option value="VV">KK</option>'.replace("VV", i).replace("KK", i);
+			}
+			phoneEle.html(phoneStr);
 			$("#distpicker").distpicker({
 				province: jsonObj["province"],
 				city: jsonObj["city"],
@@ -383,6 +393,19 @@
 				district: '---- 所在区 ----'
 			});
 		}
+		phoneEle.selectize({
+			// "plugins": ['drag_drop', 'remove_button'],
+			"items": phoneArr,
+			"addPrecedence": true,
+			"persist": false,
+			"create": true,
+			"maxItems": null,
+			"delimiter": ",",
+			"hideSelected": true,
+			"sortField": "text",
+			"searchField": ['text'],
+			"placeholder": "手机号"
+		});
 		preview.show();
 	}
 
@@ -425,13 +448,10 @@
 		return returnList;
 	}
 
+	var qiniuUrl = [[${qiniuUrl}]];
+	var theId = [[${theId}]];
 	jQuery(document).ready(function($)
 	{
-        var qiniuUrl = [[${qiniuUrl}]];
-        var theId = [[${theId}]];
-
-
-
 		jQuery.datetimepicker.setLocale('zh');
 		jQuery('#signDate').datetimepicker(
 				{
