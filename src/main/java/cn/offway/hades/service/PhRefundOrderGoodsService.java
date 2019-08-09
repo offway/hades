@@ -3,6 +3,7 @@ package cn.offway.hades.service;
 
 import java.util.List;
 
+import cn.offway.hades.domain.PhRefund;
 import cn.offway.hades.domain.PhRefundOrderGoods;
 
 /**
@@ -20,4 +21,6 @@ public interface PhRefundOrderGoodsService{
     void delete(Long id);
 
     List<PhRefundOrderGoods> save(List<PhRefundOrderGoods> entities);
+
+    void update(PhRefund refund, String orderNo, String type);
 }

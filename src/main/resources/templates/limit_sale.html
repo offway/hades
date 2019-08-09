@@ -759,8 +759,9 @@
                                     newMap[map[i]["name"]] = map[i]["value"];
                                 }
                             }
-                            args = $.base64.btoa(JSON.stringify(newMap));
-                            callback();
+							args = $.base64.btoa(JSON.stringify(newMap));
+							args = args.replace(/\+/g, "_");
+							callback();
                         }
                     }, function (err, results) {
 						footer.find("button").show();

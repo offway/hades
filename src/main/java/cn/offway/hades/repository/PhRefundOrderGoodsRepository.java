@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import cn.offway.hades.domain.PhRefundOrderGoods;
 
+import java.util.List;
+
 /**
  * 退换货后的订单商品Repository接口
  *
@@ -14,4 +16,5 @@ import cn.offway.hades.domain.PhRefundOrderGoods;
 public interface PhRefundOrderGoodsRepository extends JpaRepository<PhRefundOrderGoods,Long>,JpaSpecificationExecutor<PhRefundOrderGoods> {
 
 	/** 此处写一些自定义的方法 **/
+	List<PhRefundOrderGoods> findByOrderNo(String orderNo);
 }
