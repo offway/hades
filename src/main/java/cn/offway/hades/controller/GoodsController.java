@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -986,19 +987,17 @@ public class GoodsController {
             goodsSaved = (PhGoods) object;
         }
         byte[] jsonStr = Base64.decode(args, Base64.DEFAULT);
-        JSONObject jsonObject = JSON.parseObject(new String(jsonStr));
+        JSONObject jsonObject = JSON.parseObject(new String(jsonStr, Charset.forName("utf-8")));
         byte[] jsonStrInfo = Base64.decode(jsonObject.getString("info"), Base64.DEFAULT);
         PhLimitedSale limitedSale = jsonObject.toJavaObject(PhLimitedSale.class);
         if (limitedSale.getId() == null) {
             limitedSale.setCreateTime(new Date());
             limitedSale.setGoodsId(goodsSaved.getId());
-            limitedSale.setInfo(limitedSale.getInfo().replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))", ""));
         } else {
             PhLimitedSale limitedSaleSaved = limitedSaleService.findOne(limitedSale.getId());
             limitedSale.setCreateTime(limitedSaleSaved.getCreateTime());
-            limitedSale.setInfo(limitedSale.getInfo().replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))", ""));
         }
-        limitedSale.setInfo(new String(jsonStrInfo));
+        limitedSale.setInfo(new String(jsonStrInfo, Charset.forName("utf-8")).replaceAll("(?<=(<img.{1,200}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,200}))height:\\d+px(?=(.+>))", ""));
         limitedSale.setPrice(goodsSaved.getPrice());
         if ("1".equals(limitedSale.getStatus())) {
             goodsSaved.setStatus("1");
