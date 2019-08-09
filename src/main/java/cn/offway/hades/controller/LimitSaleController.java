@@ -1,5 +1,6 @@
 package cn.offway.hades.controller;
 
+import cn.offway.hades.domain.PhAdmin;
 import cn.offway.hades.domain.PhLimitedSale;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -97,5 +99,23 @@ public class LimitSaleController {
     @RequestMapping("/limit_sale_get")
     public PhLimitedSale get(Long id) {
         return limitedSaleService.findOne(id);
+    }
+
+    @ResponseBody
+    @RequestMapping("/limit_downIt")
+    public boolean downIt(Long id, @AuthenticationPrincipal PhAdmin admin) {
+        PhLimitedSale limitedSale = limitedSaleService.findOne(id);
+        limitedSale.setStatus("0");
+        limitedSaleService.save(limitedSale);
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/limit_upIt")
+    public boolean upIt(Long id, @AuthenticationPrincipal PhAdmin admin) {
+        PhLimitedSale limitedSale = limitedSaleService.findOne(id);
+        limitedSale.setStatus("1");
+        limitedSaleService.save(limitedSale);
+        return true;
     }
 }

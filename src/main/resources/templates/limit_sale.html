@@ -426,11 +426,12 @@
             } else {
                 toastr.error("操作失败", "温馨提示");
             }
+			oTable.fnDraw();
         });
     }
 
 	function upIt(id, self) {
-		$.post("/goods_up", {"id": id}, function (data) {
+		$.post("/limit_upIt", {"id": id}, function (data) {
 			if (data) {
 				$(self).val("下架");
 				//remove old handler
@@ -445,11 +446,12 @@
 			} else {
 				toastr.error("操作失败", "温馨提示");
 			}
+			oTable.fnDraw();
 		});
 	}
 
 	function downIt(id, self) {
-		$.post("/goods_down", {"id": id}, function (data) {
+		$.post("/limit_downIt", {"id": id}, function (data) {
 			if (data) {
 				$(self).val("上架");
 				//remove old handler
@@ -506,12 +508,12 @@
     }
 
 	var qiniuUrl = [[${qiniuUrl}]];
-
+	var oTable;
     jQuery(document).ready(function($)
 	{
         $.base64.utf8encode = true;
         $.base64.utf8decode = true;
-		var oTable;
+
         oTable = $("#example-1").dataTable({
             language: {
                 url: "../assets/Chinese.txt"
