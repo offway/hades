@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.checkerframework.checker.units.qual.A;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -217,13 +216,13 @@ public class RefundController {
             PhOrderInfo orderInfo = orderInfoService.findOne(refund.getOrderNo());
             List<PhOrderGoods> orderGoodsList = new ArrayList<>();
             List<PhRefundOrderGoods> refundOrderGoods1 = refundOrderGoodsRepository.findByRefundId(id);
-            if (refundOrderGoods1.size()>0){
+            if (refundOrderGoods1.size() > 0) {
                 for (PhRefundOrderGoods refundOrderGood : refundOrderGoods1) {
                     PhOrderGoods phOrderGoods = new PhOrderGoods();
-                    BeanUtils.copyProperties(refundOrderGood,phOrderGoods);
+                    BeanUtils.copyProperties(refundOrderGood, phOrderGoods);
                     orderGoodsList.add(phOrderGoods);
                 }
-            }else{
+            } else {
                 orderGoodsList = orderGoodsService.findAllByPid(orderInfo.getOrderNo());
             }
             boolean needClone = false;
@@ -244,47 +243,34 @@ public class RefundController {
             List<Map> goodsInfoList = new ArrayList<>();
             for (PhRefundGoods refundGoods : refundGoodsList) {
                 Map<String, Object> goodsInfo = new HashMap<>();
-                if (holder.containsKey(refundGoods.getOrderGoodsId())) {
-                    PhOrderGoods orderGoods = holder.get(refundGoods.getOrderGoodsId());
-                    PhGoods goods;
-                    List<PhGoodsProperty> propertyList;
-                    PhGoodsStock goodsStock;
-                    if (orderGoods == null){
-                        PhRefundOrderGoods refundOrderGoods = refundOrderGoodsService.findOne(refundGoods.getOrderGoodsId());
-                        goods = goodsService.findOne(refundOrderGoods.getGoodsId());
-                        propertyList = goodsPropertyService.findByStockId(refundOrderGoods.getGoodsStockId());
-                        goodsStock = goodsStockService.findOne(refundOrderGoods.getGoodsStockId());
-                        goodsInfo.put("SKU", refundOrderGoods.getGoodsStockId());
-                        goodsInfo.put("goodsId", refundOrderGoods.getGoodsId());
-                        goodsInfo.put("goodsName", refundOrderGoods.getGoodsName());
-                    }else {
-                        goods = goodsService.findOne(orderGoods.getGoodsId());
-                        propertyList = goodsPropertyService.findByStockId(orderGoods.getGoodsStockId());
-                        goodsStock = goodsStockService.findOne(orderGoods.getGoodsStockId());
-                        goodsInfo.put("SKU", orderGoods.getGoodsStockId());
-                        goodsInfo.put("goodsId", orderGoods.getGoodsId());
-                        goodsInfo.put("goodsName", orderGoods.getGoodsName());
-                    }
-                    goodsInfo.put("code", goods.getCode());
-                    goodsInfo.put("price", goods.getPrice());
-                    goodsInfo.put("brandName", goods.getBrandName());
-                    goodsInfo.put("type", goods.getType() + goods.getCategory());
-                    goodsInfo.put("merchantName", goods.getMerchantName());
-                    goodsInfo.put("stockImg", goodsStock.getImage());
-                    goodsInfo.put("toStockImage",refundGoods.getToStockImage());
-                    goodsInfo.put("toStockDesc",refundGoods.getToStockDesc());
-                    goodsInfo.put("toStockId",refundGoods.getToStockId());
-                    goodsInfo.put("reason",refundGoods.getReason());
-                    StringBuilder sb = new StringBuilder();
-                    for (PhGoodsProperty p : propertyList) {
-                        sb.append(p.getName());
-                        sb.append(":");
-                        sb.append(p.getValue());
-                        sb.append(";");
-                    }
-                    goodsInfo.put("goodsProperty", sb.toString());
-                    goodsInfo.put("goodsCount", refundGoods.getGoodsCount());
+                PhGoods goods;
+                if (refundGoods.getGoodsId() == null) {
+                    goods = goodsService.findOne(refundGoods.getOrderGoodsId());
+                } else {
+                    goods = goodsService.findOne(refundGoods.getGoodsId());
                 }
+                List<PhGoodsStock> goodsStock = goodsStockService.findByPid(refundGoods.getGoodsId());
+                String sku = "";
+                for (PhGoodsStock stock : goodsStock) {
+                    if (stock.getGoodsId().longValue() == refundGoods.getGoodsId().longValue()) {
+                        sku = stock.getSku();
+                    }
+                }
+                goodsInfo.put("SKU", refundGoods.getFromStockId());
+                goodsInfo.put("goodsId", refundGoods.getGoodsId());
+                goodsInfo.put("goodsName", refundGoods.getGoodsName());
+                goodsInfo.put("code", ((goods.getCode() != null) ? goods.getCode() : ""));
+                goodsInfo.put("price", refundGoods.getPrice());
+                goodsInfo.put("brandName", ((goods.getBrandName() != null) ? goods.getBrandName() : ""));
+                goodsInfo.put("type", ((goods.getType() != null) ? goods.getType() : "" + ((goods.getCategory() != null) ? goods.getCategory() : "")));
+                goodsInfo.put("merchantName", refund.getRemark());
+                goodsInfo.put("stockImg", refundGoods.getFromStockImage());
+                goodsInfo.put("toStockImage", refundGoods.getToStockImage());
+                goodsInfo.put("toStockDesc", refundGoods.getToStockDesc());
+                goodsInfo.put("toStockId", refundGoods.getToStockId());
+                goodsInfo.put("reason", refundGoods.getReason());
+                goodsInfo.put("goodsProperty", refundGoods.getRemark());
+                goodsInfo.put("goodsCount", refundGoods.getGoodsCount());
                 goodsInfoList.add(goodsInfo);
             }
             dataList.put("goodsInfo", goodsInfoList);
@@ -492,12 +478,12 @@ public class RefundController {
 
     @ResponseBody
     @RequestMapping("/refund_delivery")
-    public boolean delivery(PhRefund refund,@AuthenticationPrincipal PhAdmin admin){
+    public boolean delivery(PhRefund refund, @AuthenticationPrincipal PhAdmin admin) {
         PhRefund refund0 = refundService.findOne(refund.getId());
         refund0.setShipMailNo(refund.getMailNo());
         refund0.setShipExpressCode(refund.getExpressCode());
         refund0.setStatus("7");
         refundService.save(refund0);
-        return  true;
+        return true;
     }
 }
