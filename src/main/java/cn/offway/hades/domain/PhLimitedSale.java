@@ -24,7 +24,7 @@ public class PhLimitedSale implements Serializable {
     private String image;
 
     /** 售价 **/
-    private Double price;
+    private String price;
 
     /** 商品ID **/
     private Long goodsId;
@@ -85,12 +85,12 @@ public class PhLimitedSale implements Serializable {
         this.image = image;
     }
 
-    @Column(name = "price", precision = 15, scale = 2)
-    public Double getPrice() {
+    @Column(name = "price", length = 50)
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

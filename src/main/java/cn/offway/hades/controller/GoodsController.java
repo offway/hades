@@ -1001,7 +1001,7 @@ public class GoodsController {
         String newInfoStr = new String(jsonStrInfo, Charset.forName("utf-8")).replaceAll("(?<=(<img.{1,500}))style=\".+\"(?=(.+>))", "style=\"width:100% !important\"");
 //        newInfoStr = newInfoStr.replaceAll("height:auto", "height:100%").replaceAll("width:auto", "width:100%");
         limitedSale.setInfo(ArticleController.filterWxPicAndReplace(newInfoStr, qiniuService));
-        limitedSale.setPrice(goodsSaved.getPrice());
+        limitedSale.setPrice(jsonObject.getString("price"));
         if ("1".equals(limitedSale.getStatus())) {
             goodsSaved.setStatus("1");
             goodsService.save(goodsSaved);
