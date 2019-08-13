@@ -145,7 +145,7 @@ public class HadesApplicationTests {
         YunpianClient client = new YunpianClient("d7c58b5d229428d28434533b17ff084a").init();
         //发送短信API
         Map<String, String> param = client.newParam(2);
-        param.put(YunpianClient.MOBILE, "+8613761839483");
+        param.put(YunpianClient.MOBILE, "+8613918021859");
         param.put(YunpianClient.TEXT, "【很潮】您好，有一笔退款审核已通过，请通过后台确认打款~");
         Result<SmsSingleSend> r = client.sms().single_send(param);
         //获取返回结果，返回码:r.getCode(),返回码描述:r.getMsg(),API结果:r.getData(),其他说明:r.getDetail(),调用异常:r.getThrowable()
