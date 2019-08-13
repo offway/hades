@@ -123,7 +123,7 @@ public class MQRunner implements ApplicationRunner {
 
     public void save(String preOrderNo) {
         logger.info("收到新支付订单:" + preOrderNo);
-        List<PhOrderInfo> phOrderInfos = phOrderInfoService.findByPreorderNoAndStatus(preOrderNo, "1");
+        List<PhOrderInfo> phOrderInfos = phOrderInfoService.findByPreorderNoAndStatus(preOrderNo, "0", "1");
         List<PhSettlementDetail> phSettlementDetails = new ArrayList<>();
         List<PhSettlementInfo> phSettlementInfos = new ArrayList<>();
         for (PhOrderInfo orderInfo : phOrderInfos) {
