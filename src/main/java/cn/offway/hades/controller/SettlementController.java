@@ -392,10 +392,8 @@ public class SettlementController {
         if (info != null) {
             info.setStatisticalTime(new Date());
             settlementInfoService.save(info);
-            if (totalAmount > 0) {
-                sendSMS();
-            }
         }
+        sendSMS();
         return totalAmount;
     }
 
@@ -430,10 +428,8 @@ public class SettlementController {
         if (info != null) {
             info.setStatisticalTime(new Date());
             settlementInfoService.save(info);
-            if (totalAmount > 0) {
-                sendSMS();
-            }
         }
+        sendSMS();
         return totalAmount;
     }
 
