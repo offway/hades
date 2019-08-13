@@ -8,7 +8,7 @@ server:
   max-http-header-size: 5000000
   session:  
     #session超时时间，单位秒
-    timeout:  3600
+    timeout:  28800
 management:
   endpoints:
     web:
