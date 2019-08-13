@@ -165,6 +165,7 @@
                                     <label><input name="type" class="notMe" type="radio" value="3"/>明星同款详情页</label>
                                     <label><input name="type" class="notMe" type="radio" value="5"/>单篇资讯</label>
                                     <label><input name="type" class="notMe" type="radio" value="6"/>免费抽</label>
+									<label><input name="type" class="notMe" type="radio" value="15"/>限量商品</label>
                                 </div>
 							</div>
 						</div>
@@ -490,7 +491,11 @@
 					title: "类别",
                     render: function (data, type, row, meta) {
                         var map = ["跳转URL(带参)", "品牌首页", "单品", "活动首页", "明星同款详情页", "单篇资讯", "免费抽", "跳转URL(不带参)"];
-                        return map[parseInt(data)];
+                        if (data == 15){
+                        	return "限量商品"
+						}else {
+							return map[parseInt(data)];
+						}
                     }
 				},
 				{

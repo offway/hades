@@ -1,6 +1,7 @@
 package cn.offway.hades.controller;
 
 import cn.offway.hades.domain.PhAdmin;
+import cn.offway.hades.domain.PhGoods;
 import cn.offway.hades.domain.PhLimitedSale;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
@@ -107,6 +108,9 @@ public class LimitSaleController {
         PhLimitedSale limitedSale = limitedSaleService.findOne(id);
         limitedSale.setStatus("0");
         limitedSaleService.save(limitedSale);
+        PhGoods goods = goodsService.findOne(limitedSale.getGoodsId());
+        goods.setStatus("0");
+        goodsService.save(goods);
         return true;
     }
 
@@ -116,6 +120,9 @@ public class LimitSaleController {
         PhLimitedSale limitedSale = limitedSaleService.findOne(id);
         limitedSale.setStatus("1");
         limitedSaleService.save(limitedSale);
+        PhGoods goods = goodsService.findOne(limitedSale.getGoodsId());
+        goods.setStatus("1");
+        goodsService.save(goods);
         return true;
     }
 }
