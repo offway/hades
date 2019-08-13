@@ -18,8 +18,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -46,65 +48,75 @@ public class HadesApplicationTests {
     }
 
     @Test
+    @Transactional
+    @Rollback(false)
     public void insertOrder() {
-        List<PhOrderInfo> phOrderInfos = phOrderInfoService.findByPreorderNoAndStatus("1020190723000008", "2");
-        List<PhSettlementDetail> phSettlementDetails = new ArrayList<>();
-        List<PhSettlementInfo> phSettlementInfos = new ArrayList<>();
-        for (PhOrderInfo orderInfo : phOrderInfos) {
-            PhSettlementDetail settlementDetail = new PhSettlementDetail();
-            settlementDetail.setAmount(orderInfo.getAmount());
-            settlementDetail.setCreateTime(new Date());
-            Long merchantId = orderInfo.getMerchantId();
-            PhMerchant phMerchant = phMerchantService.findOne(merchantId);
-            settlementDetail.setCutRate(phMerchant.getRatio());
-            settlementDetail.setCutAmount(orderInfo.getAmount() * phMerchant.getRatio() / 100);
-            settlementDetail.setMailFee(orderInfo.getMailFee());
-            settlementDetail.setMerchantId(orderInfo.getMerchantId());
-            settlementDetail.setMerchantLogo(orderInfo.getMerchantLogo());
-            settlementDetail.setMerchantName(orderInfo.getMerchantName());
-            settlementDetail.setMVoucherAmount(orderInfo.getMVoucherAmount());
-            settlementDetail.setPVoucherAmount(orderInfo.getPVoucherAmount());
-            settlementDetail.setOrderNo(orderInfo.getOrderNo());
-            settlementDetail.setPayChannel(orderInfo.getPayChannel());
-            settlementDetail.setPayFee(String.format("%.2f", orderInfo.getAmount() * 0.003));//千分之三的手续费
-            settlementDetail.setPrice(orderInfo.getPrice());
-            settlementDetail.setWalletAmount(orderInfo.getWalletAmount());
-            //计算结算金额
-//            double amount = settlementDetail.getAmount() - settlementDetail.getCutAmount() - Double.valueOf(settlementDetail.getPayFee()) - settlementDetail.getMailFee();
-            double amount = (settlementDetail.getPrice() - settlementDetail.getMVoucherAmount()) * (1D - phMerchant.getRatio() / 100);
-            settlementDetail.setSettledAmount(amount);
-            /* 状态[0-待结算,1-结算中,2-已结算] */
-            settlementDetail.setStatus("0");
-            settlementDetail.setRemark(orderInfo.getStatus());
-            phSettlementDetails.add(settlementDetail);
-            PhSettlementInfo settlementInfo = phSettlementInfoService.findByPid(merchantId);
-            if (null == settlementInfo) {
-                settlementInfo = new PhSettlementInfo();
-                settlementInfo.setMerchantId(phMerchant.getId());
-                settlementInfo.setMerchantLogo(phMerchant.getLogo());
-                settlementInfo.setMerchantName(phMerchant.getName());
-                settlementInfo.setMerchantGoodsCount(0L);
-                settlementInfo.setStatisticalTime(new Date());
-                settlementInfo.setOrderAmount(0d);
-                settlementInfo.setOrderCount(0L);
-                settlementInfo.setSettledAmount(0d);
-                settlementInfo.setSettledCount(0L);
-                settlementInfo.setUnsettledAmount(0d);
-                settlementInfo.setUnsettledCount(0L);
+        String[] orderList = new String[]{"34775565626634202", "34775565626634206", "34775565632475305", "34775565636336405", "34775565646040612", "34775565655543004", "34775565655543013", "34775565655543015", "34775565661404104", "34775565665245204", "34775565674747407", "34775565674747421"};
+        for (String orderId : orderList) {
+            List<PhOrderInfo> phOrderInfos = phOrderInfoService.findByPreorderNoAndStatus(orderId, "1", "2", "3");
+            if (phOrderInfos.size() == 0) {
+                System.out.println("empty set Id:" + orderId);
             }
-            settlementInfo.setOrderAmount(MathUtils.add(settlementDetail.getAmount(), settlementInfo.getOrderAmount()));
-            settlementInfo.setOrderCount(settlementInfo.getOrderCount() + 1L);
-            settlementInfo.setUnsettledAmount(MathUtils.add(settlementInfo.getUnsettledAmount(), settlementDetail.getSettledAmount()));
-            settlementInfo.setUnsettledCount(settlementInfo.getUnsettledCount() + 1L);
-            settlementInfo.setStatisticalTime(new Date());
-            phSettlementInfos.add(settlementInfo);
-        }
-        //入库
-        for (PhSettlementDetail detail : phSettlementDetails) {
-            phSettlementDetailService.save(detail);
-        }
-        for (PhSettlementInfo info : phSettlementInfos) {
-            phSettlementInfoService.save(info);
+            List<PhSettlementDetail> phSettlementDetails = new ArrayList<>();
+            List<PhSettlementInfo> phSettlementInfos = new ArrayList<>();
+            for (PhOrderInfo orderInfo : phOrderInfos) {
+                PhSettlementDetail settlementDetail = new PhSettlementDetail();
+                settlementDetail.setAmount(orderInfo.getAmount());
+                settlementDetail.setCreateTime(new Date());
+                Long merchantId = orderInfo.getMerchantId();
+                PhMerchant phMerchant = phMerchantService.findOne(merchantId);
+                settlementDetail.setCutRate(phMerchant.getRatio());
+                settlementDetail.setCutAmount(orderInfo.getAmount() * phMerchant.getRatio() / 100);
+                settlementDetail.setMailFee(orderInfo.getMailFee());
+                settlementDetail.setMerchantId(orderInfo.getMerchantId());
+                settlementDetail.setMerchantLogo(orderInfo.getMerchantLogo());
+                settlementDetail.setMerchantName(orderInfo.getMerchantName());
+                settlementDetail.setMVoucherAmount(orderInfo.getMVoucherAmount());
+                settlementDetail.setPVoucherAmount(orderInfo.getPVoucherAmount());
+                settlementDetail.setPromotionAmount(orderInfo.getPromotionAmount());
+                settlementDetail.setPlatformPromotionAmount(orderInfo.getPlatformPromotionAmount());
+                settlementDetail.setOrderNo(orderInfo.getOrderNo());
+                settlementDetail.setPayChannel(orderInfo.getPayChannel());
+                settlementDetail.setPayFee(String.format("%.2f", orderInfo.getAmount() * 0.003));//千分之三的手续费
+                settlementDetail.setPrice(orderInfo.getPrice());
+                settlementDetail.setWalletAmount(orderInfo.getWalletAmount());
+                //计算结算金额
+                double amount = (settlementDetail.getPrice() - settlementDetail.getMVoucherAmount() - settlementDetail.getPromotionAmount()) * (1D - phMerchant.getRatio() / 100);
+                settlementDetail.setSettledAmount(amount);
+                /* 状态[0-待结算,1-结算中,2-已结算] */
+                settlementDetail.setStatus("0");
+                settlementDetail.setRemark(orderInfo.getStatus());
+                phSettlementDetails.add(settlementDetail);
+                PhSettlementInfo settlementInfo = phSettlementInfoService.findByPid(merchantId);
+                if (null == settlementInfo) {
+                    settlementInfo = new PhSettlementInfo();
+                    settlementInfo.setMerchantId(phMerchant.getId());
+                    settlementInfo.setMerchantLogo(phMerchant.getLogo());
+                    settlementInfo.setMerchantName(phMerchant.getName());
+                    settlementInfo.setMerchantGoodsCount(0L);
+                    settlementInfo.setStatisticalTime(new Date());
+                    settlementInfo.setOrderAmount(0d);
+                    settlementInfo.setOrderCount(0L);
+                    settlementInfo.setSettledAmount(0d);
+                    settlementInfo.setSettledCount(0L);
+                    settlementInfo.setUnsettledAmount(0d);
+                    settlementInfo.setUnsettledCount(0L);
+                }
+                settlementInfo.setOrderAmount(MathUtils.add(settlementDetail.getAmount(), settlementInfo.getOrderAmount()));
+                settlementInfo.setOrderCount(settlementInfo.getOrderCount() + 1L);
+                settlementInfo.setUnsettledAmount(MathUtils.add(settlementInfo.getUnsettledAmount(), settlementDetail.getSettledAmount()));
+                settlementInfo.setUnsettledCount(settlementInfo.getUnsettledCount() + 1L);
+                settlementInfo.setStatisticalTime(new Date());
+                phSettlementInfos.add(settlementInfo);
+            }
+            //入库
+            for (PhSettlementDetail detail : phSettlementDetails) {
+                PhSettlementDetail obj = phSettlementDetailService.save(detail);
+                System.out.println("saved Id:" + obj.getId());
+            }
+            for (PhSettlementInfo info : phSettlementInfos) {
+                phSettlementInfoService.save(info);
+            }
         }
     }
 
