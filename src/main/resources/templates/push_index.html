@@ -652,6 +652,10 @@
 
 		//保存
 		$(".btn.btn-info.save").click(function () {
+			var confirm = window.confirm("是否确定发送");
+			if (confirm == false){
+				return;
+			}
 			var footer = $(this).parent(".modal-footer");
 			footer.find("button").hide();
 			footer.find(".bg-lg").show();
