@@ -68,6 +68,9 @@ public class PhFreeDelivery implements Serializable {
     /** 用户类型[0-新用户,1-老用户] **/
     private String userType;
 
+    /** 商品尺码 **/
+    private String goodsSize;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -232,6 +235,15 @@ public class PhFreeDelivery implements Serializable {
 
     public void setUserType(String userType) {
         this.userType = userType;
+    }
+
+    @Column(name = "goods_size", length = 100)
+    public String getGoodsSize() {
+        return goodsSize;
+    }
+
+    public void setGoodsSize(String goodsSize) {
+        this.goodsSize = goodsSize;
     }
 
 }

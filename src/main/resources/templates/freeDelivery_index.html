@@ -73,48 +73,6 @@
 
             <div class="modal-body">
                 <form role="form" id="saveForm">
-                    <input type="hidden" name="id"/>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="control-label">活动名称</label>
-                                <input type="text" class="form-control" name="name" placeholder="活动名称"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="control-label">开始时间</label>
-                                <input type="text" class="form-control" name="beginTime" id="beginTime" placeholder="开始时间" />
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="control-label">截止时间</label>
-                                <input type="text" class="form-control" name="endTime" id="endTime" placeholder="截止时间" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="control-label">顶部活动图片</label>
-                                <input type="file" class="form-control" name="imageFile" placeholder="顶部活动图片" onchange="uploadMainFile(this,'0',null)"/>
-                                <input type="hidden" class="form-control" name="image"/>
-                                <img alt="" src="" name="imageImg" style="display:none;"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="control-label">添加商品</label>
-                                <input type="button" id="addMoreTextEle" class="notMe" value="添加" onclick="addMoreTextAeticle(this,null);"/>
-                                <input type="hidden" class="form-control" name="goodsIds" value=""/>
-                            </div>
-                        </div>
-                    </div>
                 </form>
             </div>
 
@@ -377,47 +335,6 @@
         return returnList;
     }
 
-    function uploadMainFile0(self,bol,res1) {
-        var that = $(self);
-        if (self.files.length > 0) {
-            var file = self.files[0];
-            getQNToken(function (token) {
-                sizevideo = 5;
-                bl= false;
-                if (bol=='1'){
-                    sizevideo = 50;
-                    bl =true;
-                }
-                this.upload("", token, file, function () {
-                    //
-                }, function (err) {
-                    console.log("error");
-                    console.log(err);
-                }, function (res) {
-                    //0图片，1视频
-                    if (bol =='0'){
-                        Filname = 'image';
-                    }else if (bol=='1') {
-                        Filname = 'video';
-                        // $('#butsev').show();
-                    }
-                    var url = qiniuUrl + "/" + res.key;
-                    that.parent().find("[name="+Filname+"]").val(url);
-                    that.parent().find("[name=goodsImg]").attr("src", url);
-                    that.parent().find("[name=goodsImg]").attr("width", "100px");
-                    that.parent().find("[name=goodsImg]").attr("height", "100px");
-                    that.parent().find("[name=goodsImg]").show();
-                    if (res1 != null){
-                        eval(res1+'();') ;
-                    }
-                },sizevideo,bl);
-            },bol);
-        } else {
-            confirm("未选择任何文件!");
-        }
-    }
-
-
     function uploadMainFile(self,bol,res1) {
         var that = $(self);
         if (self.files.length > 0) {
@@ -466,28 +383,6 @@
         $.get("/qiniu/token", param, function (token) {
             cb(token);
         });
-    }
-
-    function addMoreTextAeticle(self, v) {
-        var uuid = UUID.randomUUID();
-        var that = $(self);
-        var str = '<div id="UUID" class="toDel">'.replace("UUID", uuid);
-        if (v != null) {
-            str += '<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsIdsSame" placeholder="填写商品ID"/>'.replace("VALUE", v);
-        } else {
-            str += '<input type="file" class="form-control" name="goodsFile" placeholder="商品图片" onchange="uploadMainFile0(this,\'0\',null)"/>\n' +
-                '                <input type="hidden" class="form-control" name="goodsImg"/>\n' +
-                '                <input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsName" placeholder="商品名称"/>\n' +
-                '                <input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsPrice" placeholder="商品价格"/>\n' +
-                '                <input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsPrice" placeholder="商品尺码"/>\n' +
-                '                <input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsPrice" placeholder="商品数量"/>\n' +
-                '                <input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsPrice" placeholder="商品ID"/>\n' +
-                '                <input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsPrice" placeholder="品牌ID"/>\n' +
-                '                <input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsPrice" placeholder="助力人数"/>';
-        }
-        str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
-        str += '</div>';
-        that.before(str);
     }
 
     function upIt(id, self) {

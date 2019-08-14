@@ -85,4 +85,11 @@ public class FreeDeliveryController {
         map.put("aData", data);//数据集合
         return map;
     }
+
+    @ResponseBody
+    @RequestMapping("/freeDelivery_save")
+    public boolean save(PhFreeDelivery freeDelivery){
+        freeDeliveryService.save(freeDelivery);
+        return true;
+    }
 }
