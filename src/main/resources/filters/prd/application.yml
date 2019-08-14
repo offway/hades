@@ -65,6 +65,7 @@ spring:
   http:
     multipart:
       max-file-size: 50MB
+      max-request-size: 50MB
 ph: 
   default:  
     #默认密码
