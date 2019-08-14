@@ -4,6 +4,8 @@ package cn.offway.hades.service;
 import java.util.List;
 
 import cn.offway.hades.domain.PhFreeProduct;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 免费送产品表Service接口
@@ -20,4 +22,6 @@ public interface PhFreeProductService{
     void delete(Long id);
 
     List<PhFreeProduct> save(List<PhFreeProduct> entities);
+
+    Page<PhFreeProduct> findAll(Pageable pageable);
 }

@@ -8,7 +8,7 @@ import java.util.Date;
  * 免费送产品表
  *
  * @author wn
- * @version $v: 1.0.0, $time:2019-08-14 10:53:56 Exp $
+ * @version $v: 1.0.0, $time:2019-08-14 13:29:18 Exp $
  */
 @Entity
 @Table(name = "ph_free_product")
@@ -34,6 +34,18 @@ public class PhFreeProduct implements Serializable {
 
     /** 备注[不要展示在外面让他们瞎填] **/
     private String remark;
+
+    /** 商品种类 **/
+    private String goodsType;
+
+    /** 总商品数量 **/
+    private Long sumGooodsCount;
+
+    /** 总助力次数 **/
+    private Long sumBoostCount;
+
+    /** 创建人 **/
+    private String creator;
 
 
     @Id
@@ -102,6 +114,42 @@ public class PhFreeProduct implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    @Column(name = "goods_type", length = 100)
+    public String getGoodsType() {
+        return goodsType;
+    }
+
+    public void setGoodsType(String goodsType) {
+        this.goodsType = goodsType;
+    }
+
+    @Column(name = "sum_gooods_count", length = 11)
+    public Long getSumGooodsCount() {
+        return sumGooodsCount;
+    }
+
+    public void setSumGooodsCount(Long sumGooodsCount) {
+        this.sumGooodsCount = sumGooodsCount;
+    }
+
+    @Column(name = "sum_boost_count", length = 11)
+    public Long getSumBoostCount() {
+        return sumBoostCount;
+    }
+
+    public void setSumBoostCount(Long sumBoostCount) {
+        this.sumBoostCount = sumBoostCount;
+    }
+
+    @Column(name = "creator", length = 100)
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 
 }
