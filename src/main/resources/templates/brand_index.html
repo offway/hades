@@ -81,8 +81,10 @@
                 <button class="btn btn-info del">删除</button>
                 <button class="btn btn-danger pinToLogo">推荐至首页LOGO</button>
                 <button class="btn btn-danger pinToBanner">推荐至首页Banner</button>
+				<button class="btn btn-danger pinToBannerMini">推荐至小程序首页Banner</button>
                 <button class="btn btn-info pinLogoList">首页LOGO推荐列表</button>
                 <button class="btn btn-info pinBannerList">首页Banner推荐列表</button>
+				<button class="btn btn-info pinBannerListMini">小程序首页Banner推荐列表</button>
 				<button class="btn btn-danger up">上架</button>
 				<button class="btn btn-danger down">下架</button>
 			</div>
@@ -401,7 +403,7 @@
         that.parent().parent().remove();
     }
 
-    function listIt(data, isLogo) {
+	function listIt(data, isLogo, isMini) {
         var preview = $("#preview_body");
         var contentStr = "";
         var mainObj = data;
@@ -430,11 +432,16 @@
             image.each(function (i, e) {
                 images.push(e.value);
             });
-            $.post("/brand_pin_save", {"ids": ids, "images": images, "isLogo": isLogo}, function (data) {
-                if (data) {
-                    toastr.success("操作已成功！", "温馨提示");
-                }
-            });
+			$.post("/brand_pin_save", {
+				"ids": ids,
+				"images": images,
+				"isLogo": isLogo,
+				"isMini": isMini
+			}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+				}
+			});
         });
         jQuery('#preview').modal('show', {backdrop: 'fade'});
         toastr.success("操作已成功！", "温馨提示");
@@ -898,23 +905,50 @@
 			});
 		});
 
-        $(".btn.btn-info.pinLogoList").click(function () {
-            $.post("/brand_pin_list", {"to": "logo"}, function (data) {
-                if (data) {
-                    listIt(data, true);
-                    toastr.success("操作已成功！", "温馨提示");
-                }
-            });
-        });
+		$(".btn.btn-danger.pinToBannerMini").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
 
-        $(".btn.btn-info.pinBannerList").click(function () {
-            $.post("/brand_pin_list", {"to": "banner"}, function (data) {
-                if (data) {
-                    listIt(data, false);
-                    toastr.success("操作已成功！", "温馨提示");
-                }
-            });
-        });
+			$.post("/brand_pin", {"ids": ids, "to": "banner", "mini": 1}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+				}
+			});
+		});
+
+		$(".btn.btn-info.pinLogoList").click(function () {
+			$.post("/brand_pin_list", {"to": "logo"}, function (data) {
+				if (data) {
+					listIt(data, true, false);
+					toastr.success("操作已成功！", "温馨提示");
+				}
+			});
+		});
+
+		$(".btn.btn-info.pinBannerList").click(function () {
+			$.post("/brand_pin_list", {"to": "banner"}, function (data) {
+				if (data) {
+					listIt(data, false, false);
+					toastr.success("操作已成功！", "温馨提示");
+				}
+			});
+		});
+
+		$(".btn.btn-info.pinBannerListMini").click(function () {
+			$.post("/brand_pin_list", {"to": "banner", "mini": 1}, function (data) {
+				if (data) {
+					listIt(data, false, true);
+					toastr.success("操作已成功！", "温馨提示");
+				}
+			});
+		});
 
 		$(".btn.btn-danger.up").click(function () {
 			var activityId = $("input[name='activityId']:checked");
