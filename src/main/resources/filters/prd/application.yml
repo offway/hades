@@ -64,7 +64,7 @@ spring:
     generate-ddl: false
   http:
     multipart:
-      max-file-size: 10MB   
+      max-file-size: 50MB
 ph: 
   default:  
     #默认密码
