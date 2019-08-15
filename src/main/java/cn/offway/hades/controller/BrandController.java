@@ -174,8 +174,8 @@ public class BrandController {
 
     @ResponseBody
     @RequestMapping("/brand_pin")
-    public boolean pin(@RequestParam("ids[]") Long[] ids, String to) {
-        String key = "logo".equals(to) ? "INDEX_BRAND_LOGO" : "INDEX_BRAND_GOODS";
+    public boolean pin(@RequestParam("ids[]") Long[] ids, String to, @RequestParam(required = false, defaultValue = "0") int mini) {
+        String key = "logo".equals(to) ? "INDEX_BRAND_LOGO" : (mini == 1 ? "INDEX_BRAND_GOODS_MINI" : "INDEX_BRAND_GOODS");
         String jsonStr = configService.findContentByName(key);
         JSONArray jsonArray;
         if (jsonStr != null && !"".equals(jsonStr)) {
@@ -207,8 +207,8 @@ public class BrandController {
 
     @ResponseBody
     @RequestMapping("/brand_pin_list")
-    public List<PhBrand> pinList(String to) {
-        String key = "logo".equals(to) ? "INDEX_BRAND_LOGO" : "INDEX_BRAND_GOODS";
+    public List<PhBrand> pinList(String to, @RequestParam(required = false, defaultValue = "0") int mini) {
+        String key = "logo".equals(to) ? "INDEX_BRAND_LOGO" : (mini == 1 ? "INDEX_BRAND_GOODS_MINI" : "INDEX_BRAND_GOODS");
         String jsonStr = configService.findContentByName(key);
         JSONArray jsonArray = new JSONArray();
         if (jsonStr != null && !"".equals(jsonStr)) {
@@ -224,8 +224,8 @@ public class BrandController {
 
     @ResponseBody
     @RequestMapping("/brand_pin_save")
-    public boolean pinSave(@RequestParam(name = "ids[]", required = false) String[] ids, @RequestParam(name = "images[]", required = false) String[] images, boolean isLogo) {
-        String key = isLogo ? "INDEX_BRAND_LOGO" : "INDEX_BRAND_GOODS";
+    public boolean pinSave(@RequestParam(name = "ids[]", required = false) String[] ids, @RequestParam(name = "images[]", required = false) String[] images, boolean isLogo, boolean isMini) {
+        String key = isLogo ? "INDEX_BRAND_LOGO" : (isMini ? "INDEX_BRAND_GOODS_MINI" : "INDEX_BRAND_GOODS");
         PhConfig config = configService.findOne(key);
         JSONArray jsonArray = new JSONArray();
         if (ids != null) {
