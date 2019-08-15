@@ -296,4 +296,13 @@ public class MerchantController {
         }
         return true;
     }
+
+    @ResponseBody
+    @RequestMapping("/merchant_setphone")
+    public boolean setphone(String id,String phone){
+        PhMerchant merchant = merchantService.findOne(Long.valueOf(id));
+        merchant.setPhone(phone);
+        merchantService.save(merchant);
+        return true;
+    }
 }
