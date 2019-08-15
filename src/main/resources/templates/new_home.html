@@ -80,7 +80,7 @@
 									<div class="col-md-8">
 										<div class="form-group">
 											<label class="control-label">发货地址</label>
-											<input type="text" class="form-control" readonly="readonly" name="address_send" placeholder="发货地址"/>
+											<input type="text" class="form-control" readonly="readonly" name="address_send" placeholder="发货地址" onclick="getphone"/>
 											<input type="hidden" class="form-control" name="address_send_jsonStr"/>
 											<input type="hidden" class="form-control" name="addrId"/>
 										</div>
@@ -226,6 +226,33 @@
 		});
 	}
 
+
+	function getphone() {
+		var contractNo = $("#saveForm").find("input[name='addrId']").val();
+		if (confirm("是否修改发货手机号")){
+			var phone = prompt("请输入新的手机号","新手机号");
+			if (isNaN(phone)){
+				$.ajax({
+					type:'post',
+					url:'/merchant_setphone',
+					data:{
+						id: contractNo,
+						phone:phone
+					},
+					success:getphoneok()
+				})
+			}else {
+				alert("请输入数字");
+			}
+		} else {
+			return;
+		}
+	}
+
+	function getphoneok() {
+		alert("修改发货手机号成功");
+	}
+	
 	function closeIt() {
 		var that = $("#preview");
 		that.hide();
