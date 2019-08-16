@@ -46,6 +46,20 @@ public class LimitSaleController {
         return "limit_sale";
     }
 
+    @RequestMapping("/limit_sale_insert.html")
+    public String insert(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("theId", "XYZ");
+        return "limit_sale_compose";
+    }
+
+    @RequestMapping("/limit_sale_modify.html")
+    public String modify(ModelMap map, String id) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("theId", id);
+        return "limit_sale_compose";
+    }
+
     @RequestMapping("/limit_sale_add.html")
     public String add(ModelMap map, String args) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
