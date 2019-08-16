@@ -65,6 +65,22 @@ public class ArticleController {
         return "article_index";
     }
 
+    @RequestMapping("/article_add.html")
+    public String add(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("url", url);
+        map.addAttribute("theId", "ABCD");
+        return "article_compose";
+    }
+
+    @RequestMapping("/article_edit.html")
+    public String edit(ModelMap map, String id) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("url", url);
+        map.addAttribute("theId", id);
+        return "article_compose";
+    }
+
     @RequestMapping("/article_draft.html")
     public String indexDraft() {
         return "articleDraft_index";
