@@ -1,5 +1,7 @@
 package cn.offway.hades.domain;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -21,15 +23,18 @@ public class PhFreeProduct implements Serializable {
     private String name;
 
     /** 开始时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date beginTime;
 
     /** 截止时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date endTime;
 
     /** 顶部主题图片 **/
     private String image;
 
     /** 创建时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /** 备注[不要展示在外面让他们瞎填] **/

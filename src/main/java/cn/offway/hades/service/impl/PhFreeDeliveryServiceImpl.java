@@ -1,17 +1,16 @@
 package cn.offway.hades.service.impl;
 
-import java.util.List;
-
+import cn.offway.hades.domain.PhFreeDelivery;
+import cn.offway.hades.repository.PhFreeDeliveryRepository;
+import cn.offway.hades.service.PhFreeDeliveryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import cn.offway.hades.service.PhFreeDeliveryService;
 
-import cn.offway.hades.domain.PhFreeDelivery;
-import cn.offway.hades.repository.PhFreeDeliveryRepository;
+import java.util.List;
 
 
 /**
@@ -23,33 +22,38 @@ import cn.offway.hades.repository.PhFreeDeliveryRepository;
 @Service
 public class PhFreeDeliveryServiceImpl implements PhFreeDeliveryService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private PhFreeDeliveryRepository phFreeDeliveryRepository;
-	
-	@Override
-	public PhFreeDelivery save(PhFreeDelivery phFreeDelivery){
-		return phFreeDeliveryRepository.save(phFreeDelivery);
-	}
-	
-	@Override
-	public PhFreeDelivery findOne(Long id){
-		return phFreeDeliveryRepository.findOne(id);
-	}
+    @Autowired
+    private PhFreeDeliveryRepository phFreeDeliveryRepository;
 
-	@Override
-	public void delete(Long id){
-		phFreeDeliveryRepository.delete(id);
-	}
+    @Override
+    public PhFreeDelivery save(PhFreeDelivery phFreeDelivery) {
+        return phFreeDeliveryRepository.save(phFreeDelivery);
+    }
 
-	@Override
-	public List<PhFreeDelivery> save(List<PhFreeDelivery> entities){
-		return phFreeDeliveryRepository.save(entities);
-	}
+    @Override
+    public PhFreeDelivery findOne(Long id) {
+        return phFreeDeliveryRepository.findOne(id);
+    }
 
-	@Override
-	public Page<PhFreeDelivery> findAll(Pageable pageable){
-		return phFreeDeliveryRepository.findAll(pageable);
-	}
+    @Override
+    public void delete(Long id) {
+        phFreeDeliveryRepository.delete(id);
+    }
+
+    @Override
+    public List<PhFreeDelivery> save(List<PhFreeDelivery> entities) {
+        return phFreeDeliveryRepository.save(entities);
+    }
+
+    @Override
+    public Page<PhFreeDelivery> findAll(Pageable pageable) {
+        return phFreeDeliveryRepository.findAll(pageable);
+    }
+
+    @Override
+    public void deleteByproductIdInList(List<Long> id) {
+        phFreeDeliveryRepository.deleteByproductId(id);
+    }
 }

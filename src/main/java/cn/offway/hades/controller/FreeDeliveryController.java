@@ -1,13 +1,15 @@
 package cn.offway.hades.controller;
 
-import cn.offway.hades.domain.*;
+import cn.offway.hades.domain.PhAdmin;
+import cn.offway.hades.domain.PhFreeDelivery;
+import cn.offway.hades.domain.PhFreeProduct;
+import cn.offway.hades.domain.PhGoods;
 import cn.offway.hades.properties.QiniuProperties;
-import cn.offway.hades.service.*;
+import cn.offway.hades.service.PhFreeDeliveryService;
+import cn.offway.hades.service.PhFreeProductService;
+import cn.offway.hades.service.PhGoodsService;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,24 +19,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
 
 @Controller
 @RequestMapping
@@ -46,6 +37,9 @@ public class FreeDeliveryController {
     private PhFreeDeliveryService freeDeliveryService;
     @Autowired
     private PhFreeProductService freeProductService;
+    @Autowired
+    private PhGoodsService goodsService;
+
     @Value("${ph.url}")
     private String url;
 
@@ -62,7 +56,6 @@ public class FreeDeliveryController {
         map.addAttribute("url", url);
         return "freeDelivery_add";
     }
-
 
 
     @ResponseBody
@@ -88,8 +81,61 @@ public class FreeDeliveryController {
 
     @ResponseBody
     @RequestMapping("/freeDelivery_save")
-    public boolean save(PhFreeDelivery freeDelivery){
-        freeDeliveryService.save(freeDelivery);
+    public boolean save(String json, @AuthenticationPrincipal PhAdmin admin) {
+        int sumGooodsCount = 0;
+        int sumBoostCount = 0;
+        PhFreeProduct freeProduct = JSONObject.parseObject(json, PhFreeProduct.class);
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        List<PhFreeDelivery> phFreeDeliveryList = new ArrayList<>();
+        JSONArray priceList = jsonObject.getJSONArray("priceList");
+        JSONArray goodsSizeList = jsonObject.getJSONArray("goodsSizeList");
+        JSONArray goodsCountList = jsonObject.getJSONArray("goodsCountList");
+        JSONArray goodsIdList = jsonObject.getJSONArray("goodsIdList");
+        JSONArray brandIdList = jsonObject.getJSONArray("brandIdList");
+        JSONArray boostCountList = jsonObject.getJSONArray("boostCountList");
+        JSONArray goodsNameList = jsonObject.getJSONArray("goodsNameList");
+        JSONArray goodsImgeList = jsonObject.getJSONArray("goodsImgeList");
+        JSONArray userTypesList = jsonObject.getJSONArray("userTypesList");
+        freeProduct.setCreator(admin.getNickname());
+        freeProduct.setCreateTime(new Date());
+        freeProduct = freeProductService.save(freeProduct);
+
+        for (int i = 0; i < userTypesList.size(); i++) {
+            PhFreeDelivery freeDeliveries = new PhFreeDelivery();
+            PhGoods goods = goodsService.findOne(Long.valueOf(goodsIdList.get(i).toString()));
+            freeDeliveries.setUserType(userTypesList.get(i).toString());
+            freeDeliveries.setImage(goodsImgeList.get(i).toString());
+            freeDeliveries.setName(goodsNameList.get(i).toString());
+            freeDeliveries.setBoostCount(Long.valueOf(boostCountList.get(i).toString()));
+            freeDeliveries.setBrandId(Long.valueOf(brandIdList.get(i).toString()));
+            freeDeliveries.setGoodsId(Long.valueOf(goodsIdList.get(i).toString()));
+            freeDeliveries.setGoodsCount(Long.valueOf(goodsCountList.get(i).toString()));
+            freeDeliveries.setGoodsSize(goodsSizeList.get(i).toString());
+            freeDeliveries.setPrice(Double.valueOf(priceList.get(i).toString()));
+            freeDeliveries.setCreateTime(new Date());
+            freeDeliveries.setStatus("0");
+            freeDeliveries.setSort((long) i);
+            freeDeliveries.setBrandLogo(goods.getBrandLogo());
+            freeDeliveries.setBrandName(goods.getBrandName());
+            freeDeliveries.setProductId(freeProduct.getId());
+            phFreeDeliveryList.add(freeDeliveries);
+            sumGooodsCount += Integer.valueOf(goodsCountList.get(i).toString());
+            sumBoostCount += Integer.valueOf(boostCountList.get(i).toString());
+        }
+
+        freeProduct.setSumBoostCount((long) sumBoostCount);
+        freeProduct.setSumGooodsCount((long) sumGooodsCount);
+        freeProductService.save(freeProduct);
+        freeDeliveryService.save(phFreeDeliveryList);
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/freeDelivery_del")
+    public boolean delete(@RequestParam("ids[]") Long[] ids) {
+        List<Long> id = Arrays.asList(ids);
+        freeProductService.deleteList(id);
+        freeDeliveryService.deleteByproductIdInList(id);
         return true;
     }
 }

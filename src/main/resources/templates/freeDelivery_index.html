@@ -617,7 +617,10 @@
                 {
                     targets: 8,
                     data: "createTime",
-                    title: "创建时间"
+                    title: "创建时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
                 },
                 {
                     targets: 9,
@@ -818,7 +821,7 @@
                 ids.push(e.value);
             });
 
-            $.post("/article_del", {ids: ids}, function (data) {
+            $.post("/freeDelivery_del", {ids: ids}, function (data) {
                 if (data) {
                     toastr.success("操作已成功！", "温馨提示");
                     oTable.fnDraw();

@@ -8,6 +8,8 @@
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
 	<link rel="stylesheet" href="assets/css/jquery-editable-select.min.css"/>
+	<link rel="stylesheet" href="assets/css/selectize.bootstrap3.css"/>
+	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -83,7 +85,6 @@
 										<div class="form-group">
 											<label class="control-label">添加商品</label>
 											<input type="button" id="addMoreTextEle" class="notMe" value="添加" onclick="addMoreTextAeticle(this,null);"/>
-											<input type="hidden" class="form-control" name="goodsIds" value=""/>
 										</div>
 									</div>
 								</div>
@@ -117,9 +118,11 @@
     <script src="assets/js/distpicker.js"></script>
 	<script src="assets/js/jquery-editable-select.min.js"></script>.
 	<script src="assets/js/selectize.min.js"></script>
+	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
+	var uuids =[];
 	function addMoreTextAeticle(self, v) {
 		var uuid = UUID.randomUUID();
 		var that = $(self);
@@ -127,8 +130,9 @@
 		if (v != null) {
 			str += '<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsIdsSame" placeholder="填写商品ID"/>'.replace("VALUE", v);
 		} else {
-			str += '<input type="file" class="form-control" name="goodsFile" placeholder="商品图片" onchange="uploadMainFile0(this,\'0\',null)"/>\n' +
-					'<input type="hidden" class="form-control" name="goodsImg"/>\n' +
+			str += '<input type="file" class="form-control" name="goodsFile" placeholder="商品图片" onchange="uploadFile(this)"/>\n' +
+					'<input type="hidden" class="form-control" name="goodImge" />\n'+
+					'<img alt="" src="" name="goodsImg" style="display:none;"/>\n' +
 					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsName" placeholder="商品名称"/>\n' +
 					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsPrice" placeholder="商品价格"/>\n' +
 					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsSize" placeholder="商品尺码"/>\n' +
@@ -136,10 +140,10 @@
 					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsId" placeholder="商品ID"/>\n' +
 					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="brandId" placeholder="品牌ID"/>\n' +
 					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="boostCount" placeholder="助力人数"/>\n' +
-					'<label class="control-label">是否新用户</label>\n' +
-					'<label><input name="userType" class="notMe" type="radio" checked="checked" value="0"/>是 </label>\n' +
-					'<label><input name="userType" class="notMe" type="radio" value="1"/>否 </label>'
+					'<label><input name="userTypeUUID" class="notMe" type="radio" checked="checked" value="0"/>新用户 </label>\n'.replace("UUID", uuid) +
+					'<label><input name="userTypeUUID" class="notMe" type="radio" value="1"/>新老用户 </label>'.replace("UUID", uuid)
 			str = str.replace("UUID", uuid);
+			uuids.push("userType"+uuid);
 		}
 		str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
 		str += '</div>';
@@ -191,6 +195,71 @@
 		}
 	}
 
+	function uploadFile(self) {
+		var that = $(self);
+		if (self.files.length > 0) {
+			var file = self.files[0];
+			getQNToken(function (token) {
+				this.upload("", token, file, function () {
+					//
+				}, function (err) {
+					console.log("error");
+					console.log(err);
+				}, function (res) {
+					var url = qiniuUrl + "/" + res.key;
+					that.parent().find("[name=goodImge]").val(url);
+					that.parent().find("[name=goodsImg]").attr("src", url);
+					that.parent().find("[name=goodsImg]").attr("width", "100px");
+					that.parent().find("[name=goodsImg]").attr("height", "100px");
+					that.parent().find("[name=goodsImg]").show();
+				});
+			});
+		} else {
+			confirm("未选择任何文件!");
+		}
+	}
+
+
+	function uploadMainFile0(self,bol,res1) {
+		var that = $(self);
+		if (self.files.length > 0) {
+			var file = self.files[0];
+			getQNToken(function (token) {
+				sizevideo = 5;
+				bl= false;
+				if (bol=='1'){
+					sizevideo = 50;
+					bl =true;
+				}
+				this.upload("", token, file, function () {
+					//
+				}, function (err) {
+					console.log("error");
+					console.log(err);
+				}, function (res) {
+					//0图片，1视频
+					if (bol =='0'){
+						Filname = 'image';
+					}else if (bol=='1') {
+						Filname = 'video';
+						// $('#butsev').show();
+					}
+					var url = qiniuUrl + "/" + res.key;
+					that.parent().find("[name="+Filname+"]").val(url);
+					that.parent().find("[name=goodsImg]").attr("src", url);
+					that.parent().find("[name=goodsImg]").attr("width", "100px");
+					that.parent().find("[name=goodsImg]").attr("height", "100px");
+					that.parent().find("[name=goodsImg]").show();
+					if (res1 != null){
+						eval(res1+'();') ;
+					}
+				},sizevideo,bl);
+			},bol);
+		} else {
+			confirm("未选择任何文件!");
+		}
+	}
+
 	function getQNToken(cb,bol) {
 		var param = {};
 		if (bol == 1) {
@@ -209,7 +278,28 @@
 
 	jQuery(document).ready(function ($) {
         $.base64.utf8encode = true;
-        $.base64.utf8decode = true;
+		jQuery.datetimepicker.setLocale('zh');
+
+		jQuery('#beginTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
+		jQuery('#endTime').datetimepicker(
+				{
+					"lang": "zh",
+					"format": "Y-m-d H:i:s",
+					"timepicker": true,
+					"datepicker": true,
+					"defaultDate": new Date(),
+					"defaultTime": "00:00:00"
+				}
+		);
 
         //save the argStr
         $("#args").val(args);
@@ -235,21 +325,143 @@
 		$(".btn.btn-info.save").click(function () {
 			var footer = $(this).parent(".modal-footer");
 			var form = $("#saveForm");
-			var name = form.find("input[name='goodsName']").val();
-			var price = form.find("input[name='goodsPrice']").val();
-			var goodsSize = form.find("input[name='goodsSize']").val();
-			var goodsCount = form.find("input[name='goodsCount']").val();
-			var goodsId = form.find("input[name='goodsId']").val();
-			var brandId = form.find("input[name='brandId']").val();
-			var boostCount = form.find("input[name='boostCount']").val();
+			var name = form.find("input[name='name']").val();
 			var beginTime = form.find("input[name='beginTime']").val();
 			var endTime = form.find("input[name='endTime']").val();
 			var image = form.find("input[name='image']").val();
+
 
 			// if (name == '' || beginTime == '' || endTime == '' || image == '') {
 			// 	toastr.error("请填写完整数据后提交", "温馨提示");
 			// 	return;
 			// }
+
+			var prices = form.find("input[name='goodsPrice']");
+			var priceList= [];
+			for (var k in prices) {
+				if (isNaN(k)) {
+					continue;
+				}
+				var price = prices[k].value;
+				if (price == '') {
+					//skip
+				} else {
+					priceList.push(price);
+				}
+			}
+			var goodsSizes = form.find("input[name='goodsSize']");
+			var goodsSizeList= [];
+			for (var k in goodsSizes) {
+				if (isNaN(k)) {
+					continue;
+				}
+				var goods = goodsSizes[k].value;
+				if (goods == '') {
+					//skip
+				} else {
+					goodsSizeList.push(goods);
+				}
+			}
+
+			var goodsCounts = form.find("input[name='goodsCount']");
+			var goodsCountList= [];
+			for (var k in goodsCounts) {
+				if (isNaN(k)) {
+					continue;
+				}
+				var goods = goodsCounts[k].value;
+				if (goods == '') {
+					//skip
+				} else {
+					goodsCountList.push(goods);
+				}
+			}
+			var goodsIds = form.find("input[name='goodsId']");
+			var goodsIdList= [];
+			for (var k in goodsIds) {
+				if (isNaN(k)) {
+					continue;
+				}
+				var goods = goodsIds[k].value;
+				if (goods == '') {
+					//skip
+				} else {
+					goodsIdList.push(goods);
+				}
+			}
+			var brandIds = form.find("input[name='brandId']");
+			var brandIdList= [];
+			for (var k in brandIds) {
+				if (isNaN(k)) {
+					continue;
+				}
+				var goods = brandIds[k].value;
+				if (goods == '') {
+					//skip
+				} else {
+					brandIdList.push(goods);
+				}
+			}
+			var boostCounts = form.find("input[name='boostCount']");
+			var boostCountList= [];
+			for (var k in boostCounts) {
+				if (isNaN(k)) {
+					continue;
+				}
+				var goods = boostCounts[k].value;
+				if (goods == '') {
+					//skip
+				} else {
+					boostCountList.push(goods);
+				}
+			}
+			var goodsNames = form.find("input[name='goodsName']");
+			var goodsNameList= [];
+			for (var k in goodsNames) {
+				if (isNaN(k)) {
+					continue;
+				}
+				var goods = goodsNames[k].value;
+				if (goods == '') {
+					//skip
+				} else {
+					goodsNameList.push(goods);
+				}
+			}
+			var goodsImges = form.find("input[name='goodImge']");
+			var goodsImgeList= [];
+			for (var k in goodsImges) {
+				if (isNaN(k)) {
+					continue;
+				}
+				var goods = goodsImges[k].value;
+				if (goods == '') {
+					//skip
+				} else {
+					goodsImgeList.push(goods);
+				}
+			}
+
+
+			var userTypesList =[];
+			for (var uuid in uuids){
+				userTypesList.push(form.find("input[name='"+uuids[uuid]+"']").val());
+			}
+			var json = {
+				"name":name,
+				"beginTime":beginTime,
+				"endTime":endTime,
+				"image":image,
+				"priceList":priceList,
+				"goodsSizeList":goodsSizeList,
+				"goodsCountList":goodsCountList,
+				"goodsIdList":goodsIdList,
+				"brandIdList":brandIdList,
+				"boostCountList":boostCountList,
+				"goodsNameList":goodsNameList,
+				"goodsImgeList":goodsImgeList,
+				"userTypesList":userTypesList
+			};
 			//获取token
 			$.get("/qiniu/token", {}, function (token) {
 				if (token != '') {
@@ -263,20 +475,24 @@
 						},
 						three: function (callback) {
 							//提交保存
-							var data = {
-								"name": name,
-								"price": price,
-								"goodsSize": goodsSize,
-								"goodsCount": goodsCount,
-								"goodsId": goodsId,
-								"brandId": brandId,
-								"boostCount": boostCount,
-								"beginTime": beginTime,
-								"endTime": endTime,
-								"image": image
-							};
-							console.log(data);
-							$.post("/freeDelivery_save", data, function (data) {
+							// var data = {
+							// 	"name":name,
+							// 	"beginTime":beginTime,
+							// 	"endTime":endTime,
+							// 	"image":image,
+							// 	"priceList":priceList,
+							// 	"goodsSizeList":goodsSizeList,
+							// 	"goodsCountList":goodsCountList,
+							// 	"goodsIdList":goodsIdList,
+							// 	"brandIdList":brandIdList,
+							// 	"boostCountList":boostCountList,
+							// 	"goodsNameList":goodsNameList,
+							// 	"goodsImgeList":goodsImgeList,
+							// 	"userTypesList":userTypesList
+							// };
+							// console.log(data);
+							//$("#saveForm").serialize()
+							$.post("/freeDelivery_save",{"json":JSON.stringify(json)}, function (data) {
 								if (data) {
 									footer.find("button").show();
 									footer.find(".bg-lg").hide();
@@ -295,7 +511,7 @@
 						if (err) {
 							$(".btn.btn-info.save").removeAttr("disabled");
 						} else {
-							window.location.href = '/limit_sale.html';
+							window.location.href = '/freeDelivery.html';
 						}
 					});
 				} else {
