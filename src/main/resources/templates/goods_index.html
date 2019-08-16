@@ -678,11 +678,6 @@
 					},
 					{
 						targets: 15,
-						data: "material",
-						title: "材质"
-					},
-					{
-						targets: 16,
 						data: "status",
 						title: "状态",
 						render: function (data, type, row, meta) {
@@ -690,17 +685,17 @@
 						}
 					},
 					{
-						targets: 17,
+						targets: 16,
 						data: "viewCount",
 						title: "浏览数"
 					},
 					{
-						targets: 18,
+						targets: 17,
 						data: "saleCount",
 						title: "销量"
 					},
 					{
-						targets: 19,
+						targets: 18,
 						data: "createTime",
 						title: "创建时间",
 						render: function (data, type, row, meta) {
@@ -708,20 +703,15 @@
 						}
 					},
 					{
-						targets: 20,
-						data: "remark",
-						title: "备注"
-					},
-					{
-						targets: 21,
+						targets: 19,
 						data: "isSpecial",
 						title: "特殊商品",
 						render: function (data, type, row, meta) {
-							return data == "1" ? "<font color='red'>特殊</font>" : "非特殊";
+							return data == "1" ? "<font color='red'>限量</font>" : "非限量";
 						}
 					},
 					{
-						targets: 22,
+						targets: 20,
 						data: "id",
 						orderable: false,
 						title: "操作",
@@ -732,7 +722,7 @@
 						}
 					},
 					{
-						targets: 23,
+						targets: 21,
 						data: "id",
 						orderable: false,
 						title: "操作",
