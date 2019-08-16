@@ -4,6 +4,8 @@ package cn.offway.hades.service;
 import java.util.List;
 
 import cn.offway.hades.domain.PhFreeDelivery;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * 免费送Service接口
@@ -20,4 +22,6 @@ public interface PhFreeDeliveryService{
     void delete(Long id);
 
     List<PhFreeDelivery> save(List<PhFreeDelivery> entities);
+
+    Page<PhFreeDelivery> findAll(Pageable pageable);
 }

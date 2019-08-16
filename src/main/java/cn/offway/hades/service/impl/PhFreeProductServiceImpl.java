@@ -5,6 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import cn.offway.hades.service.PhFreeProductService;
 
@@ -44,5 +46,10 @@ public class PhFreeProductServiceImpl implements PhFreeProductService {
 	@Override
 	public List<PhFreeProduct> save(List<PhFreeProduct> entities){
 		return phFreeProductRepository.save(entities);
+	}
+
+	@Override
+	public Page<PhFreeProduct> findAll(Pageable pageable){
+		return phFreeProductRepository.findAll(pageable);
 	}
 }
