@@ -50,15 +50,30 @@ public class IndexManagerController {
         }
     }
 
+    private String getImgXcxFromJSON(String num) {
+        if (jsonArray != null) {
+            for (Object o : jsonArray) {
+                JSONObject obj = (JSONObject) o;
+                if (num.equals(obj.getString("type"))) {
+                    return obj.getString("imageXcx");
+                }
+            }
+            return "";
+        } else {
+            return "";
+        }
+    }
+
     @ResponseBody
     @RequestMapping("/index_save")
-    public boolean save(String id, String logo, String value) {
+    public boolean save(String id, String logo,String logoXcx, String value) {
         if (jsonArray == null) {
             List<Object> list = new ArrayList<>();
             Map<String, String> map = new HashMap<>();
             map.put("type", id);
             map.put("value", value);
             map.put("image", logo);
+            map.put("imageXcx",logoXcx);
             list.add(map);
             jsonArray = new JSONArray(list);
         } else {
@@ -76,6 +91,7 @@ public class IndexManagerController {
             jsonObject.put("type", id);
             jsonObject.put("value", value);
             jsonObject.put("image", logo);
+            jsonObject.put("imageXcx",logoXcx);
             jsonArray.add(jsonObject);
         }
         if (phConfig == null) {
@@ -92,6 +108,7 @@ public class IndexManagerController {
     public String zgll(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("image", getImgFromJSON("0"));
+        map.addAttribute("imageXcx", getImgXcxFromJSON("0"));
         map.addAttribute("type", "0");
         map.addAttribute("value", "中国力量");
         return "index_common";
@@ -101,6 +118,7 @@ public class IndexManagerController {
     public String gjcl(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("image", getImgFromJSON("1"));
+        map.addAttribute("imageXcx", getImgXcxFromJSON("1"));
         map.addAttribute("type", "1");
         map.addAttribute("value", "高街潮流");
         return "index_common";
@@ -110,6 +128,7 @@ public class IndexManagerController {
     public String msd(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("image", getImgFromJSON("2"));
+        map.addAttribute("imageXcx", getImgXcxFromJSON("2"));
         map.addAttribute("type", "2");
         map.addAttribute("value", "买手店");
         return "index_common";
@@ -119,6 +138,7 @@ public class IndexManagerController {
     public String xlzq(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("image", getImgFromJSON("3"));
+        map.addAttribute("imageXcx", getImgXcxFromJSON("3"));
         map.addAttribute("type", "3");
         map.addAttribute("value", "限量专区");
         return "index_common";
@@ -128,6 +148,7 @@ public class IndexManagerController {
     public String mfs(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("image", getImgFromJSON("4"));
+        map.addAttribute("imageXcz", getImgXcxFromJSON("4"));
         map.addAttribute("type", "4");
         map.addAttribute("value", "免费送");
         return "index_common";

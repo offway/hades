@@ -72,6 +72,7 @@
 				<button class="btn btn-info add" >添加</button>
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
+				<button class="btn btn-info same" id="same">同步至小程序</button>
 <!--                <button class="btn btn-info up">上架</button>-->
 <!--                <button class="btn btn-info down">下架</button>-->
 			</div>
@@ -247,7 +248,7 @@
 		var tips = $("h4.modal-title");
 		var radioGroup = $("#radioGroup");
 		switch (parseInt(position)) {
-				//展示位置[0-首页顶部,1-首页腹部,2-广告页]
+				//展示位置[0-首页顶部,1-首页腹部,2-广告页,4-小程序首页顶部,5-小程序首页腹部]
 			case 0:
 				titleEle.html(titleEle.html() + "顶部");
 				subTitleEle.html(subTitleEle.html() + "顶部");
@@ -331,6 +332,28 @@
 						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"14\"/>买手店详情页 </label>\n"+
 						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"15\"/>跳转限量商品 </label>\n"
 				);
+				break;
+			case 4:
+				titleEle.html("小程序顶部");
+				subTitleEle.html("小程序顶部");
+				tips.html("小程序顶部");
+				radioGroup.html("" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(带参) </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(不带参) </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"2\"/>单品 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"1\"/>品牌首页</label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"4\"/>活动首页</label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"3\"/>明星同款详情页 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"5\"/>单篇资讯 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"6\"/>免费抽 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"7\"/>App内部H5 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"11\"/>中国力量首页 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"12\"/>高街时尚首页 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"13\"/>买手店首页 </label>\n" +
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"14\"/>买手店详情页 </label>\n"+
+						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"15\"/>跳转限量商品 </label>\n"
+				);
+				$("#same").hide();
 				break;
 			default:
 				break;
@@ -700,6 +723,26 @@
 			});
 
 			$.post("/banner_down", {"ids": ids}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			});
+		});
+
+		$(".btn.btn-info.same").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
+
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
+
+			$.post("/banner_same", {"ids": ids}, function (data) {
 				if (data) {
 					toastr.success("操作已成功！", "温馨提示");
 					oTable.fnDraw();

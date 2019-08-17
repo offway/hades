@@ -100,7 +100,7 @@ public class FreeDeliveryController {
         freeProduct.setCreateTime(new Date());
         freeProduct = freeProductService.save(freeProduct);
 
-        for (int i = 0; i < userTypesList.size(); i++) {
+        for (int i = 0; i < goodsIdList.size(); i++) {
             PhFreeDelivery freeDeliveries = new PhFreeDelivery();
             PhGoods goods = goodsService.findOne(Long.valueOf(goodsIdList.get(i).toString()));
             freeDeliveries.setUserType(userTypesList.get(i).toString());

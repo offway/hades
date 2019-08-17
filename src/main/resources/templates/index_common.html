@@ -52,10 +52,41 @@
 								<div class="row">
 									<div class="col-md-12">
 										<div class="form-group">
-											<label class="control-label">图片</label>
+											<label class="control-label">App图片</label>
 											<input type="file" class="form-control" name="logoFile" onchange="uploadFile(this)"/>
 											<input type="hidden" class="form-control" name="logo" />
 											<img alt="" src='' name="logoImg" style="display:none;"/>
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-info save">保存</button>
+									<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title"></h3>
+							<div class="panel-options">
+							</div>
+						</div>
+						<div class="panel-body">
+							<form role="form" id="sameForm" class="form-horizontal">
+								<input type="hidden" name="id" value=''/>
+								<input type="hidden" name="value" value=''/>
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="control-label">小程序图片</label>
+											<input type="file" class="form-control" name="logoFileXcx" onchange="uploadFileXcx(this)"/>
+											<input type="hidden" class="form-control" name="logoXcx" />
+											<img alt="" src='' name="logoImgXcx" style="display:none;"/>
 										</div>
 									</div>
 								</div>
@@ -219,6 +250,30 @@
 		}
 	}
 
+	function uploadFileXcx(self) {
+		var that = $(self);
+		if (self.files.length > 0) {
+			var file = self.files[0];
+			getQNToken(function (token) {
+				this.upload("", token, file, function () {
+					//
+				}, function (err) {
+					console.log("error");
+					console.log(err);
+				}, function (res) {
+					var url = qiniuUrl + "/" + res.key;
+					that.parent().find("[name=logoXcx]").val(url);
+					that.parent().find("[name=logoImgXcx]").attr("src", url);
+					that.parent().find("[name=logoImgXcx]").attr("width", "300px");
+					that.parent().find("[name=logoImgXcx]").attr("height", "300px");
+					that.parent().find("[name=logoImgXcx]").show();
+				});
+			});
+		} else {
+			confirm("未选择任何文件!");
+		}
+	}
+
 	function getQNToken(cb) {
 		$.get("/qiniu/token", {}, function (token) {
 			cb(token);
@@ -227,6 +282,7 @@
 
 	var qiniuUrl = [[${qiniuUrl}]];
     var image = [[${image}]];
+    var imageXcx = [[${imageXcx}]];
 	var type = [[${type}]];
 	var value = [[${value}]];
 
@@ -239,14 +295,21 @@
         $("h1.title").html(value);
 
 		var form = $("#saveForm");
+		var sameform = $("#sameForm");
 		form.find("input[name='id']").val(type);
+		sameform.find("input[name='id']").val(type);
 		form.find("input[name='value']").val(value);
+		sameform.find("input[name='value']").val(value);
 		form.find("input[name='logo']").val(image);
+		sameform.find("input[name='logoXcx']").val(imageXcx);
 		form.find("img[name='logoImg']").attr("src", image);
+		sameform.find("img[name='logoImgXcx']").attr("src",imageXcx);
 		if (image != '') {
 			form.find("img[name='logoImg']").show();
 		}
-
+		if (imageXcx != ''){
+			sameform.find("img[name='logoImgXcx']").show();
+		}
 
 
 		//保存
@@ -254,9 +317,11 @@
 			var footer = $(this).parent(".modal-footer");
 			footer.find("button").hide();
 			footer.find(".bg-lg").show();
+			var sameform = $("#sameForm");
 			var form = $("#saveForm");
 			//已上传的图片地址
 			var logo = form.find("input[name='logo']").val();
+			var img = sameform.find("input[name='logoXcx']").val();
 
 			if (logo == '') {
 				toastr.error("请填写完整数据后提交", "温馨提示");
@@ -277,7 +342,18 @@
 						},
 						three: function (callback) {
 							//提交保存
+							// var id =form.find("input[name='id']").val(type);
+							// var value =form.find("input[name='value']").val(value);
+							// var logo =form.find("input[name='logo']").val(image);
+							// var  logoXcx=sameform.find("input[name='logoXcx']").val(imageXcx);
+							// var data ={
+							// 	"id":id,
+							// 	"value":value,
+							// 	"logo":logo,
+							// 	"logoXcx":logoXcx
+							// };
 							var data = $("#saveForm").serializeArray();
+							data.push({"name":"logoXcx","value":img});
 							$.post("/index_save", data, function (data) {
 								if (data) {
 									footer.find("button").show();

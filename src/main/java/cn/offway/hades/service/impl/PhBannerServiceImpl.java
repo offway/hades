@@ -95,4 +95,9 @@ public class PhBannerServiceImpl implements PhBannerService {
             }
         }, pageable);
     }
+
+    @Override
+    public void downSame(){
+        bannerRepository.updateSamestate();
+    }
 }

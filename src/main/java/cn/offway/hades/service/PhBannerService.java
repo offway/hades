@@ -20,4 +20,6 @@ public interface PhBannerService {
     void updatetime();
 
     Page<PhBanner> findAll(String position, String id, String remark, Pageable pageable);
+
+    void downSame();
 }

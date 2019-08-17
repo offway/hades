@@ -55,6 +55,13 @@ public class BannerController {
         return "banner_index";
     }
 
+    @RequestMapping("/banner_wx.html")
+    public String indexWx(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("position", 4);
+        return "banner_index";
+    }
+
     @RequestMapping("/banner_list")
     @ResponseBody
     public Map<String, Object> getAll(HttpServletRequest request, String position,String id,String remark) {
@@ -138,6 +145,29 @@ public class BannerController {
         banner.setStatus("0");
         banner.setSort(null);
         bannerService.save(banner);
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/banner_same")
+    public boolean same(@RequestParam("ids[]") Long[] ids){
+        bannerService.downSame();
+        for (Long id : ids) {
+            PhBanner banner= bannerService.findOne(id);
+            PhBanner newbanner = new PhBanner();
+            newbanner.setCreateTime(new Date());
+            newbanner.setSort(banner.getSort());
+            newbanner.setStatus(banner.getStatus());
+            newbanner.setUrl(banner.getUrl());
+            newbanner.setBanner(banner.getBanner());
+            newbanner.setBeginTime(banner.getBeginTime());
+            newbanner.setEndTime(banner.getEndTime());
+            newbanner.setRedirectId(banner.getRedirectId());
+            newbanner.setRemark(banner.getRemark());
+            newbanner.setType(banner.getType());
+            newbanner.setPosition("4");
+            bannerService.save(newbanner);
+        }
         return true;
     }
 }

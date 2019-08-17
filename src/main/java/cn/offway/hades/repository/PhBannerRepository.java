@@ -28,4 +28,9 @@ public interface PhBannerRepository extends JpaRepository<PhBanner, Long>, JpaSp
     @Modifying
     @Query(nativeQuery = true, value = "update `ph_banner` set `status` = 0 where `status` = 1 and `end_time` <= NOW()")
     void updatetime();
+
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true, value = "update `ph_banner` set `status` = 0 where `position` = 4 ")
+    void updateSamestate();
 }
