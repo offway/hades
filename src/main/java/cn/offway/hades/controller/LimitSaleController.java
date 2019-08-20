@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -114,6 +115,16 @@ public class LimitSaleController {
     @RequestMapping("/limit_sale_get")
     public PhLimitedSale get(Long id) {
         return limitedSaleService.findOne(id);
+    }
+
+    @ResponseBody
+    @RequestMapping("/limit_sale_add")
+    public boolean add(PhLimitedSale limitedSale) {
+        if (limitedSale.getId() == null) {
+            limitedSale.setCreateTime(new Date());
+        }
+        limitedSaleService.save(limitedSale);
+        return true;
     }
 
     @ResponseBody

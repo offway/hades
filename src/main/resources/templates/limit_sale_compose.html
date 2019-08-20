@@ -49,7 +49,7 @@
 				<div class="panel-body">
 					<form role="form" id="saveForm">
 						<input type="hidden" name="id"/>
-						<input type="hidden" name="goodsId"/>
+<!--						<input type="hidden" name="goodsId"/>-->
 						<input type="hidden" name="action"/>
 						<div class="row">
 							<div class="col-md-12">
@@ -133,9 +133,17 @@
 								</div>
 							</div>
 						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">关联商品ID</label>
+									<input type="number" class="form-control" name="goodsId" placeholder="关联商品ID"/>
+								</div>
+							</div>
+						</div>
 					</form>
 				</div>
-				<button type="button" class="btn btn-info save">保存并添加商品</button>
+				<button type="button" class="btn btn-info save">保存</button>
 			</div>
 			<footer th:replace="footer"></footer>
 		</div>
@@ -330,6 +338,7 @@
             footer.find("button").hide();
             footer.find(".bg-lg").show();
 			var form = $("#saveForm");
+			var goodsId = form.find("input[name='goodsId']").val();
 			var action = form.find("input[name='action']").val();
 			var beginTime = form.find("input[name='beginTime']").val();
 			var endTime = form.find("input[name='endTime']").val();
@@ -339,7 +348,7 @@
 			var boostCount = form.find("input[name='boostCount']:checked").val();
 			var info = editor.html();
 
-            if (beginTime == '' || endTime == '' || name == '' || image == '' || status == '' || info == '' || boostCount == '') {
+            if (beginTime == '' || endTime == '' || name == '' || image == '' || status == '' || info == '' || boostCount == '' || goodsId == '') {
                 toastr.error("请填写完整数据后提交", "温馨提示");
                 footer.find("button").show();
                 footer.find(".bg-lg").hide();
@@ -358,31 +367,49 @@
                             callback();
                         },
                         three: function (callback) {
-                            //提交保存
-                            var map = $("#saveForm").serializeArray();
-                            var newMap = {};
-                            for (var i in map) {
-                                if (map[i]["name"] == 'info') {
-                                    newMap["info"] = $.base64.btoa(info);
-                                } else {
-                                    newMap[map[i]["name"]] = map[i]["value"];
-                                }
-                            }
-							args = $.base64.btoa(JSON.stringify(newMap));
-							args = args.replace(/\+/g, "_");
+							// var map = $("#saveForm").serializeArray();
+							// var newMap = {};
+							// for (var i in map) {
+							// 	if (map[i]["name"] == 'info') {
+							// 		newMap["info"] = $.base64.btoa(info);
+							// 	} else {
+							// 		newMap[map[i]["name"]] = map[i]["value"];
+							// 	}
+							// }
+							// args = $.base64.btoa(JSON.stringify(newMap));
+							// args = args.replace(/\+/g, "_");
 							callback();
                         }
                     }, function (err, results) {
-						footer.find("button").show();
-						footer.find(".bg-lg").hide();
-						var url = $("#url");
-						if (action == 'edit') {
-							url.attr("href", '/limit_sale_edit.html?args=' + args);
-							url[0].click();
-						} else {
-							url.attr("href", '/limit_sale_add.html?args=' + args);
-							url[0].click();
+						//提交保存
+						var map = $("#saveForm").serializeArray();
+						var newMap = {};
+						for (var i in map) {
+							if (map[i]["name"] == 'info') {
+								newMap["info"] = info;
+							} else {
+								newMap[map[i]["name"]] = map[i]["value"];
+							}
 						}
+						$.post("/limit_sale_add", newMap, function (data) {
+							if (data) {
+								footer.find("button").show();
+								footer.find(".bg-lg").hide();
+								toastr.success("操作已成功！", "温馨提示");
+							} else {
+								footer.find("button").show();
+								footer.find(".bg-lg").hide();
+								toastr.error("操作失败", "温馨提示");
+							}
+						});
+						// var url = $("#url");
+						// if (action == 'edit') {
+						// 	url.attr("href", '/limit_sale_edit.html?args=' + args);
+						// 	url[0].click();
+						// } else {
+						// 	url.attr("href", '/limit_sale_add.html?args=' + args);
+						// 	url[0].click();
+						// }
                     });
                 } else {
                     footer.find("button").show();
