@@ -2,6 +2,7 @@ package cn.offway.hades.service.impl;
 
 import cn.offway.hades.domain.PhBrand;
 import cn.offway.hades.domain.PhGoods;
+import cn.offway.hades.domain.PhLimitedSale;
 import cn.offway.hades.domain.PhMerchant;
 import cn.offway.hades.repository.PhGoodsRepository;
 import cn.offway.hades.service.PhGoodsService;
@@ -13,10 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -62,7 +60,7 @@ public class PhGoodsServiceImpl implements PhGoodsService {
     }
 
     @Override
-    public Page<PhGoods> findAll(String name, Long id, String code, String status, Long merchantId, String merchantBrandId, String type, String category, Long[] gidArr, boolean inOrNot, Pageable pageable) {
+    public Page<PhGoods> findAll(String name, Long id, String code, String status, Long merchantId, String merchantBrandId, String type, String category, Long[] gidArr, boolean inOrNot, boolean isLimit, Pageable pageable) {
         return phGoodsRepository.findAll(new Specification<PhGoods>() {
             @Override
             public Predicate toPredicate(Root<PhGoods> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -79,6 +77,15 @@ public class PhGoodsServiceImpl implements PhGoodsService {
                     } else {
                         params.add(in.not());
                     }
+                }
+                if (isLimit) {
+                    Subquery<PhLimitedSale> subquery = criteriaQuery.subquery(PhLimitedSale.class);
+                    Root<PhLimitedSale> subRoot = subquery.from(PhLimitedSale.class);
+                    subquery.select(subRoot);
+                    subquery.where(
+                            criteriaBuilder.equal(root.get("id"), subRoot.get("goodsId"))
+                    );
+                    params.add(criteriaBuilder.exists(subquery));
                 }
                 if (!"".equals(status)) {
                     params.add(criteriaBuilder.equal(root.get("status"), status));
