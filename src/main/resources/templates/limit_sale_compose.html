@@ -391,17 +391,20 @@
 								newMap[map[i]["name"]] = map[i]["value"];
 							}
 						}
-						$.post("/limit_sale_add", newMap, function (data) {
-							if (data) {
-								footer.find("button").show();
-								footer.find(".bg-lg").hide();
-								toastr.success("操作已成功！", "温馨提示");
-							} else {
-								footer.find("button").show();
-								footer.find(".bg-lg").hide();
-								toastr.error("操作失败", "温馨提示");
-							}
-						});
+                        $.post("/limit_sale_add", newMap, function (data) {
+                            if (data) {
+                                footer.find("button").show();
+                                footer.find(".bg-lg").hide();
+                                toastr.success("操作已成功！", "温馨提示");
+                                setTimeout(function () {
+                                    window.location.href = '/limit_sale.html';
+                                }, 1000);
+                            } else {
+                                footer.find("button").show();
+                                footer.find(".bg-lg").hide();
+                                toastr.error("操作失败", "温馨提示");
+                            }
+                        });
 						// var url = $("#url");
 						// if (action == 'edit') {
 						// 	url.attr("href", '/limit_sale_edit.html?args=' + args);
