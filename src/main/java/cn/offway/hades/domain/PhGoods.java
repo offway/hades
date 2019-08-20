@@ -113,6 +113,9 @@ public class PhGoods extends BaseRowModel implements Serializable {
     /** 风格 **/
     private String style;
 
+    /**商品标示[0-普通商品,1-限量商品]**/
+    private String label;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -340,5 +343,14 @@ public class PhGoods extends BaseRowModel implements Serializable {
 
     public void setStyle(String style) {
         this.style = style;
+    }
+
+    @Column(name = "label", length = 2)
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }
