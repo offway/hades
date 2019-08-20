@@ -97,16 +97,18 @@
                                     <option value="" selected="selected">全部</option>
                                 </select>
                             </div>
-                            <div class="input-group">
-                                <label for="special" class="control-box">是否特殊商品</label>
-                            </div>
-                            <div class="input-group">
-                                <select id="special" name="special" class="form-control" style="height:35px">
-                                    <option value="" selected="selected">全部</option>
-                                    <option value="1">是</option>
-                                    <option value="0">否</option>
-                                </select>
-                            </div>
+							<div id="specialEle">
+								<div class="input-group">
+									<label for="special" class="control-box">是否特殊商品</label>
+								</div>
+								<div class="input-group">
+									<select id="special" name="special" class="form-control" style="height:35px">
+										<option value="" selected="selected">全部</option>
+										<option value="1">是</option>
+										<option value="0">否</option>
+									</select>
+								</div>
+							</div>
                         </div>
                         <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
@@ -562,7 +564,9 @@
             $("#stopTimeText").show();
         }
     }
-
+	var qiniuUrl = [[${qiniuUrl}]];
+	var isAdmin = [[${isAdmin}]];
+	var isLimit = [[${isLimit}]];
     jQuery(document).ready(function($)
 	{
 		var oTable;
@@ -573,9 +577,6 @@
 				language: {
 					url: "../assets/Chinese.txt"
 				},
-				aLengthactivity: [
-					[10, 25, 50, 100], [10, 25, 50, 100]
-				],
 				bFilter: false,
 				bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
 				sAjaxDataProp: "aData",//是服务器分页的标志，必须有
@@ -583,6 +584,7 @@
 				fnServerParams: function (aData) {
 					var searchArray = $(".form-inline").serializeArray();
 					$.merge(aData, searchArray);
+					aData.push({"name": "isLimit", "value": isLimit});//append isLimit
 				},
 				order: [[6, "desc"]],
 				columnDefs: [
@@ -768,11 +770,6 @@
 			window.location.href = '/goods_add.html';
 		});
 
-
-        var qiniuUrl = [[${qiniuUrl}]];
-
-        var isAdmin = [[${isAdmin}]];
-
 		jQuery.datetimepicker.setLocale('zh');
 		jQuery('#beginTime').datetimepicker(
 				{
@@ -795,73 +792,82 @@
 				}
 		);
 
-        $('[name="now"]').click(function () {
-            var value = $(this).val();  //获取选中的radio的值
-            var beginTime = $("#beginTime");
-            var endTime = $("#endTime");
-            var div = $("#period");
-            switch (parseInt(value)) {
-                case 0:
-                    var pushTimeStr = new Date().Format('yyyy-MM-dd hh:mm:ss');
-                    beginTime.val(pushTimeStr);
-                    endTime.val(pushTimeStr);
-                    div.show();
-                    break;
-                default:
-                    div.hide();
-                    beginTime.val("");
-                    endTime.val("");
-                    break;
-            }
-        });
+		$('[name="now"]').click(function () {
+			var value = $(this).val();  //获取选中的radio的值
+			var beginTime = $("#beginTime");
+			var endTime = $("#endTime");
+			var div = $("#period");
+			switch (parseInt(value)) {
+				case 0:
+					var pushTimeStr = new Date().Format('yyyy-MM-dd hh:mm:ss');
+					beginTime.val(pushTimeStr);
+					endTime.val(pushTimeStr);
+					div.show();
+					break;
+				default:
+					div.hide();
+					beginTime.val("");
+					endTime.val("");
+					break;
+			}
+		});
 
-        if (isAdmin == "1") {
-            $(".btn.btn-info.discountList").click(function () {
-                checkJob();
-            });
-            $(".btn.btn-info.discount").click(function () {
-                var activityId = $("input[name='activityId']:checked");
-                if (activityId.length < 1) {
-                    toastr.error("请至少选择一条数据操作", "温馨提示");
-                    return;
-                }
-                var ids = [];
-                activityId.each(function (i, e) {
-                    ids.push(e.value);
-                });
-                var form = $("#saveForm");
-                form.find("input:not(.notMe)").val("");
-                form.find("input[name='ids']").val(ids.join(","));
-                form.find("img").attr("src", "");
-                form.find("img").hide();
-                form.find("input[type='file']").show();
-                $(".imageShow").remove();
-                jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-            });
-			$(".btn.btn-info.restorePrice").click(function () {
-				var activityId = $("input[name='activityId']:checked");
-				if (activityId.length < 1) {
-					toastr.error("请至少选择一条数据操作", "温馨提示");
-					return;
-				}
-				var ids = [];
-				activityId.each(function (i, e) {
-					ids.push(e.value);
+		if (isLimit == "1") {
+			var titleEle = $("title");
+			var subTitleEle = $("h1.title");
+			titleEle.html("限量" + titleEle.html());
+			subTitleEle.html("限量" + subTitleEle.html());
+			$(".btn.btn-info").hide();
+			$("#specialEle").hide();
+		} else {
+			if (isAdmin == "1") {
+				$(".btn.btn-info.discountList").click(function () {
+					checkJob();
 				});
-				$.post("/goods_restore_price", {ids: ids}, function (data) {
-					if (data) {
-						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw();
-					} else {
-						toastr.error("您无权操作！", "温馨提示");
+				$(".btn.btn-info.discount").click(function () {
+					var activityId = $("input[name='activityId']:checked");
+					if (activityId.length < 1) {
+						toastr.error("请至少选择一条数据操作", "温馨提示");
+						return;
 					}
+					var ids = [];
+					activityId.each(function (i, e) {
+						ids.push(e.value);
+					});
+					var form = $("#saveForm");
+					form.find("input:not(.notMe)").val("");
+					form.find("input[name='ids']").val(ids.join(","));
+					form.find("img").attr("src", "");
+					form.find("img").hide();
+					form.find("input[type='file']").show();
+					$(".imageShow").remove();
+					jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 				});
-			});
-        } else {
-			$(".btn.btn-info.discountList").hide();
-			$(".btn.btn-info.discount").hide();
-			$(".btn.btn-info.restorePrice").hide();
-        }
+				$(".btn.btn-info.restorePrice").click(function () {
+					var activityId = $("input[name='activityId']:checked");
+					if (activityId.length < 1) {
+						toastr.error("请至少选择一条数据操作", "温馨提示");
+						return;
+					}
+					var ids = [];
+					activityId.each(function (i, e) {
+						ids.push(e.value);
+					});
+					$.post("/goods_restore_price", {ids: ids}, function (data) {
+						if (data) {
+							toastr.success("操作已成功！", "温馨提示");
+							oTable.fnDraw();
+						} else {
+							toastr.error("您无权操作！", "温馨提示");
+						}
+					});
+				});
+			} else {
+				$(".btn.btn-info.discountList").hide();
+				$(".btn.btn-info.discount").hide();
+				$(".btn.btn-info.restorePrice").hide();
+			}
+		}
 
 		$(".btn.btn-info.export").click(function () {
 			var activityId = $("input[name='activityId']:checked");

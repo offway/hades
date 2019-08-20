@@ -94,6 +94,20 @@ public class GoodsController {
         } else {
             map.addAttribute("isAdmin", "1");
         }
+        map.addAttribute("isLimit", "0");
+        return "goods_index";
+    }
+
+    @RequestMapping("/goods_limit.html")
+    public String indexLimit(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            map.addAttribute("isAdmin", "0");
+        } else {
+            map.addAttribute("isAdmin", "1");
+        }
+        map.addAttribute("isLimit", "1");
         return "goods_index";
     }
 
@@ -338,7 +352,7 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_list")
-    public Map<String, Object> getList(HttpServletRequest request) {
+    public Map<String, Object> getList(HttpServletRequest request, boolean isLimit) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
@@ -356,7 +370,7 @@ public class GoodsController {
         String special = request.getParameter("special");
         Long[] gids = null;
         boolean inOrNot = true;
-        if (!"".equals(special)) {
+        if (!"".equals(special) && !isLimit) {
             List<PhGoodsSpecial> l = specialService.findAll();
             List<Long> tmpArr = new ArrayList<>();
             for (PhGoodsSpecial i : l) {
@@ -366,7 +380,8 @@ public class GoodsController {
             inOrNot = "1".equals(special);
         }
         Sort sort = new Sort("id");
-        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, Long.valueOf(merchantId), merchantBrandId, type, category, gids, inOrNot, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
+        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, Long.valueOf(merchantId), merchantBrandId, type, category, gids, inOrNot, isLimit, pr);
         ObjectMapper objectMapper = new ObjectMapper();
         List<Map> arr = new ArrayList<>();
         for (PhGoods goods : pages.getContent()) {
