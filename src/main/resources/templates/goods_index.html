@@ -729,6 +729,9 @@
 						orderable: false,
 						title: "操作",
 						render: function (data, type, full, meta) {
+							if (isLimit) {
+								return "";
+							}
 							var str = "";
 							if (full["status"] == "0") {
 								str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
@@ -767,7 +770,11 @@
         });
 
 		$(".btn.btn-info.add").click(function () {
-			window.location.href = '/goods_add.html';
+			if (isLimit) {
+				window.location.href = '/goods_add_limit.html';
+			} else {
+				window.location.href = '/goods_add.html';
+			}
 		});
 
 		jQuery.datetimepicker.setLocale('zh');
@@ -818,6 +825,9 @@
 			titleEle.html("限量" + titleEle.html());
 			subTitleEle.html("限量" + subTitleEle.html());
 			$(".btn.btn-info").hide();
+			$(".btn.btn-info.add").show();
+			$(".btn.btn-info.edit").show();
+			$(".btn.btn-info.del").show();
 			$("#specialEle").hide();
 		} else {
 			if (isAdmin == "1") {
@@ -1092,46 +1102,6 @@
 				}
 			});
 		});
-
-        $(".btn.btn-info.up").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
-
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
-
-            $.post("/banner_up",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            });
-        });
-
-        $(".btn.btn-info.down").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
-
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
-
-            $.post("/banner_down",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            });
-        });
 	});
 	/*]]>*/
 	</script>

@@ -85,7 +85,11 @@ public class PhGoodsServiceImpl implements PhGoodsService {
                     subquery.where(
                             criteriaBuilder.equal(root.get("id"), subRoot.get("goodsId"))
                     );
-                    params.add(criteriaBuilder.exists(subquery));
+                    Predicate sub = criteriaBuilder.exists(subquery);
+                    Predicate label = criteriaBuilder.equal(root.get("label"), "1");
+                    params.add(criteriaBuilder.or(sub, label));
+                } else {
+                    params.add(criteriaBuilder.equal(root.get("label"), "0"));
                 }
                 if (!"".equals(status)) {
                     params.add(criteriaBuilder.equal(root.get("status"), status));

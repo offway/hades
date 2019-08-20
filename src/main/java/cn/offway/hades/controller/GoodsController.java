@@ -120,6 +120,20 @@ public class GoodsController {
         } else {
             map.addAttribute("isAdmin", "1");
         }
+        map.addAttribute("isLimit", "0");
+        return "goods_add";
+    }
+
+    @RequestMapping("/goods_add_limit.html")
+    public String add_limit(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(8L))) {
+            map.addAttribute("isAdmin", "0");
+        } else {
+            map.addAttribute("isAdmin", "1");
+        }
+        map.addAttribute("isLimit", "1");
         return "goods_add";
     }
 

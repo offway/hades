@@ -59,6 +59,7 @@
 					<div class="panel-body">
 						<form role="form" id="saveForm" class="form-horizontal">
 							<input type="hidden" name="id"/>
+							<input type="hidden" name="label"/>
 							<div class="row">
 								<div class="col-md-6">
 									<div class="form-group">
@@ -1131,11 +1132,8 @@
     }
 
 	var qiniuUrl = [[${qiniuUrl}]];
-
 	var theId = [[${theId}]];
-
 	var isAdmin = [[${isAdmin}]];
-
 	jQuery(document).ready(function ($) {
 		$.base64.utf8encode = true;
 		$.base64.utf8decode = true;
@@ -1341,6 +1339,7 @@
 			var type = form.find("select[name='type']").val();
 			var category = form.find("select[name='category']").val();
 			var id = form.find("input[name='id']").val();
+			var label = form.find("input[name='label']").val();
 			var name = form.find("input[name='name']").val();
 			var code = form.find("input[name='code']").val();
 			// var brand_id = form.find("select[name='brand_id']").val();
@@ -1519,6 +1518,7 @@
 							//提交保存
 							var data = {
 								"id": id,
+								"label": label,
 								"name": name,
 								"code": code,
 								"image": form.find("input[name='image']").val(),
@@ -1558,7 +1558,11 @@
 						if (err) {
 							$(".btn.btn-info.save").attr("disabled", "");
 						} else {
-							window.location.href = '/goods.html';
+							if (isLimit) {
+								window.location.href = '/goods_limit.html';
+							} else {
+								window.location.href = '/goods.html';
+							}
 						}
 					});
 				} else {
