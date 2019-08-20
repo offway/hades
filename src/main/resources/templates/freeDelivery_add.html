@@ -128,11 +128,31 @@
 		var that = $(self);
 		var str = '<div id="UUID" class="toDel">'.replace("UUID", uuid);
 		if (v != null) {
-			str += '<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsIdsSame" placeholder="填写商品ID"/>'.replace("VALUE", v);
+			str += '<input type="file" class="form-control" name="goodsFile" placeholder="商品图片" onchange="uploadFile(this)"/>\n' +
+					'<input type="hidden" class="form-control" value="VVV" name="goodImge" />\n'.replace("VVV",v["image"])+
+					'<img alt="" src="VVV" name="goodsImg" height="100px" width="100px"/>\n'.replace("VVV",v["image"]) +
+					'<input type="hidden" class="form-control" name="gid" value="VVV" />\n'.replace("VVV",v["id"])+
+					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VVV" name="goodsName" placeholder="商品名称"/>\n'.replace("VVV",v["name"]) +
+					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VVV" name="goodsPrice" placeholder="商品价格"/>\n'.replace("VVV",v["price"]) +
+					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VVV" name="goodsSize" placeholder="商品尺码"/>\n'.replace("VVV",v["goodsSize"]) +
+					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VVV" name="goodsCount" placeholder="商品数量"/>\n'.replace("VVV",v["goodsCount"]) +
+					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VVV" name="goodsId" placeholder="商品ID"/>\n'.replace("VVV",v["goodsId"]) +
+					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VVV" name="brandId" placeholder="品牌ID"/>\n'.replace("VVV",v["brandId"]) +
+					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VVV" name="boostCount" placeholder="助力人数"/>\n'.replace("VVV",v["boostCount"]);
+			if (v["userType"] == "1"){
+				str += 	'<label><input name="userTypeUUID" class="notMe" type="radio" value="0"/>新用户 </label>\n'.replace("UUID", uuid) +
+						'<label><input name="userTypeUUID" class="notMe" type="radio" checked="checked" value="1"/>新老用户 </label>'.replace("UUID", uuid);
+			}else {
+				str += 	'<label><input name="userTypeUUID" class="notMe" type="radio" checked="checked" value="0"/>新用户 </label>\n'.replace("UUID", uuid) +
+						'<label><input name="userTypeUUID" class="notMe" type="radio" value="1"/>新老用户 </label>'.replace("UUID", uuid);
+			}
+			str = str.replace("UUID", uuid);
+			uuids.push("userType"+uuid);
 		} else {
 			str += '<input type="file" class="form-control" name="goodsFile" placeholder="商品图片" onchange="uploadFile(this)"/>\n' +
 					'<input type="hidden" class="form-control" name="goodImge" />\n'+
 					'<img alt="" src="" name="goodsImg" style="display:none;"/>\n' +
+					'<input type="hidden" class="form-control" name="gid" value=""/>\n'+
 					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsName" placeholder="商品名称"/>\n' +
 					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsPrice" placeholder="商品价格"/>\n' +
 					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="goodsSize" placeholder="商品尺码"/>\n' +
@@ -141,7 +161,7 @@
 					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="brandId" placeholder="品牌ID"/>\n' +
 					'<input style="display:inline-block;width: 200px;" type="number" class="form-control" value="VALUE" name="boostCount" placeholder="助力人数"/>\n' +
 					'<label><input name="userTypeUUID" class="notMe" type="radio" checked="checked" value="0"/>新用户 </label>\n'.replace("UUID", uuid) +
-					'<label><input name="userTypeUUID" class="notMe" type="radio" value="1"/>新老用户 </label>'.replace("UUID", uuid)
+					'<label><input name="userTypeUUID" class="notMe" type="radio" value="1"/>新老用户 </label>'.replace("UUID", uuid);
 			str = str.replace("UUID", uuid);
 			uuids.push("userType"+uuid);
 		}
@@ -272,6 +292,7 @@
 
 	var qiniuUrl = [[${qiniuUrl}]];
 	var args = [[${args}]];
+	var theId = [[${theId}]];
 
 	console.log(args);
 	console.log(qiniuUrl);
@@ -301,6 +322,30 @@
 				}
 		);
 
+		if (theId!=null){
+			$.post("freeDelivery_editfind",{"id":theId},function (data) {
+				var form = $("#saveForm");
+				var freeProduct = data["freeProduct"];
+				var freeDelivery = data["freeDelivery"];
+
+
+				//Format("yyyy-MM-dd hh:mm:ss")
+				form.find("input[name='name']").val(freeProduct["name"]);
+				form.find("input[name='id']").val(freeProduct["id"]);
+				form.find("input[name='beginTime']").val(new Date(freeProduct["beginTime"]).Format("yyyy-MM-dd hh:mm:ss"));
+				form.find("input[name='endTime']").val(new Date(freeProduct["endTime"]).Format("yyyy-MM-dd hh:mm:ss"));
+				form.find("img[name='image']").val(freeProduct["image"]);
+				form.find("img[name='imageImg']").attr("src", freeProduct["image"]);
+				form.find("img[name='imageImg']").attr("width", 200);
+				form.find("img[name='imageImg']").attr("length", 200);
+				form.find("img[name='imageImg']").show();
+
+				for (var i of freeDelivery) {
+					addMoreTextAeticle("#addMoreTextEle",i);
+				}
+			})
+		}
+
         //save the argStr
         $("#args").val(args);
 
@@ -329,6 +374,7 @@
 			var beginTime = form.find("input[name='beginTime']").val();
 			var endTime = form.find("input[name='endTime']").val();
 			var image = form.find("input[name='image']").val();
+			var freeId = form.find("input[name='id']").val();
 
 
 			// if (name == '' || beginTime == '' || endTime == '' || image == '') {
@@ -336,6 +382,19 @@
 			// 	return;
 			// }
 
+			var gids = form.find("input[name='gid']");
+			var gidsList = [];
+			for (var k in gids) {
+				if (isNaN(k)) {
+					continue;
+				}
+				var gid = gids[k].value;
+				if (gid == '') {
+					//skip
+				} else {
+					gidsList.push(gid);
+				}
+			}
 			var prices = form.find("input[name='goodsPrice']");
 			var priceList= [];
 			for (var k in prices) {
@@ -362,7 +421,6 @@
 					goodsSizeList.push(goods);
 				}
 			}
-
 			var goodsCounts = form.find("input[name='goodsCount']");
 			var goodsCountList= [];
 			for (var k in goodsCounts) {
@@ -445,13 +503,15 @@
 
 			var userTypesList =[];
 			for (var uuid in uuids){
-				userTypesList.push(form.find("input[name='"+uuids[uuid]+"']").val());
+				userTypesList.push(form.find("input[name='"+uuids[uuid]+"']:checked").val());
 			}
 			var json = {
+				"id":freeId,
 				"name":name,
 				"beginTime":beginTime,
 				"endTime":endTime,
 				"image":image,
+				"gidsList":gidsList,
 				"priceList":priceList,
 				"goodsSizeList":goodsSizeList,
 				"goodsCountList":goodsCountList,

@@ -251,7 +251,12 @@
         });
 
         $(".btn.btn-info.edit").click(function () {
-            window.location.href = '/freeDelivery_add.html';
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            window.location.href = '/freeDelivery_add.html?id='+activityId.val();
         });
 
     });

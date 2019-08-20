@@ -26,4 +26,6 @@ public interface PhFreeDeliveryService {
     Page<PhFreeDelivery> findAll(Pageable pageable);
 
     void deleteByproductIdInList(List<Long> id);
+
+    List<PhFreeDelivery> findOneByProductId(Long id);
 }
