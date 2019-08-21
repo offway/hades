@@ -704,14 +704,18 @@
 							return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
 						}
 					},
-					{
-						targets: 19,
-						data: "isSpecial",
-						title: "特殊商品",
-						render: function (data, type, row, meta) {
-							return data == "1" ? "<font color='red'>限量</font>" : "非限量";
-						}
-					},
+                    {
+                        targets: 19,
+                        data: "isSpecial",
+                        title: "特殊商品",
+                        render: function (data, type, row, meta) {
+                            if (isLimit == "1") {
+                                return "不可用";
+                            } else {
+                                return data == "1" ? "<font color='red'>限量</font>" : "非限量";
+                            }
+                        }
+                    },
 					{
 						targets: 20,
 						data: "id",
