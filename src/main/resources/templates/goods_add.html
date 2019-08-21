@@ -1290,7 +1290,7 @@
 
         switchToCommon();
 
-		if (isLimit) {
+		if (isLimit == "1") {
 			$("input[name='label']").val("1");
 		}
 
@@ -1512,7 +1512,7 @@
 						if (err) {
 							$(".btn.btn-info.save").removeAttr("disabled");
 						} else {
-							if (isLimit) {
+							if (isLimit == "1") {
 								window.location.href = '/goods_limit.html';
 							} else {
 								window.location.href = '/goods.html';
