@@ -128,7 +128,9 @@ public class LimitSaleController {
         } else {
             limitedSale.setCreateTime(limitedSaleService.findOne(limitedSale.getId()).getCreateTime());
         }
-        limitedSale.setInfo(ArticleController.filterWxPicAndReplace(limitedSale.getInfo().replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))", ""), qiniuService));
+        String newInfoStr = limitedSale.getInfo().replaceAll("(?<=(<img.{1,500}))style=\".+\"(?=(.+>))", "style=\"width:100% !important\"");
+//        newInfoStr = newInfoStr.replaceAll("height:auto", "height:100%").replaceAll("width:auto", "width:100%");
+        limitedSale.setInfo(ArticleController.filterWxPicAndReplace(newInfoStr, qiniuService));
         limitedSaleService.save(limitedSale);
         return true;
     }
