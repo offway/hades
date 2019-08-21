@@ -77,12 +77,18 @@
 											<input type="text" class="form-control" name="company" placeholder="公司名称"/>
 										</div>
 									</div>
-									<div class="col-md-8">
+									<div class="col-md-6">
 										<div class="form-group">
 											<label class="control-label">发货地址</label>
-											<input type="text" class="form-control" readonly="readonly" name="address_send" placeholder="发货地址" onclick="getphone()"/>
+											<input type="text" class="form-control" readonly="readonly" name="address_send" placeholder="发货地址"/>
 											<input type="hidden" class="form-control" name="address_send_jsonStr"/>
 											<input type="hidden" class="form-control" name="addrId"/>
+										</div>
+									</div>
+									<div class="col-md-2">
+										<div class="form-group">
+											<label class="control-label">修改手机号</label>
+											<input type="text" class="form-control" style="background-color:#1baee6; color:white " name="setphone" value="点击修改接收短信手机号" onclick="getphone()"/>
 										</div>
 									</div>
 								</div>
