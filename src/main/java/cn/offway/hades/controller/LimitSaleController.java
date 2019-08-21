@@ -122,6 +122,8 @@ public class LimitSaleController {
     public boolean add(PhLimitedSale limitedSale) {
         if (limitedSale.getId() == null) {
             limitedSale.setCreateTime(new Date());
+        } else {
+            limitedSale.setCreateTime(limitedSaleService.findOne(limitedSale.getId()).getCreateTime());
         }
         limitedSaleService.save(limitedSale);
         return true;
