@@ -60,6 +60,9 @@ public class PhLimitedSale implements Serializable {
     /** 目标助力次数 **/
     private Long boostCount;
 
+    /**用户类型[0-新用户,1-新老用户]**/
+    private String userType;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -189,5 +192,14 @@ public class PhLimitedSale implements Serializable {
 
     public void setBoostCount(Long boostCount) {
         this.boostCount = boostCount;
+    }
+
+    @Column(name = "user_type", length = 2)
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 }

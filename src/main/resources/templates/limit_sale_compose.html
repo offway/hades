@@ -79,6 +79,15 @@
 							</div>
 						</div>
 						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">用户类型</label>
+									<label><input name="userType" class="notMe" type="radio" value="0"/>新用户 </label>
+									<label><input name="userType" class="notMe" type="radio" checked="checked" value="1"/>新老用户</label>
+								</div>
+							</div>
+						</div>
+						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
 									<label class="control-label">开始时间</label>
@@ -333,10 +342,10 @@
 		}
 
 		//保存
-		$(".btn.btn-info.save").click(function(){
-            var footer = $(this).parent(".modal-footer");
-            footer.find("button").hide();
-            footer.find(".bg-lg").show();
+		$(".btn.btn-info.save").click(function () {
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
 			var form = $("#saveForm");
 			var goodsId = form.find("input[name='goodsId']").val();
 			var action = form.find("input[name='action']").val();
@@ -346,14 +355,15 @@
 			var image = form.find("input[name='image']").val();
 			var status = form.find("input[name='status']:checked").val();
 			var boostCount = form.find("input[name='boostCount']:checked").val();
+			var userType = form.find("input[name='userType']:checked").val();
 			var info = editor.html();
 
-            if (beginTime == '' || endTime == '' || name == '' || image == '' || status == '' || info == '' || boostCount == '' || goodsId == '') {
-                toastr.error("请填写完整数据后提交", "温馨提示");
-                footer.find("button").show();
-                footer.find(".bg-lg").hide();
-                return;
-            }
+			if (beginTime == '' || endTime == '' || name == '' || image == '' || status == '' || info == '' || boostCount == '' || goodsId == '' || userType == '') {
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return;
+			}
 
             //获取token
             $.get("/qiniu/token", {}, function (token) {
