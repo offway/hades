@@ -50,7 +50,7 @@ public class CallbackController {
         logger.info(param);
         JSONObject jsonObject = JSONObject.parseObject(param);
         //快递单当前签收状态，包括0在途中、1已揽收、2疑难、3已签收、4退签、5同城派送中、6退回、7转单等7个状态
-        int state = jsonObject.getJSONObject("destResult").getIntValue("state");
+        int state = jsonObject.getJSONObject("lastResult").getIntValue("state");
         if (state == 5) {
             Map<String, String> args = new HashMap<>();
             args.put("type", "9");
