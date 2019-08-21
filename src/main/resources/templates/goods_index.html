@@ -729,7 +729,7 @@
 						orderable: false,
 						title: "操作",
 						render: function (data, type, full, meta) {
-							if (isLimit) {
+							if (isLimit == "1") {
 								return "";
 							}
 							var str = "";
@@ -770,7 +770,7 @@
         });
 
 		$(".btn.btn-info.add").click(function () {
-			if (isLimit) {
+			if (isLimit == "1") {
 				window.location.href = '/goods_add_limit.html';
 			} else {
 				window.location.href = '/goods_add.html';

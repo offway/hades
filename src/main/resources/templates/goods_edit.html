@@ -1558,11 +1558,9 @@
 						if (err) {
 							$(".btn.btn-info.save").attr("disabled", "");
 						} else {
-							if (isLimit) {
-								window.location.href = '/goods_limit.html';
-							} else {
-								window.location.href = '/goods.html';
-							}
+							setTimeout(function () {
+								window.close();
+							}, 2000);
 						}
 					});
 				} else {
