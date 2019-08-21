@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +41,8 @@ public class LimitSaleController {
     private PhGoodsImageService goodsImageService;
     @Autowired
     private PhGoodsPropertyService goodsPropertyService;
+    @Autowired
+    private QiniuService qiniuService;
 
     @RequestMapping("/limit_sale.html")
     public String index(ModelMap map) {
@@ -119,12 +122,13 @@ public class LimitSaleController {
 
     @ResponseBody
     @RequestMapping("/limit_sale_add")
-    public boolean add(PhLimitedSale limitedSale) {
+    public boolean add(PhLimitedSale limitedSale) throws IOException {
         if (limitedSale.getId() == null) {
             limitedSale.setCreateTime(new Date());
         } else {
             limitedSale.setCreateTime(limitedSaleService.findOne(limitedSale.getId()).getCreateTime());
         }
+        limitedSale.setInfo(ArticleController.filterWxPicAndReplace(limitedSale.getInfo().replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))", ""), qiniuService));
         limitedSaleService.save(limitedSale);
         return true;
     }
