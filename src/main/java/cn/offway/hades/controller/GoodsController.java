@@ -1194,4 +1194,41 @@ public class GoodsController {
             return goodsSaved;
         }
     }
+
+    @ResponseBody
+    @Transactional
+    @RequestMapping("/goods_copy")
+    public boolean copyGoods(Long id) {
+        PhGoods goods = goodsService.findOne(id);
+        if (goods != null) {
+            goods.setId(null);//set ID null for new row
+            goods.setCreateTime(new Date());
+            /*商品标示[0-普通商品,1-限量商品]**/
+            goods.setLabel("1");
+            PhGoods goodsNew = goodsService.save(goods);
+            //copy goods images
+            for (PhGoodsImage image : goodsImageService.findByPid(id)) {
+                image.setId(null);
+                image.setCreateTime(new Date());
+                image.setGoodsId(goodsNew.getId());
+                goodsImageService.save(image);
+            }
+            //copy goods stocks
+            for (PhGoodsStock stock : goodsStockService.findByPid(id)) {
+                stock.setId(null);
+                stock.setCreateTime(new Date());
+                stock.setGoodsId(goodsNew.getId());
+                goodsStockService.save(stock);
+            }
+            //copy goods property
+            for (PhGoodsProperty property : goodsPropertyService.findByPid(id)) {
+                property.setId(null);
+                property.setCreateTime(new Date());
+                property.setGoodsId(goodsNew.getId());
+                goodsPropertyService.save(property);
+            }
+            return true;
+        }
+        return false;
+    }
 }
