@@ -65,8 +65,8 @@ public class CallbackController {
             JSONObject map = new JSONObject();
             map.put("id", oid);
             map.put("type", "confirmPackage");
-            map.put("sTime", oneWeekLater);
-            map.put("eTime", twoWeeksLater);
+            map.put("sTime", oneWeekLater.toString("yyyy-MM-dd HH:mm:ss"));
+            map.put("eTime", twoWeeksLater.toString("yyyy-MM-dd HH:mm:ss"));
             jsonArray.add(map);
             key = MessageFormat.format(key, oneWeekLater.toString("yyyy-MM-dd HH:mm:ss"), twoWeeksLater.toString("yyyy-MM-dd HH:mm:ss"), oid);
             //save to DB
