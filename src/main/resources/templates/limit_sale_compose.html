@@ -150,6 +150,14 @@
 								</div>
 							</div>
 						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">单用户可购买数量上限</label>
+									<input type="number" class="form-control" name="buyLimit" placeholder="单用户可购买数量上限"/>
+								</div>
+							</div>
+						</div>
 					</form>
 				</div>
 				<button type="button" class="btn btn-info save">保存</button>
@@ -356,9 +364,10 @@
 			var status = form.find("input[name='status']:checked").val();
 			var boostCount = form.find("input[name='boostCount']:checked").val();
 			var userType = form.find("input[name='userType']:checked").val();
+			var buyLimit = form.find("input[name='buyLimit']").val();
 			var info = editor.html();
 
-			if (beginTime == '' || endTime == '' || name == '' || image == '' || status == '' || info == '' || boostCount == '' || goodsId == '' || userType == '') {
+			if (beginTime == '' || endTime == '' || name == '' || image == '' || status == '' || info == '' || boostCount == '' || goodsId == '' || userType == '' || buyLimit == '') {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();

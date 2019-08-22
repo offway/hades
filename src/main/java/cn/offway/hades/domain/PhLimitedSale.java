@@ -63,6 +63,9 @@ public class PhLimitedSale implements Serializable {
     /**用户类型[0-新用户,1-新老用户]**/
     private String userType;
 
+    /**单用户可购买数量上限**/
+    private Long buyLimit;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -201,5 +204,14 @@ public class PhLimitedSale implements Serializable {
 
     public void setUserType(String userType) {
         this.userType = userType;
+    }
+
+    @Column(name = "buy_limit", length = 11)
+    public Long getBuyLimit() {
+        return buyLimit;
+    }
+
+    public void setBuyLimit(Long buyLimit) {
+        this.buyLimit = buyLimit;
     }
 }
