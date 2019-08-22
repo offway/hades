@@ -63,6 +63,7 @@
 				<button class="btn btn-info add" >添加</button>
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
+				<button class="btn btn-danger same">排序同步至小程序</button>
 			</div>
 			
 					
@@ -365,6 +366,22 @@
 		}
 	}
 
+	function topItMini(id) {
+		var num = prompt("输入置顶位置,从0开始,0为第一位", "0");
+		if (isNaN(num) || num == null) {
+			alert("请输入数字！");
+		} else {
+			$.post("/starSame_topMini", {"id": id, "sort": num}, function (data) {
+				if (data) {
+					table_global.fnDraw();
+					toastr.success("操作已成功！", "温馨提示");
+				} else {
+					toastr.error("操作失败", "温馨提示");
+				}
+			});
+		}
+	}
+
     jQuery(document).ready(function($)
 	{
 		var oTable = $("#example-1").dataTable({
@@ -441,8 +458,16 @@
 						return parseInt(data) < 6 ? data : "";
 					}
 				},
+				{
+					targets: 8,
+					data: "sortMini",
+					title: "小程序排序",
+					render: function (data, type, row, meta) {
+						return parseInt(data) < 6 ? data : "";
+					}
+				},
                 {
-                    targets: 8,
+                    targets: 9,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
@@ -450,12 +475,12 @@
                     }
                 },
 				{
-					targets: 9,
+					targets: 10,
 					data: "remark",
 					title: "备注"
 				},
 				{
-					targets: 10,
+					targets: 11,
 					data: "id",
 					orderable: false,
 					title: "操作",
@@ -464,16 +489,23 @@
 					}
 				},
 				{
-					targets: 11,
+					targets: 12,
 					data: "id",
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
+						var str;
 						if (full["sort"] == null || parseInt(full["sort"]) > 5) {
-							return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶"/>';
+							str = '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶"/>';
 						} else {
-							return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶排序"/>';
+							str = '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶排序"/>';
 						}
+						if (full["sortMini"] == null || parseInt(full["sortMini"]) > 5) {
+							str += '<input type="button" name="checkIt" onclick="topItMini(' + data + ')" value="小程序置顶"/>';
+						} else {
+							str += '<input type="button" name="checkIt" onclick="topItMini(' + data + ')" value="小程序置顶排序"/>';
+						}
+						return str;
 					}
 				}
                ]
@@ -766,6 +798,15 @@
                 }
             })
         });
+
+		$(".btn.btn-danger.same").click(function () {
+			$.post("/starSame_sameSrot", {}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			})
+		});
 	});
 	/*]]>*/
 	</script>

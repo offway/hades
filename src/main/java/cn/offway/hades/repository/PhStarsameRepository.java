@@ -24,4 +24,9 @@ public interface PhStarsameRepository extends JpaRepository<PhStarsame, Long>, J
 //    @Query(nativeQuery = true, value = "UPDATE `ph_starsame` SET `sort` = NULL WHERE `sort` >= 6")
     @Query(nativeQuery = true, value = "UPDATE `ph_starsame` SET `sort` = 999 WHERE `sort` >= 6 or `sort` is null")
     void resetSort();
+
+    @Transactional
+    @Modifying
+    @Query(nativeQuery = true, value = "UPDATE ph_starsame SET sort_mini = sort")
+    void updateSameSort();
 }

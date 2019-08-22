@@ -1,7 +1,7 @@
 package cn.offway.hades.domain;
 
-import java.io.Serializable;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,35 +14,60 @@ import java.util.Date;
 @Table(name = "ph_starsame")
 public class PhStarsame implements Serializable {
 
-    /** ID **/
+    /**
+     * ID
+     **/
     private Long id;
 
-    /** 标题 **/
+    /**
+     * 标题
+     **/
     private String title;
 
-    /** 图片URL **/
+    /**
+     * 图片URL
+     **/
     private String imageUrl;
 
-    /** 明星姓名 **/
+    /**
+     * 明星姓名
+     **/
     private String starName;
 
-    /** 浏览数 **/
+    /**
+     * 浏览数
+     **/
     private Long viewCount;
 
-    /** 点赞数 **/
+    /**
+     * 点赞数
+     **/
     private Long praiseCount;
 
-    /** 打call数 **/
+    /**
+     * 打call数
+     **/
     private Long callCount;
 
-    /** 创建时间 **/
+    /**
+     * 创建时间
+     **/
     private Date createTime;
 
-    /** 备注 **/
+    /**
+     * 备注
+     **/
     private String remark;
 
-    /** 排序 **/
+    /**
+     * 排序
+     **/
     private Long sort;
+
+    /**
+     * 小程序排序
+     **/
+    private Long sortMini;
 
 
     @Id
@@ -136,6 +161,15 @@ public class PhStarsame implements Serializable {
 
     public void setSort(Long sort) {
         this.sort = sort;
+    }
+
+    @Column(name = "sort_mini", length = 11)
+    public Long getSortMini() {
+        return sortMini;
+    }
+
+    public void setSortMini(Long sortMini) {
+        this.sortMini = sortMini;
     }
 
 }
