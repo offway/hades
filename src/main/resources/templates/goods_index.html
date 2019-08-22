@@ -128,6 +128,7 @@
 				<button class="btn btn-info export">导出商品</button>
                 <button class="btn btn-info updateSku">修改库存</button>
 				<button class="btn btn-info updatePrice">修改价格</button>
+				<button class="btn btn-info copyGoods">复制商品</button>
 			</div>
 			<footer th:replace="footer"></footer>
 		</div>
@@ -834,8 +835,23 @@
 			$(".btn.btn-info.del").show();
 			$(".btn.btn-info.updateSku").show();
 			$(".btn.btn-info.updatePrice").show();
+			$(".btn.btn-info.copyGoods").show();
+			$(".btn.btn-info.copyGoods").click(function () {
+				var goodsId = prompt("请输入要复制的商品ID", "0");
+				if (isNaN(goodsId) || goodsId == null) {
+					alert("请输入数字！")
+				} else {
+					$.post("/goods_copy", {"id": goodsId}, function (data) {
+						if (data) {
+							toastr.success("操作已成功！", "温馨提示");
+							oTable.fnDraw();
+						}
+					});
+				}
+			});
 			$("#specialEle").hide();
 		} else {
+			$(".btn.btn-info.copyGoods").hide();
 			if (isAdmin == "1") {
 				$(".btn.btn-info.discountList").click(function () {
 					checkJob();
