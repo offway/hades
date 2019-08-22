@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<link rel="stylesheet" href="assets/css/selectize.bootstrap3.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -88,7 +89,7 @@
 									<div class="col-md-2">
 										<div class="form-group">
 											<label class="control-label">修改手机号</label>
-											<input type="text" class="form-control" style="background-color:#1baee6; color:white " name="setphone" value="点击修改接收短信手机号" onclick="getphone()"/>
+											<input type="text" class="form-control" style="background-color:#1baee6; color:white " name="setphone" value="点击修改接收短信手机号" onclick="checkIt()"/>
 										</div>
 									</div>
 								</div>
@@ -191,6 +192,7 @@
 	<script src="assets/js/async.min.js"></script>
 	<script src="assets/js/distpicker.js"></script>
 	<script src="assets/js/jquery.base64.js"></script>
+	<script src="assets/js/selectize.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -232,31 +234,9 @@
 		});
 	}
 
-
-	function getphone() {
-		var id = $("#saveForm").find("input[name='id']").val();
-		if (confirm("是否修改发货手机号")){
-			var phone = prompt("请输入新的手机号","新手机号");
-			if (isNaN(phone)){
-				alert("请输入数字");
-			}else {
-				$.ajax({
-					type:'post',
-					url:'/merchant_setphone',
-					data:{
-						id: id,
-						phone:phone
-					},
-					success:getphoneok()
-				})
-			}
-		} else {
-			return;
-		}
-	}
-
 	function getphoneok() {
 		alert("修改发货手机号成功");
+		closeIt();
 	}
 	
 	function closeIt() {
@@ -270,24 +250,22 @@
 	}
 
 	function closeAndSaveIt() {
-		var that = $("#preview");
-		var p = that.find("select[name='p']").val();
-		var c = that.find("select[name='c']").val();
-		var d = that.find("select[name='d']").val();
-		var location = that.find("input[name='location']").val();
-		var telephone = that.find("input[name='telephone']").val();
-		var real_name = that.find("input[name='real_name']").val();
-		var json = {
-			"realName": real_name,
-			"phone": telephone,
-			"province": p,
-			"city": c,
-			"county": d,
-			"content": location
-		};
-		$("input[name='address_send_jsonStr']").val(JSON.stringify(json));
-		$("input[name='address_send']").val(p + "" + c + "" + d + "" + location);
-		that.hide();
+		// var jsonStr = $("input[name='address_send_jsonStr']").val();
+		// var jsonObj = JSON.parse(jsonStr);
+		var form = $("#saveForm");
+		var addid = form.find("input[name='addrId']").val();
+		var telephone = $("#preview").find("select[name='telephone']").val().join(",");
+		// jsonObj.put("phone",telephone);
+		// $("input[name='address_send_jsonStr']").val();
+		$.ajax({
+			type:'post',
+			url:'/merchant_setphone',
+			data:{
+				id: addid,
+				phone:telephone
+			},
+			success:getphoneok()
+		})
 	}
 
     function formatTime(time) {
@@ -300,38 +278,50 @@
 
 
 	function checkIt() {
-		var preview = $("#preview");
-		var contentStr = "\t<div id=\"distpicker\">\n" +
-				"\t\t<select name='p' ></select>\n" +
-				"\t\t<select name='c' ></select>\n" +
-				"\t\t<select name='d' ></select>\n" +
-				"\t\t<input type=\"text\" name='location' placeholder='详细地址'/><br/>\n" +
-				"\t\t<input type=\"number\" name='telephone' placeholder='手机号'/>\n" +
-				"\t\t<input type=\"text\" name='real_name' placeholder='发件人'/>\n" +
-				"\t</div>";
-		contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt()" />';
-		contentStr += '<input type="button" value="关闭" onclick="closeIt()" />';
-		preview.html(contentStr);
-		//render
-		var jsonStr = $("input[name='address_send_jsonStr']").val();
-		if (jsonStr != '') {
-			var jsonObj = JSON.parse(jsonStr);
-			preview.find("input[name='location']").val(jsonObj["content"]);
-			preview.find("input[name='real_name']").val(jsonObj["realName"]);
-			preview.find("input[name='telephone']").val(jsonObj["phone"]);
-			$("#distpicker").distpicker({
-				province: jsonObj["province"],
-				city: jsonObj["city"],
-				district: jsonObj["county"]
+    	var form = $("#saveForm");
+    	var addrId = form.find("input[name='addrId']").val();
+    	$.post("/merchant_findAddrId",{"addrId":addrId},function (data) {
+			var preview = $("#preview");
+			var contentStr = "\t<div id=\"distpicker\">\n" +
+					"<select class=\"form-control\" name=\"telephone\" id=\"telephone\" multiple=\"multiple\"></select>"+
+					"\t</div>";
+			contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt()" />';
+			contentStr += '<input type="button" value="关闭" onclick="closeIt()" />';
+			preview.html(contentStr);
+			//render
+			// preview.find("input[name='telephone']").val(data["phone"]);
+			var jsonStr = $("input[name='address_send_jsonStr']").val();
+			var phoneEle = preview.find("select[name='telephone']");
+			var phoneStr = "";
+			var phoneArr = [];
+			if (jsonStr != '') {
+				var jsonObj = JSON.parse(jsonStr);
+				// preview.find("input[name='location']").val(jsonObj["content"]);
+				// preview.find("input[name='real_name']").val(jsonObj["realName"]);
+				phoneArr = jsonObj["phone"].split(",");
+				for (var i in phoneArr) {
+					i = phoneArr[i];
+					phoneStr += '<option value="VV">KK</option>'.replace("VV", i).replace("KK", i);
+				}
+				phoneEle.html(phoneStr);
+			} else {
+
+			}
+			phoneEle.selectize({
+				// "plugins": ['drag_drop', 'remove_button'],
+				"items": phoneArr,
+				"addPrecedence": true,
+				"persist": false,
+				"create": true,
+				"maxItems": null,
+				"delimiter": ",",
+				"hideSelected": true,
+				"sortField": "text",
+				"searchField": ['text'],
+				"placeholder": "手机号"
 			});
-		} else {
-			$("#distpicker").distpicker({
-				province: '---- 所在省 ----',
-				city: '---- 所在市 ----',
-				district: '---- 所在区 ----'
-			});
-		}
-		preview.show();
+			preview.show();
+		});
 	}
 
 	function checkImg(list) {

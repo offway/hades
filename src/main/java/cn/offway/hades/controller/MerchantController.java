@@ -286,8 +286,8 @@ public class MerchantController {
 
     @ResponseBody
     @RequestMapping("/merchant_top")
-    public boolean top(@RequestParam(name="id") Long[] ids) {
-        Long i=0L;
+    public boolean top(@RequestParam(name = "id") Long[] ids) {
+        Long i = 0L;
         for (Long id : ids) {
             PhMerchant newOne = merchantService.findOne(id);
             newOne.setSort(i);
@@ -299,10 +299,22 @@ public class MerchantController {
 
     @ResponseBody
     @RequestMapping("/merchant_setphone")
-    public boolean setphone(String id,String phone){
-        PhMerchant merchant = merchantService.findOne(Long.valueOf(id));
-        merchant.setPhone(phone);
-        merchantService.save(merchant);
+    public boolean setphone(Long id, String phone) {
+        PhAddress address = addressService.findOne(id);
+        address.setPhone(phone);
+        String json = address.getRemark();
+        JSONObject jsonObject = JSON.parseObject(json);
+        jsonObject.put("phone",phone);
+        String remark = JSON.toJSONString(jsonObject);
+        address.setRemark(remark);
+        addressService.save(address);
         return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/merchant_findAddrId")
+    public PhAddress findAddrId(Long addrId) {
+        PhAddress address = addressService.findOne(addrId);
+        return address;
     }
 }
