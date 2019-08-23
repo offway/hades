@@ -21,6 +21,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -1201,31 +1202,43 @@ public class GoodsController {
     public boolean copyGoods(Long id) {
         PhGoods goods = goodsService.findOne(id);
         if (goods != null) {
-            goods.setId(null);//set ID null for new row
-            goods.setCreateTime(new Date());
+            PhGoods goodsNew = new PhGoods();
+            BeanUtils.copyProperties(goods, goodsNew);
+//            goodsNew = goods;
+            goodsNew.setId(null);//set ID null for new row
+            goodsNew.setCreateTime(new Date());
             /*商品标示[0-普通商品,1-限量商品]**/
-            goods.setLabel("1");
-            PhGoods goodsNew = goodsService.save(goods);
+            goodsNew.setLabel("1");
+            goodsNew = goodsService.save(goodsNew);
             //copy goods images
             for (PhGoodsImage image : goodsImageService.findByPid(id)) {
-                image.setId(null);
-                image.setCreateTime(new Date());
-                image.setGoodsId(goodsNew.getId());
-                goodsImageService.save(image);
+                PhGoodsImage imageNew = new PhGoodsImage();
+                BeanUtils.copyProperties(image, imageNew);
+//                imageNew = image;
+                imageNew.setId(null);
+                imageNew.setCreateTime(new Date());
+                imageNew.setGoodsId(goodsNew.getId());
+                goodsImageService.save(imageNew);
             }
             //copy goods stocks
             for (PhGoodsStock stock : goodsStockService.findByPid(id)) {
-                stock.setId(null);
-                stock.setCreateTime(new Date());
-                stock.setGoodsId(goodsNew.getId());
-                goodsStockService.save(stock);
+                PhGoodsStock stockNew = new PhGoodsStock();
+                BeanUtils.copyProperties(stock, stockNew);
+//                stockNew = stock;
+                stockNew.setId(null);
+                stockNew.setCreateTime(new Date());
+                stockNew.setGoodsId(goodsNew.getId());
+                goodsStockService.save(stockNew);
             }
             //copy goods property
             for (PhGoodsProperty property : goodsPropertyService.findByPid(id)) {
-                property.setId(null);
-                property.setCreateTime(new Date());
-                property.setGoodsId(goodsNew.getId());
-                goodsPropertyService.save(property);
+                PhGoodsProperty propertyNew = new PhGoodsProperty();
+                BeanUtils.copyProperties(property, propertyNew);
+//                propertyNew = property;
+                propertyNew.setId(null);
+                propertyNew.setCreateTime(new Date());
+                propertyNew.setGoodsId(goodsNew.getId());
+                goodsPropertyService.save(propertyNew);
             }
             return true;
         }
