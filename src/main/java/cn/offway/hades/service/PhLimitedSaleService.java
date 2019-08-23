@@ -19,4 +19,8 @@ public interface PhLimitedSaleService {
     Page<PhLimitedSale> list(Pageable pageable);
 
     void del(Long id);
+
+    void issetshow(Long id);
+
+    void isshow();
 }

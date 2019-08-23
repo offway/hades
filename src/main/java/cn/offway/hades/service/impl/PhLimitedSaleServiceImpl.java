@@ -43,4 +43,15 @@ public class PhLimitedSaleServiceImpl implements PhLimitedSaleService {
     public PhLimitedSale findOne(Long id) {
         return phLimitedSaleRepository.findOne(id);
     }
+
+    @Override
+    public void issetshow(Long id){
+        phLimitedSaleRepository.issetshow0();
+        phLimitedSaleRepository.issetshow1(id);
+    }
+
+    @Override
+    public void isshow(){
+        phLimitedSaleRepository.issetshow0();
+    }
 }

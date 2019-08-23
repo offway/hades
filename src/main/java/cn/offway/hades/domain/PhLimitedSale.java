@@ -66,6 +66,9 @@ public class PhLimitedSale implements Serializable {
     /**单用户可购买数量上限**/
     private Long buyLimit;
 
+    /**是否展示[0-不展示,1-展示]**/
+    private String isShow;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -213,5 +216,14 @@ public class PhLimitedSale implements Serializable {
 
     public void setBuyLimit(Long buyLimit) {
         this.buyLimit = buyLimit;
+    }
+
+    @Column(name = "is_show", length = 2)
+    public String getIsShow() {
+        return isShow;
+    }
+
+    public void setIsShow(String isShow) {
+        this.isShow = isShow;
     }
 }

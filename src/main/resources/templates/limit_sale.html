@@ -471,8 +471,10 @@
 					upIt(id, self);
 				});
 				toastr.success("操作已成功！", "温馨提示");
+				oTable.fnDraw();
 			} else {
 				toastr.error("操作失败", "温馨提示");
+				oTable.fnDraw();
 			}
 		});
 	}
@@ -514,6 +516,23 @@
             }
         });
     }
+
+    function isShow(id) {
+		$.post("/limit_isshow",{"id":id},function (data) {
+			if (data){
+				toastr.success("操作已成功！", "温馨提示");
+				oTable.fnDraw();
+			}
+		});
+	}
+	function isShowDo(id) {
+		$.post("/limit_isshowDo",{},function (data) {
+			if (data){
+				toastr.success("操作已成功！", "温馨提示");
+				oTable.fnDraw();
+			}
+		});
+	}
 
 	var qiniuUrl = [[${qiniuUrl}]];
 	var oTable;
@@ -649,6 +668,11 @@
                             str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
                         } else {
                             str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+							if (full["isShow"]=="0"){
+								str += '<input type="button" name="checkIt" onclick="isShow(' + data + ')" value="展示"/>';
+							} else {
+								str += '<input type="button" name="checkIt" onclick="isShowDo()" value="不展示"/>';
+							}
                         }
                         return str;
                     }

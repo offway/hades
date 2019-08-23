@@ -15,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -86,7 +87,7 @@ public class LimitSaleController {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        Sort sort = new Sort(Sort.Direction.DESC, "status");
         Page<PhLimitedSale> pages = limitedSaleService.list(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
@@ -131,6 +132,7 @@ public class LimitSaleController {
         String newInfoStr = limitedSale.getInfo().replaceAll("(?<=(<img.{1,500}))style=\".+\"(?=(.+>))", "style=\"width:100% !important\"");
 //        newInfoStr = newInfoStr.replaceAll("height:auto", "height:100%").replaceAll("width:auto", "width:100%");
         limitedSale.setInfo(ArticleController.filterWxPicAndReplace(newInfoStr, qiniuService));
+        limitedSale.setIsShow("0");
         limitedSaleService.save(limitedSale);
         return true;
     }
@@ -156,6 +158,20 @@ public class LimitSaleController {
         PhGoods goods = goodsService.findOne(limitedSale.getGoodsId());
         goods.setStatus("1");
         goodsService.save(goods);
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/limit_isshow")
+    public boolean isShow(Long id){
+        limitedSaleService.issetshow(id);
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/limit_isshowDo")
+    public boolean isShowDo(){
+        limitedSaleService.isshow();
         return true;
     }
 }
