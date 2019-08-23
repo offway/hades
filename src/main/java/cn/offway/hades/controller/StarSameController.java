@@ -50,6 +50,13 @@ public class StarSameController {
         return "starSame_index";
     }
 
+    @RequestMapping("/starSame_Mini.html")
+    public String who(ModelMap map,String who){
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("who", who);
+        return "starSame_index";
+    }
+
     @ResponseBody
     @RequestMapping("/starSame_list")
     public Map<String, Object> getList(HttpServletRequest request) {

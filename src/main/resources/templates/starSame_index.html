@@ -52,6 +52,9 @@
 						<div class="form-group">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
 						</div>
+						<div style="display: none" id="return" class="form-group">
+							<button class="btn btn-secondary btn-single searchBtn" style="height:35px" onclick="returnSame()">返回</button>
+						</div>
 						
 					</form>
 				</div>
@@ -64,6 +67,7 @@
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
 				<button class="btn btn-danger same">排序同步至小程序</button>
+				<button class="btn btn-danger mini">小程序排序</button>
 			</div>
 			
 					
@@ -382,8 +386,23 @@
 		}
 	}
 
+	function returnSame() {
+		window.location.href = '/starSame.html';
+	}
+
+	var who = [[${who}]];
+	var vis = true;
     jQuery(document).ready(function($)
 	{
+		if (who == "Mini"){
+			$(".btn.btn-info.add").hide();
+			$(".btn.btn-info.edit").hide();
+			$(".btn.btn-info.del").hide();
+			$(".btn.btn-danger.same").hide();
+			$(".btn.btn-danger.mini").hide();
+			$("#return").show();
+			vis = false;
+		}
 		var oTable = $("#example-1").dataTable({
 			language: {
                 url: "../assets/Chinese.txt"
@@ -456,7 +475,8 @@
 					title: "排序",
 					render: function (data, type, row, meta) {
 						return parseInt(data) < 6 ? data : "";
-					}
+					},
+					visible:vis
 				},
 				{
 					targets: 8,
@@ -464,7 +484,8 @@
 					title: "小程序排序",
 					render: function (data, type, row, meta) {
 						return parseInt(data) < 6 ? data : "";
-					}
+					},
+					visible:!vis
 				},
                 {
                     targets: 9,
@@ -494,15 +515,15 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						var str;
-						if (full["sort"] == null || parseInt(full["sort"]) > 5) {
+						var str = "";
+						if (full["sort"] == null || parseInt(full["sort"]) > 5 && who==null) {
 							str = '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶"/>';
-						} else {
+						} else if (who == null) {
 							str = '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶排序"/>';
 						}
-						if (full["sortMini"] == null || parseInt(full["sortMini"]) > 5) {
+						if (full["sortMini"] == null || parseInt(full["sortMini"]) > 5 && who !=null) {
 							str += '<input type="button" name="checkIt" onclick="topItMini(' + data + ')" value="小程序置顶"/>';
-						} else {
+						} else if ( who !=null) {
 							str += '<input type="button" name="checkIt" onclick="topItMini(' + data + ')" value="小程序置顶排序"/>';
 						}
 						return str;
@@ -800,12 +821,16 @@
         });
 
 		$(".btn.btn-danger.same").click(function () {
+			// window.location.href = '/starSame_Mini.html?who=' + "Mini";
 			$.post("/starSame_sameSrot", {}, function (data) {
 				if (data) {
 					toastr.success("操作已成功！", "温馨提示");
 					oTable.fnDraw();
 				}
 			})
+		});
+		$(".btn.btn-danger.mini").click(function () {
+			window.location.href = '/starSame_Mini.html?who=' + "Mini";
 		});
 	});
 	/*]]>*/
