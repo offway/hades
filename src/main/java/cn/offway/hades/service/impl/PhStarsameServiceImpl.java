@@ -74,8 +74,28 @@ public class PhStarsameServiceImpl implements PhStarsameService {
         }, new PageRequest(0, 6, Sort.Direction.ASC, "sort")).getContent();
     }
 
+
+    @Override
+    public List<PhStarsame> getLimitListSortMini() {
+        return phStarsameRepository.findAll(new Specification<PhStarsame>() {
+            @Override
+            public Predicate toPredicate(Root<PhStarsame> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(criteriaBuilder.notEqual(root.get("sortMini"), 999));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        }, new PageRequest(0, 6, Sort.Direction.ASC, "sortMini")).getContent();
+    }
+
     @Override
     public PhStarsame findOne(Long id) {
         return phStarsameRepository.findOne(id);
+    }
+
+    @Override
+    public void sameSort() {
+        phStarsameRepository.updateSameSort();
     }
 }

@@ -84,12 +84,12 @@ public class StarSameController {
         PhStarsame starsame = starsameService.findOne(id);
         Map<String, Object> map = new HashMap<>();
         if (starsame != null) {
-            List<PhStarsameGoods> goodsList = starsameGoodsService.findAllByPid(starsame.getId(),"0");
-            List<PhStarsameGoods> goodsListSame = starsameGoodsService.findAllByPid(starsame.getId(),"1");
+            List<PhStarsameGoods> goodsList = starsameGoodsService.findAllByPid(starsame.getId(), "0");
+            List<PhStarsameGoods> goodsListSame = starsameGoodsService.findAllByPid(starsame.getId(), "1");
             List<PhStarsameImage> imageList = starsameImageService.findAllByPid(starsame.getId());
             map.put("main", starsame);
             map.put("goodsList", goodsList);
-            map.put("goodsListSame",goodsListSame);
+            map.put("goodsListSame", goodsListSame);
             map.put("imageList", imageList);
         }
         return map;
@@ -128,14 +128,49 @@ public class StarSameController {
         return true;
     }
 
+
+    @ResponseBody
+    @RequestMapping("/starSame_topMini")
+    public boolean topMini(Long id, Long sort) {
+        List<PhStarsame> top6 = starsameService.getLimitListSortMini();
+        long i = 0;
+        boolean included = false;
+        for (int index = 0; index < 6; index++) {
+            if (index < top6.size()) {
+                PhStarsame obj = top6.get(index);
+                if (Long.compare(id, obj.getId()) == 0) {
+                    included = true;
+                    obj.setSortMini(sort);
+                    starsameService.save(obj);
+                    continue;
+                }
+                if (Long.compare(i, sort) == 0) {
+                    //skip specific position
+                    i++;
+                }
+                obj.setSortMini(i);
+                starsameService.save(obj);
+                i++;
+            }
+        }
+        if (!included) {
+            PhStarsame newOne = starsameService.findOne(id);
+            newOne.setSortMini(sort);
+            starsameService.save(newOne);
+        }
+        starsameService.resetSort();
+        return true;
+    }
+
     @ResponseBody
     @PostMapping("/starSame_save")
-    public boolean save(PhStarsame starsame, String goodsIDStr,String goodsIDStrSame, String imagesJSONStr) {
+    public boolean save(PhStarsame starsame, String goodsIDStr, String goodsIDStrSame, String imagesJSONStr) {
         starsame.setCreateTime(new Date());
         if (starsame.getId() == null) {
             starsame.setSort(999L);
+            starsame.setSortMini(999L);
         }
-        if(null == starsame.getCallCount()){
+        if (null == starsame.getCallCount()) {
             starsame.setCallCount(0L);
         }
         PhStarsame starsameObj = starsameService.save(starsame);
@@ -145,7 +180,7 @@ public class StarSameController {
         String[] goodsSameList = goodsIDStrSame.split(",");
         for (String Sameid : goodsSameList) {
             if (NumberUtils.isNumber(Sameid)) {
-                PhBrand phBrand= brandService.findOne(Long.valueOf(Sameid));
+                PhBrand phBrand = brandService.findOne(Long.valueOf(Sameid));
                 if ((phBrand != null)) {
                     PhStarsameGoods starsameGoods0 = new PhStarsameGoods();
                     starsameGoods0.setStarsameId(starsameObj.getId());
@@ -207,6 +242,13 @@ public class StarSameController {
         } else {
             logger.error("images json 非法");
         }
+        return true;
+    }
+
+    @ResponseBody
+    @PostMapping("/starSame_sameSrot")
+    public boolean sameSrot() {
+        starsameService.sameSort();
         return true;
     }
 }

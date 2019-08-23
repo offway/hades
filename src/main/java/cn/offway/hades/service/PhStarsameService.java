@@ -16,6 +16,8 @@ public interface PhStarsameService {
 
     PhStarsame save(PhStarsame phStarsame);
 
+    List<PhStarsame> getLimitListSortMini();
+
     PhStarsame findOne(Long id);
 
     void delete(Long id);
@@ -27,4 +29,6 @@ public interface PhStarsameService {
     void resetSort();
 
     List<PhStarsame> getLimitList();
+
+    void sameSort();
 }
