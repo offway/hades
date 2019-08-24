@@ -969,6 +969,7 @@
 					var contentStr = "<form id='priceForm'>";
 					contentStr += "<hr/>";
 					for (var a in data) {
+						var index = a;
 						a = data[a];
 						var gidEle = '<input type="hidden" name="gid" value="VV" />'.replace("VV", a["id"]);
 						var imgEle = '<img src="VV" width="100px" height="100px" />'.replace("VV", a["image"]);
@@ -980,10 +981,14 @@
                         var instantChange = '<label><input type="radio" name="isInstantChangeBtn" checked="checked" onclick="isInstantChange(true)"/>是</label>';
                         var startTimeText = '<input type="text" id="startTimeText" name="startTimeText" style="display: none;" placeholder="开始时间" />';
                         var stopTimeText = '<input type="text" id="stopTimeText" name="stopTimeText" style="display: none;" placeholder="结束时间" />';
-                        contentStr += appendToPreviewList("是否及时改价", "", delayChange, "", instantChange, "");
-                        contentStr += appendToPreviewList("", "", startTimeText, "", stopTimeText, "");
-                        var batchSetBtn = '<input type="button" value="批量设置价格" onclick="batchSetPrice()" />';
-                        contentStr += appendToPreviewList("", "", "", "", batchSetBtn, "");
+						if (index == 0) {
+							contentStr += appendToPreviewList("是否及时改价", "", delayChange, "", instantChange, "");
+							contentStr += appendToPreviewList("", "", startTimeText, "", stopTimeText, "");
+						}
+						var batchSetBtn = '<input type="button" value="批量设置价格" onclick="batchSetPrice()" />';
+						if (index == 0) {
+							contentStr += appendToPreviewList("", "", "", "", batchSetBtn, "");
+						}
 						for (var b in a["sub"]) {
 							b = a["sub"][b];
 							var idEle = '<input type="hidden" name="sid" value="VV" />'.replace("VV", b["id"]);
