@@ -31,7 +31,7 @@ public class IndexManagerController {
     public IndexManagerController(QiniuProperties qiniuProperties, PhConfigService configService) {
         this.qiniuProperties = qiniuProperties;
         this.configService = configService;
-        String jsonStr = configService.findContentByName("INDEX_IMAGES");
+        String jsonStr = configService.findContentByName("INDEX_IMAGES_2");
         String jsonStrMini = configService.findContentByName("INDEX_IMAGES_MINI");
         if (jsonStr != null && !"".equals(jsonStr)) {
             jsonArray = JSON.parseArray(jsonStr);
@@ -39,7 +39,7 @@ public class IndexManagerController {
         if (jsonStrMini != null&& !"".equals(jsonStrMini)){
             jsonArrayMini =JSON.parseArray(jsonStrMini);
         }
-        phConfig = configService.findOne("INDEX_IMAGES");
+        phConfig = configService.findOne("INDEX_IMAGES_2");
         phConfigMini = configService.findOne("INDEX_IMAGES_MINI");
     }
 
@@ -93,7 +93,7 @@ public class IndexManagerController {
         }
         if (phConfig == null) {
             phConfig = new PhConfig();
-            phConfig.setName("INDEX_IMAGES");
+            phConfig.setName("INDEX_IMAGES_2");
             phConfig.setCreateTime(new Date());
         }
         phConfig.setContent(jsonArray.toJSONString());
