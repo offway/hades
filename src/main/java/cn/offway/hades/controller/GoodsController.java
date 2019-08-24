@@ -895,8 +895,37 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_discount_list")
-    public Set<String> discountList() {
-        return JobHolder.getHolder().keySet();
+    public List<Map<String, Object>> discountList(Long mid) {
+        String jsonStr = configService.findContentByName("CRONJOB");
+        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (String key : JobHolder.getHolder().keySet()) {
+            if (key.endsWith("REVERSE") || key.endsWith("ConfirmPackage")) {
+                continue;
+            }
+            JSONArray arr = jsonObject.getJSONArray(key);
+            JSONObject innerObj = arr.getJSONObject(0);
+            Long gid = innerObj.getLongValue("id");
+            PhGoods goods = goodsService.findOne(gid);
+            if (goods != null && mid.equals(goods.getMerchantId())) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("sTime", innerObj.getString("sTime"));
+                map.put("eTime", innerObj.getString("eTime"));
+                map.put("goodsName", goods.getName());
+                map.put("key", key);
+                //2019-08-24 02:00:50_2019-08-31 04:00:50_63,286,287,288,289,290,_DirectChange
+                if (key.endsWith("DirectChange")) {
+                    map.put("type", "change");
+                    map.put("from", innerObj.getDoubleValue("goodsPriceOriginal"));
+                    map.put("to", innerObj.getDoubleValue("goodsPrice"));
+                } else {//2019-08-24 17:15:53_2019-08-31 20:00:53_63_0.5
+                    map.put("type", "discount");
+                    map.put("discount", innerObj.getDoubleValue("discount"));
+                }
+                list.add(map);
+            }
+        }
+        return list;
     }
 
     @RequestMapping("/job_index.html")
