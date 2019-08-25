@@ -64,14 +64,9 @@
                 <button class="btn btn-info up">上架</button>
                 <button class="btn btn-info down">下架</button>
 			</div>
-
-					
 			<footer th:replace="footer"></footer>
 		</div>
 	</div>
-	
-	<div th:replace="body-under"></div>
-	
 	<div class="modal fade in" id="modal-6">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 800px;">
@@ -439,7 +434,7 @@
 			form.find("img").hide();
 			form.find("input[type='file']").show();
 			$(".imageShow").remove();
-			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+            jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 		});
 
 		function getImgSize(file, cb) {
@@ -611,7 +606,7 @@
 					form.find("img[name='imageImage']").show();
 					form.find(".btn.image").show();
 				}
-				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+                jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 			});
 		});
 
