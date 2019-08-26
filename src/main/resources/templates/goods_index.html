@@ -367,20 +367,22 @@
 	}
 
 	function checkJob() {
-		$.post("/goods_discount_list", {}, function (data) {
+		$.post("/goods_discount_list", {"mid": $("#merchantId").val()}, function (data) {
 			if (data) {
 				var preview = $("#preview_body");
 				var contentStr = "";
-				for (var key in data) {
-					key = data[key];
-					var list = key.split("_");
-					if (list.length == 4) {
-						contentStr += appendToPreview("开始时间:", list[0]);
-						contentStr += appendToPreview("结束时间:", list[1]);
-						contentStr += appendToPreview("商品ID:", list[2]);
-						contentStr += appendToPreview("折扣:", list[3]);
-						contentStr += "<hr/>";
+				for (var i in data) {
+					i = data[i];
+					contentStr += appendToPreview("开始时间:", i["sTime"]);
+					contentStr += appendToPreview("结束时间:", i["eTime"]);
+					contentStr += appendToPreview("商品名称:", i["goodsName"]);
+					if (i["type"] == "change") {
+						contentStr += appendToPreview("从:", i["from"]);
+						contentStr += appendToPreview("到:", i["to"]);
+					} else {
+						contentStr += appendToPreview("折扣:", i["discount"]);
 					}
+					contentStr += "<hr/>";
 				}
 				preview.html(contentStr);
 				jQuery('#preview').modal('show', {backdrop: 'fade'});
