@@ -245,4 +245,17 @@ public class BrandController {
         configService.save(config);
         return true;
     }
+
+    @ResponseBody
+    @RequestMapping("/brand_pin_sum")
+    public Long pinsum(){
+        String jsonStr = configService.findContentByName("INDEX_BRAND_LOGO");
+        JSONArray jsonArray;
+        if (jsonStr != null && !"".equals(jsonStr)) {
+            jsonArray = JSON.parseArray(jsonStr);
+        } else {
+            jsonArray = new JSONArray();
+        }
+        return Long.valueOf(jsonArray.size());
+    }
 }

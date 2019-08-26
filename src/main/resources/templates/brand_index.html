@@ -880,9 +880,18 @@
 				ids.push(e.value);
 			});
 
-			$.post("/brand_pin", {"ids": ids, "to": "logo"}, function (data) {
+			$.post("/brand_pin_sum", {}, function (data) {
 				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
+					if ((data + ids.length)>7){
+						toastr.error("超过最大上限！", "温馨提示");
+						return;
+					}else {
+						$.post("/brand_pin", {"ids": ids, "to": "logo"}, function (data) {
+							if (data) {
+								toastr.success("操作已成功！", "温馨提示");
+							}
+						});
+					}
 				}
 			});
 		});
