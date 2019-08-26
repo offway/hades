@@ -63,16 +63,20 @@
 						</div>
 						
 					</form>
+					<div class="form-group">
+						<button class="btn btn-info ex" id="returnbanner" style="display: none; height:35px">返回</button>
+					</div>
 				</div>
 
 				<div class="panel-body">
 					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
 					</table>
 				</div>
-				<button class="btn btn-info add" >添加</button>
-				<button class="btn btn-info edit">修改</button>
-				<button class="btn btn-info del">删除</button>
-				<button class="btn btn-info same" id="same">同步至小程序</button>
+				<button class="btn btn-info add" id="miniadd">添加</button>
+				<button class="btn btn-info edit" id="miniedit">修改</button>
+				<button class="btn btn-info del" id="minidel">删除</button>
+				<button class="btn btn-info same" id="same" style="display: none;">同步至小程序</button>
+				<button class="btn btn-info showMini" id="showMini">小程序管理</button>
 <!--                <button class="btn btn-info up">上架</button>-->
 <!--                <button class="btn btn-info down">下架</button>-->
 			</div>
@@ -252,7 +256,7 @@
 			case 0:
 				titleEle.html(titleEle.html() + "顶部");
 				subTitleEle.html(subTitleEle.html() + "顶部");
-				tips.html(tips.html() + "顶部");
+				tips.html("编辑banner顶部");
 				radioGroup.html("" +
 						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(带参) </label>\n" +
 						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(不带参) </label>\n" +
@@ -270,11 +274,12 @@
 						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"15\"/>跳转限量商品 </label>\n"+
 						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"98\" checked='checked'/>不跳转 </label>\n"
 				);
+				$("#same").show();
 				break;
 			case 1:
 				titleEle.html(titleEle.html() + "底部");
 				subTitleEle.html(subTitleEle.html() + "底部");
-				tips.html(tips.html() + "底部");
+				tips.html("编辑banner底部");
 				radioGroup.html("" +
 						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(带参) </label>\n" +
 						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(不带参) </label>\n" +
@@ -362,6 +367,12 @@
 				break;
 			default:
 				break;
+		}
+
+		if (position == "4"){
+			$("#same").hide();
+			$("#showMini").hide();
+			$("#returnbanner").show();
 		}
 
 		$(".searchBtn").click(function(){
@@ -753,6 +764,12 @@
 					oTable.fnDraw();
 				}
 			});
+		});
+		$(".btn.btn-info.showMini").click(function () {
+			window.location.href = '/banner_wx.html';
+		});
+		$(".btn.btn-info.ex").click(function () {
+			window.location.href = '/banner.html';
 		});
 	});
 	/*]]>*/
