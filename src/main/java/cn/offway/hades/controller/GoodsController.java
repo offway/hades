@@ -1228,7 +1228,7 @@ public class GoodsController {
     @ResponseBody
     @Transactional
     @RequestMapping("/goods_copy")
-    public boolean copyGoods(Long id) {
+    public Long copyGoods(Long id) {
         PhGoods goods = goodsService.findOne(id);
         if (goods != null) {
             PhGoods goodsNew = new PhGoods();
@@ -1257,20 +1257,21 @@ public class GoodsController {
                 stockNew.setId(null);
                 stockNew.setCreateTime(new Date());
                 stockNew.setGoodsId(goodsNew.getId());
-                goodsStockService.save(stockNew);
-            }
-            //copy goods property
-            for (PhGoodsProperty property : goodsPropertyService.findByPid(id)) {
-                PhGoodsProperty propertyNew = new PhGoodsProperty();
-                BeanUtils.copyProperties(property, propertyNew);
+                stockNew = goodsStockService.save(stockNew);
+                //copy goods property
+                for (PhGoodsProperty property : goodsPropertyService.findByStockId(stock.getId())) {
+                    PhGoodsProperty propertyNew = new PhGoodsProperty();
+                    BeanUtils.copyProperties(property, propertyNew);
 //                propertyNew = property;
-                propertyNew.setId(null);
-                propertyNew.setCreateTime(new Date());
-                propertyNew.setGoodsId(goodsNew.getId());
-                goodsPropertyService.save(propertyNew);
+                    propertyNew.setId(null);
+                    propertyNew.setCreateTime(new Date());
+                    propertyNew.setGoodsId(goodsNew.getId());
+                    propertyNew.setGoodsStockId(stockNew.getId());
+                    goodsPropertyService.save(propertyNew);
+                }
             }
-            return true;
+            return goodsNew.getId();
         }
-        return false;
+        return 0L;
     }
 }
