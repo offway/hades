@@ -23,6 +23,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -62,6 +64,10 @@ public class InitRunner implements ApplicationRunner {
                 String sTimeStr = args[0];
                 String eTimeStr = args[1];
                 String goodIds = args[2];
+                if (!isValidateTime(sTimeStr) || !isValidateTime(eTimeStr)) {
+                    removeTaskFormDB(key, configService);
+                    continue;
+                }
                 Date sTime = DateTime.parse(sTimeStr, format).toDate();
                 Date eTime = DateTime.parse(eTimeStr, format).toDate();
                 Date now = new Date();
@@ -77,6 +83,17 @@ public class InitRunner implements ApplicationRunner {
                 createJob(taskList, key, sTime, eTime, now, goodsService, stockService, orderInfoService, configService);
             }
         }
+    }
+
+    private boolean isValidateTime(String str) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        formatter.setLenient(false);
+        try {
+            formatter.parse(str);
+        } catch (ParseException e) {
+            return false;
+        }
+        return true;
     }
 
     public static void createJob(JSONArray taskList, String key, Date sTime, Date eTime, Date now, PhGoodsService goodsService, PhGoodsStockService stockService, PhOrderInfoService orderInfoService, PhConfigService configService) {
