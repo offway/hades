@@ -366,13 +366,12 @@
 		});
 	}
 
-	function delJob(key) {
+	function delJob(key, self) {
 		console.log(key);
 		$.post("/goods_discount_del", {"key": key}, function (data) {
 			if (data) {
+				$(self).parent().parent().parent().remove();
 				toastr.success("操作已成功！", "温馨提示");
-				jQuery('#preview').modal('hide');
-				checkJob();
 			} else {
 				toastr.error("操作失败", "温馨提示");
 			}
@@ -386,6 +385,7 @@
 				var contentStr = "";
 				for (var i in data) {
 					i = data[i];
+					contentStr += "<div>";
 					contentStr += appendToPreview("开始时间:", i["sTime"]);
 					contentStr += appendToPreview("结束时间:", i["eTime"]);
 					contentStr += appendToPreview("商品名称:", i["goodsName"]);
@@ -395,9 +395,10 @@
 					} else {
 						contentStr += appendToPreview("折扣:", i["discount"]);
 					}
-					var btnEle = '<input type="button" value="删除" onclick="delJob(\'KEY\')" />'.replace("KEY", i["key"]);
+					var btnEle = '<input type="button" value="删除" onclick="delJob(\'KEY\',this)" />'.replace("KEY", i["key"]);
 					contentStr += appendToPreview("", btnEle);
 					contentStr += "<hr/>";
+					contentStr += "</div>";
 				}
 				preview.html(contentStr);
 				jQuery('#preview').modal('show', {backdrop: 'fade'});
