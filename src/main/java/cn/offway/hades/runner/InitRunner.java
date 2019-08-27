@@ -57,6 +57,7 @@ public class InitRunner implements ApplicationRunner {
         } else {
             JSONObject jsonObject = JSON.parseObject(jsonStr);
             for (String key : jsonObject.keySet()) {
+                System.out.println(key);
                 String[] args = key.split("_");
                 String sTimeStr = args[0];
                 String eTimeStr = args[1];
