@@ -366,6 +366,19 @@
 		});
 	}
 
+	function delJob(key) {
+		console.log(key);
+		$.post("/goods_discount_del", {"key": key}, function (data) {
+			if (data) {
+				toastr.success("操作已成功！", "温馨提示");
+				jQuery('#preview').modal('hide');
+				checkJob();
+			} else {
+				toastr.error("操作失败", "温馨提示");
+			}
+		});
+	}
+
 	function checkJob() {
 		$.post("/goods_discount_list", {"mid": $("#merchantId").val()}, function (data) {
 			if (data) {
@@ -382,6 +395,8 @@
 					} else {
 						contentStr += appendToPreview("折扣:", i["discount"]);
 					}
+					var btnEle = '<input type="button" value="删除" onclick="delJob(\'KEY\')" />'.replace("KEY", i["key"]);
+					contentStr += appendToPreview("", btnEle);
 					contentStr += "<hr/>";
 				}
 				preview.html(contentStr);
