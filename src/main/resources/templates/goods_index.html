@@ -859,12 +859,13 @@
 				if (isNaN(goodsId) || goodsId == null) {
 					alert("请输入数字！")
 				} else {
-					$.post("/goods_copy", {"id": goodsId}, function (data) {
-						if (data) {
-							toastr.success("操作已成功！", "温馨提示");
-							oTable.fnDraw();
-						}
-					});
+                    $.post("/goods_copy", {"id": goodsId}, function (data) {
+                        if (data > 0) {
+                            toastr.success("操作已成功！", "温馨提示");
+                            oTable.fnDraw();
+                            window.open('/goods_edit.html?id=' + data, "_blank");
+                        }
+                    });
 				}
 			});
 			$("#specialEle").hide();
