@@ -3,14 +3,14 @@
 <head>
 	<head th:replace="head"></head>
 	<title>商品优选管理</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+<!--	<link rel="stylesheet" href="assets/js/select2/select2.css"/>-->
+<!--	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>-->
 	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
 	<link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
 	<link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
 	<link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
 	<link rel="stylesheet" href="assets/css/dd.css"/>
-	<link rel="stylesheet" href="assets/css/ui-selectbox.css"/>
+<!--	<link rel="stylesheet" href="assets/css/ui-selectbox.css"/>-->
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -225,9 +225,10 @@
 	<script src="js/common.js"></script>
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
-	<script src="assets/js/jquery-ui.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script src="assets/js/selectbox-min.js"></script>
+<!--	<script src="assets/js/jquery-ui.min.js"></script>-->
+	<script src="assets/js/jquery-ui/jquery-ui.js"></script>
+<!--	<script src="assets/js/select2/select2.min.js"></script>-->
+<!--	<script src="assets/js/selectbox-min.js"></script>-->
 	<script src="assets/js/async.min.js"></script>
 	<script src="assets/js/jquery.dd.js"></script>
 	<script th:inline="javascript">
@@ -482,7 +483,7 @@
 		var imgList = {};
 		for (var i in data) {
 			var brand = data[i];
-			str += '<option value="VALUE" data-image="ICON" data-goodsNo="CODE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["id"]+"  `"+brand["name"]).replace("ICON", brand["image"]).replace("CODE", brand["code"]);
+			str += '<option value="VALUE" data-image="ICON" data-goodsNo="CODE" data-goodsPrice="￥PRICE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["id"] + " " + brand["name"] + " ￥" + brand["price"]).replace("ICON", brand["image"]).replace("CODE", brand["code"]).replace("PRICE", brand["price"]);
 			imgList[brand["id"]] = brand["image"];
 		}
 		var ele = $("#goodsSelect");
