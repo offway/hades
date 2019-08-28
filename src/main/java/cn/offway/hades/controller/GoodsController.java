@@ -1238,6 +1238,8 @@ public class GoodsController {
             goodsNew.setCreateTime(new Date());
             /*商品标示[0-普通商品,1-限量商品]**/
             goodsNew.setLabel("1");
+            /* 状态[0-未上架,1-已上架] **/
+            goodsNew.setStatus("0");
             goodsNew = goodsService.save(goodsNew);
             //copy goods images
             for (PhGoodsImage image : goodsImageService.findByPid(id)) {
