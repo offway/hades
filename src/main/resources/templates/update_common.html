@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title>APP版本更新</title>
+	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<style type="text/css">
+	.form-group img{
+		max-width:400px;
+		max-height:300px;
+	}
+	</style>
+</head>
+<body class="page-body">
+
+	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+			
+		<div th:replace="sidebar-menu"></div>
+		<div class="main-content">
+			<!-- User Info, Notifications and activity Bar -->
+			<nav th:replace="navbar"></nav>
+			<div class="page-title">
+				
+				<div class="title-env">
+					<h1 class="title">APP版本更新</h1>
+					<p class="activityDescription"></p>
+				</div>
+
+				<div class="breadcrumb-env">
+					<ol class="breadcrumb bc-1">
+						<li><a href="/"><i class="fa-home"></i>Home</a></li>
+						<li><a>系统管理</a></li>
+						<li class="active"><strong>APP版本更新</strong></li>
+					</ol>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title"></h3>
+							<div class="panel-options">
+							</div>
+						</div>
+						<div class="panel-body">
+							<form role="form" id="saveForm" class="form-horizontal">
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="control-label">App版本号</label>
+											<input type="text" class="form-control" name="version" />
+										</div>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="control-label">更新标题</label>
+											<input type="text" class="form-control" name="title" />
+										</div>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="control-label">更新内容</label>
+											<textarea type="text" class="form-control" name="body" >
+
+											</textarea>
+										</div>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="control-label">更新地址</label>
+											<input type="text" class="form-control" name="url" />
+										</div>
+									</div>
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="control-label">是否强制更新</label>
+											<label><input type="radio" name="isForce" value="1" />是</label>
+											<label><input type="radio" name="isForce" value="0" />否</label>
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-info save">保存</button>
+									<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<footer th:replace="footer"></footer>
+		</div>
+	</div>
+
+	<script src="js/common.js"></script>
+	<script src="assets/js/moment.min.js"></script>
+	<script src="assets/js/async.min.js"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	var json = [[${json}]];
+    var os = [[${os}]];
+    jQuery(document).ready(function($)
+	{
+		$("title").html($("title").html() + os);
+		$("h1.title").html($("h1.title").html() + os);
+		// $(".activityDescription").html(value);
+		// $(".active strong").html(value);
+		// $(".panel-title").html(value);
+
+		if (json != null && json != "") {
+			var obj = JSON.parse(json);
+			var form = $("#saveForm");
+			form.find("input[name='version']").val(obj["version"]);
+			form.find("input[name='title']").val(obj["title"]);
+			form.find("textarea[name='body']").val(obj["body"]);
+			form.find("input[name='url']").val(obj["url"]);
+			form.find("input[name='isForce']").val([obj["isForce"]]);
+		}
+
+		//保存
+		$(".btn.btn-info.save").click(function(){
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+			var form = $("#saveForm");
+			var version = form.find("input[name='version']").val();
+			var title = form.find("input[name='title']").val();
+			var isForce = form.find("input[name='isForce']:checked").val();
+			if (version == '' || title == '' || isForce == '') {
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return;
+			}
+			async.series({
+				one: function (callback) {
+					callback();
+				},
+				two: function (callback) {
+					callback();
+				},
+				three: function (callback) {
+					//提交保存
+					var data = $("#saveForm").serializeArray();
+					data.push({"name":"os","value":os});
+					$.post("/update_save", data, function (data) {
+						if (data) {
+							footer.find("button").show();
+							footer.find(".bg-lg").hide();
+							toastr.success("操作已成功！", "温馨提示");
+						} else {
+							footer.find("button").show();
+							footer.find(".bg-lg").hide();
+							toastr.error("操作失败", "温馨提示");
+						}
+						callback();
+					});
+				}
+			}, function(err, results) {
+				console.log("OK");
+			});
+		});
+	});
+	/*]]>*/
+	</script>
+</body>
+
+</html>
