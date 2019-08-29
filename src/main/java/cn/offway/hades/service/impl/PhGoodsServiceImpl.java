@@ -6,6 +6,7 @@ import cn.offway.hades.domain.PhLimitedSale;
 import cn.offway.hades.domain.PhMerchant;
 import cn.offway.hades.repository.PhGoodsRepository;
 import cn.offway.hades.service.PhGoodsService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,8 +126,12 @@ public class PhGoodsServiceImpl implements PhGoodsService {
                 params.add(criteriaBuilder.equal(root.get("status"), "1"));
                 if ("keyword".equals(name)) {
                     Predicate like = criteriaBuilder.like(root.get("name"), "%" + value + "%");
-                    Predicate or = criteriaBuilder.equal(root.get("id"), value);
-                    params.add(criteriaBuilder.or(like, or));
+                    if (StringUtils.isNumeric(String.valueOf(value))) {
+                        Predicate or = criteriaBuilder.equal(root.get("id"), value);
+                        params.add(criteriaBuilder.or(like, or));
+                    } else {
+                        params.add(like);
+                    }
                 } else {
                     params.add(criteriaBuilder.equal(root.get(name), value));
                 }
