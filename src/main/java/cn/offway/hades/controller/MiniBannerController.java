@@ -64,11 +64,18 @@ public class MiniBannerController {
 
     @ResponseBody
     @RequestMapping("/miniBanner_save")
-    public boolean save(String pos, String img, String redirectType, String redirectTarget) {
+    public boolean save(String pos, String img, String redirectType, String redirectTarget, String remark) {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("img", img);
-        jsonObject.put("redirectType", redirectType);
-        jsonObject.put("redirectTarget", redirectTarget);
+        jsonObject.put("banner", img);
+        jsonObject.put("remark", remark);
+        jsonObject.put("type", redirectType);
+        if ("0".equals(redirectType)) {
+            jsonObject.put("url", redirectTarget);
+            jsonObject.put("redirectId", "");
+        } else {
+            jsonObject.put("url", "");
+            jsonObject.put("redirectId", redirectTarget);
+        }
         String key = "miniBanner";
         PhConfig config = configService.findOne(key);
         JSONObject container;

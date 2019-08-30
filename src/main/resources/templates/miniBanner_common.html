@@ -53,6 +53,12 @@
 											<img alt="" src='' name="imgImg" style="display:none;"/>
 										</div>
 									</div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">活动名</label>
+                                            <input type="text" class="form-control" name="remark" />
+                                        </div>
+                                    </div>
 									<div class="col-md-12 redirectType">
 										<div class="form-group">
 											<label class="control-label">跳转方式</label>
@@ -75,8 +81,8 @@
 									</div>
 									<div class="col-md-12 redirectTarget">
 										<div class="form-group">
-											<label class="control-label">跳转链接</label>
-											<input type="text" class="form-control" name="redirectTarget" />
+											<label class="control-label">跳转目标</label>
+											<input type="text" class="form-control" name="redirectTarget" placeholder="跳转目标,填地址或者ID" />
 										</div>
 									</div>
 								</div>
@@ -145,19 +151,24 @@
 		// $(".active strong").html(value);
 		// $(".panel-title").html(value);
 
-		if (pos != "a") {
-			$("div.redirectType").hide();
-			$("div.redirectTarget").hide();
-		}
-		if (json != null && json != "") {
-			var form = $("#saveForm");
-			var obj = JSON.parse(json);
-			form.find("input[name='img']").val(obj["img"]);
-			form.find("img[name='imgImg']").attr("src", obj["img"]);
-			form.find("img[name='imgImg']").show();
-			form.find("input[name='redirectType']").val([obj["redirectType"]]);
-			form.find("input[name='redirectTarget']").val(obj["redirectTarget"]);
-		}
+        if (pos != "a") {
+            $("div.redirectType").hide();
+            $("div.redirectTarget").hide();
+        }
+        if (json != null && json != "") {
+            var form = $("#saveForm");
+            var obj = JSON.parse(json);
+            form.find("input[name='img']").val(obj["banner"]);
+            form.find("img[name='imgImg']").attr("src", obj["banner"]);
+            form.find("img[name='imgImg']").show();
+            form.find("input[name='redirectType']").val([obj["type"]]);
+            if (obj["type"] == "0") {
+                form.find("input[name='redirectTarget']").val(obj["url"]);
+            } else if (obj["type"] != "") {
+                form.find("input[name='redirectTarget']").val(obj["redirectId"]);
+            }
+            form.find("input[name='remark']").val([obj["remark"]]);
+        }
 
 		//保存
 		$(".btn.btn-info.save").click(function(){
