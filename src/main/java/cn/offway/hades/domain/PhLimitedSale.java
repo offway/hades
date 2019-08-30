@@ -69,6 +69,9 @@ public class PhLimitedSale implements Serializable {
     /**是否展示[0-不展示,1-展示]**/
     private String isShow;
 
+    /**渠道,该字段为二进制位运算标识,0否1是,从右到左第一位表示H5,第二位表示小程序,第三位表示APP。如要查询APP则传参为0100,查询H5和小程序则传参0011以此类推**/
+    private Long channel;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -225,5 +228,14 @@ public class PhLimitedSale implements Serializable {
 
     public void setIsShow(String isShow) {
         this.isShow = isShow;
+    }
+
+    @Column(name = "channel", length = 1)
+    public Long getChannel() {
+        return channel;
+    }
+
+    public void setChannel(Long channel) {
+        this.channel = channel;
     }
 }

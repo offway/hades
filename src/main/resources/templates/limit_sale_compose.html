@@ -158,6 +158,16 @@
 								</div>
 							</div>
 						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label"><font color="red">*</font>渠道</label>
+									<label><input name="tags" class="notMe" type="checkbox" value="0"/>H5</label>
+									<label><input name="tags" class="notMe" type="checkbox" value="1" />小程序</label>
+									<label><input name="tags" class="notMe" type="checkbox" value="2"/>APP</label>
+								</div>
+							</div>
+						</div>
 					</form>
 				</div>
 				<button type="button" class="btn btn-info save">保存</button>
@@ -273,6 +283,16 @@
 						form.find("img[name='" + i + "Img']").show();
 					}
 					editor.html(data["info"]);
+					//渠道标签
+					if (data.hasOwnProperty("channel") && data["channel"] != null) {
+						var tag = parseInt(data["channel"]);
+						var tagEle = form.find("input[name='tags']");
+						for (var i = 0; i < 3; i++) {
+							if ((tag & 1 << i) != 0) {
+								$(tagEle[i]).prop("checked", "checked");
+							}
+						}
+					}
 					form.find(".btn.image").show();
 					form.find("input[name='action']").val("edit");
 				}
@@ -365,6 +385,7 @@
 			var boostCount = form.find("input[name='boostCount']:checked").val();
 			var userType = form.find("input[name='userType']:checked").val();
 			var buyLimit = form.find("input[name='buyLimit']").val();
+			var tags = form.find("input[name='tags']:checked");
 			var info = editor.html();
 
 			if (beginTime == '' || endTime == '' || name == '' || image == '' || status == '' || info == '' || boostCount == '' || goodsId == '' || userType == '' || buyLimit == '') {
@@ -373,6 +394,11 @@
 				footer.find(".bg-lg").hide();
 				return;
 			}
+
+			var tag = 0;
+			tags.each(function (a, b) {
+				tag = tag | 1 << parseInt(b.value);
+			});
 
             //获取token
             $.get("/qiniu/token", {}, function (token) {
@@ -410,6 +436,7 @@
 								newMap[map[i]["name"]] = map[i]["value"];
 							}
 						}
+						newMap["channel"] = tag;
                         $.post("/limit_sale_add", newMap, function (data) {
                             if (data) {
                                 footer.find("button").show();
