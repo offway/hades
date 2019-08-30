@@ -1,6 +1,7 @@
 package cn.offway.hades.controller;
 
 import cn.offway.hades.domain.PhConfig;
+import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhConfigService;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
@@ -19,9 +20,12 @@ public class MiniBannerController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private PhConfigService configService;
+    @Autowired
+    private QiniuProperties qiniuProperties;
 
     @RequestMapping("/miniBanner_a.html")
     public String first(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("pos", "a");
         map.addAttribute("json", getData("a"));
         return "miniBanner_common";
@@ -29,6 +33,7 @@ public class MiniBannerController {
 
     @RequestMapping("/miniBanner_b.html")
     public String second(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("pos", "b");
         map.addAttribute("json", getData("b"));
         return "miniBanner_common";
@@ -36,6 +41,7 @@ public class MiniBannerController {
 
     @RequestMapping("/miniBanner_c.html")
     public String third(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("pos", "c");
         map.addAttribute("json", getData("c"));
         return "miniBanner_common";

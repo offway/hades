@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title>小程序限定发售banner</title>
+	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<style type="text/css">
+	.form-group img{
+		max-width:400px;
+		max-height:300px;
+	}
+	</style>
+</head>
+<body class="page-body">
+
+	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+			
+		<div th:replace="sidebar-menu"></div>
+		<div class="main-content">
+			<!-- User Info, Notifications and activity Bar -->
+			<nav th:replace="navbar"></nav>
+			<div class="page-title">
+				
+				<div class="title-env">
+					<h1 class="title">小程序限定发售banner</h1>
+					<p class="activityDescription"></p>
+				</div>
+
+				<div class="breadcrumb-env">
+					<ol class="breadcrumb bc-1">
+						<li><a href="/"><i class="fa-home"></i>Home</a></li>
+						<li><a>系统管理</a></li>
+						<li class="active"><strong>小程序限定发售banner</strong></li>
+					</ol>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title"></h3>
+							<div class="panel-options">
+							</div>
+						</div>
+						<div class="panel-body">
+							<form role="form" id="saveForm" class="form-horizontal">
+								<div class="row">
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="control-label">Banner 图</label>
+											<input type="file" class="form-control" name="imgFile" onchange="uploadFile(this)"/>
+											<input type="hidden" class="form-control" name="img" />
+											<img alt="" src='' name="imgImg" style="display:none;"/>
+										</div>
+									</div>
+									<div class="col-md-12 redirectType">
+										<div class="form-group">
+											<label class="control-label">跳转方式</label>
+											<label><input name="redirectType" class="notMe" type="radio" value="0"/>跳转URL(带参) </label>
+											<label><input name="redirectType" class="notMe" type="radio" value="0"/>跳转URL(不带参) </label>
+											<label><input name="redirectType" class="notMe" type="radio" value="2"/>单品 </label>
+											<label><input name="redirectType" class="notMe" type="radio" value="1"/>品牌首页</label>
+											<label><input name="redirectType" class="notMe" type="radio" value="4"/>活动首页</label>
+											<label><input name="redirectType" class="notMe" type="radio" value="3"/>明星同款详情页 </label>
+											<label><input name="redirectType" class="notMe" type="radio" value="5"/>单篇资讯 </label>
+											<label><input name="redirectType" class="notMe" type="radio" value="6"/>免费抽 </label>
+											<label><input name="redirectType" class="notMe" type="radio" value="7"/>App内部H5 </label>
+											<label><input name="redirectType" class="notMe" type="radio" value="11"/>中国力量首页 </label>
+											<label><input name="redirectType" class="notMe" type="radio" value="12"/>高街时尚首页 </label>
+											<label><input name="redirectType" class="notMe" type="radio" value="13"/>买手店首页 </label>
+											<label><input name="redirectType" class="notMe" type="radio" value="14"/>买手店详情页 </label>
+											<label><input name="redirectType" class="notMe" type="radio" value="15"/>跳转限量商品 </label>
+											<label><input name="redirectType" class="notMe" type="radio" value="" checked='checked'/>不跳转</label>
+										</div>
+									</div>
+									<div class="col-md-12 redirectTarget">
+										<div class="form-group">
+											<label class="control-label">跳转链接</label>
+											<input type="text" class="form-control" name="redirectTarget" />
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-info save">保存</button>
+									<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<footer th:replace="footer"></footer>
+		</div>
+	</div>
+
+	<script src="js/common.js"></script>
+	<script src="assets/js/moment.min.js"></script>
+	<script src="assets/js/async.min.js"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	function uploadFile(self) {
+		var that = $(self);
+		if (self.files.length > 0) {
+			var file = self.files[0];
+			getQNToken(function (token) {
+				this.upload("", token, file, function () {
+					//
+				}, function (err) {
+					console.log("error");
+					console.log(err);
+				}, function (res) {
+					var url = qiniuUrl + "/" + res.key;
+					that.parent().find("[name=img]").val(url);
+					that.parent().find("[name=imgImg]").attr("src", url);
+					that.parent().find("[name=imgImg]").attr("width", "300px");
+					that.parent().find("[name=imgImg]").attr("height", "300px");
+					that.parent().find("[name=imgImg]").show();
+				});
+			});
+		} else {
+			confirm("未选择任何文件!");
+		}
+	}
+
+	function getQNToken(cb) {
+		$.get("/qiniu/token", {}, function (token) {
+			cb(token);
+		});
+	}
+
+	var json = [[${json}]];
+	var pos = [[${pos}]];
+	var qiniuUrl = [[${qiniuUrl}]];
+	var map = {
+		"a": "位置一(有跳转)",
+		"b": "位置二(无跳转)",
+		"c": "位置三(无跳转)"
+	};
+    jQuery(document).ready(function($)
+	{
+		$("title").html($("title").html() + map[pos]);
+		$("h1.title").html($("h1.title").html() + map[pos]);
+		// $(".activityDescription").html(value);
+		// $(".active strong").html(value);
+		// $(".panel-title").html(value);
+
+		if (pos != "a") {
+			$("div.redirectType").hide();
+			$("div.redirectTarget").hide();
+		}
+		if (json != null && json != "") {
+			var form = $("#saveForm");
+			var obj = JSON.parse(json);
+			form.find("input[name='img']").val(obj["img"]);
+			form.find("img[name='imgImg']").attr("src", obj["img"]);
+			form.find("img[name='imgImg']").show();
+			form.find("input[name='redirectType']").val([obj["redirectType"]]);
+			form.find("input[name='redirectTarget']").val(obj["redirectTarget"]);
+		}
+
+		//保存
+		$(".btn.btn-info.save").click(function(){
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+			var form = $("#saveForm");
+			var img = form.find("input[name='img']").val();
+			var redirectType = form.find("input[name='redirectType']:checked").val();
+			var redirectTarget = form.find("input[name='redirectTarget']").val();
+			if (img == '' || (redirectType != '' && redirectTarget == '') || (redirectType == '' && redirectTarget != '')) {
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return;
+			}
+			async.series({
+				one: function (callback) {
+					callback();
+				},
+				two: function (callback) {
+					callback();
+				},
+				three: function (callback) {
+					//提交保存
+					var data = $("#saveForm").serializeArray();
+					data.push({"name": "pos", "value": pos});
+					$.post("/miniBanner_save", data, function (data) {
+						if (data) {
+							footer.find("button").show();
+							footer.find(".bg-lg").hide();
+							toastr.success("操作已成功！", "温馨提示");
+						} else {
+							footer.find("button").show();
+							footer.find(".bg-lg").hide();
+							toastr.error("操作失败", "温馨提示");
+						}
+						callback();
+					});
+				}
+			}, function(err, results) {
+				console.log("OK");
+			});
+		});
+	});
+	/*]]>*/
+	</script>
+</body>
+
+</html>
