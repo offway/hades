@@ -47,7 +47,7 @@ public class UpdateController {
         jsonObject.put("title", title);
         jsonObject.put("body", body);
         jsonObject.put("url", url);
-        jsonObject.put("isForce", isForce);
+        jsonObject.put("isForce", "1".equals(isForce));
         String key = "update_" + os;
         PhConfig config = configService.findOne(key);
         if (config == null) {

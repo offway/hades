@@ -108,15 +108,15 @@
 		// $(".active strong").html(value);
 		// $(".panel-title").html(value);
 
-		if (json != null && json != "") {
-			var obj = JSON.parse(json);
-			var form = $("#saveForm");
-			form.find("input[name='version']").val(obj["version"]);
-			form.find("input[name='title']").val(obj["title"]);
-			form.find("textarea[name='body']").val(obj["body"]);
-			form.find("input[name='url']").val(obj["url"]);
-			form.find("input[name='isForce']").val([obj["isForce"]]);
-		}
+        if (json != null && json != "") {
+            var obj = JSON.parse(json);
+            var form = $("#saveForm");
+            form.find("input[name='version']").val(obj["version"]);
+            form.find("input[name='title']").val(obj["title"]);
+            form.find("textarea[name='body']").val(obj["body"]);
+            form.find("input[name='url']").val(obj["url"]);
+            form.find("input[name='isForce']").val([obj["isForce"] ? "1" : "0"]);
+        }
 
 		//保存
 		$(".btn.btn-info.save").click(function(){
