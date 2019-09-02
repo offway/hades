@@ -3,6 +3,7 @@ package cn.offway.hades.controller;
 import cn.offway.hades.domain.PhConfig;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhConfigService;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +52,10 @@ public class MiniBannerController {
         String key = "INDEX_SELL_WELL";
         String jsonStr = configService.findContentByName(key);
         if (jsonStr != null) {
-            JSONObject jsonObject = JSONObject.parseObject(jsonStr);
-            if (jsonObject.containsKey(pos)) {
-                return jsonObject.getJSONObject(pos).toJSONString();
+            JSONArray jsonArray = JSONArray.parseArray(jsonStr);
+            JSONObject jsonObject = jsonArray.getJSONObject(posToIndex(pos));
+            if (jsonObject != null) {
+                return jsonObject.toJSONString();
             } else {
                 return null;
             }
@@ -62,9 +64,28 @@ public class MiniBannerController {
         }
     }
 
+    private int posToIndex(String pos) {
+        int i = 0;
+        switch (pos) {
+            case "a":
+                i = 0;
+                break;
+            case "b":
+                i = 1;
+                break;
+            case "c":
+                i = 2;
+                break;
+            default:
+                break;
+        }
+        return i;
+    }
+
     @ResponseBody
     @RequestMapping("/miniBanner_save")
     public boolean save(String pos, String img, String redirectType, String redirectTarget, String remark) {
+        int i = posToIndex(pos);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("banner", img);
         jsonObject.put("remark", remark);
@@ -78,17 +99,17 @@ public class MiniBannerController {
         }
         String key = "INDEX_SELL_WELL";
         PhConfig config = configService.findOne(key);
-        JSONObject container;
+        JSONArray container;
         if (config == null) {
             config = new PhConfig();
             config.setCreateTime(new Date());
             config.setName(key);
             config.setRemark("");
-            container = new JSONObject();
+            container = new JSONArray(3);
         } else {
-            container = JSONObject.parseObject(config.getContent());
+            container = JSONArray.parseArray(config.getContent());
         }
-        container.put(pos, jsonObject);
+        container.set(i, jsonObject);
         config.setContent(container.toJSONString());
         configService.save(config);
         return true;
