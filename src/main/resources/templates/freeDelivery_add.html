@@ -108,13 +108,18 @@
 		var str = '<div id="UUID" class="toDel" style="\n'.replace(/UUID/g, uuid) +
 				'    border: solid 1px;\n' +
 				'    padding-left: 30px;\n' +
-				'    padding-bottom: 35px;\n">';
+				'    padding-bottom: 0px;\n">';
 		if (v != null) {
 			str += "\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品DD</label>\n".replace("DD", $("div.toDel").length + 1) +
 					"\t\t\t\t\t\t\t\t\t\t\t\t<input type='hidden' name='gid' value='VV' />\n".replace("VV", v["id"]) +
+					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t\t<input type='button' value='删除' onclick='delNode(\"UUID\")' />\n".replace("UUID", uuid) +
 					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t</div>\n" +
@@ -165,6 +170,12 @@
 					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"brandId\" placeholder=\"品牌ID\" value='VV' />\n".replace("VV", v["brandId"]) +
 					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">助力人数</label>\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"boostCount\" placeholder=\"助力人数\" value='VV' />\n".replace("VV", v["boostCount"]) +
+					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
 					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-3\">\n" +
@@ -175,21 +186,18 @@
 					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" name=\"userType\" value='VV' />\n".replace("VV", v["userType"]) +
 					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">助力人数</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"boostCount\" value=\"VV\" placeholder=\"助力人数\" />\n".replace("VV", v["boostCount"]) +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t</div>";
+					"\t\t\t\t\t\t\t\t\t</div>\n";
 		} else {
 			str += "\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品DD</label>\n".replace("DD", $("div.toDel").length + 1) +
 					"\t\t\t\t\t\t\t\t\t\t\t\t<input type='hidden' name='gid' value='' />\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t\t<input type='button' value='删除' onclick='delNode(\"UUID\")' />\n".replace("UUID", uuid) +
 					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t</div>\n" +
@@ -240,6 +248,12 @@
 					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"brandId\" placeholder=\"品牌ID\" />\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">助力人数</label>\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"boostCount\" value=\"0\" placeholder=\"助力人数\" />\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
 					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-3\">\n" +
@@ -250,17 +264,9 @@
 					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" name=\"userType\" />\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">助力人数</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"boostCount\" value=\"0\" placeholder=\"助力人数\" />\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t</div>";
+					"\t\t\t\t\t\t\t\t\t</div>\n";
 		}
-		str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
+		// str += '<input style="display:inline-block;" type="button" value="" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
 		str += '</div>';
 		$("#elementPool").append(str);
 	}
