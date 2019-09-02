@@ -936,7 +936,6 @@
 			$.post("/brand_pin_list", {"to": "logo"}, function (data) {
 				if (data) {
 					listIt(data, true, false);
-					toastr.success("操作已成功！", "温馨提示");
 				}
 			});
 		});
@@ -945,7 +944,6 @@
 			$.post("/brand_pin_list", {"to": "banner"}, function (data) {
 				if (data) {
 					listIt(data, false, false);
-					toastr.success("操作已成功！", "温馨提示");
 				}
 			});
 		});
@@ -954,7 +952,6 @@
 			$.post("/brand_pin_list", {"to": "banner", "mini": 1}, function (data) {
 				if (data) {
 					listIt(data, false, true);
-					toastr.success("操作已成功！", "温馨提示");
 				}
 			});
 		});
