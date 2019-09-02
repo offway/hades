@@ -594,6 +594,28 @@
 					{
 						targets: 11,
 						orderable: false,
+						data: "orderNo",
+						title: "退货状态",
+						render: function (data, type, row, meta) {
+							//状态[0-审核中,1-待退货,2-退货中/换货中,3-退款中,4-退款成功/换货成功,5-退款取消,6-审核失败,7-已寄出]
+							var map = ["审核中", "待退货", "退货中/换货中", "退款中", "退款成功/换货成功", "退款取消", "审核失败", "已寄出"];
+							var str = "暂无";
+							$.ajax({
+								"url": "/refund_query",
+								"async": false,
+								"data": {"orderNo": data},
+								"success": function (body) {
+									if (body) {
+										str = map[parseInt(body["status"])];
+									}
+								}
+							});
+							return str;
+						}
+					},
+					{
+						targets: 12,
+						orderable: false,
 						data: "payChannel",
 						title: "支付渠道",
 						render: function (data, type, row, meta) {
@@ -603,7 +625,7 @@
 						}
 					},
 					{
-						targets: 12,
+						targets: 13,
 						orderable: false,
 						data: "preorderNo",
 						title: "总订单号",
@@ -618,7 +640,7 @@
 						}
 					},
 					{
-						targets: 13,
+						targets: 14,
 						orderable: false,
 						data: "createTime",
 						title: "创建时间",
@@ -633,7 +655,7 @@
 					// 	title: "商户名"
 					// },
 					{
-						targets: 14,
+						targets: 15,
 						orderable: false,
 						data: "id",
 						title: "操作",
@@ -642,7 +664,7 @@
 						}
 					},
 					{
-						targets: 15,
+						targets: 16,
 						orderable: false,
 						data: "id",
 						title: "操作",

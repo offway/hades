@@ -18,7 +18,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -247,10 +246,10 @@ public class RefundController {
                     goodsInfo.put("type", goods.getType() + goods.getCategory());
                     goodsInfo.put("merchantName", goods.getMerchantName());
                     goodsInfo.put("stockImg", goodsStock.getImage());
-                    goodsInfo.put("toStockImage",refundGoods.getToStockImage());
-                    goodsInfo.put("toStockDesc",refundGoods.getToStockDesc());
-                    goodsInfo.put("toStockId",refundGoods.getToStockId());
-                    goodsInfo.put("reason",refundGoods.getReason());
+                    goodsInfo.put("toStockImage", refundGoods.getToStockImage());
+                    goodsInfo.put("toStockDesc", refundGoods.getToStockDesc());
+                    goodsInfo.put("toStockId", refundGoods.getToStockId());
+                    goodsInfo.put("reason", refundGoods.getReason());
                     StringBuilder sb = new StringBuilder();
                     for (PhGoodsProperty p : propertyList) {
                         sb.append(p.getName());
@@ -260,7 +259,7 @@ public class RefundController {
                     }
                     goodsInfo.put("goodsProperty", sb.toString());
                     goodsInfo.put("goodsCount", refundGoods.getGoodsCount());
-                }else if (refundGoods != null){
+                } else if (refundGoods != null) {
                     PhGoods goods;
                     if (refundGoods.getGoodsId() == null) {
                         goods = goodsService.findOne(refundGoods.getOrderGoodsId());
@@ -399,6 +398,12 @@ public class RefundController {
     public boolean find(String orderNo, @AuthenticationPrincipal PhAdmin admin) {
         PhRefund refund = refundService.findOne(orderNo, "0", "1", "2", "3", "4", "5");
         return refund != null;
+    }
+
+    @ResponseBody
+    @RequestMapping("/refund_query")
+    public PhRefund find(String orderNo) {
+        return refundService.findOne(orderNo, "0", "1", "2", "3", "4", "5");
     }
 
     @ResponseBody
