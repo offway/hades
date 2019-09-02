@@ -92,10 +92,10 @@ public class MiniBannerController {
         jsonObject.put("type", redirectType);
         if ("0".equals(redirectType)) {
             jsonObject.put("url", redirectTarget);
-            jsonObject.put("redirectId", "");
+            jsonObject.put("redirectId", "0");
         } else {
             jsonObject.put("url", "");
-            jsonObject.put("redirectId", redirectTarget);
+            jsonObject.put("redirectId", "".equals(redirectTarget) ? "0" : redirectTarget);
         }
         String key = "INDEX_SELL_WELL";
         PhConfig config = configService.findOne(key);
