@@ -44,7 +44,7 @@ import java.util.*;
 @Controller
 @RequestMapping
 public class SettlementController {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static Logger logger = LoggerFactory.getLogger(SettlementController.class);
     @Autowired
     private QiniuProperties qiniuProperties;
     @Autowired
@@ -393,7 +393,7 @@ public class SettlementController {
             info.setStatisticalTime(new Date());
             settlementInfoService.save(info);
         }
-        sendSMS();
+        sendSMS("【很潮】您好，有一笔退款审核已通过，请通过后台确认打款~", "+8613918021859", "+8613663478885");
         return totalAmount;
     }
 
@@ -429,23 +429,21 @@ public class SettlementController {
             info.setStatisticalTime(new Date());
             settlementInfoService.save(info);
         }
-        sendSMS();
+        sendSMS("【很潮】您好，有一笔退款审核已通过，请通过后台确认打款~", "+8613918021859", "+8613663478885");
         return totalAmount;
     }
 
-    private void sendSMS() {
+    public static void sendSMS(String text, String... phones) {
         //初始化clnt,使用单例方式
         YunpianClient client = new YunpianClient("d7c58b5d229428d28434533b17ff084a").init();
         //发送短信API
         Map<String, String> param = client.newParam(2);
-        param.put(YunpianClient.MOBILE, "+8613918021859");
-        param.put(YunpianClient.TEXT, "【很潮】您好，有一笔退款审核已通过，请通过后台确认打款~");
-        Result<SmsSingleSend> r = client.sms().single_send(param);
-        logger.info(r.getMsg());
-        //change the phone number
-        param.put(YunpianClient.MOBILE, "+8613663478885");
-        Result<SmsSingleSend> r2 = client.sms().single_send(param);
-        logger.info(r2.getMsg());
+        param.put(YunpianClient.TEXT, text);
+        for (String phone : phones) {
+            param.put(YunpianClient.MOBILE, phone);
+            Result<SmsSingleSend> r = client.sms().single_send(param);
+            logger.info(r.getMsg());
+        }
         //获取返回结果，返回码:r.getCode(),返回码描述:r.getMsg(),API结果:r.getData(),其他说明:r.getDetail(),调用异常:r.getThrowable()
         //账户:clnt.user().* 签名:clnt.sign().* 模版:clnt.tpl().* 短信:clnt.sms().* 语音:clnt.voice().* 流量:clnt.flow().* 隐私通话:clnt.call().*
         //释放clnt

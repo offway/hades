@@ -2,12 +2,10 @@ package cn.offway.hades.controller;
 
 import cn.offway.hades.domain.PhConfig;
 import cn.offway.hades.domain.PhRefund;
+import cn.offway.hades.domain.PhUserInfo;
 import cn.offway.hades.repository.PhArticleRepository;
 import cn.offway.hades.runner.InitRunner;
-import cn.offway.hades.service.JPushService;
-import cn.offway.hades.service.PhConfigService;
-import cn.offway.hades.service.PhOrderInfoService;
-import cn.offway.hades.service.PhRefundService;
+import cn.offway.hades.service.*;
 import cn.offway.hades.utils.MeiqiaSigner;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -40,6 +38,8 @@ public class CallbackController {
     private PhOrderInfoService orderInfoService;
     @Autowired
     private PhConfigService configService;
+    @Autowired
+    private PhUserInfoService userInfoService;
 
     @Value("${meqia.key}")
     private String meqiaKey;
@@ -57,6 +57,10 @@ public class CallbackController {
             args.put("id", oid);
             args.put("url", "");
             jPushService.sendPushUser("派送中", "准备收货：亲，您购买的商品已经在路上啦，注意签收哦！", args, uid);
+            PhUserInfo userInfo = userInfoService.findOne(Long.valueOf(uid));
+            if (userInfo != null) {
+                SettlementController.sendSMS("很潮app提醒您：您购买的商品正在派送中，请注意签收哦~", userInfo.getPhone());
+            }
         } else if (state == 3) {
             String key = "{0}_{1}_{2}_ConfirmPackage";//beginTime + "_" + endTime + "_" + ids + "_" + discount;
             DateTime oneWeekLater = new DateTime().plusDays(7);
