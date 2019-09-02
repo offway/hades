@@ -48,7 +48,7 @@ public class MiniBannerController {
     }
 
     private String getData(String pos) {
-        String key = "miniBanner";
+        String key = "INDEX_SELL_WELL";
         String jsonStr = configService.findContentByName(key);
         if (jsonStr != null) {
             JSONObject jsonObject = JSONObject.parseObject(jsonStr);
@@ -76,7 +76,7 @@ public class MiniBannerController {
             jsonObject.put("url", "");
             jsonObject.put("redirectId", redirectTarget);
         }
-        String key = "miniBanner";
+        String key = "INDEX_SELL_WELL";
         PhConfig config = configService.findOne(key);
         JSONObject container;
         if (config == null) {
