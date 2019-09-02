@@ -13,14 +13,12 @@ import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -41,44 +39,35 @@ public class FreeDeliveryController {
     @Autowired
     private PhGoodsService goodsService;
 
-    @Value("${ph.url}")
-    private String url;
-
     @RequestMapping("/freeDelivery.html")
     public String index(ModelMap map) {
-        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
-        map.addAttribute("url", url);
         return "freeDelivery_index";
     }
 
     @RequestMapping("/freeDelivery_add.html")
-    public String add(ModelMap map,Long id) {
+    public String add(ModelMap map, Long id) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("theId", id);
         return "freeDelivery_add";
     }
 
     @ResponseBody
-    @RequestMapping("/freeDelivery_editfind")
+    @RequestMapping("/freeDelivery_editFind")
     public Map<String, Object> find(Long id) {
         Map<String, Object> map = new HashMap<>();
         PhFreeProduct freeProduct = freeProductService.findOne(id);
         List<PhFreeDelivery> freeDelivery = freeDeliveryService.findOneByProductId(id);
-
-        map.put("freeProduct",freeProduct);
-        map.put("freeDelivery",freeDelivery);
+        map.put("freeProduct", freeProduct);
+        map.put("freeDelivery", freeDelivery);
         return map;
     }
 
 
     @ResponseBody
     @RequestMapping("/freeDelivery_list")
-    public Map<String, Object> getList(HttpServletRequest request) {
-        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
-        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
-        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "id"), new Sort.Order(Sort.Direction.ASC, "sort"));
-        Page<PhFreeProduct> pages = freeProductService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength));
+    public Map<String, Object> getList(HttpServletRequest request, int sEcho, int iDisplayStart, int iDisplayLength) {
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "id"));
+        Page<PhFreeProduct> pages = freeProductService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         return echoBody(initEcho, pages.getTotalElements(), pages.getTotalElements(), pages.getContent());
     }
@@ -114,7 +103,7 @@ public class FreeDeliveryController {
         freeProduct.setCreator(admin.getNickname());
         freeProduct.setCreateTime(new Date());
         freeProduct = freeProductService.save(freeProduct);
-        if (gidsList!=null){
+        if (gidsList != null) {
             for (int i = 0; i < gidsList.size(); i++) {
                 PhFreeDelivery freeDelivery = freeDeliveryService.findOne(Long.valueOf(gidsList.get(i).toString()));
                 PhGoods goods = goodsService.findOne(Long.valueOf(goodsIdList.get(i).toString()));
@@ -137,7 +126,7 @@ public class FreeDeliveryController {
                 sumGooodsCount += Integer.valueOf(goodsCountList.get(i).toString());
                 sumBoostCount += Integer.valueOf(boostCountList.get(i).toString());
             }
-        }else {
+        } else {
 
             for (int i = 0; i < goodsIdList.size(); i++) {
                 PhFreeDelivery freeDeliveries = new PhFreeDelivery();

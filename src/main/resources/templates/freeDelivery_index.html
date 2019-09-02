@@ -3,13 +3,6 @@
 <head>
     <head th:replace="head"></head>
     <title>助力免费送</title>
-    <link rel="stylesheet" href="assets/js/select2/select2.css"/>
-    <link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-    <link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
-    <link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
-    <link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
-    <link rel="stylesheet" href="assets/css/selectize.bootstrap3.css"/>
-    <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
     <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
     <style type="text/css">
         .form-group img {
@@ -56,72 +49,22 @@
             <button class="btn btn-info del">删除</button>
         </div>
 
-
         <footer th:replace="footer"></footer>
     </div>
 </div>
-
-<div th:replace="body-under"></div>
-
-<div class="modal fade in" id="modal-6">
-    <div class="modal-dialog">
-    </div>
-</div>
-
-
-<input type="hidden" id="facke"/>
-<input type="hidden" id="fackew"/>
-<input type="hidden" id="fackeh"/>
-
-<video style="display: none" id="videoObj"></video>
-<input type="hidden" class="form-control" name="articleid" id="articleid" value=""/>
 <script src="js/common.js"></script>
 <script src="assets/js/moment.min.js"></script>
-<script src="assets/js/select2/select2.min.js"></script>
 <script src="assets/js/async.min.js"></script>
-<script src="assets/kindeditor-4.1.12/kindeditor-all.js"></script>
-<script src="assets/kindeditor-4.1.12/lang/zh-CN.js"></script>
-<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
-<script src="assets/js/jquery-ui.min.js"></script>
-<script src="assets/js/selectize.min.js"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
-
-    KindEditor.ready(function (K) {
-        window.editor = K.create('#editor_id', {
-            uploadJson: '/file/upload_qn',
-            allowFileManager: false,
-            afterUpload: function (url, data, name) {
-                console.log(url);
-                console.log(data);
-                console.log(name);
-            }
-        });
-    });
-
-    var table_global;
-
-    var qiniuUrl = [[${qiniuUrl}]];
-
+    function checkIt() {
+        alert("暂未实现");
+    }
     jQuery(document).ready(function ($) {
-        jQuery.datetimepicker.setLocale('zh');
-        jQuery('#timeup').datetimepicker(
-            {
-                "lang": "zh",
-                "format": "Y-m-d H:i:s",
-                "timepicker": true,
-                "datepicker": true,
-                "defaultDate": new Date(),
-                "defaultTime": "00:00:00"
-            }
-        );
         var oTable = $("#example-1").dataTable({
             language: {
                 url: "../assets/Chinese.txt"
             },
-            aLengthactivity: [
-                [10, 25, 50, 100], [10, 25, 50, 100]
-            ],
             bFilter: false,
             bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
             sAjaxDataProp: "aData",//是服务器分页的标志，必须有
@@ -202,20 +145,16 @@
                     orderable: false,
                     title: "操作",
                     render: function (data, type, full, meta) {
-                        return '<input type="button" name="checkIt" onclick="derail(' + data + ',this)" value="查看详情"/>';
+                        return '<input type="button" name="checkIt" onclick="checkIt(' + data + ',this)" value="查看详情"/>';
                     }
                 }
             ]
         });
-
-        table_global = oTable;
-
         $(".searchBtn").click(function () {
             $("#checkbox-all").attr("checked", false);
             oTable.fnDraw(); //or fnReloadAjax()
             return false;
         });
-
         $('#example-1').on('click', "#checkbox-all", function () {
             var obj = $(this);
             $("input[name='activityId']").each(function (i, e) {
@@ -256,9 +195,8 @@
                 toastr.error("请至少选择一条数据操作", "温馨提示");
                 return;
             }
-            window.location.href = '/freeDelivery_add.html?id='+activityId.val();
+            window.location.href = '/freeDelivery_add.html?id=' + activityId.val();
         });
-
     });
     /*]]>*/
 </script>
