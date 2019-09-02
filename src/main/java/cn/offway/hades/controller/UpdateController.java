@@ -36,6 +36,8 @@ public class UpdateController {
 
     private String getVersion(String os) {
         String key = "update_" + os;
+        //key 转成大写
+        key = key.toUpperCase();
         return configService.findContentByName(key);
     }
 
@@ -49,6 +51,8 @@ public class UpdateController {
         jsonObject.put("url", url);
         jsonObject.put("isForce", "1".equals(isForce));
         String key = "update_" + os;
+        //key 转成大写
+        key = key.toUpperCase();
         PhConfig config = configService.findOne(key);
         if (config == null) {
             config = new PhConfig();
