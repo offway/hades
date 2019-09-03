@@ -28,4 +28,6 @@ public interface PhFreeDeliveryService {
     void deleteByproductIdInList(List<Long> id);
 
     List<PhFreeDelivery> findOneByProductId(Long id);
+
+    void deleteByproductId(Long id);
 }

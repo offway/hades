@@ -61,4 +61,9 @@ public class PhFreeDeliveryServiceImpl implements PhFreeDeliveryService {
     public List<PhFreeDelivery> findOneByProductId(Long id) {
         return phFreeDeliveryRepository.findOneByProductId(id);
     }
+
+    @Override
+    public void deleteByproductId(Long id) {
+        phFreeDeliveryRepository.deleteBypId(id);
+    }
 }
