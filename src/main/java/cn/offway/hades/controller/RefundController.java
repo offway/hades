@@ -396,7 +396,7 @@ public class RefundController {
     @ResponseBody
     @RequestMapping("/refund_find")
     public boolean find(String orderNo, @AuthenticationPrincipal PhAdmin admin) {
-        PhRefund refund = refundService.findOne(orderNo, "0", "1", "2", "3", "4", "5");
+        PhRefund refund = refundService.findOne(orderNo, "0", "1", "2", "3", "4");
         return refund != null;
     }
 
