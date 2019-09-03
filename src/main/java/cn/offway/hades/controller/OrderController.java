@@ -634,7 +634,7 @@ public class OrderController {
                 jPushService.sendPushUser("已发货", "已发货提醒：亲，您购买的商品已经发货啦！", args, String.valueOf(orderInfo.getUserId()));
                 PhUserInfo userInfo = userInfoService.findOne(orderInfo.getUserId());
                 if (userInfo != null) {
-                    SettlementController.sendSMS("很潮app提醒您：您购买的商品xxxxx已经发货啦，请及时查看物流信息哦~", userInfo.getPhone());
+                    SettlementController.sendSMS("【很潮】app提醒您：您购买的商品xxxxx已经发货啦，请及时查看物流信息哦~", userInfo.getPhone());
                 }
                 subscribeExpressInfo(orderExpressInfo, orderInfo);
             } else {
@@ -726,7 +726,7 @@ public class OrderController {
                         jPushService.sendPushUser("未付款", "20分钟后提示：亲，您有一笔订单未支付哦！", args, String.valueOf(orderInfo.getUserId()));
                         PhUserInfo userInfo = userInfoService.findOne(orderInfo.getUserId());
                         if (userInfo != null) {
-                            SettlementController.sendSMS("很潮app提醒您：您有一笔订单未支付哦~", userInfo.getPhone());
+                            SettlementController.sendSMS("【很潮】app提醒您：您有一笔订单未支付哦~", userInfo.getPhone());
                         }
                     }
                 });

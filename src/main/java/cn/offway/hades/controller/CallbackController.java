@@ -59,7 +59,7 @@ public class CallbackController {
             jPushService.sendPushUser("派送中", "准备收货：亲，您购买的商品已经在路上啦，注意签收哦！", args, uid);
             PhUserInfo userInfo = userInfoService.findOne(Long.valueOf(uid));
             if (userInfo != null) {
-                SettlementController.sendSMS("很潮app提醒您：您购买的商品正在派送中，请注意签收哦~", userInfo.getPhone());
+                SettlementController.sendSMS("【很潮】app提醒您：您购买的商品正在派送中，请注意签收哦~", userInfo.getPhone());
             }
         } else if (state == 3) {
             String key = "{0}_{1}_{2}_ConfirmPackage";//beginTime + "_" + endTime + "_" + ids + "_" + discount;

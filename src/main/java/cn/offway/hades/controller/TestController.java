@@ -16,18 +16,18 @@ public class TestController {
     @RequestMapping("/2")
     @ResponseBody
     public void testSms2() {
-        SettlementController.sendSMS("很潮app提醒您：您有一笔订单未支付哦~", "+8613761839483", "+8613663478885");
+        SettlementController.sendSMS("【很潮】app提醒您：您有一笔订单未支付哦~", "+8613761839483", "+8613663478885");
     }
 
     @RequestMapping("/3")
     @ResponseBody
     public void testSms3() {
-        SettlementController.sendSMS("很潮app提醒您：您购买的商品正在派送中，请注意签收哦~", "+8613761839483", "+8613663478885");
+        SettlementController.sendSMS("【很潮】app提醒您：您购买的商品正在派送中，请注意签收哦~", "+8613761839483", "+8613663478885");
     }
 
     @RequestMapping("/4")
     @ResponseBody
     public void testSms4() {
-        SettlementController.sendSMS("很潮app提醒您：您购买的商品xxxxx已经发货啦，请及时查看物流信息哦~", "+8613761839483", "+8613663478885");
+        SettlementController.sendSMS("【很潮】app提醒您：您购买的商品xxxxx已经发货啦，请及时查看物流信息哦~", "+8613761839483", "+8613663478885");
     }
 }
