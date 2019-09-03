@@ -393,7 +393,7 @@ public class SettlementController {
             info.setStatisticalTime(new Date());
             settlementInfoService.save(info);
         }
-        sendSMS("【很潮】您好，有一笔退款审核已通过，请通过后台确认打款~", "+8613918021859", "+8613663478885");
+//        sendSMS("【很潮】您好，有一笔退款审核已通过，请通过后台确认打款~", "+8613918021859", "+8613663478885");
         return totalAmount;
     }
 
@@ -429,7 +429,7 @@ public class SettlementController {
             info.setStatisticalTime(new Date());
             settlementInfoService.save(info);
         }
-        sendSMS("【很潮】您好，有一笔退款审核已通过，请通过后台确认打款~", "+8613918021859", "+8613663478885");
+//        sendSMS("【很潮】您好，有一笔退款审核已通过，请通过后台确认打款~", "+8613918021859", "+8613663478885");
         return totalAmount;
     }
 

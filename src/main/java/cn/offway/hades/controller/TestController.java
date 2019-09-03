@@ -28,6 +28,6 @@ public class TestController {
     @RequestMapping("/4")
     @ResponseBody
     public void testSms4() {
-        SettlementController.sendSMS("【很潮】app提醒您：您购买的商品xxxxx已经发货啦，请及时查看物流信息哦~", "+8613761839483", "+8613663478885");
+        SettlementController.sendSMS("【很潮】app提醒您：您购买的商品已经发货啦，请及时查看物流信息哦~", "+8613761839483", "+8613663478885");
     }
 }

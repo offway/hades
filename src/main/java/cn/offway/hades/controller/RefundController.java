@@ -440,6 +440,7 @@ public class RefundController {
                 /* 类型[0-仅退款,1-退货退款,2-换货] **/
                 switch (refund.getType()) {
                     case "0":
+                        SettlementController.sendSMS("【很潮】您好，有一笔退款审核已通过，请通过后台确认打款~", "+8613918021859", "+8613663478885");
                         refund.setStatus("3");
                         break;
                     case "1":
