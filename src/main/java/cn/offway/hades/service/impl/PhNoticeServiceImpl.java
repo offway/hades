@@ -1,13 +1,14 @@
 package cn.offway.hades.service.impl;
 
+import cn.offway.hades.domain.PhNotice;
+import cn.offway.hades.repository.PhNoticeRepository;
+import cn.offway.hades.service.PhNoticeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import cn.offway.hades.service.PhNoticeService;
-
-import cn.offway.hades.domain.PhNotice;
-import cn.offway.hades.repository.PhNoticeRepository;
 
 
 /**
@@ -19,18 +20,28 @@ import cn.offway.hades.repository.PhNoticeRepository;
 @Service
 public class PhNoticeServiceImpl implements PhNoticeService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	private PhNoticeRepository phNoticeRepository;
-	
-	@Override
-	public PhNotice save(PhNotice phNotice){
-		return phNoticeRepository.save(phNotice);
-	}
-	
-	@Override
-	public PhNotice findOne(Long id){
-		return phNoticeRepository.findOne(id);
-	}
+    @Autowired
+    private PhNoticeRepository phNoticeRepository;
+
+    @Override
+    public PhNotice save(PhNotice phNotice) {
+        return phNoticeRepository.save(phNotice);
+    }
+
+    @Override
+    public Page<PhNotice> findAll(Pageable pageable) {
+        return phNoticeRepository.findAll(pageable);
+    }
+
+    @Override
+    public void del(Long id) {
+        phNoticeRepository.delete(id);
+    }
+
+    @Override
+    public PhNotice findOne(Long id) {
+        return phNoticeRepository.findOne(id);
+    }
 }

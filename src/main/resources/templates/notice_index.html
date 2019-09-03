@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<head th:replace="head"></head>
+	<title>站内信管理</title>
+	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+	<style type="text/css">
+	.form-group img{
+		max-width:400px;
+		max-height:300px;
+	}
+	</style>
+</head>
+<body class="page-body">
+
+	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+			
+		<div th:replace="sidebar-menu"></div>
+		<div class="main-content">
+			<!-- User Info, Notifications and activity Bar -->
+			<nav th:replace="navbar"></nav>
+			<div class="page-title">
+				<div class="title-env">
+					<h1 class="title">站内信管理</h1>
+					<p class="activityDescription"></p>
+				</div>
+				<div class="breadcrumb-env">
+					<ol class="breadcrumb bc-1">
+						<li><a href="/"><i class="fa-home"></i>Home</a></li>
+						<li><a>系统管理</a></li>
+						<li class="active"><strong>站内信管理</strong></li>
+					</ol>
+				</div>
+			</div>
+			
+			<div class="panel panel-default">
+				<div class="panel-heading">
+				</div>
+				<div class="panel-body">
+					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					</table>
+				</div>
+				<button class="btn btn-info add" >添加</button>
+				<button class="btn btn-info edit">修改</button>
+				<button class="btn btn-info del">删除</button>
+			</div>
+
+			<footer th:replace="footer"></footer>
+		</div>
+	</div>
+
+	<div class="modal fade in" id="modal-6">
+		<div class="modal-dialog">
+			<div class="modal-content" style="width: 800px;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">添加站内信</h4>
+				</div>
+				
+				<div class="modal-body">
+					<form role="form" id="saveForm">
+					<input type="hidden" name="id"/>
+					<input type="hidden" name="createTime" />
+					<input type="hidden" name="isRead" />
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">用户ID</label>
+								<input type="number" class="form-control" name="userId" placeholder="用户ID"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">类型</label>
+								<label><input name="type" class="notMe" type="radio" value="0" checked="checked" />系统消息</label>
+								<label><input name="type" class="notMe" type="radio" value="1"/>订单通知</label>
+								<label><input name="type" class="notMe" type="radio" value="2"/>活动通知</label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">消息内容</label>
+								<textarea class="form-control" name="content" placeholder="消息内容"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">图片</label>
+								<input type="file" class="form-control" name="imageFile" onchange="uploadFile(this)"/>
+								<input type="hidden" class="form-control" name="image" />
+								<img alt="" src='' name="imageImg" style="display:none;"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">备注</label>
+								<input type="text" class="form-control" name="remark" placeholder="备注"/>
+							</div>
+						</div>
+					</div>
+					</form>
+				</div>
+				
+				<div class="modal-footer">
+					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info save">保存</button>
+					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+
+    <div id="preview" style="display: none;
+    position: fixed;
+    top: 190px;
+    left: 650px;
+    background: white;
+    overflow: scroll;
+    border: solid; width: 700px; height: 600px;
+    z-index: 9999;" onclick="closeIt(this)">
+    </div>
+
+	<script src="js/common.js"></script>
+	<script src="assets/js/moment.min.js"></script>
+	<script src="assets/js/async.min.js"></script>
+	<script th:inline="javascript">
+	/*<![CDATA[*/
+
+    function closeIt(self) {
+        var that = $(self);
+        that.hide();
+    }
+
+    function formatTime(time) {
+        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+    }
+
+    function buildImg(url) {
+        return "<img width='100px' height='100px' src='#' />".replace("#", url);
+    }
+
+	function uploadFile(self) {
+		var that = $(self);
+		if (self.files.length > 0) {
+			var file = self.files[0];
+			getQNToken(function (token) {
+				this.upload("", token, file, function () {
+					//
+				}, function (err) {
+					console.log("error");
+					console.log(err);
+				}, function (res) {
+					var url = qiniuUrl + "/" + res.key;
+					that.parent().find("[name=image]").val(url);
+					that.parent().find("[name=imageImg]").attr("src", url);
+					that.parent().find("[name=imageImg]").attr("width", "300px");
+					that.parent().find("[name=imageImg]").attr("height", "300px");
+					that.parent().find("[name=imageImg]").show();
+				});
+			});
+		} else {
+			confirm("未选择任何文件!");
+		}
+	}
+
+	function getQNToken(cb) {
+		$.get("/qiniu/token", {}, function (token) {
+			cb(token);
+		});
+	}
+
+	var table_global;
+	var qiniuUrl = [[${qiniuUrl}]];
+    jQuery(document).ready(function($)
+	{
+		var oTable = $("#example-1").dataTable({
+			language: {
+                url: "../assets/Chinese.txt"
+            },
+			bFilter : false,
+			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
+            sAjaxSource : "/notice_list",//通过ajax实现分页的url路径。
+			fnServerParams: function (aData) {
+				var searchArray = $(".form-inline").serializeArray();
+				$.merge(aData, searchArray);
+			},
+            columnDefs: [
+				{	
+					targets: 0,
+				    data: "id",
+				    width:"5%",
+				    orderable: false,
+				    className: 'select-checkbox',
+				    title: '<input type="checkbox" id="checkbox-all"/>',
+				    render: function ( data, type, full, meta ) {
+				    	return '<input type="checkbox" name="activityId" value="'+data+'" />';  
+				    }
+				},
+                {
+                    targets: 1,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+               		targets: 2,
+	                data: "userId",
+	                title: "用户ID"
+            	},
+				{
+					targets: 3,
+					data: "type",
+					title: "类型",
+					render: function (data, type, row, meta) {
+						/** 类型[0-系统消息，1-订单通知，2-活动通知] **/
+						var map = ["系统消息", "订单通知", "活动通知"];
+						return map[parseInt(data)];
+					}
+				},
+				{
+					targets: 4,
+					data: "content",
+					title: "消息内容"
+				},
+				{
+					targets: 5,
+					data: "isRead",
+					title: "是否已读",
+					render: function (data, type, row, meta) {
+						return (data == 0 || data == null) ? '否' : '是';
+					}
+				},
+				{
+					targets: 6,
+					data: "image",
+					title: "图片",
+					render: function (data, type, row, meta) {
+						return buildImg(data);
+					}
+				},
+				{
+					targets: 7,
+					data: "createTime",
+					title: "创建时间",
+					render: function (data, type, row, meta) {
+						return formatTime(data);
+					}
+				},
+				{
+					targets: 8,
+					data: "remark",
+					title: "备注"
+				}
+               ]
+		});
+
+		table_global = oTable;
+
+		$(".searchBtn").click(function () {
+			$("#checkbox-all").attr("checked", false);
+			oTable.fnDraw(); //or fnReloadAjax()  
+			return false;
+		});
+
+		$(".btn.btn-info.add").click(function () {
+			var form = $("#saveForm");
+			form.find("input:not(.notMe)").val("");
+			form.find("textarea").val("");
+			form.find("img").attr("src", "");
+			form.find("img").hide();
+			form.find("input[type='file']").show();
+			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+		});
+
+		//保存
+		$(".btn.btn-info.save").click(function(){
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+			var form = $("#saveForm");
+			var userId = form.find("input[name='userId']").val();
+			var content = form.find("[name='content']").val();
+			var image = form.find("input[name='image']").val();
+			var type = form.find("input[name='type']:checked").val();
+
+			if (userId == '' || content == '' || image == '' || type == '') {
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return;
+			}
+			async.series({
+				one: function(callback) {
+					callback();
+				},
+				two: function(callback){
+					callback();
+				},
+				three: function(callback){
+					//提交保存
+					$.post("/notice_save", $("#saveForm").serializeArray(), function (data) {
+						if (data) {
+							footer.find("button").show();
+							footer.find(".bg-lg").hide();
+							jQuery('#modal-6').modal('hide');
+							toastr.success("操作已成功！", "温馨提示");
+							oTable.fnDraw();
+						} else {
+							footer.find("button").show();
+							footer.find(".bg-lg").hide();
+							toastr.error("操作失败", "温馨提示");
+						}
+						callback();
+					});
+				}
+			}, function(err, results) {
+				console.log("OK");
+			});
+		});
+
+		$(".btn.btn-info.edit").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length != 1) {
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return;
+			}
+
+			$.post("/notice_find", {"id": activityId.val()}, function (data) {
+				var form = $("#saveForm");
+				//商家
+				for (var i in data) {
+					var ele = form.find("input[name='" + i + "']");
+					switch (ele.attr("type")) {
+						case "radio":
+							ele.val([data[i]]);
+							break;
+						default:
+							if (data[i] != undefined && !isNaN(data[i]) && String(data[i]).length == 13) {
+								ele.val(formatTime(data[i]));
+								$("#" + i).val(formatTime(data[i]));
+							} else {
+								ele.val(data[i]);
+							}
+					}
+				}
+				//处理文本域
+				form.find("textarea[name='content']").val(data["content"]);
+				//处理图片
+				form.find("img[name='imageImg']").attr("src", data["image"]);
+				form.find("img[name='imageImg']").show();
+				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			});
+		});
+
+		$(".btn.btn-info.del").click(function () {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
+
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
+
+			$.post("/notice_del", {"ids": ids}, function (data) {
+				if (data) {
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				}
+			})
+		});
+	});
+	/*]]>*/
+	</script>
+</body>
+
+</html>

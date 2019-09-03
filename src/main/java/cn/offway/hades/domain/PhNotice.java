@@ -1,5 +1,7 @@
 package cn.offway.hades.domain;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.Date;
@@ -30,6 +32,7 @@ public class PhNotice implements Serializable {
     private String isRead;
 
     /** 创建时间 **/
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /** 备注 **/
