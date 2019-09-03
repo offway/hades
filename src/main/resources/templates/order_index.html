@@ -596,22 +596,28 @@
 						orderable: false,
 						data: "orderNo",
 						title: "退货状态",
-						render: function (data, type, row, meta) {
-							//状态[0-审核中,1-待退货,2-退货中/换货中,3-退款中,4-退款成功/换货成功,5-退款取消,6-审核失败,7-已寄出]
-							var map = ["审核中", "待退货", "退货中/换货中", "退款中", "退款成功/换货成功", "退款取消", "审核失败", "已寄出"];
-							var str = "暂无";
-							$.ajax({
-								"url": "/refund_query",
-								"async": false,
-								"data": {"orderNo": data},
-								"success": function (body) {
-									if (body) {
-										str = map[parseInt(body["status"])];
-									}
-								}
-							});
-							return str;
-						}
+                        render: function (data, type, row, meta) {
+                            //类型[0-仅退款,1-退货退款,2-换货]
+                            var typeMap = ["仅退款", "退货退款", "换货"];
+                            //状态[0-审核中,1-待退货,2-退货中/换货中,3-退款中,4-退款成功/换货成功,5-退款取消,6-审核失败,7-已寄出]
+                            var statusMap = ["审核中", "待退货", "退货中/换货中", "退款中", "退款成功/换货成功", "退款取消", "审核失败", "已寄出"];
+                            var str = "暂无";
+                            $.ajax({
+                                "url": "/refund_query",
+                                "async": false,
+                                "data": {"orderNo": data},
+                                "success": function (body) {
+                                    if (body) {
+                                        str = "<font color='red'>";
+                                        str += typeMap[parseInt(body["type"])];
+                                        str += "-";
+                                        str += statusMap[parseInt(body["status"])];
+                                        str += "</font>"
+                                    }
+                                }
+                            });
+                            return str;
+                        }
 					},
 					{
 						targets: 12,
