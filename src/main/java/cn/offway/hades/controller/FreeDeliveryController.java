@@ -109,32 +109,14 @@ public class FreeDeliveryController {
             if (did.size()>0){
                 freeDeliveryService.deleteByproductId(freeProduct.getId());
             }
-//            for (int i = 0; i < gidsList.size(); i++) {
-//                PhFreeDelivery freeDelivery = new PhFreeDelivery();//freeDeliveryService.findOne(Long.valueOf(gidsList.get(i).toString()));
-//                PhGoods goods = goodsService.findOne(Long.valueOf(goodsIdList.get(i).toString()));
-//                freeDelivery.setUserType(userTypesList.get(i).toString());
-//                freeDelivery.setImage(goodsImgeList.get(i).toString());
-//                freeDelivery.setName(goodsNameList.get(i).toString());
-//                freeDelivery.setBoostCount(Long.valueOf(boostCountList.get(i).toString()));
-//                freeDelivery.setBrandId(Long.valueOf(brandIdList.get(i).toString()));
-//                freeDelivery.setGoodsId(Long.valueOf(goodsIdList.get(i).toString()));
-//                freeDelivery.setGoodsCount(Long.valueOf(goodsCountList.get(i).toString()));
-//                freeDelivery.setGoodsSize(goodsSizeList.get(i).toString());
-//                freeDelivery.setPrice(Double.valueOf(priceList.get(i).toString()));
-//                freeDelivery.setCreateTime(new Date());
-//                freeDelivery.setStatus("0");
-//                freeDelivery.setSort((long) i);
-//                freeDelivery.setBrandLogo(goods.getBrandLogo());
-//                freeDelivery.setBrandName(goods.getBrandName());
-//                freeDelivery.setProductId(freeProduct.getId());
-//                phFreeDeliveryList.add(freeDelivery);
-//                sumGooodsCount += Integer.valueOf(goodsCountList.get(i).toString());
-//                sumBoostCount += Integer.valueOf(boostCountList.get(i).toString());
-//            }
         }
         for (int i = 0; i < goodsIdList.size(); i++) {
             PhFreeDelivery freeDeliveries = new PhFreeDelivery();
-            PhGoods goods = goodsService.findOne(Long.valueOf(goodsIdList.get(i).toString()));
+            if (!"0".equals(goodsIdList.get(i).toString())){
+                PhGoods goods = goodsService.findOne(Long.valueOf(goodsIdList.get(i).toString()));
+                freeDeliveries.setBrandLogo(goods.getBrandLogo());
+                freeDeliveries.setBrandName(goods.getBrandName());
+            }
             freeDeliveries.setUserType(userTypesList.get(i).toString());
             freeDeliveries.setImage(goodsImgeList.get(i).toString());
             freeDeliveries.setName(goodsNameList.get(i).toString());
@@ -147,8 +129,6 @@ public class FreeDeliveryController {
             freeDeliveries.setCreateTime(new Date());
             freeDeliveries.setStatus("0");
             freeDeliveries.setSort((long) i);
-            freeDeliveries.setBrandLogo(goods.getBrandLogo());
-            freeDeliveries.setBrandName(goods.getBrandName());
             freeDeliveries.setProductId(freeProduct.getId());
             phFreeDeliveryList.add(freeDeliveries);
             sumGooodsCount += Integer.valueOf(goodsCountList.get(i).toString());
