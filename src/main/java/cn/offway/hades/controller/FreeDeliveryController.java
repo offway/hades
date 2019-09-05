@@ -130,6 +130,7 @@ public class FreeDeliveryController {
             freeDeliveries.setPrice(Double.valueOf(priceList.get(i).toString()));
             freeDeliveries.setCreateTime(new Date());
             freeDeliveries.setStatus("0");
+            freeDeliveries.setVersion(0L);
             freeDeliveries.setSort((long) i);
             freeDeliveries.setProductId(freeProduct.getId());
             freeDeliveries.setRemark("限量"+goodsCountList.get(i)+reamkeList.get(i));
