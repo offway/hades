@@ -5,6 +5,7 @@ import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,10 @@ public class FreeDeliveryController {
     private PhFreeDeliveryService freeDeliveryService;
     @Autowired
     private PhFreeProductService freeProductService;
+    @Autowired
+    private PhFreeDeliveryUserService freeDeliveryUserService;
+    @Autowired
+    private PhFreeDeliveryBoostService freeDeliveryBoostService;
     @Autowired
     private PhGoodsService goodsService;
     @Autowired
@@ -79,6 +84,35 @@ public class FreeDeliveryController {
     }
 
     @ResponseBody
+    @RequestMapping("/freeDelivery_goods_list")
+    public List<Map<String, Object>> getGoodsList(Long id) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Map<String, Object>> data = new ArrayList<>();
+        List<PhFreeDelivery> list = freeDeliveryService.findOneByProductId(id);
+        for (PhFreeDelivery delivery : list) {
+            Map<String, Object> map = objectMapper.convertValue(delivery, Map.class);
+            map.put("realJoinCount", freeDeliveryUserService.getCountByPid(delivery.getId()));
+            map.put("realBoostCount", freeDeliveryBoostService.getCountByPid(delivery.getId()));
+            data.add(map);
+        }
+        return data;
+    }
+
+    @ResponseBody
+    @RequestMapping("/freeDelivery_join_list")
+    public List<Map<String, Object>> getJoinList(Long id) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Map<String, Object>> data = new ArrayList<>();
+        List<PhFreeDeliveryUser> list = freeDeliveryUserService.getListByPid(id);
+        for (PhFreeDeliveryUser user : list) {
+            Map<String, Object> map = objectMapper.convertValue(user, Map.class);
+            map.put("subList", freeDeliveryBoostService.getListByPid(user.getId()));
+            data.add(map);
+        }
+        return data;
+    }
+
+    @ResponseBody
     @RequestMapping("/freeDelivery_save")
     public boolean save(String json, @AuthenticationPrincipal PhAdmin admin) {
         int sumGooodsCount = 0;
@@ -102,19 +136,19 @@ public class FreeDeliveryController {
         freeProduct.setCreateTime(new Date());
         freeProduct = freeProductService.save(freeProduct);
 
-        if (gidsList.size()>0) {
+        if (gidsList.size() > 0) {
             List<Long> did = gidsList.toJavaList(Long.class);
-            if (did.size()>0){
+            if (did.size() > 0) {
                 freeDeliveryService.deleteByproductId(freeProduct.getId());
             }
         }
         for (int i = 0; i < goodsIdList.size(); i++) {
             PhFreeDelivery freeDeliveries = new PhFreeDelivery();
-            if (!"0".equals(goodsIdList.get(i).toString())){
+            if (!"0".equals(goodsIdList.get(i).toString())) {
                 PhGoods goods = goodsService.findOne(Long.valueOf(goodsIdList.get(i).toString()));
                 freeDeliveries.setBrandLogo(goods.getBrandLogo());
                 freeDeliveries.setBrandName(goods.getBrandName());
-            }else {
+            } else {
                 PhBrand brand = phBrandService.findOne(Long.valueOf(brandIdList.get(i).toString()));
                 freeDeliveries.setBrandLogo(brand.getLogo());
                 freeDeliveries.setBrandName(brand.getName());
@@ -133,7 +167,7 @@ public class FreeDeliveryController {
             freeDeliveries.setVersion(0L);
             freeDeliveries.setSort((long) i);
             freeDeliveries.setProductId(freeProduct.getId());
-            freeDeliveries.setRemark("限量"+goodsCountList.get(i)+reamkeList.get(i));
+            freeDeliveries.setRemark("限量" + goodsCountList.get(i) + reamkeList.get(i));
             phFreeDeliveryList.add(freeDeliveries);
             sumGooodsCount += Integer.valueOf(goodsCountList.get(i).toString());
             sumBoostCount += Integer.valueOf(boostCountList.get(i).toString());

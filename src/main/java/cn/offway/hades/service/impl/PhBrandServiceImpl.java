@@ -93,7 +93,7 @@ public class PhBrandServiceImpl implements PhBrandService {
 
     public <Y extends Comparable<? super Y>> Predicate ascii(CriteriaBuilderImpl criteriaBuilder,
                                                              Expression<? extends Y> expression, Y object) {
-        return new AsciiPredicate<>(criteriaBuilder, expression, null);
+        return new AsciiPredicate<>(criteriaBuilder, expression, object);
     }
 
     @Override

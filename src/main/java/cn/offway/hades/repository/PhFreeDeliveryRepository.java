@@ -25,8 +25,6 @@ public interface PhFreeDeliveryRepository extends JpaRepository<PhFreeDelivery, 
     @Query(nativeQuery = true, value = "DELETE FROM `ph_free_delivery` WHERE (`product_id` in (?1))")
     void deleteByproductId(List<Long> id);
 
-    List<PhFreeDelivery> findOneByProductId(Long id);
-
     @Transactional
     @Modifying
     @Query(nativeQuery = true, value = "DELETE FROM `ph_free_delivery` WHERE `product_id` = ?1 ")
