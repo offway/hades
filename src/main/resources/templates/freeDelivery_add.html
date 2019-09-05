@@ -166,6 +166,12 @@
 					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品单位</label>\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"reamke\" value=\"0\" placeholder=\"商品单位\" />\n".replace("VV", v["remake"]) +
+					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">品牌ID</label>\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"brandId\" placeholder=\"品牌ID\" value='VV' />\n".replace("VV", v["brandId"]) +
 					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
@@ -240,6 +246,12 @@
 					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品ID</label>\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"goodsId\" placeholder=\"商品ID\" />\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品单位</label>\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"reamke\" value=\"0\" placeholder=\"商品单位\" />\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
@@ -490,6 +502,19 @@
 					goodsImgeList.push(goods);
 				}
 			}
+			var reamkes = form.find("input[name='reamke']");
+			var reamkeList = [];
+			for (var k in reamkes) {
+				if (isNaN(k)) {
+					continue;
+				}
+				var goods = reamkes[k].value;
+				if (goods == '') {
+					//skip
+				} else {
+					reamkeList.push(goods);
+				}
+			}
 			var userTypes = form.find("input[name='userType']");
 			var userTypesList = [];
 			for (var k in userTypes) {
@@ -518,7 +543,8 @@
 				"boostCountList": boostCountList,
 				"goodsNameList": goodsNameList,
 				"goodsImgeList": goodsImgeList,
-				"userTypesList": userTypesList
+				"userTypesList": userTypesList,
+				"reamkeList":reamkeList
 			};
 			$(".btn.btn-info.save").attr("disabled", "disabled");
 			async.series({

@@ -1,13 +1,8 @@
 package cn.offway.hades.controller;
 
-import cn.offway.hades.domain.PhAdmin;
-import cn.offway.hades.domain.PhFreeDelivery;
-import cn.offway.hades.domain.PhFreeProduct;
-import cn.offway.hades.domain.PhGoods;
+import cn.offway.hades.domain.*;
 import cn.offway.hades.properties.QiniuProperties;
-import cn.offway.hades.service.PhFreeDeliveryService;
-import cn.offway.hades.service.PhFreeProductService;
-import cn.offway.hades.service.PhGoodsService;
+import cn.offway.hades.service.*;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
@@ -38,6 +33,8 @@ public class FreeDeliveryController {
     private PhFreeProductService freeProductService;
     @Autowired
     private PhGoodsService goodsService;
+    @Autowired
+    private PhBrandService phBrandService;
 
     @RequestMapping("/freeDelivery.html")
     public String index(ModelMap map) {
@@ -100,6 +97,7 @@ public class FreeDeliveryController {
         JSONArray goodsNameList = jsonObject.getJSONArray("goodsNameList");
         JSONArray goodsImgeList = jsonObject.getJSONArray("goodsImgeList");
         JSONArray userTypesList = jsonObject.getJSONArray("userTypesList");
+        JSONArray reamkeList = jsonObject.getJSONArray("reamkeList");
         freeProduct.setCreator(admin.getNickname());
         freeProduct.setCreateTime(new Date());
         freeProduct = freeProductService.save(freeProduct);
@@ -116,6 +114,10 @@ public class FreeDeliveryController {
                 PhGoods goods = goodsService.findOne(Long.valueOf(goodsIdList.get(i).toString()));
                 freeDeliveries.setBrandLogo(goods.getBrandLogo());
                 freeDeliveries.setBrandName(goods.getBrandName());
+            }else {
+                PhBrand brand = phBrandService.findOne(Long.valueOf(brandIdList.get(i).toString()));
+                freeDeliveries.setBrandLogo(brand.getLogo());
+                freeDeliveries.setBrandName(brand.getName());
             }
             freeDeliveries.setUserType(userTypesList.get(i).toString());
             freeDeliveries.setImage(goodsImgeList.get(i).toString());
@@ -130,6 +132,7 @@ public class FreeDeliveryController {
             freeDeliveries.setStatus("0");
             freeDeliveries.setSort((long) i);
             freeDeliveries.setProductId(freeProduct.getId());
+            freeDeliveries.setRemark("限量"+goodsCountList.get(i)+reamkeList.get(i));
             phFreeDeliveryList.add(freeDeliveries);
             sumGooodsCount += Integer.valueOf(goodsCountList.get(i).toString());
             sumBoostCount += Integer.valueOf(boostCountList.get(i).toString());
