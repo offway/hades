@@ -120,7 +120,6 @@ public class FreeDeliveryController {
         boolean isNew = true;
         JSONObject jsonObject = JSONObject.parseObject(json);
         List<PhFreeDelivery> phFreeDeliveryList = new ArrayList<>();
-
         PhFreeProduct freeProduct = JSONObject.parseObject(json, PhFreeProduct.class);
         JSONArray gidsList = jsonObject.getJSONArray("gidsList");
         JSONArray priceList = jsonObject.getJSONArray("priceList");
@@ -132,11 +131,10 @@ public class FreeDeliveryController {
         JSONArray goodsNameList = jsonObject.getJSONArray("goodsNameList");
         JSONArray goodsImgeList = jsonObject.getJSONArray("goodsImgeList");
         JSONArray userTypesList = jsonObject.getJSONArray("userTypesList");
-        JSONArray reamkeList = jsonObject.getJSONArray("reamkeList");
+        JSONArray remarkList = jsonObject.getJSONArray("remarkList");
         freeProduct.setCreator(admin.getNickname());
         freeProduct.setCreateTime(new Date());
         freeProduct = freeProductService.save(freeProduct);
-
         if (gidsList.size() > 0) {
             List<Long> did = gidsList.toJavaList(Long.class);
             if (did.size() > 0) {
@@ -144,11 +142,11 @@ public class FreeDeliveryController {
 //                freeDeliveryService.deleteByproductId(freeProduct.getId());
             }
         }
-        PhFreeDelivery freeDeliveries = new PhFreeDelivery();
+        PhFreeDelivery freeDeliveries;
         for (int i = 0; i < goodsIdList.size(); i++) {
-            if (isNew){
+            if (isNew) {
                 freeDeliveries = new PhFreeDelivery();
-            }else {
+            } else {
                 List<PhFreeDelivery> freeDeliveriesList = freeDeliveryService.findOneByProductId(freeProduct.getId());
                 freeDeliveries = freeDeliveriesList.get(i);
             }
@@ -175,7 +173,7 @@ public class FreeDeliveryController {
             freeDeliveries.setVersion(0L);
             freeDeliveries.setSort((long) i);
             freeDeliveries.setProductId(freeProduct.getId());
-            freeDeliveries.setRemark("限量" + goodsCountList.get(i) + reamkeList.get(i));
+            freeDeliveries.setRemark("限量" + goodsCountList.get(i) + remarkList.get(i));
             phFreeDeliveryList.add(freeDeliveries);
             sumGooodsCount += Integer.valueOf(goodsCountList.get(i).toString());
             sumBoostCount += Integer.valueOf(boostCountList.get(i).toString());
