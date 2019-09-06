@@ -1,14 +1,9 @@
 package cn.offway.hades.runner;
 
-import cn.offway.hades.domain.PhConfig;
-import cn.offway.hades.domain.PhGoods;
-import cn.offway.hades.domain.PhGoodsStock;
-import cn.offway.hades.domain.PhOrderInfo;
-import cn.offway.hades.service.PhConfigService;
-import cn.offway.hades.service.PhGoodsService;
-import cn.offway.hades.service.PhGoodsStockService;
-import cn.offway.hades.service.PhOrderInfoService;
+import cn.offway.hades.domain.*;
+import cn.offway.hades.service.*;
 import cn.offway.hades.singleton.JobHolder;
+import cn.offway.hades.utils.MathUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -42,6 +37,10 @@ public class InitRunner implements ApplicationRunner {
     private PhGoodsStockService stockService;
     @Autowired
     private PhOrderInfoService orderInfoService;
+    @Autowired
+    private PhUserInfoService userInfoService;
+    @Autowired
+    private PhAccumulatePointsService accumulatePointsService;
     private static Logger logger = LoggerFactory.getLogger(ApplicationRunner.class);
 
     @Override
@@ -80,7 +79,7 @@ public class InitRunner implements ApplicationRunner {
                     continue;
                 }
                 JSONArray taskList = jsonObject.getJSONArray(key);
-                createJob(taskList, key, sTime, eTime, now, goodsService, stockService, orderInfoService, configService);
+                createJob(taskList, key, sTime, eTime, now, goodsService, stockService, orderInfoService, configService, userInfoService, accumulatePointsService);
             }
         }
     }
@@ -96,7 +95,7 @@ public class InitRunner implements ApplicationRunner {
         return true;
     }
 
-    public static void createJob(JSONArray taskList, String key, Date sTime, Date eTime, Date now, PhGoodsService goodsService, PhGoodsStockService stockService, PhOrderInfoService orderInfoService, PhConfigService configService) {
+    public static void createJob(JSONArray taskList, String key, Date sTime, Date eTime, Date now, PhGoodsService goodsService, PhGoodsStockService stockService, PhOrderInfoService orderInfoService, PhConfigService configService, PhUserInfoService userInfoService, PhAccumulatePointsService accumulatePointsService) {
         ThreadFactory factory = new ThreadFactoryBuilder()
                 .setDaemon(true)
                 .setNameFormat("Orders-%d")
@@ -169,6 +168,10 @@ public class InitRunner implements ApplicationRunner {
                                 if (orderInfo != null) {
                                     orderInfo.setStatus("3");
                                     orderInfoService.save(orderInfo);
+                                    //增加积分
+                                    double amount = MathUtils.add(orderInfo.getAmount(), orderInfo.getWalletAmount());
+                                    Long points = (long) amount;
+                                    points(orderInfo.getUserId(), "4", points, "确认收货,订单号：" + orderInfo.getOrderNo(), accumulatePointsService, userInfoService);
                                 }
                                 break;
                         }
@@ -253,6 +256,20 @@ public class InitRunner implements ApplicationRunner {
         } else {
             return String.format("%.2f-%.2f", lowest, highest);
         }
+    }
+
+    private static void points(Long userId, String type, Long points, String remark, PhAccumulatePointsService accumulatePointsService, PhUserInfoService userInfoService) {
+        PhAccumulatePoints accumulatePoints = new PhAccumulatePoints();
+        accumulatePoints.setUserId(userId);
+        accumulatePoints.setCreateTime(new Date());
+        accumulatePoints.setType(type);
+        accumulatePoints.setPoints(points);
+        accumulatePoints.setPointsBalace(points);
+        accumulatePoints.setStatus("0");
+        accumulatePoints.setVersion(0L);
+        accumulatePoints.setRemark(remark);
+        accumulatePointsService.save(accumulatePoints);
+        userInfoService.addPoints(userId, points);
     }
 
     private static void calcPriceRange(Long gid, PhGoodsStockService stockService, PhGoodsService goodsService) {

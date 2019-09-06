@@ -40,6 +40,8 @@ public class CallbackController {
     private PhConfigService configService;
     @Autowired
     private PhUserInfoService userInfoService;
+    @Autowired
+    private PhAccumulatePointsService accumulatePointsService;
 
     @Value("${meqia.key}")
     private String meqiaKey;
@@ -89,7 +91,7 @@ public class CallbackController {
             config.setContent(jsonObjectSaved.toJSONString());
             configService.save(config);
             //launch the job
-            InitRunner.createJob(jsonArray, key, oneWeekLater.toDate(), twoWeeksLater.toDate(), new Date(), null, null, orderInfoService, configService);
+            InitRunner.createJob(jsonArray, key, oneWeekLater.toDate(), twoWeeksLater.toDate(), new Date(), null, null, orderInfoService, configService, userInfoService, accumulatePointsService);
         }
         Map<String, Object> ret = new HashMap<>();
         ret.put("result", true);

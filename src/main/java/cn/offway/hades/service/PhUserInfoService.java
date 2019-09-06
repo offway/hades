@@ -19,4 +19,6 @@ public interface PhUserInfoService {
     PhUserInfo findOne(Long id);
 
     Page<PhUserInfo> list(String phone, String nickname, String userId, String sex, Date sTime, Date eTime, String channel, Date sTimeReg, Date eTimeReg, Pageable pageable);
+
+    int addPoints(Long id, Long points);
 }
