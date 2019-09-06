@@ -117,6 +117,7 @@ public class FreeDeliveryController {
     public boolean save(String json, @AuthenticationPrincipal PhAdmin admin) {
         int sumGooodsCount = 0;
         int sumBoostCount = 0;
+        boolean isNew = true;
         JSONObject jsonObject = JSONObject.parseObject(json);
         List<PhFreeDelivery> phFreeDeliveryList = new ArrayList<>();
 
@@ -139,11 +140,18 @@ public class FreeDeliveryController {
         if (gidsList.size() > 0) {
             List<Long> did = gidsList.toJavaList(Long.class);
             if (did.size() > 0) {
-                freeDeliveryService.deleteByproductId(freeProduct.getId());
+                isNew = false;
+//                freeDeliveryService.deleteByproductId(freeProduct.getId());
             }
         }
+        PhFreeDelivery freeDeliveries = new PhFreeDelivery();
         for (int i = 0; i < goodsIdList.size(); i++) {
-            PhFreeDelivery freeDeliveries = new PhFreeDelivery();
+            if (isNew){
+                freeDeliveries = new PhFreeDelivery();
+            }else {
+                List<PhFreeDelivery> freeDeliveriesList = freeDeliveryService.findOneByProductId(freeProduct.getId());
+                freeDeliveries = freeDeliveriesList.get(i);
+            }
             if (!"0".equals(goodsIdList.get(i).toString())) {
                 PhGoods goods = goodsService.findOne(Long.valueOf(goodsIdList.get(i).toString()));
                 freeDeliveries.setBrandLogo(goods.getBrandLogo());
