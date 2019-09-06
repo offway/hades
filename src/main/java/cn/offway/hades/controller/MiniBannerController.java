@@ -93,7 +93,11 @@ public class MiniBannerController {
         if ("0".equals(redirectType)) {
             jsonObject.put("url", redirectTarget);
             jsonObject.put("redirectId", "0");
-        } else {
+        }else if ("7".equals(redirectType)){
+            jsonObject.put("url", redirectTarget);
+            jsonObject.put("redirectId", "0");
+        }
+        else {
             jsonObject.put("url", "");
             jsonObject.put("redirectId", "".equals(redirectTarget) ? "0" : redirectTarget);
         }
