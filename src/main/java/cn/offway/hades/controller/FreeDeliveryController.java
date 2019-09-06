@@ -169,7 +169,9 @@ public class FreeDeliveryController {
             freeDeliveries.setGoodsSize(goodsSizeList.get(i).toString());
             freeDeliveries.setPrice(Double.valueOf(priceList.get(i).toString()));
             freeDeliveries.setCreateTime(new Date());
-            freeDeliveries.setStatus("0");
+            if (isNew){
+                freeDeliveries.setStatus("0");
+            }
             freeDeliveries.setVersion(0L);
             freeDeliveries.setSort((long) i);
             freeDeliveries.setProductId(freeProduct.getId());
