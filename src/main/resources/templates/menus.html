@@ -3,8 +3,6 @@
 <head>
 	<head th:replace="head"></head>
 	<title>菜单管理</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 </head>
 <body class="page-body">
 
@@ -89,7 +87,7 @@
 				
 				<div class="modal-footer">
 					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-info deteleBtn">确定</button>
+					<button type="button" class="btn btn-info deleteBtn">确定</button>
 				</div>
 			</div>
 		</div>
@@ -137,7 +135,7 @@
 							<div class="form-group">
 								<label for="field-4" class="control-label">图标</label>
 								
-								<select class="form-control select2-offscreen" id="s2example-3" name="icon"
+								<select class="form-control" id="s2example-3" name="icon"
 									tabindex="-1" title="">
 									<option value="linecons-music">linecons-music</option>
 									<option value="linecons-search">linecons-search</option>
@@ -206,7 +204,7 @@
 							
 							<div class="form-group">
 								<label for="field-4" class="control-label">父菜单</label>
-								<select class="form-control select2-offscreen" id="s2example-2" name="parentId"
+								<select class="form-control" id="s2example-2" name="parentId"
 									tabindex="-1" title="" style="height:32px">
 								</select> 
 								
@@ -225,238 +223,173 @@
 			</div>
 		</div>
 	</div>
-	
-	
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
+
 	<script th:inline="javascript">
 	/*<![CDATA[*/	
 	jQuery(document).ready(function($)
 	{
 		var oTable = $("#example-1").dataTable({
 			language: {
-                url: "../assets/Chinese.txt"
-            },
-			aLengthMenu: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
-			bFilter : false,
-			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/menus-data",//通过ajax实现分页的url路径。
-            fnServerParams : function(aData){
-                var searchArray = $(".form-inline").serializeArray();
-                $.merge(aData, searchArray);
-            },
-            columnDefs: [
-				{	
+				url: "../assets/Chinese.txt"
+			},
+			bFilter: false,
+			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+			sAjaxSource: "/menus-data",//通过ajax实现分页的url路径。
+			fnServerParams: function (aData) {
+				var searchArray = $(".form-inline").serializeArray();
+				$.merge(aData, searchArray);
+			},
+			columnDefs: [
+				{
 					targets: 0,
-				    data: "id",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="menuId" value="'+data+'" />';  
-				    }
+					data: "id",
+					width: "5%",
+					orderable: false,
+					className: 'select-checkbox',
+					title: '<input type="checkbox" id="checkbox-all"/>',
+					render: function (data, type, full, meta) {
+						return '<input type="checkbox" name="menuId" value="' + data + '" />';
+					}
 				},
-                {
-                    targets: 1,
-                    data: "id",
-                    title: "序号"
-                },
-                {
-               		targets: 2,
-	                data: "name",
-	                title: "菜单名"
-            	}, 
-            	{
-               		targets: 3,
-	                data: "link",
-	                title: "链接地址"
-            	}, 
-            	{
-               		targets: 4,
-	                data: "icon",
-	                title: "图标",
-                    render: function (data, type, row, meta) {
-                        return "<i class="+data+"></i>";
-                    }
-            	},
-            	{
-               		targets: 5,
-	                data: "sort",
-	                title: "排序"
-            	},
-            	{
-               		targets: 6,
-	                data: "parentId",
-	                title: "父菜单ID"
-            	},
-                {
-                    targets: 7,
-                    data: "createdtime",
-                    title: "创建时间",
-                    render: function (data, type, row, meta) {
-                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-                    }
-                }
-               ]
+				{
+					targets: 1,
+					data: "id",
+					title: "序号"
+				},
+				{
+					targets: 2,
+					data: "name",
+					title: "菜单名"
+				},
+				{
+					targets: 3,
+					data: "link",
+					title: "链接地址"
+				},
+				{
+					targets: 4,
+					data: "icon",
+					title: "图标",
+					render: function (data, type, row, meta) {
+						return "<i class=" + data + "></i>";
+					}
+				},
+				{
+					targets: 5,
+					data: "sort",
+					title: "排序"
+				},
+				{
+					targets: 6,
+					data: "parentId",
+					title: "父菜单ID"
+				},
+				{
+					targets: 7,
+					data: "createdtime",
+					title: "创建时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				}
+			]
 		});
-		
-		$(".searchBtn").click(function(){
+		$(".searchBtn").click(function () {
 			$("#checkbox-all").attr("checked", false);
 			oTable.fnDraw(); //or fnReloadAjax()  
 			return false;
 		});
-		
-		 $('#example-1').on('click',"#checkbox-all",function() {  
+		$('#example-1').on('click', "#checkbox-all", function () {
 			var obj = $(this);
-			$("input[name='menuId']").each(function(i,e){
-				 this.checked = obj[0].checked;
+			$("input[name='menuId']").each(function (i, e) {
+				this.checked = obj[0].checked;
 			});
-		})
-		
-		
-		$(".btn.btn-info.delete").click(function(){
+		});
+		$(".btn.btn-info.delete").click(function () {
 			var menuId = $("input[name='menuId']:checked");
-			if(menuId.length < 1){
+			if (menuId.length < 1) {
 				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return ;
+				return;
 			}
 			jQuery('#modal-1').modal('show', {backdrop: 'fade'});
-			
 		});
-		
-		
-		$(".deteleBtn").click(function(){
-			
-			
-			var ids='';
-			$("input[name='menuId']:checked").each(function(i,e){
-				ids+=e.value+",";
+		$(".deleteBtn").click(function () {
+			var ids = '';
+			$("input[name='menuId']:checked").each(function (i, e) {
+				ids += e.value + ",";
 			});
-			$.post("/menus-delete",{
-				ids:ids
-			},function(data){
-				if(data){
+			$.post("/menus-delete", {
+				ids: ids
+			}, function (data) {
+				if (data) {
 					jQuery('#modal-1').modal('hide');
 					toastr.success("您的操作已成功！", "温馨提示");
-					oTable.fnDraw(); 
-				}else{
+					oTable.fnDraw();
+				} else {
 					toastr.error("操作失败,请稍后再试", "温馨提示");
 				}
 			});
-			 
 			return false;
 		});
-		 
-			$("#s2example-3").select2({
-				placeholder : '图标',
-				allowClear : false,
-				minimumResultsForSearch : -1, // Hide the search bar
-				formatResult : function(
-						state) {
-					return '<div class ="'
-							+ state.id
-							+ '" style="no-repeat center center;background-size:100%;display:inline-block;position:relative;width:20px;height:20px;margin-right: 10px;top:3px;"></div>'
-							+ state.text;
-				}
-			}).on('select2-open',function() {
-				// Adding Custom Scrollbar
-				$(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
+		$(".btn.btn-info.add").click(function () {
+			$("#saveForm").find("input[name='id']").val("");
+			$.post("/menus-parent", {}, function (data) {
+				$('#s2example-2').empty();
+				$('#s2example-2').append("<option value=\"\">无</option>");
+				$.each(data, function (i, e) {
+					$('#s2example-2').append("<option value=" + e.id + ">" + e.name + "</option>");
+				});
+				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 			});
-			 
-			
-			
-			$(".btn.btn-info.add").click(function(){
-				$("#saveForm").find("input[name='id']").val("");
-				$.post("/menus-parent",{},function(data){
-					
+		});
+		//保存
+		$(".btn.btn-info.save").click(function () {
+			var form = $("#saveForm");
+			var name = form.find("input[name='name']").val();
+			var sort = form.find("input[name='sort']").val();
+			if (name == '' || sort == '') {
+				toastr.error("菜单名/排序不能为空", "温馨提示");
+				return;
+			}
+
+			$.post("/menus-save", $("#saveForm").serialize(), function (data) {
+				if (data) {
+					jQuery('#modal-6').modal('hide');
+					toastr.success("操作已成功！", "温馨提示");
+					oTable.fnDraw();
+				} else {
+					toastr.error("操作失败", "温馨提示");
+				}
+			});
+		});
+		$(".btn.btn-info.edit").click(function () {
+			var menuId = $("input[name='menuId']:checked");
+			if (menuId.length != 1) {
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return;
+			}
+			$.post("/menus-one", {id: menuId.val()}, function (data) {
+				var form = $("#saveForm");
+				form.find("input[name='id']").val(data.id);
+				form.find("input[name='name']").val(data.name);
+				form.find("input[name='sort']").val(data.sort);
+				form.find("input[name='link']").val(data.link);
+				var parentId = data.parentId;
+				$.post("/menus-parent", {}, function (data) {
 					$('#s2example-2').empty();
 					$('#s2example-2').append("<option value=\"\">无</option>");
-					 $.each(data,function(i,e){
-						$('#s2example-2').append("<option value="+e.id+">"+e.name+"</option>");
+					$.each(data, function (i, e) {
+						if (e.id == parentId) {
+							$('#s2example-2').append("<option value=" + e.id + " selected='selected'>" + e.name + "</option>");
+						} else {
+							$('#s2example-2').append("<option value=" + e.id + ">" + e.name + "</option>");
+						}
 					});
-					
-					$("#s2example-2").select2({
-						allowClear : false,
-						minimumResultsForSearch : -1 // Hide the search bar
-					}).on('select2-open',function() {
-						// Adding Custom Scrollbar
-						$(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
-					});
-					
 					jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 				});
-				
 			});
-			
-			//保存
-			$(".btn.btn-info.save").click(function(){
-				var form = $("#saveForm");
-				var name = form.find("input[name='name']").val();
-				var sort = form.find("input[name='sort']").val();
-				if(name =='' ||sort==''){
-					toastr.error("菜单名/排序不能为空", "温馨提示");
-					return ;
-				}
-				
-				$.post("/menus-save",$("#saveForm").serialize(),function(data){
-					if(data){
-						jQuery('#modal-6').modal('hide');
-						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw(); 
-					}else{
-						toastr.error("操作失败", "温馨提示");
-					}
-				});
-			});
-			
-			$(".btn.btn-info.edit").click(function(){
-				
-				var menuId = $("input[name='menuId']:checked");
-				if(menuId.length!=1){
-					toastr.error("请选择一条数据操作", "温馨提示");
-					return ;
-				}
-				
-				
-				$.post("/menus-one",{id:menuId.val()},function(data){
-					var form = $("#saveForm");
-					form.find("input[name='id']").val(data.id);
-					form.find("input[name='name']").val(data.name);
-					form.find("input[name='sort']").val(data.sort);
-					form.find("input[name='link']").val(data.link);
-					var parentId = data.parentId;
-					$.post("/menus-parent",{},function(data){
-						
-						$('#s2example-2').empty();
-						$('#s2example-2').append("<option value=\"\">无</option>");
-						 $.each(data,function(i,e){
-							 if(e.id == parentId){
-									$('#s2example-2').append("<option value="+e.id+" selected='selected'>"+e.name+"</option>");
-							 }else{
-								$('#s2example-2').append("<option value="+e.id+">"+e.name+"</option>");
-							 }
-						});
-						
-						$("#s2example-2").select2({
-							allowClear : false,
-							minimumResultsForSearch : -1 // Hide the search bar
-						}).on('select2-open',function() {
-							// Adding Custom Scrollbar
-							$(this).data('select2').results.addClass('overflow-hidden').perfectScrollbar();
-						});
-						
-						jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-					});
-					
-				});
-				
-				
-			});
-		
+		});
 	});
 	/*]]>*/
 	</script>
