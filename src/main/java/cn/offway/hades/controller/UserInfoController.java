@@ -44,7 +44,7 @@ public class UserInfoController {
 
     @ResponseBody
     @RequestMapping("/userInfo_list")
-    public Map<String, Object> usersData(HttpServletRequest request, String phone, String nickname, String sex, String year, String channel, String sTimeReg, String eTimeReg) {
+    public Map<String, Object> usersData(HttpServletRequest request, String phone, String nickname, String userId, String sex, String year, String channel, String sTimeReg, String eTimeReg) {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
@@ -66,7 +66,7 @@ public class UserInfoController {
             eTimeRegObj = DateTime.parse(eTimeReg, format).toDate();
         }
         Sort sort = new Sort(Sort.Direction.DESC, "createTime");
-        Page<PhUserInfo> pages = userInfoService.list(phone, nickname, sex, sTime, eTime, channel, sTimeRegObj, eTimeRegObj, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhUserInfo> pages = userInfoService.list(phone, nickname, userId, sex, sTime, eTime, channel, sTimeRegObj, eTimeRegObj, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         // 为操作次数加1，必须这样做
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
