@@ -8,7 +8,7 @@ import java.util.Date;
  * 用户信息
  *
  * @author wn
- * @version $v: 1.0.0, $time:2019-04-04 15:18:00 Exp $
+ * @version $v: 1.0.0, $time:2019-09-06 15:21:47 Exp $
  */
 @Entity
 @Table(name = "ph_user_info")
@@ -53,7 +53,7 @@ public class PhUserInfo implements Serializable {
     /** 收藏数量 **/
     private Long collectCount;
 
-    /** 优惠券数量 **/
+    /** 优惠券数量[暂未使用] **/
     private Long voucherCount;
 
     /** 创建时间 **/
@@ -71,6 +71,19 @@ public class PhUserInfo implements Serializable {
     /** 渠道[HY-欢阅传媒] **/
     private String channel;
 
+    /** 支付宝用户ID **/
+    private String alipayUserId;
+
+    /** 支付宝用户昵称 **/
+    private String alipayNickName;
+
+    /** 积分 **/
+    private Long points;
+
+    /** 连续积分签到天数 **/
+    private Long signCount;
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
@@ -82,7 +95,7 @@ public class PhUserInfo implements Serializable {
         this.id = id;
     }
 
-    @Column(name = "phone", length = 11)
+    @Column(name = "phone", length = 100)
     public String getPhone() {
         return phone;
     }
@@ -210,7 +223,6 @@ public class PhUserInfo implements Serializable {
         this.createTime = createTime;
     }
 
-    @Version
     @Column(name = "version", length = 11)
     public Long getVersion() {
         return version;
@@ -246,4 +258,41 @@ public class PhUserInfo implements Serializable {
     public void setChannel(String channel) {
         this.channel = channel;
     }
+
+    @Column(name = "alipay_user_id", length = 50)
+    public String getAlipayUserId() {
+        return alipayUserId;
+    }
+
+    public void setAlipayUserId(String alipayUserId) {
+        this.alipayUserId = alipayUserId;
+    }
+
+    @Column(name = "alipay_nick_name", length = 100)
+    public String getAlipayNickName() {
+        return alipayNickName;
+    }
+
+    public void setAlipayNickName(String alipayNickName) {
+        this.alipayNickName = alipayNickName;
+    }
+
+    @Column(name = "points", length = 11)
+    public Long getPoints() {
+        return points;
+    }
+
+    public void setPoints(Long points) {
+        this.points = points;
+    }
+
+    @Column(name = "sign_count", length = 11)
+    public Long getSignCount() {
+        return signCount;
+    }
+
+    public void setSignCount(Long signCount) {
+        this.signCount = signCount;
+    }
+
 }
