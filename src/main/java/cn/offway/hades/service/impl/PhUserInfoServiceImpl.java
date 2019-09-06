@@ -40,7 +40,7 @@ public class PhUserInfoServiceImpl implements PhUserInfoService {
     }
 
     @Override
-    public Page<PhUserInfo> list(String phone, String nickname, String sex, Date sTime, Date eTime, String channel, Date sTimeReg, Date eTimeReg, Pageable pageable) {
+    public Page<PhUserInfo> list(String phone, String nickname, String userId, String sex, Date sTime, Date eTime, String channel, Date sTimeReg, Date eTimeReg, Pageable pageable) {
         return phUserInfoRepository.findAll(new Specification<PhUserInfo>() {
             @Override
             public Predicate toPredicate(Root<PhUserInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -50,6 +50,9 @@ public class PhUserInfoServiceImpl implements PhUserInfoService {
                 }
                 if (!"".equals(nickname)) {
                     params.add(criteriaBuilder.like(root.get("nickname"), "%" + nickname + "%"));
+                }
+                if (!"".equals(userId)) {
+                    params.add(criteriaBuilder.equal(root.get("id"), Long.valueOf(userId)));
                 }
                 if (!"".equals(sex)) {
                     params.add(criteriaBuilder.equal(root.get("sex"), sex));
