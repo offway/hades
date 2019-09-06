@@ -15,7 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -105,11 +104,15 @@ public class LimitSaleController {
         for (Long id : ids) {
             PhLimitedSale limitedSale = limitedSaleService.findOne(id);
             if (limitedSale != null) {
-                goodsService.del(limitedSale.getGoodsId());
-                goodsImageService.delByPid(limitedSale.getGoodsId());
-                goodsPropertyService.delByPid(limitedSale.getGoodsId());
-                goodsStockService.delByPid(limitedSale.getGoodsId());
+//                goodsService.del(limitedSale.getGoodsId());
+//                goodsImageService.delByPid(limitedSale.getGoodsId());
+//                goodsPropertyService.delByPid(limitedSale.getGoodsId());
+//                goodsStockService.delByPid(limitedSale.getGoodsId());
                 limitedSaleService.del(id);
+                //将关联商品下架
+                PhGoods goods = goodsService.findOne(limitedSale.getGoodsId());
+                goods.setStatus("0");
+                goodsService.save(goods);
             }
         }
         return true;
@@ -134,6 +137,11 @@ public class LimitSaleController {
         limitedSale.setInfo(ArticleController.filterWxPicAndReplace(newInfoStr, qiniuService));
         limitedSale.setIsShow("0");
         limitedSaleService.save(limitedSale);
+        PhGoods goods = goodsService.findOne(limitedSale.getGoodsId());
+        if (goods != null) {
+            goods.setStatus(limitedSale.getStatus());
+            goodsService.save(goods);
+        }
         return true;
     }
 
@@ -163,14 +171,14 @@ public class LimitSaleController {
 
     @ResponseBody
     @RequestMapping("/limit_isshow")
-    public boolean isShow(Long id){
+    public boolean isShow(Long id) {
         limitedSaleService.issetshow(id);
         return true;
     }
 
     @ResponseBody
     @RequestMapping("/limit_isshowDo")
-    public boolean isShowDo(){
+    public boolean isShowDo() {
         limitedSaleService.isshow();
         return true;
     }
