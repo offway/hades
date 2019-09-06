@@ -5,6 +5,9 @@
 	<meta name="referrer" content="no-referrer"/>
 	<title>添加免费送方案</title>
 	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -100,6 +103,7 @@
 	<script src="assets/js/moment.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
 	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+	<script src="assets/js/jquery-ui.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -127,7 +131,7 @@
 					"\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
 					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品图片</label>\n" +
+					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label goodsIndex\">商品图片</label>\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"goodsImageFile\" placeholder=\"商品图片\" onchange=\"uploadFile(this,'goodsImage')\"/>\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"goodsImage\" value='VV'/>\n".replace("VV", v["image"]) +
 					"\t\t\t\t\t\t\t\t\t\t\t\t<img alt=\"\" src=\"SRC\" name=\"goodsImageImg\" style=\"display:block;\"/>\n".replace("SRC", v["image"]) +
@@ -198,7 +202,7 @@
 			str += "\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
 					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品DD</label>\n".replace("DD", $("div.toDel").length + 1) +
+					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label goodsIndex\">商品DD</label>\n".replace("DD", $("div.toDel").length + 1) +
 					"\t\t\t\t\t\t\t\t\t\t\t\t<input type='hidden' name='gid' value='' />\n" +
 					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
 					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
@@ -282,6 +286,15 @@
 		// str += '<input style="display:inline-block;" type="button" value="" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
 		str += '</div>';
 		$("#elementPool").append(str);
+		$("#elementPool").sortable({
+			update: function (event, ui) {
+				var labels = $("label.goodsIndex");
+				$.each(labels, function (a, b) {
+					$(b).html("商品#".replace("#", a + 1));
+				});
+			}
+		});
+		$("#elementPool").disableSelection();
 	}
 
 	function delNode(uuid) {
