@@ -78,6 +78,11 @@ public class PhUserInfoServiceImpl implements PhUserInfoService {
     }
 
     @Override
+    public int addPoints(Long id, Long points) {
+        return phUserInfoRepository.addPoints(id, points);
+    }
+
+    @Override
     public PhUserInfo findOne(Long id) {
         return phUserInfoRepository.findOne(id);
     }
