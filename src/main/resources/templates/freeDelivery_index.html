@@ -110,6 +110,10 @@
         });
     }
 
+    function showTips(str) {
+        alert("手机号为:" + str);
+    }
+
     function checkItInner(id) {
         $.post("/freeDelivery_join_list", {"id": id}, function (data) {
             if (data) {
@@ -124,6 +128,7 @@
                         userIdList.push(j["boostUserId"]);
                     }
                     var str = "<pre>AAAA   进度:BBBB/CCCC      助力ID:DDDD</pre>".replace("AAAA", item["nickname"]).replace("BBBB", item["currentCount"]).replace("CCCC", item["boostCount"]).replace("DDDD", userIdList.join(","));
+                    str += "<input type='button' value='显示手机号' onclick='showTips(\"STR\")' />".replace("STR", item["subPhoneList"].join(","));
                     contentStr += appendToPreview(i, str);
                 }
                 preview.html(contentStr);
