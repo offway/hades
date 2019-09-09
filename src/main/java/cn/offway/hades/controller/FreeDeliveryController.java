@@ -37,6 +37,8 @@ public class FreeDeliveryController {
     @Autowired
     private PhFreeDeliveryBoostService freeDeliveryBoostService;
     @Autowired
+    private PhUserInfoService userInfoService;
+    @Autowired
     private PhGoodsService goodsService;
     @Autowired
     private PhBrandService phBrandService;
@@ -106,7 +108,16 @@ public class FreeDeliveryController {
         List<PhFreeDeliveryUser> list = freeDeliveryUserService.getListByPid(id);
         for (PhFreeDeliveryUser user : list) {
             Map<String, Object> map = objectMapper.convertValue(user, Map.class);
-            map.put("subList", freeDeliveryBoostService.getListByPid(user.getId()));
+            List<PhFreeDeliveryBoost> boostList = freeDeliveryBoostService.getListByPid(user.getId());
+            map.put("subList", boostList);
+            List<String> phoneList = new ArrayList<>();
+            for (PhFreeDeliveryBoost boost : boostList) {
+                PhUserInfo userInfo = userInfoService.findOne(boost.getBoostUserId());
+                if (userInfo != null) {
+                    phoneList.add(userInfo.getPhone());
+                }
+            }
+            map.put("subPhoneList", phoneList);
             data.add(map);
         }
         return data;
