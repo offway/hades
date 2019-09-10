@@ -73,20 +73,22 @@ public class PhSettlementDetailServiceImpl implements PhSettlementDetailService 
                     params.add(criteriaBuilder.lessThanOrEqualTo(root.get("createTime"), eTime));
                 }
                 if (!"".equals(orderStatus)) {
+                    Subquery<PhRefund> subquery = criteriaQuery.subquery(PhRefund.class);
+                    Root<PhRefund> subRoot = subquery.from(PhRefund.class);
+                    subquery.select(subRoot);
+                    subquery.where(
+                            criteriaBuilder.equal(root.get("orderNo"), subRoot.get("orderNo")),
+                            criteriaBuilder.equal(subRoot.get("status"), "4")
+                    );
+                    Predicate altWay = criteriaBuilder.exists(subquery);
+                    Predicate preferWay = criteriaBuilder.equal(root.get("remark"), orderStatus);
                     if ("5".equals(orderStatus)) {
-                        Subquery<PhRefund> subquery = criteriaQuery.subquery(PhRefund.class);
-                        Root<PhRefund> subRoot = subquery.from(PhRefund.class);
-                        subquery.select(subRoot);
-                        subquery.where(
-                                criteriaBuilder.equal(root.get("orderNo"), subRoot.get("orderNo")),
-                                criteriaBuilder.equal(subRoot.get("status"), "4")
-                        );
-                        Predicate altWay = criteriaBuilder.exists(subquery);
-                        Predicate preferWay = criteriaBuilder.equal(root.get("remark"), orderStatus);
                         Predicate or = criteriaBuilder.or(preferWay, altWay);
                         params.add(or);
                     } else {
-                        params.add(criteriaBuilder.equal(root.get("remark"), orderStatus));
+                        Predicate not = criteriaBuilder.not(altWay);
+                        Predicate and = criteriaBuilder.and(preferWay, not);
+                        params.add(and);
                     }
                 }
                 Predicate[] predicates = new Predicate[params.size()];
