@@ -41,6 +41,7 @@ public class LogFilter extends OncePerRequestFilter {
             }
             System.out.print("\n");
         }
+        httpServletResponse.setHeader("X-Frame-Options", "SAMEORIGIN");
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 }
