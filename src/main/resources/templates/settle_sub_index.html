@@ -419,13 +419,13 @@
 								isRefund = true;
 							}
 						}
-						if (isRefund) {
-							return "已退款";
-						} else {
-							//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
-							var map = ["已下单", "已付款", "已发货", "已收货", "取消", "已退款"];
-							return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "";
-						}
+                        if (isRefund) {
+                            return "<font color='red'>已退款</font>";
+                        } else {
+                            //状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
+                            var map = ["已下单", "已付款", "已发货", "已收货", "取消", "<font color='red'>已退款</font>"];
+                            return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "";
+                        }
 					}
 				},
 				{
