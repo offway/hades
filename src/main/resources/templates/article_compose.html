@@ -112,8 +112,8 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="control-label">资讯内容</label>
-                                <textarea id="editor_id"  style="width:700px;height:300px;" placeholder="资讯内容">
-									</textarea>
+<!--                                <textarea id="editor_id"  style="width:700px;height:300px;" placeholder="资讯内容"></textarea>-->
+                                <script id="editor_id" type="text/plain" style="width:1024px;height:500px;">资讯内容</script>
                                 <input type="hidden" class="form-control" name="content" placeholder="资讯内容"/>
                             </div>
                         </div>
@@ -165,25 +165,31 @@
 <script src="assets/js/moment.min.js"></script>
 <script src="assets/js/select2/select2.min.js"></script>
 <script src="assets/js/async.min.js"></script>
-<script src="assets/kindeditor-4.1.12/kindeditor-all.js"></script>
-<script src="assets/kindeditor-4.1.12/lang/zh-CN.js"></script>
+<!--<script src="assets/kindeditor-4.1.12/kindeditor-all.js"></script>-->
+<!--<script src="assets/kindeditor-4.1.12/lang/zh-CN.js"></script>-->
 <script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 <script src="assets/js/jquery-ui.min.js"></script>
 <script src="assets/js/selectize.min.js"></script>
+<!-- 配置文件 -->
+<script type="text/javascript" src="assets/ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="assets/ueditor/ueditor.all.js"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
 
-    KindEditor.ready(function (K) {
-        window.editor = K.create('#editor_id', {
-            uploadJson: '/file/upload_qn',
-            allowFileManager: false,
-            afterUpload: function (url, data, name) {
-                console.log(url);
-                console.log(data);
-                console.log(name);
-            }
-        });
-    });
+    var editor = UE.getEditor('editor_id');
+
+    // KindEditor.ready(function (K) {
+    //     window.editor = K.create('#editor_id', {
+    //         uploadJson: '/file/upload_qn',
+    //         allowFileManager: false,
+    //         afterUpload: function (url, data, name) {
+    //             console.log(url);
+    //             console.log(data);
+    //             console.log(name);
+    //         }
+    //     });
+    // });
 
     $('input[type=radio][name=type]').change(function() {
         if (this.value == '2') {
@@ -374,7 +380,7 @@
         var video = form.find("input[name='video']").val();
         var type = form.find("input[name='type']").val();
         var tag = form.find("input[name='tag']").val();
-        var content = editor.html();
+        var content = "";//editor.html();
         form.find("input[name='content']").val(content);
 
         var viewCount = form.find("input[name='viewCount']").val();
@@ -417,7 +423,7 @@
         form.find("div.toDel").remove();
         form.find("input[type='file']").show();
         form.find("input[type='radio']").val(["0"]);
-        editor.html("");
+        //editor.html("");
         toggle("0");
         //tag
         $.getJSON("/article_tagList", {}, function (innerData) {
@@ -449,7 +455,7 @@
             var goodsList = data["goodsIds"];
             form.find("input:not(.notMe)").val("");
             var content = data["content"];
-            editor.html(content);
+            // editor.html(content);
             for (var i in data) {
                 var ele = form.find("input[name='" + i + "']");
                 switch (ele.attr("type")) {
