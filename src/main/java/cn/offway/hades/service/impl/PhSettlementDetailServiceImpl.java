@@ -1,5 +1,6 @@
 package cn.offway.hades.service.impl;
 
+import cn.offway.hades.domain.PhRefund;
 import cn.offway.hades.domain.PhSettlementDetail;
 import cn.offway.hades.repository.PhSettlementDetailRepository;
 import cn.offway.hades.service.PhSettlementDetailService;
@@ -10,10 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -75,15 +73,21 @@ public class PhSettlementDetailServiceImpl implements PhSettlementDetailService 
                     params.add(criteriaBuilder.lessThanOrEqualTo(root.get("createTime"), eTime));
                 }
                 if (!"".equals(orderStatus)) {
-                    params.add(criteriaBuilder.equal(root.get("remark"), orderStatus));
-//                    Subquery<PhOrderInfo> subquery = criteriaQuery.subquery(PhOrderInfo.class);
-//                    Root<PhOrderInfo> subRoot = subquery.from(PhOrderInfo.class);
-//                    subquery.select(subRoot);
-//                    subquery.where(
-//                            criteriaBuilder.equal(root.get("orderNo"), subRoot.get("orderNo")),
-//                            criteriaBuilder.equal(subRoot.get("status"), orderStatus)
-//                    );
-//                    params.add(criteriaBuilder.exists(subquery));
+                    if ("5".equals(orderStatus)) {
+                        Subquery<PhRefund> subquery = criteriaQuery.subquery(PhRefund.class);
+                        Root<PhRefund> subRoot = subquery.from(PhRefund.class);
+                        subquery.select(subRoot);
+                        subquery.where(
+                                criteriaBuilder.equal(root.get("orderNo"), subRoot.get("orderNo")),
+                                criteriaBuilder.equal(subRoot.get("status"), "4")
+                        );
+                        Predicate altWay = criteriaBuilder.exists(subquery);
+                        Predicate preferWay = criteriaBuilder.equal(root.get("remark"), orderStatus);
+                        Predicate or = criteriaBuilder.or(preferWay, altWay);
+                        params.add(or);
+                    } else {
+                        params.add(criteriaBuilder.equal(root.get("remark"), orderStatus));
+                    }
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
