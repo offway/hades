@@ -953,9 +953,9 @@ function _mediaEmbed(attrs) {
 
 	});
 	var timer = setInterval(function(){
-		var caonima = $("#facke").val();
-		var caonimaw = $("#fackew").val();
-		var caonimah = $("#fackeh").val();
+		var poster = $("#video_poster").val();
+		var width = $("#video_width").val();
+		var height = $("#video_height").val();
 		if(caonima == ""){
 			return ;
 		}else {
@@ -963,16 +963,15 @@ function _mediaEmbed(attrs) {
 		}
 		var html = '<video ';
 		_each(attrs, function (key, val) {
-			if(key == "width"){
+			if (key == "width") {
 				html += 'width="' + '375' + '" ';
-			}else if(key == "height"){
+			} else if (key == "height") {
 				html += 'height="' + '200' + '" ';
-			}else {
+			} else {
 				html += key + '="' + val + '" ';
 			}
-
 		});
-		html += 'poster="' + caonima + '" ';
+		html += 'poster="' + poster + '" ';
 		html += 'controls="" >';
 		html += '</video>';
 		var a = editor.html();

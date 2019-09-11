@@ -156,9 +156,9 @@
 
 <div th:replace="body-under"></div>
 
-<input type="hidden" id="facke"/>
-<input type="hidden" id="fackew"/>
-<input type="hidden" id="fackeh"/>
+<input type="hidden" id="video_poster"/>
+<input type="hidden" id="video_width"/>
+<input type="hidden" id="video_height"/>
 <video style="display: none" id="videoObj"></video>
 <input type="hidden" name="articleid" id="articleid" value=""/>
 <script src="js/common.js"></script>
@@ -174,6 +174,8 @@
 <script type="text/javascript" src="assets/ueditor/ueditor.config.js"></script>
 <!-- 编辑器源码文件 -->
 <script type="text/javascript" src="assets/ueditor/ueditor.all.js"></script>
+<!-- 播放器使用的是videojs开源插件 -->
+<script type="text/javascript" src="assets/ueditor/ueditor.parse.js"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
 
@@ -338,7 +340,7 @@
         return brandStr;
     }
 
-    function videoCapture(url, cb) {
+    function videoCapture(url, cb, uuid) {
         var canvas = document.createElement('canvas');
         var ctx = canvas.getContext('2d');
         var video = document.getElementById('videoObj');
@@ -359,10 +361,13 @@
                 ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                 var imgBase64 = canvas.toDataURL("image/jpg");
                 console.log(imgBase64);
-                $('#facke').val(imgBase64);
-                $('#fackeh').val(h);
-                $('#fackew').val(w);
+                $('#video_poster').val(imgBase64);
+                $('#video_height').val(h);
+                $('#video_width').val(w);
                 cb(imgBase64);
+                var old = editor.getContent();
+                console.log(old);
+                editor.setContent(old.replace(uuid, imgBase64));
             }, 500);
         };
         video.crossOrigin = "anonymous";
