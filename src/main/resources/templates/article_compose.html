@@ -385,7 +385,7 @@
         var video = form.find("input[name='video']").val();
         var type = form.find("input[name='type']").val();
         var tag = form.find("input[name='tag']").val();
-        var content = "";//editor.html();
+        var content = editor.getContent();
         form.find("input[name='content']").val(content);
 
         var viewCount = form.find("input[name='viewCount']").val();
@@ -428,7 +428,7 @@
         form.find("div.toDel").remove();
         form.find("input[type='file']").show();
         form.find("input[type='radio']").val(["0"]);
-        //editor.html("");
+        editor.setContent("");
         toggle("0");
         //tag
         $.getJSON("/article_tagList", {}, function (innerData) {
@@ -460,7 +460,7 @@
             var goodsList = data["goodsIds"];
             form.find("input:not(.notMe)").val("");
             var content = data["content"];
-            // editor.html(content);
+            editor.setContent(content);
             for (var i in data) {
                 var ele = form.find("input[name='" + i + "']");
                 switch (ele.attr("type")) {
