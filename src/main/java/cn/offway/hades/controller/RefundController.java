@@ -74,6 +74,8 @@ public class RefundController {
     private PhRefundOrderGoodsService refundOrderGoodsService;
     @Autowired
     private PhRefundOrderGoodsRepository refundOrderGoodsRepository;
+    @Autowired
+    private PhSettlementDetailService settlementDetailService;
 
     @RequestMapping("/refund.html")
     public String index(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
@@ -487,6 +489,12 @@ public class RefundController {
                         }
 
                     }
+                }
+                //更新财务系统订单状态
+                PhSettlementDetail detail = settlementDetailService.findOne(refund.getOrderNo());
+                if (detail != null) {
+                    detail.setRemark("5");
+                    settlementDetailService.save(detail);
                 }
                 break;
             default:

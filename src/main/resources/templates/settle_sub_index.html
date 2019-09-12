@@ -59,8 +59,6 @@
 								<option value="3">已收货</option>
 								<option value="4">取消</option>
 								<option value="5">已退款</option>
-								<option value="6">已退货</option>
-								<option value="7">已退货退款</option>
 							</select>
 						</div>
 						<div class="input-group">
@@ -413,9 +411,21 @@
 					data: "remark",
 					title: "订单状态",
 					render: function (data, type, row, meta) {
-						//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
-						var map = ["已下单", "已付款", "已发货", "已收货", "取消", "已退款", "已退货", "已退货退款"];
-						return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "";
+						var param = $(".form-inline").serializeArray();
+						var isRefund = false;
+						for (var i in param) {
+							i = param[i];
+							if (i["name"] == 'orderStatus' && i["value"] == "5") {
+								isRefund = true;
+							}
+						}
+                        if (isRefund) {
+                            return "<font color='red'>已退款</font>";
+                        } else {
+                            //状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
+                            var map = ["已下单", "已付款", "已发货", "已收货", "取消", "<font color='red'>已退款</font>"];
+                            return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "";
+                        }
 					}
 				},
 				{

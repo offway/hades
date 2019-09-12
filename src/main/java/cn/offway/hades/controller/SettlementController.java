@@ -63,6 +63,8 @@ public class SettlementController {
     private PhGoodsService goodsService;
     @Autowired
     private PhRoleadminService roleadminService;
+    @Autowired
+    private PhRefundService refundService;
 
     //    @Scheduled(cron = "0 0 * * * *")
     @Deprecated
@@ -270,6 +272,14 @@ public class SettlementController {
         Page<PhSettlementDetail> pages = (Page<PhSettlementDetail>) settlementDetailService.findAll(Long.valueOf(id), strToDate(sTime), strToDate(eTime), orderStatus, status, payChannel, pageRequest);
         for (PhSettlementDetail detail : pages.getContent()) {
             Map m = objectMapper.convertValue(detail, Map.class);
+            if ("5".equals(orderStatus)) {
+                m.put("remark", "5");
+            } else {
+                PhRefund refund = refundService.findOne(detail.getOrderNo());
+                if (refund != null && "4".equals(refund.getStatus())) {
+                    m.put("remark", "5");
+                }
+            }
             if (detail.getOrderNo() != null) {
                 m.put("goods", orderGoodsService.findAllByPid(detail.getOrderNo()));
                 m.put("orderId", orderInfoService.findOne(detail.getOrderNo()).getId());
