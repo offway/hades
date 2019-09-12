@@ -46,8 +46,25 @@ public class PhStarsameServiceImpl implements PhStarsameService {
     }
 
     @Override
-    public Page<PhStarsame> findAll(Pageable pageable) {
-        return phStarsameRepository.findAll(pageable);
+    public Page<PhStarsame> findAll(String id, String name, String starName, Pageable pageable) {
+        return phStarsameRepository.findAll(new Specification<PhStarsame>() {
+            @Override
+            public Predicate toPredicate(Root<PhStarsame> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                if (!"".equals(id)) {
+                    params.add(cb.equal(root.get("id"), id));
+                }
+                if (!"".equals(name)) {
+                    params.add(cb.like(root.get("title"), "%" + name + "%"));
+                }
+                if (!"".equals(starName)) {
+                    params.add(cb.like(root.get("starName"), "%" + starName + "%"));
+                }
+                Predicate[] predicates = new Predicate[params.size()];
+                query.where(params.toArray(predicates));
+                return null;
+            }
+        }, pageable);
     }
 
     @Override

@@ -22,7 +22,7 @@ public interface PhStarsameService {
 
     void delete(Long id);
 
-    Page<PhStarsame> findAll(Pageable pageable);
+    Page<PhStarsame> findAll(String id, String name, String starName, Pageable pageable);
 
     void resort(Long sort);
 
