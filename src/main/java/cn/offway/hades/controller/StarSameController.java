@@ -51,7 +51,7 @@ public class StarSameController {
     }
 
     @RequestMapping("/starSame_Mini.html")
-    public String who(ModelMap map,String who){
+    public String who(ModelMap map, String who) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("who", who);
         return "starSame_index";
@@ -59,12 +59,12 @@ public class StarSameController {
 
     @ResponseBody
     @RequestMapping("/starSame_list")
-    public Map<String, Object> getList(HttpServletRequest request) {
+    public Map<String, Object> getList(HttpServletRequest request, String id, String name, String starName) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         Sort sort = new Sort(new Sort.Order(Sort.Direction.ASC, "sort"), new Sort.Order(Sort.Direction.DESC, "createTime"));
-        Page<PhStarsame> pages = starsameService.findAll(new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhStarsame> pages = starsameService.findAll(id, name, starName, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);

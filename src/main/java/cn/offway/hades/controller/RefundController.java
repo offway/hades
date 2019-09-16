@@ -27,6 +27,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.ServletOutputStream;
@@ -109,7 +110,7 @@ public class RefundController {
 
     @ResponseBody
     @RequestMapping("/refund_list")
-    public Map<String, Object> getList(HttpServletRequest request, String orderNo, String sTime, String eTime, String userId, String sTimeCheck, String eTimeCheck, String type, String status, String merchantId, @AuthenticationPrincipal PhAdmin admin) {
+    public Map<String, Object> getList(HttpServletRequest request, String orderNo, String sTime, String eTime, String userId, String sTimeCheck, String eTimeCheck, @RequestParam(name = "type[]", required = false, defaultValue = "") String[] type, String status, String merchantId, @AuthenticationPrincipal PhAdmin admin) {
         Object mid = null;
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
@@ -140,7 +141,7 @@ public class RefundController {
     }
 
     @RequestMapping("/refund_list_export.html")
-    public void exportList(HttpServletResponse response, String orderNo, String sTime, String eTime, String userId, String sTimeCheck, String eTimeCheck, String type, String status) {
+    public void exportList(HttpServletResponse response, String orderNo, String sTime, String eTime, String userId, String sTimeCheck, String eTimeCheck, @RequestParam(name = "type[]", required = false, defaultValue = "") String[] type, String status) {
         List<PhRefund> all = refundService.all(orderNo, strToDate(sTime), strToDate(eTime), userId, strToDate(sTimeCheck), strToDate(eTimeCheck), type, status);
         try {
             ServletOutputStream outputStream = response.getOutputStream();
