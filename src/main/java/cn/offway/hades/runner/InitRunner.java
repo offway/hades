@@ -101,84 +101,88 @@ public class InitRunner implements ApplicationRunner {
                 .setNameFormat("Orders-%d")
                 .build();
         ScheduledExecutorService pool = Executors.newScheduledThreadPool(taskList.size(), factory);
+        ExecutorService poolNow = Executors.newFixedThreadPool(taskList.size(), factory);
         ScheduledExecutorService poolReverse = Executors.newScheduledThreadPool(taskList.size(), factory);
         for (JSONObject task : taskList.toJavaList(JSONObject.class)) {
             //calc the delay in seconds
             long delaySeconds = sTime.getTime() - now.getTime();
-            if (delaySeconds >= 0) {
-                pool.schedule(new Callable<Object>() {
-                    @Override
-                    public Object call() throws Exception {
-                        long id = task.containsKey("gid") ? task.getLongValue("gid") : task.getLongValue("id");
-                        String type = "discount";
-                        if (task.containsKey("type")) {
-                            type = task.getString("type");
-                        }
-                        PhGoods goods;
-                        PhGoodsStock goodsStock;
-                        switch (type) {
-                            case "discount":
-                                double discount = task.getDoubleValue("discount");
-                                goods = goodsService.findOne(id);
-                                if (goods != null) {
-                                    //update goods
-                                    if (discount >= 1) {
-                                        goods.setOriginalPrice(null);
-                                    } else {
-                                        goods.setOriginalPrice(goods.getPrice());
-                                    }
-                                    goods.setPrice(goods.getPrice() * discount);
-                                    //update stock
-                                    List<Double> priceList = new ArrayList<>();
-                                    for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
-                                        stock.setPrice(stock.getPrice() * discount);
-                                        PhGoodsStock stockSaved = stockService.save(stock);
-                                        priceList.add(stockSaved.getPrice());
-                                    }
-                                    goods.setPriceRange(genPriceRange(priceList));
-                                    goodsService.save(goods);
-                                }
-                                break;
-                            case "goodsPrice":
-                                double goodsPrice = task.getDoubleValue("goodsPrice");
-                                double goodsPriceOriginal = task.getDoubleValue("goodsPriceOriginal");
-                                goods = goodsService.findOne(id);
-                                if (goods != null) {
-                                    goods.setPrice(goodsPrice);
-                                    goods.setOriginalPrice(goodsPriceOriginal);
-                                    logger.info("setPrice to " + goodsPrice);
-                                    logger.info("setOriginalPrice to " + goodsPriceOriginal);
-                                    logger.info("now is " + new Date());
-                                    goodsService.save(goods);
-                                    //re-calc priceRange 3 seconds later
-                                    calcPriceRange(id, stockService, goodsService);
-                                }
-                                break;
-                            case "stockPrice":
-                                double stockPrice = task.getDoubleValue("stockPrice");
-                                goodsStock = stockService.findOne(id);
-                                if (goodsStock != null) {
-                                    goodsStock.setPrice(stockPrice);
-                                    stockService.save(goodsStock);
-                                }
-                                break;
-                            case "confirmPackage":
-                                long oid = task.getLongValue("id");
-                                PhOrderInfo orderInfo = orderInfoService.findOne(oid);
-                                if (orderInfo != null) {
-                                    orderInfo.setStatus("3");
-                                    orderInfoService.save(orderInfo);
-                                    //增加积分
-                                    double amount = MathUtils.add(orderInfo.getAmount(), orderInfo.getWalletAmount());
-                                    Long points = (long) amount;
-                                    points(orderInfo.getUserId(), "4", points, "确认收货,订单号：" + orderInfo.getOrderNo(), accumulatePointsService, userInfoService);
-                                }
-                                break;
-                        }
-                        checkAndPurgeTask(key, configService);
-                        return null;
+            Callable<Object> callable = new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    long id = task.containsKey("gid") ? task.getLongValue("gid") : task.getLongValue("id");
+                    String type = "discount";
+                    if (task.containsKey("type")) {
+                        type = task.getString("type");
                     }
-                }, delaySeconds, TimeUnit.MILLISECONDS);
+                    PhGoods goods;
+                    PhGoodsStock goodsStock;
+                    switch (type) {
+                        case "discount":
+                            double discount = task.getDoubleValue("discount");
+                            goods = goodsService.findOne(id);
+                            if (goods != null) {
+                                //update goods
+                                if (discount >= 1) {
+                                    goods.setOriginalPrice(null);
+                                } else {
+                                    goods.setOriginalPrice(goods.getPrice());
+                                }
+                                goods.setPrice(goods.getPrice() * discount);
+                                //update stock
+                                List<Double> priceList = new ArrayList<>();
+                                for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
+                                    stock.setPrice(stock.getPrice() * discount);
+                                    PhGoodsStock stockSaved = stockService.save(stock);
+                                    priceList.add(stockSaved.getPrice());
+                                }
+                                goods.setPriceRange(genPriceRange(priceList));
+                                goodsService.save(goods);
+                            }
+                            break;
+                        case "goodsPrice":
+                            double goodsPrice = task.getDoubleValue("goodsPrice");
+                            double goodsPriceOriginal = task.getDoubleValue("goodsPriceOriginal");
+                            goods = goodsService.findOne(id);
+                            if (goods != null) {
+                                goods.setPrice(goodsPrice);
+                                goods.setOriginalPrice(goodsPriceOriginal);
+                                logger.info("setPrice to " + goodsPrice);
+                                logger.info("setOriginalPrice to " + goodsPriceOriginal);
+                                logger.info("now is " + new Date());
+                                goodsService.save(goods);
+                                //re-calc priceRange 3 seconds later
+                                calcPriceRange(id, stockService, goodsService);
+                            }
+                            break;
+                        case "stockPrice":
+                            double stockPrice = task.getDoubleValue("stockPrice");
+                            goodsStock = stockService.findOne(id);
+                            if (goodsStock != null) {
+                                goodsStock.setPrice(stockPrice);
+                                stockService.save(goodsStock);
+                            }
+                            break;
+                        case "confirmPackage":
+                            long oid = task.getLongValue("id");
+                            PhOrderInfo orderInfo = orderInfoService.findOne(oid);
+                            if (orderInfo != null) {
+                                orderInfo.setStatus("3");
+                                orderInfoService.save(orderInfo);
+                                //增加积分
+                                double amount = MathUtils.add(orderInfo.getAmount(), orderInfo.getWalletAmount());
+                                Long points = (long) amount;
+                                points(orderInfo.getUserId(), "4", points, "确认收货,订单号：" + orderInfo.getOrderNo(), accumulatePointsService, userInfoService);
+                            }
+                            break;
+                    }
+                    checkAndPurgeTask(key, configService);
+                    return null;
+                }
+            };
+            if (delaySeconds >= 0) {
+                pool.schedule(callable, delaySeconds, TimeUnit.MILLISECONDS);
+            } else {
+                poolNow.submit(callable);
             }
             //reverse job
             //calc the delay in seconds
