@@ -190,7 +190,7 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">商品数量</label>
-									<input id="goodscountinput" type="text" class="form-control" name="giftLimit" readonly="value" value=""/>
+									<input id="goodscountinput" type="text" class="form-control" readonly="value" value=""/>
 								</div>
 							</div>
 						</div>
@@ -495,10 +495,13 @@
 	}
 
 	function toggleMethod(value) {
+    	$("#goodscountinput").val("");
+		$('#goodsPool').find("div.row").remove();
 		switch (parseInt(value)) {
 			case 0://全场商品
 				$('#goodscount').find("div.row").remove();
 				getGoodsListAll();
+				$("#goodsPool").hide();
 				break;
 			case 1://优选商品
 				$('#goodscount').find("div.row").remove();
@@ -508,6 +511,7 @@
 						getGoodsListByPickId(goodsId);
 					}
 				}
+				$("#goodsPool").hide();
 				break;
 			case 2://商户
 				$('#goodscount').hide();
@@ -522,6 +526,7 @@
 				queryMerchantList(mid);
 				jQuery('#modal-8').modal({backdrop: 'static', keyboard: false});
 				$(".modal-backdrop").css("z-index", 999);
+				$("#goodsPool").show();
 				break;
 			case 3://品牌
 				$('#goodscount').hide();
@@ -537,6 +542,7 @@
 				queryBrandList(mid);
 				jQuery('#modal-8').modal({backdrop: 'static', keyboard: false});
 				$(".modal-backdrop").css("z-index", 999);
+				$("#goodsPool").show();
 				break;
 			case 4:
 				$('#goodscount').hide();
@@ -544,6 +550,7 @@
 				buildAZBar();
 				jQuery('#modal-7').modal({backdrop: 'static', keyboard: false});
 				$(".modal-backdrop").css("z-index", 999);
+				$("#goodsPool").show();
 				break;
 		}
 	}
@@ -679,9 +686,9 @@
 			if (data) {
 				$('#goodscountinput').val(data.length);
 				$('#goodscount').show();
-				// for (var i in data) {
-				// 	addGoodsId(data[i]);
-				// }
+				for (var i in data) {
+					addGoodsId(data[i]);
+				}
 			}
 		});
 	}
@@ -691,9 +698,9 @@
 			if (data) {
 				$('#goodscountinput').val(data.length);
 				$('#goodscount').show();
-				// for (var i in data) {
-				// 	addGoodsId(data[i]);
-				// }
+				for (var i in data) {
+					addGoodsId(data[i]);
+				}
 			}
 		});
 	}
@@ -1243,6 +1250,7 @@
 				for (var j in promotionGoodsList) {
 					addGoodsId(promotionGoodsList[j]["goodsId"]);
 				}
+				$(":radio[name='method'][value='4']").prop("checked", "checked");
 				$('#addCfgBtn').find("div.row").remove();
 				for (var k in promotionRuleList) {
 					if(promotionRuleList[k]["discountNum"]!=null){

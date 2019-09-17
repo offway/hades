@@ -58,7 +58,7 @@ public class PromotionController {
 
     @ResponseBody
     @RequestMapping("/promotion_save")
-    public boolean save(PhPromotionInfo promotionInfo, @AuthenticationPrincipal PhAdmin admin, String discountJSONStr, String reduceJSONStr, @RequestParam(name = "goodsId", required = true) String[] goodsId, String gift, double giftLimit) {
+    public boolean save(PhPromotionInfo promotionInfo, @AuthenticationPrincipal PhAdmin admin, String discountJSONStr, String reduceJSONStr, @RequestParam(name = "goodsId", required = true) String[] goodsId, String gift,@RequestParam(required = false,defaultValue = "0") double giftLimit) {
         PhPromotionInfo infoSaved;
         if (promotionInfo.getId() == null) {
             promotionInfo.setCreateTime(new Date());
@@ -183,8 +183,8 @@ public class PromotionController {
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
-        map.put("iTotalRecords", list.size());//数据总条数
-        map.put("iTotalDisplayRecords", list.size());//显示的条数
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+        map.put("iTotalDisplayRecords",  pages.getTotalElements());//显示的条数
         map.put("aData", list);//数据集合
         return map;
     }

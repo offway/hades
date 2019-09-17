@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-editable-select.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -90,7 +91,7 @@
                                 </select>
                             </div>
                             <div class="input-group">
-                                <label for="category" class="control-box">子分类</label>
+                                <label id="categoryLabe" for="category" class="control-box">子分类</label>
                             </div>
                             <div class="input-group">
                                 <select id="category" name="category" class="form-control" style="height:35px">
@@ -213,6 +214,7 @@
 	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
+	<script src="assets/js/jquery-editable-select.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -379,7 +381,7 @@
 	}
 
 	function checkJob() {
-		$.post("/goods_discount_list", {"mid": $("#merchantId").val()}, function (data) {
+		$.post("/goods_discount_list", {"mid": $("#merchantId").parent().find("li.es-visible").val()}, function (data) {
 			if (data) {
 				var preview = $("#preview_body");
 				var contentStr = "";
@@ -425,6 +427,7 @@
 			}
 		}
 		$("#merchantId").html(brandStr);
+		$("#merchantId").editableSelect();
 	}
 
 	function bindTypeSelector(data) {
@@ -444,6 +447,8 @@
 			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
 		}
 		$("#category").html(categoryStr);
+		$("#category").show();
+		$("#categoryLabe").show();
 	}
 
 	function bindBrandSelector(data) {
@@ -459,11 +464,16 @@
 		var jsonStr = $("#type_and_category_list").val();
 		var list = JSON.parse(jsonStr);
 		var selectedId = $(self).val();
-		for (var type in list) {
-			if (selectedId == list[type]["name"]) {
-				bindCategorySelector(list[type]["sub"]);
-				break;
+		if(selectedId != "创意生活") {
+			for (var type in list) {
+				if (selectedId == list[type]["name"]) {
+					bindCategorySelector(list[type]["sub"]);
+					break;
+				}
 			}
+		}else {
+			$("#category").hide();
+			$("#categoryLabe").hide();
 		}
 	}
 
@@ -602,6 +612,8 @@
 				sAjaxSource: "/goods_list",//通过ajax实现分页的url路径。
 				fnServerParams: function (aData) {
 					var searchArray = $(".form-inline").serializeArray();
+					var merchantId = $("#merchantId").parent().find("li.es-visible").val();
+					searchArray.push({"name": "merchantId","value":merchantId});
 					$.merge(aData, searchArray);
 					aData.push({"name": "isLimit", "value": isLimit});//append isLimit
 				},
