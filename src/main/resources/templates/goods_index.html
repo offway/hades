@@ -91,7 +91,7 @@
                                 </select>
                             </div>
                             <div class="input-group">
-                                <label for="category" class="control-box">子分类</label>
+                                <label id="categoryLabe" for="category" class="control-box">子分类</label>
                             </div>
                             <div class="input-group">
                                 <select id="category" name="category" class="form-control" style="height:35px">
@@ -447,6 +447,8 @@
 			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
 		}
 		$("#category").html(categoryStr);
+		$("#category").show();
+		$("#categoryLabe").show();
 	}
 
 	function bindBrandSelector(data) {
@@ -462,11 +464,16 @@
 		var jsonStr = $("#type_and_category_list").val();
 		var list = JSON.parse(jsonStr);
 		var selectedId = $(self).val();
-		for (var type in list) {
-			if (selectedId == list[type]["name"]) {
-				bindCategorySelector(list[type]["sub"]);
-				break;
+		if(selectedId != "创意生活") {
+			for (var type in list) {
+				if (selectedId == list[type]["name"]) {
+					bindCategorySelector(list[type]["sub"]);
+					break;
+				}
 			}
+		}else {
+			$("#category").hide();
+			$("#categoryLabe").hide();
 		}
 	}
 
