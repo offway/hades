@@ -44,7 +44,7 @@ public class PhMerchantBrandServiceImpl implements PhMerchantBrandService {
             @Override
             public Predicate toPredicate(Root<PhMerchantBrand> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
-                if (pid != null) {
+                if (pid != null && pid != 0L) {
                     params.add(criteriaBuilder.equal(root.get("merchantId"), pid));
                 }
                 Predicate[] predicates = new Predicate[params.size()];

@@ -427,7 +427,13 @@
 			}
 		}
 		$("#merchantId").html(brandStr);
-		$("#merchantId").editableSelect();
+		$("#merchantId").editableSelect()
+				.on('select.editable-select', function (e, li) {
+					if (li.text() == '全部') {
+						$("#merchantId").val("");
+						$("#merchantId").editableSelect("filter");
+					}
+				});
 	}
 
 	function bindTypeSelector(data) {
@@ -452,12 +458,20 @@
 	}
 
 	function bindBrandSelector(data) {
-		var categoryStr = "<option value=\"\" selected=\"selected\">全部</option>";
+		var categoryStr = "<option value=\"0\" selected=\"selected\">全部</option>";
 		for (var category in data) {
 			category = data[category];
 			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["brandId"]).replace("KEY", category["brandName"]);
 		}
+		$('#merchantBrandId').editableSelect("destroy");
 		$("#merchantBrandId").html(categoryStr);
+		$("#merchantBrandId").editableSelect()
+				.on('select.editable-select', function (e, li) {
+					if (li.text() == '全部') {
+						$("#merchantBrandId").val("");
+						$("#merchantBrandId").editableSelect("filter");
+					}
+				});
 	}
 
 	function renderCategory(self) {
@@ -478,7 +492,7 @@
 	}
 
 	function renderBrand(self) {
-		var selectedId = $(self).val();
+		var selectedId = $("#merchantId").parent().find("li.es-visible").val();//$(self).val();
 		$.getJSON("/merchant_brand_list", {"id": selectedId}, function (data) {
 			bindBrandSelector(data);
 		});
@@ -613,11 +627,12 @@
 				fnServerParams: function (aData) {
 					var searchArray = $(".form-inline").serializeArray();
 					var merchantId = $("#merchantId").parent().find("li.es-visible").val();
-					searchArray.push({"name": "merchantId","value":merchantId});
+					var merchantBrandId = $("#merchantBrandId").parent().find("li.es-visible").val();
+					searchArray.push({"name": "merchantId", "value": merchantId});
+					searchArray.push({"name": "merchantBrandId", "value": merchantBrandId});
 					$.merge(aData, searchArray);
 					aData.push({"name": "isLimit", "value": isLimit});//append isLimit
 				},
-				order: [[6, "desc"]],
 				columnDefs: [
 					{
 						targets: 0,

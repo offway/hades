@@ -396,7 +396,7 @@ public class GoodsController {
         }
         Sort sort = new Sort("id");
         PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
-        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, Long.valueOf(merchantId), merchantBrandId, type, category, gids, inOrNot, isLimit, pr);
+        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, Long.valueOf(merchantId), Long.valueOf(merchantBrandId), type, category, gids, inOrNot, isLimit, pr);
         ObjectMapper objectMapper = new ObjectMapper();
         List<Map> arr = new ArrayList<>();
         for (PhGoods goods : pages.getContent()) {
