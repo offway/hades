@@ -1351,7 +1351,11 @@
 			styles.each(function (a, b) {
 				styleList.push(b.value);
 			});
-
+			//判空
+			if (styleList.length == 0) {
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				return;
+			}
             //多个元素 sku 属性
             var attrName = form.find("input[name='attrName']");
             // var attrValue = form.find("input[name='attrValue']").val();//omit
