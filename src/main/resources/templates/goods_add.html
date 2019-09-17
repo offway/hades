@@ -1136,10 +1136,10 @@
 				break;
 			}
 		}
-		if (selectedId == "18") {
-			$("input[name='style']").attr("disabled", "disabled");
-		} else {
+		if (selectedId == "12" || selectedId == "13" || selectedId == "14" ) {
 			$("input[name='style']").removeAttr("disabled");
+		} else  {
+			$("input[name='style']").attr("disabled", "disabled");
 		}
 	}
 
@@ -1266,7 +1266,7 @@
 			var str = "";
 			for (var i in data["data"]) {
 				var item = data["data"][i];
-                str += "<label><input name=\"style\" class=\"notMe\" type=\"checkbox\" value=\"NAME\" onchange='limitMax(this)'/>NAME</label>".replace(/NAME/g, item["value"]);
+                str += "<label><input disabled='disabled' name=\"style\" class=\"notMe\" type=\"checkbox\" value=\"NAME\" onchange='limitMax(this)'/>NAME</label>".replace(/NAME/g, item["value"]);
 			}
 			$("#styleDIV").html(str);
 		});
@@ -1316,27 +1316,27 @@
             //已上传的图片地址
             var imageImg = form.find("input[name='image']").val();
 
-            if (category == '42'||category =='45'||category=='46'||category=='48'||category=='50'||category=='51') {
-
-				if (type == '' || category == '' || name == '' || code == '' || brand_id == '' || price == '' || material.trim() == '' || imageImg == '') {
-					toastr.error("请填写完整数据后提交", "温馨提示");
-					return;
-				}
-				if ($("input[name='style']:checkbox:checked").length<1){
-					toastr.error("最少选择一个风格", "温馨提示");
-					return;
-				}
-				if ($("input[name='style']:checkbox:checked").length>2){
-					toastr.error("最多选择两个风格", "温馨提示");
-					return;
-				}
-
-			}else {
+            // if (category == '42'||category =='45'||category=='46'||category=='48'||category=='50'||category=='51') {
+			//
+			// 	if (type == '' || category == '' || name == '' || code == '' || brand_id == '' || price == '' || material.trim() == '' || imageImg == '') {
+			// 		toastr.error("请填写完整数据后提交", "温馨提示");
+			// 		return;
+			// 	}
+			// 	if ($("input[name='style']:checkbox:checked").length<1){
+			// 		toastr.error("最少选择一个风格", "温馨提示");
+			// 		return;
+			// 	}
+			// 	if ($("input[name='style']:checkbox:checked").length>2){
+			// 		toastr.error("最多选择两个风格", "温馨提示");
+			// 		return;
+			// 	}
+			//
+			// }else {
 				if (type == '' || name == '' || code == '' || brand_id == '' || price == '' || material.trim() == '' || imageImg == '') {
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					return;
 				}
-			}
+			// }
 
 			
 
