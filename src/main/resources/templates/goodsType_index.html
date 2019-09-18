@@ -67,6 +67,7 @@
 				<button class="btn btn-info config">底部导航栏配置</button>
 				<button class="btn btn-info configMini">小程序底部导航栏配置</button>
 				<button class="btn btn-info configBottom">顶部导航栏配置</button>
+				<button class="btn btn-info configSearch">搜索栏配置</button>
 			</div>
 			
 					
@@ -137,6 +138,7 @@
 					<form role="form" id="saveForm7">
 						<input type="hidden" name="isBottom" id="isBottom"/>
 						<input type="hidden" name="isMini" id="isMini"/>
+						<input type="hidden" name="isSearch" id="isSearch"/>
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
@@ -541,18 +543,28 @@
 			prepareSelectUI(false);
 			$("#isBottom").val(0);
 			$("#isMini").val(0);
+			$("#isSearch").val(0);
 		});
 
 		$(".btn.btn-info.configMini").click(function () {
 			prepareSelectUI(false);
 			$("#isBottom").val(0);
 			$("#isMini").val(1);
+			$("#isSearch").val(0);
 		});
 
 		$(".btn.btn-info.configBottom").click(function () {
 			prepareSelectUI(true);
 			$("#isBottom").val(1);
 			$("#isMini").val(0);
+			$("#isSearch").val(0);
+		});
+
+		$(".btn.btn-info.configSearch").click(function () {
+			prepareSelectUI(false);
+			$("#isBottom").val(0);
+			$("#isMini").val(0);
+			$("#isSearch").val(1);
 		});
 
 		function prepareSelectUI(isBottom) {
@@ -627,7 +639,8 @@
 			$.post("/goodsType_saveConfig", {
 				"keys": data,
 				"isBottom": $("#isBottom").val(),
-				"isMini": $("#isMini").val()
+				"isMini": $("#isMini").val(),
+				"isSearch": $("#isSearch").val()
 			}, function (data) {
 				if (data) {
 					jQuery('#modal-7').modal('hide');
