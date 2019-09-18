@@ -11,8 +11,8 @@ import java.util.Date;
  * @version $v: 1.0.0, $time:2019-09-18 16:00:10 Exp $
  */
 @Entity
-@Table(name = "ph_activity_comments")
-public class PhActivityComments implements Serializable {
+@Table(name = "ph_starsame_comments")
+public class PhStarsameComments implements Serializable {
 
     /** ID **/
     private Long id;
