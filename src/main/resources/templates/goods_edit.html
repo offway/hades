@@ -1374,10 +1374,10 @@
 				styleList.push(b.value);
 			});
 			//判空
-			if (styleList.length == 0) {
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				return;
-			}
+			// if (styleList.length == 0) {
+			// 	toastr.error("请填写完整数据后提交", "温馨提示");
+			// 	return;
+			// }
 			var isOK = checkImg([[image, "image"]]);
 			if (typeof isOK == 'boolean') {
 				return;
