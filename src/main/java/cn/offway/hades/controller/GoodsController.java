@@ -199,7 +199,7 @@ public class GoodsController {
             PhMerchant defaultAll = new PhMerchant();
             defaultAll.setId(0L);
             defaultAll.setName("全部");
-            list.add(defaultAll);
+            list.add(0, defaultAll);
             return list;
         }
     }
