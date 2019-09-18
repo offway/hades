@@ -1078,7 +1078,7 @@ public class GoodsController {
             }
         }
         goods.setTag(tag);
-        if (styleList != null) {
+        if (styleList != null && styleList.length > 0) {
             goods.setStyle(String.join(",", styleList));
         } else {
             goods.setStyle(null);
