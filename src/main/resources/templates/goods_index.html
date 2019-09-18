@@ -50,7 +50,7 @@
 								<label for="merchantId" class="control-label">商户</label>
 							</div>
 							<div class="input-group">
-								<select id="merchantId" name="merchantId" class="form-control" style="height:35px" onchange="renderBrand(this)">
+								<select id="merchantId" name="merchantId" class="form-control" style="height:35px" onchange="renderBrand(this,1)">
 								</select>
 							</div>
 							<div class="input-group">
@@ -58,7 +58,6 @@
 							</div>
 							<div class="input-group">
 								<select id="merchantBrandId" name="merchantBrandId" class="form-control" style="height:35px">
-									<option value="" selected="selected">全部</option>
 								</select>
 							</div>
 							<div class="input-group">
@@ -212,7 +211,7 @@
 	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
-	<script src="assets/js/jquery-editable-select.min.js"></script>
+	<script src="assets/js/jquery-editable-select.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -455,13 +454,15 @@
 		$("#categoryLabe").show();
 	}
 
-	function bindBrandSelector(data) {
+	function bindBrandSelector(data, needRebuild) {
 		var categoryStr = "<option value=\"0\" selected=\"selected\">全部</option>";
 		for (var category in data) {
 			category = data[category];
 			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["brandId"]).replace("KEY", category["brandName"]);
 		}
-		$('#merchantBrandId').editableSelect("destroy");
+		if (needRebuild == 1) {
+			$('#merchantBrandId').editableSelect("destroy");
+		}
 		$("#merchantBrandId").html(categoryStr);
 		$("#merchantBrandId").editableSelect()
 				.on('select.editable-select', function (e, li) {
@@ -489,10 +490,10 @@
 		}
 	}
 
-	function renderBrand(self) {
+	function renderBrand(self, needRebuild) {
 		var selectedId = $("#merchantId").parent().find("li.es-visible").val();//$(self).val();
 		$.getJSON("/merchant_brand_list", {"id": selectedId}, function (data) {
-			bindBrandSelector(data);
+			bindBrandSelector(data, needRebuild);
 		});
 	}
 
@@ -610,193 +611,193 @@
 	var isLimit = [[${isLimit}]];
     jQuery(document).ready(function($)
 	{
-		var oTable;
-		$.getJSON("/merchant_list_all", {}, function (data) {
-			bindMerchantSelector(data);
-			renderBrand("#merchantId");
-			oTable = $("#example-1").dataTable({
-				language: {
-					url: "../assets/Chinese.txt"
+		var oTable = $("#example-1").dataTable({
+			language: {
+				url: "../assets/Chinese.txt"
+			},
+			bFilter: false,
+			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+			sAjaxSource: "/goods_list",//通过ajax实现分页的url路径。
+			fnServerParams: function (aData) {
+				var searchArray = $(".form-inline").serializeArray();
+				var merchantId = $("#merchantId").parent().find("li.es-visible").val();
+				var merchantBrandId = $("#merchantBrandId").parent().find("li.es-visible").val();
+				searchArray.push({"name": "merchantId", "value": merchantId});
+				searchArray.push({"name": "merchantBrandId", "value": merchantBrandId});
+				$.merge(aData, searchArray);
+				aData.push({"name": "isLimit", "value": isLimit});//append isLimit
+			},
+			columnDefs: [
+				{
+					targets: 0,
+					data: "id",
+					width: "5%",
+					orderable: false,
+					className: 'select-checkbox',
+					title: '<input type="checkbox" id="checkbox-all"/>',
+					render: function (data, type, full, meta) {
+						return '<input type="checkbox" name="activityId" value="' + data + '" />';
+					}
 				},
-				bFilter: false,
-				bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
-				sAjaxDataProp: "aData",//是服务器分页的标志，必须有
-				sAjaxSource: "/goods_list",//通过ajax实现分页的url路径。
-				fnServerParams: function (aData) {
-					var searchArray = $(".form-inline").serializeArray();
-					var merchantId = $("#merchantId").parent().find("li.es-visible").val();
-					var merchantBrandId = $("#merchantBrandId").parent().find("li.es-visible").val();
-					searchArray.push({"name": "merchantId", "value": merchantId});
-					searchArray.push({"name": "merchantBrandId", "value": merchantBrandId});
-					$.merge(aData, searchArray);
-					aData.push({"name": "isLimit", "value": isLimit});//append isLimit
+				{
+					targets: 1,
+					data: "id",
+					title: "序号"
 				},
-				columnDefs: [
-					{
-						targets: 0,
-						data: "id",
-						width: "5%",
-						orderable: false,
-						className: 'select-checkbox',
-						title: '<input type="checkbox" id="checkbox-all"/>',
-						render: function (data, type, full, meta) {
-							return '<input type="checkbox" name="activityId" value="' + data + '" />';
-						}
-					},
-					{
-						targets: 1,
-						data: "id",
-						title: "序号"
-					},
-					{
-						targets: 2,
-						data: "name",
-						title: "名称"
-					},
-					{
-						targets: 3,
-						data: "image",
-						title: "封面图片",
-						render: function (data, type, row, meta) {
-							return buildImg(data);
-						}
-					},
-					{
-						targets: 4,
-						data: "merchantId",
-						title: "商户ID"
-					},
-					{
-						targets: 5,
-						data: "style",
-						title: "风格",
+				{
+					targets: 2,
+					data: "name",
+					title: "名称"
+				},
+				{
+					targets: 3,
+					data: "image",
+					title: "封面图片",
+					render: function (data, type, row, meta) {
+						return buildImg(data);
+					}
+				},
+				{
+					targets: 4,
+					data: "merchantId",
+					title: "商户ID"
+				},
+				{
+					targets: 5,
+					data: "style",
+					title: "风格",
 					/*	render: function (data, type, row, meta) {
 							return buildImg(data);
 						}*/
-					},
-					{
-						targets: 6,
-						data: "merchantName",
-						title: "商户名称"
-					},
-					{
-						targets: 7,
-						data: "brandId",
-						title: "品牌ID"
-					},
-					{
-						targets: 8,
-						data: "brandName",
-						title: "品牌名称"
-					},
-					{
-						targets: 9,
-						data: "brandLogo",
-						title: "品牌LOGO",
-						render: function (data, type, row, meta) {
-							return buildImg(data);
-						}
-					},
-					{
-						targets: 10,
-						data: "type",
-						title: "类别"
-					},
-					{
-						targets: 11,
-						data: "category",
-						title: "类目"
-					},
-					{
-						targets: 12,
-						data: "price",
-						title: "发售价"
-					},
-					{
-						targets: 13,
-						data: "originalPrice",
-						title: "原价"
-					},
-					{
-						targets: 14,
-						data: "priceRange",
-						title: "价格范围"
-					},
-					{
-						targets: 15,
-						data: "status",
-						title: "状态",
-						render: function (data, type, row, meta) {
-							return (data == "0" || data == undefined) ? "<font color='red'>未上架</font>" : "已上架";
-						}
-					},
-					{
-						targets: 16,
-						data: "viewCount",
-						title: "浏览数"
-					},
-					{
-						targets: 17,
-						data: "saleCount",
-						title: "销量"
-					},
-					{
-						targets: 18,
-						data: "createTime",
-						title: "创建时间",
-						render: function (data, type, row, meta) {
-							return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-						}
-					},
-                    {
-                        targets: 19,
-                        data: "isSpecial",
-                        title: "特殊商品",
-                        render: function (data, type, row, meta) {
-                            if (isLimit == "1") {
-                                return "不可用";
-                            } else {
-                                return data == "1" ? "<font color='red'>限量</font>" : "非限量";
-                            }
-                        }
-                    },
-					{
-						targets: 20,
-						data: "id",
-						orderable: false,
-						title: "操作",
-						render: function (data, type, full, meta) {
-							var str = '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-							str += '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
-							return str;
-						}
-					},
-					{
-						targets: 21,
-						data: "id",
-						orderable: false,
-						title: "操作",
-						render: function (data, type, full, meta) {
-							if (isLimit == "1") {
-								return "";
-							}
-							var str = "";
-							if (full["status"] == "0") {
-								str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
-							} else {
-								str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
-							}
-							if (full["isSpecial"] == "0") {
-								str += '<input type="button" name="checkIt" onclick="specialIt(' + data + ',this)" value="设为限量商品"/>';
-							} else {
-								str += '<input type="button" name="checkIt" onclick="unSpecialIt(' + data + ',this)" value="取消限量商品"/>';
-							}
-							return str;
+				},
+				{
+					targets: 6,
+					data: "merchantName",
+					title: "商户名称"
+				},
+				{
+					targets: 7,
+					data: "brandId",
+					title: "品牌ID"
+				},
+				{
+					targets: 8,
+					data: "brandName",
+					title: "品牌名称"
+				},
+				{
+					targets: 9,
+					data: "brandLogo",
+					title: "品牌LOGO",
+					render: function (data, type, row, meta) {
+						return buildImg(data);
+					}
+				},
+				{
+					targets: 10,
+					data: "type",
+					title: "类别"
+				},
+				{
+					targets: 11,
+					data: "category",
+					title: "类目"
+				},
+				{
+					targets: 12,
+					data: "price",
+					title: "发售价"
+				},
+				{
+					targets: 13,
+					data: "originalPrice",
+					title: "原价"
+				},
+				{
+					targets: 14,
+					data: "priceRange",
+					title: "价格范围"
+				},
+				{
+					targets: 15,
+					data: "status",
+					title: "状态",
+					render: function (data, type, row, meta) {
+						return (data == "0" || data == undefined) ? "<font color='red'>未上架</font>" : "已上架";
+					}
+				},
+				{
+					targets: 16,
+					data: "viewCount",
+					title: "浏览数"
+				},
+				{
+					targets: 17,
+					data: "saleCount",
+					title: "销量"
+				},
+				{
+					targets: 18,
+					data: "createTime",
+					title: "创建时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
+				{
+					targets: 19,
+					data: "isSpecial",
+					title: "特殊商品",
+					render: function (data, type, row, meta) {
+						if (isLimit == "1") {
+							return "不可用";
+						} else {
+							return data == "1" ? "<font color='red'>限量</font>" : "非限量";
 						}
 					}
-				]
-			});
-			table_global = oTable;
+				},
+				{
+					targets: 20,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						var str = '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+						str += '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
+						return str;
+					}
+				},
+				{
+					targets: 21,
+					data: "id",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						if (isLimit == "1") {
+							return "";
+						}
+						var str = "";
+						if (full["status"] == "0") {
+							str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+						} else {
+							str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+						}
+						if (full["isSpecial"] == "0") {
+							str += '<input type="button" name="checkIt" onclick="specialIt(' + data + ',this)" value="设为限量商品"/>';
+						} else {
+							str += '<input type="button" name="checkIt" onclick="unSpecialIt(' + data + ',this)" value="取消限量商品"/>';
+						}
+						return str;
+					}
+				}
+			]
+		});
+		table_global = oTable;
+
+		$.getJSON("/merchant_list_all", {}, function (data) {
+			bindMerchantSelector(data);
+			renderBrand("#merchantId", 0);
 		});
 
 		$.getJSON("/type_and_category_list", {}, function (data) {
