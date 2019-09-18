@@ -367,7 +367,7 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_list")
-    public Map<String, Object> getList(HttpServletRequest request, boolean isLimit) {
+    public Map<String, Object> getList(HttpServletRequest request, boolean isLimit, @RequestParam(required = false, defaultValue = "0") Long merchantBrandId, @RequestParam(required = false, defaultValue = "0") Long merchantId) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
@@ -378,8 +378,6 @@ public class GoodsController {
         String name = request.getParameter("name");
         String code = request.getParameter("code");
         String status = request.getParameter("status");
-        String merchantId = request.getParameter("merchantId");
-        String merchantBrandId = request.getParameter("merchantBrandId");
         String type = request.getParameter("type");
         String category = request.getParameter("category");
         String special = request.getParameter("special");
@@ -396,7 +394,7 @@ public class GoodsController {
         }
         Sort sort = new Sort("id");
         PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
-        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, Long.valueOf(merchantId), Long.valueOf(merchantBrandId), type, category, gids, inOrNot, isLimit, pr);
+        Page<PhGoods> pages = goodsService.findAll(name, Long.valueOf(id), code, status, merchantId, merchantBrandId, type, category, gids, inOrNot, isLimit, pr);
         ObjectMapper objectMapper = new ObjectMapper();
         List<Map> arr = new ArrayList<>();
         for (PhGoods goods : pages.getContent()) {
