@@ -683,7 +683,7 @@
     }
 
     var qiniuUrl = [[${qiniuUrl}]];
-
+    var url = [[${url}]];
     jQuery(document).ready(function ($) {
         jQuery.datetimepicker.setLocale('zh');
         jQuery('#timeup').datetimepicker(
@@ -700,9 +700,6 @@
             language: {
                 url: "../assets/Chinese.txt"
             },
-            aLengthactivity: [
-                [10, 25, 50, 100], [10, 25, 50, 100]
-            ],
             bFilter: false,
             bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
             sAjaxDataProp: "aData",//是服务器分页的标志，必须有
@@ -774,7 +771,6 @@
                         if (row['type']=='2'){
                             return "<font color=\"red\">视频资讯无内容</font>";
                         }
-                        var url = [[${url}]];
                         return "<a style='color: #7fff00;' target='_blank'  href=\""+url+"/article/info/"+data+".html\">预览</a>";
                     }
                 },
@@ -782,13 +778,12 @@
                     targets: 9,
                     data: "id",
                     title: "手机预览",
-                    render: function (data,type,row,meta) {
-                        if (row['type']=='2'){
-                            return  "<a style='color: #0e7df0;' target='_blank'  href=\"http://www.kuaizhan.com/common/encode-png?large=true&data="+row['video']+"\">手机预览</a>";
+                    render: function (data, type, row, meta) {
+                        if (row['type'] == '2') {
+                            return "<a style='color: #0e7df0;' target='_blank'  href=\"http://qr.topscan.com/api.php?text=" + row['video'] + "\">手机预览</a>";
                             // return "<font color=\"red\">无</font>";
                         }
-                        var url = [[${url}]];
-                        return  "<a style='color: #0e7df0;' target='_blank'  href=\"http://www.kuaizhan.com/common/encode-png?large=true&data="+url+"/article/info/"+data+".html\">手机预览</a>";
+                        return "<a style='color: #0e7df0;' target='_blank'  href=\"http://qr.topscan.com/api.php?text=" + url + "/article/info/" + data + ".html\">手机预览</a>";
                     }
                 },
                 {
