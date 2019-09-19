@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +39,8 @@ public class StarSameController {
     @Autowired
     private PhStarsameImageService starsameImageService;
     @Autowired
+    private PhStarsameCommentsService starsameCommentsService;
+    @Autowired
     private PhGoodsService goodsService;
     @Autowired
     private PhBrandService brandService;
@@ -55,6 +58,17 @@ public class StarSameController {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         map.addAttribute("who", who);
         return "starSame_index";
+    }
+
+    @RequestMapping("/starSameComment.html")
+    public String index(ModelMap map, Long id) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("theId", id);
+        PhStarsame starsame = starsameService.findOne(id);
+        if (starsame != null) {
+            map.addAttribute("theName", starsame.getTitle());
+        }
+        return "startSameComment_index";
     }
 
     @ResponseBody
@@ -75,12 +89,37 @@ public class StarSameController {
     }
 
     @ResponseBody
+    @RequestMapping("/starSameComment_list")
+    public Map<String, Object> getCommentList(int sEcho, int iDisplayStart, int iDisplayLength, String pid, String id, String userId, String content) {
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "createTime"));
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
+        Page<PhStarsameComments> pages = starsameCommentsService.findAll(pid, id, userId, content, pr);
+        int initEcho = sEcho + 1;
+        Map<String, Object> map = new HashMap<>();
+        map.put("sEcho", initEcho);
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        map.put("aData", pages.getContent());//数据集合
+        return map;
+    }
+
+    @ResponseBody
     @RequestMapping("/starSame_del")
     public boolean delete(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {
             starsameService.delete(id);
             starsameGoodsService.deleteByPid(id);
             starsameImageService.deleteByPid(id);
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/starSameComment_del")
+    @Transactional
+    public boolean deleteComment(@RequestParam("ids[]") Long[] ids) {
+        for (Long id : ids) {
+            starsameCommentsService.delete(id);
         }
         return true;
     }
@@ -254,7 +293,7 @@ public class StarSameController {
 
     @ResponseBody
     @PostMapping("/starSame_sameSrot")
-    public boolean sameSrot() {
+    public boolean sameSort() {
         starsameService.sameSort();
         return true;
     }

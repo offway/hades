@@ -1,9 +1,11 @@
 package cn.offway.hades.service;
 
 
-import java.util.List;
-
 import cn.offway.hades.domain.PhStarsameComments;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 /**
  * 文章评论Service接口
@@ -14,10 +16,12 @@ import cn.offway.hades.domain.PhStarsameComments;
 public interface PhStarsameCommentsService {
 
     PhStarsameComments save(PhStarsameComments phActivityComments);
-	
+
     PhStarsameComments findOne(Long id);
 
     void delete(Long id);
 
     List<PhStarsameComments> save(List<PhStarsameComments> entities);
+
+    Page<PhStarsameComments> findAll(String pid, String id, String userId, String content, Pageable pageable);
 }

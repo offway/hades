@@ -359,6 +359,10 @@
         });
     }
 
+	function checkItsList(id) {
+		window.location.href = '/starSameComment.html?id=' + id;
+	}
+
     var table_global;
 
 	function topIt(id) {
@@ -509,7 +513,9 @@
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+						var str = '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+						str += '<input type="button" name="checkIt" onclick="checkItsList(' + data + ')" value="查看评论"/>';
+						return str;
 					}
 				},
 				{
