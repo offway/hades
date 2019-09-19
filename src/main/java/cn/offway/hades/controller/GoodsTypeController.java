@@ -72,7 +72,7 @@ public class GoodsTypeController {
 
     @ResponseBody
     @RequestMapping("/goodsType_saveConfig")
-    public boolean saveConfig(@RequestParam(value = "keys[]") String[] keys, int isBottom, int isMini) {
+    public boolean saveConfig(@RequestParam(value = "keys[]") String[] keys, int isBottom, int isMini, int isSearch) {
         List<Map<String, String>> list = new ArrayList<>();
         for (String key : keys) {
             Map<String, String> item = new HashMap<>();
@@ -90,6 +90,9 @@ public class GoodsTypeController {
             list.add(item);
         }
         String name = isBottom == 0 ? (isMini == 0 ? "INDEX_CATEGORY" : "INDEX_CATEGORY_MINI") : "INDEX_CATEGORY_IMG";
+        if (isSearch == 1) {
+            name = "INDEX_SEARCH";
+        }
         PhConfig config = configService.findOne(name);
         if (config != null) {
             config.setContent(JSON.toJSONString(list));
