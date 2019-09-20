@@ -1,7 +1,7 @@
 package cn.offway.hades.service.impl;
 
 import cn.offway.hades.domain.PhStarsameComments;
-import cn.offway.hades.repository.PhActivityCommentsRepository;
+import cn.offway.hades.repository.PhStarsameCommentsRepository;
 import cn.offway.hades.service.PhStarsameCommentsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,26 +31,26 @@ public class PhStarsameCommentsServiceImpl implements PhStarsameCommentsService 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private PhActivityCommentsRepository phActivityCommentsRepository;
+    private PhStarsameCommentsRepository phStarsameCommentsRepository;
 
     @Override
     public PhStarsameComments save(PhStarsameComments phActivityComments) {
-        return phActivityCommentsRepository.save(phActivityComments);
+        return phStarsameCommentsRepository.save(phActivityComments);
     }
 
     @Override
     public PhStarsameComments findOne(Long id) {
-        return phActivityCommentsRepository.findOne(id);
+        return phStarsameCommentsRepository.findOne(id);
     }
 
     @Override
     public void delete(Long id) {
-        phActivityCommentsRepository.delete(id);
+        phStarsameCommentsRepository.delete(id);
     }
 
     @Override
     public Page<PhStarsameComments> findAll(String pid, String id, String userId, String content, Pageable pageable) {
-        return phActivityCommentsRepository.findAll(new Specification<PhStarsameComments>() {
+        return phStarsameCommentsRepository.findAll(new Specification<PhStarsameComments>() {
             @Override
             public Predicate toPredicate(Root<PhStarsameComments> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 List<Predicate> params = new ArrayList<Predicate>();
@@ -73,6 +73,6 @@ public class PhStarsameCommentsServiceImpl implements PhStarsameCommentsService 
 
     @Override
     public List<PhStarsameComments> save(List<PhStarsameComments> entities) {
-        return phActivityCommentsRepository.save(entities);
+        return phStarsameCommentsRepository.save(entities);
     }
 }

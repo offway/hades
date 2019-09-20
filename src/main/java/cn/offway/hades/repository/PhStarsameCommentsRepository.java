@@ -11,7 +11,7 @@ import cn.offway.hades.domain.PhStarsameComments;
  * @author wn
  * @version $v: 1.0.0, $time:2019-09-18 16:00:10 Exp $
  */
-public interface PhActivityCommentsRepository extends JpaRepository<PhStarsameComments,Long>,JpaSpecificationExecutor<PhStarsameComments> {
+public interface PhStarsameCommentsRepository extends JpaRepository<PhStarsameComments,Long>,JpaSpecificationExecutor<PhStarsameComments> {
 
 	/** 此处写一些自定义的方法 **/
 }
