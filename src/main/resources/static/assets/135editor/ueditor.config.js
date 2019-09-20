@@ -39,7 +39,7 @@
         
         , toolbars: [
         ["bold","italic","underline","forecolor","shadowcolor","backcolor","|","justifyleft","justifycenter","justifyright",'justifyjustify', "indent","rowspacingtop",'rowspacingbottom',"lineheight","|","removeformat",'formatmatch',"autotypeset"],
-        ['cleardoc',"paragraph","fontfamily","fontsize","inserttable",'background','simpleupload',"insertimage",'music','insertvideo',"horizontal","|","undo","redo","|","more"],
+        ['cleardoc',"paragraph","fontfamily","fontsize","inserttable",'background',"insertimage",'music','insertvideo',"horizontal","|","undo","redo","|","more"],
         ["source",'remotecontent', 'spechars','emotion','link','superscript', 'subscript','insertorderedlist', 'insertunorderedlist','directionalityltr', 'directionalityrtl','searchreplace', 'map','help','message']
         ]
         // 'simpleupload','music','pagebreak','touppercase', 'tolowercase',
