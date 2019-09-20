@@ -80,7 +80,7 @@ public class PhBrandServiceImpl implements PhBrandService {
             public Predicate toPredicate(Root<PhBrand> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
                 List<Predicate> params = new ArrayList<Predicate>();
                 if ("#".equals(prefix)) {
-                    params.add(ascii((CriteriaBuilderImpl) criteriaBuilder, root.get("name"), null));
+                    params.add(ascii((CriteriaBuilderImpl) criteriaBuilder, root.get("name")));
                 } else {
                     params.add(criteriaBuilder.like(root.get("name"), prefix + "%"));
                 }
@@ -92,8 +92,8 @@ public class PhBrandServiceImpl implements PhBrandService {
     }
 
     public <Y extends Comparable<? super Y>> Predicate ascii(CriteriaBuilderImpl criteriaBuilder,
-                                                             Expression<? extends Y> expression, Y object) {
-        return new AsciiPredicate<>(criteriaBuilder, expression, object);
+                                                             Expression<? extends Y> expression) {
+        return new AsciiPredicate<>(criteriaBuilder, expression, null);
     }
 
     @Override

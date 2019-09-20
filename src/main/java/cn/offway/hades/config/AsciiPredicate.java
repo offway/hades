@@ -25,7 +25,7 @@ public class AsciiPredicate<Y>
     private final Expression<? extends Y> expression;
     private final Expression<? extends Y> object;
 
-    public AsciiPredicate(
+    private AsciiPredicate(
             CriteriaBuilderImpl criteriaBuilder,
             Expression<? extends Y> expression,
             Y object) {
