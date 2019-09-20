@@ -29,7 +29,10 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -225,12 +228,12 @@ public class ArticleController {
     @RequestMapping("/article_save")
     public boolean save(PhArticle brand) throws IOException {
         if (brand.getId() == null) {
-            brand.setContent(filterWxPicAndReplace(brand.getContent().replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))", ""), qiniuService));
+            brand.setContent(filterWxPicAndReplace(brand.getContent()/*.replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))", "")*/, qiniuService));
             brand.setCreateTime(new Date());
             brand.setStatus("0");
         } else {
             PhArticle article = articleService.findOne(brand.getId());
-            brand.setContent(filterWxPicAndReplace(brand.getContent().replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))", ""), qiniuService));
+            brand.setContent(filterWxPicAndReplace(brand.getContent()/*.replaceAll("(?<=(<img.{1,100}))width:\\d+px(?=(.+>))", "").replaceAll("(?<=(<img.{1,100}))height:\\d+px(?=(.+>))", "")*/, qiniuService));
             brand.setStatus(article.getStatus());
             brand.setCreateTime(article.getCreateTime());
             brand.setApprover(article.getApprover());
@@ -359,26 +362,26 @@ public class ArticleController {
     }
 
     @ResponseBody
-    @GetMapping(value = "/article/{type}/{id}.html",produces="text/html;charset=UTF-8")
+    @GetMapping(value = "/article/{type}/{id}.html", produces = "text/html;charset=UTF-8")
     public String html(
-         @PathVariable String type,
-         @PathVariable Long id){
+            @PathVariable String type,
+            @PathVariable Long id) {
         String html = "<!DOCTYPE html>\n<!--[if lt IE 7 ]> <html class=\"ie ie6\"> <![endif]-->\n<!--[if IE 7 ]>    <html class=\"ie ie7\"> <![endif]-->\n<!--[if IE 8 ]>    <html class=\"ie ie8\"> <![endif]-->\n<!--[if IE 9 ]>    <html class=\"ie ie9\"> <![endif]-->\n<!--[if (gt IE 9)|!(IE)]><!--> <html lang=\"zh-cn\"> <!--<![endif]-->\n<head lang=\"en\">\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no\" />\n    <title>###NAME###</title>\n    <link rel=\"stylesheet\" href=\"https://api.offway.cn:8443/wxshare/style/style.css\">\n    <script src=\"https://api.offway.cn:8443/js/jquery.min.js\"></script>\n    <script src=\"https://api.offway.cn:8443/wxshare/script/jquery-m.js\"></script>\n    <style>\n		.p-box img {\n		    margin: auto auto !important;\n		}\n		.page-3 {\n		    border-bottom: 10px solid #fff;\n		}\n	</style>\n</head>\n<body>\n<div class=\"page-3\">\n    <div class=\"title\">###TITLE###</div>\n    <div class=\"span\">\n       ###TYPE### \n        <span class=\"eye\">###VIEWCOUNT###</span>\n        <span class=\"time\">###CREATETIME###</span>\n    </div>\n    <div class=\"p-box\">\n###CONTENT### \n ###RECOMMEND_GOODS###\n    </div>\n</div>\n<div class=\"foot-none\"></div>\n<div class=\"foot-btn\"><a href=\"https://android.myapp.com/myapp/detail.htm?apkName=com.puhao.offway\">下载APP</a> </div>\n</body>\n\n<script src=\"https://res.wx.qq.com/open/js/jweixin-1.4.0.js\"></script>\n<script src=\"https://api.offway.cn:8443/js/jquery.min.js\"></script>\n<script type=\"text/javascript\">\nfunction goWxShare(shareOption){	\n	var imgurl =  shareOption.imgurl;\n	\n	var url = shareOption.fromUrl ;\n	var forumid=\"\";\n	\n		\n	if(null===url || ''===url || undefined===url){\n		url = location.href ;\n	}\n	if(url.indexOf(\"forumid=\")>=0){\n		forumid=shareOption.forumid;		\n	}\n\n	\n	$.ajax({  \n	    url:\"https://zeus.offway.cn/access/wx/config\",  \n	    data: {url:url}, \n		dataType: 'json',\n	    type:'post',\n	    error: function(data) {   \n	        // alert(JSON.stringify(data));\n	    },  \n	    success:function(data){\n	    	// alert(JSON.stringify(data));\n	    	//var temp = JSON.parse(data);\n	    	if(null!==data ){\n		    		//通过config接口注入权限验证配置\n					wx.config({\n					  debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。\n					  appId: data.appid, // 必填，公众号的唯一标识\n					  timestamp: data.timestamp, // 必填，生成签名的时间戳\n					  nonceStr: data.nonce, // 必填，生成签名的随机串\n					  signature: data.getSHA1,// 必填，签名，见附录\n					  jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage','hideMenuItems'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2\n					});\n			    	\n		    		// 更改七牛分享的尺寸大小\n		    		// var imgurl =  shareOption.imgurl;\n					\n					// ready 接口处理成功\n					wx.ready(function(){\n						//分享给朋友\n						//title:分享的标题；link分享的链接；imgUrl分享的图标\n					 	wx.onMenuShareAppMessage({\n					 	    title: shareOption.title,\n					 	    desc: shareOption.desc,\n					 	    link: url,\n					 	    imgUrl:  imgurl,\n					 	    success: function () {\n					 	    	//getShareConfig(); \n					 	    	// shareTask(1,forumid);\n					 	    }\n					 	});\n\n						//分享给朋友圈\n						//title:分享的标题；link分享的链接；imgUrl分享的图标\n					 	wx.onMenuShareTimeline({\n					 		title: shareOption.title , \n					 		link:  url,\n					 	    imgUrl:  imgurl,\n					 	    success: function () {\n					 	    	//getShareConfig();\n					 	    	// shareTask(2,forumid);\n					 	    }\n					    });\n					 	//============\n					}); 			\n		    	\n		    	}\n	    	//=================\n	    }\n	});\n}\n</script>\n\n<script type=\"text/javascript\">\ngoWxShare({\n	imgurl:'###IMAGE###',\n	title:'###NAME###',\n	desc:'###TITLE###',\n	fromUrl:location.href\n});\n</script>\n</html>";
         PhArticle phArticle = articleService.findOne(id);
-        phArticle.setViewCount(phArticle.getViewCount()+1L);
+        phArticle.setViewCount(phArticle.getViewCount() + 1L);
         phArticle = articleService.save(phArticle);
         html = html.replace("###TITLE###", phArticle.getTitle());
 
         StringBuilder sb = new StringBuilder();
-        String [] tags = phArticle.getTag().split(",");
+        String[] tags = phArticle.getTag().split(",");
         for (String tag : tags) {
-            sb.append("<span class=\"tip\" style=\"margin-right: .1rem;\">"+tag+"</span>");
+            sb.append("<span class=\"tip\" style=\"margin-right: .1rem;\">" + tag + "</span>");
         }
         html = html.replace("###TYPE###", sb.toString());
-        html = html.replace("###VIEWCOUNT###", phArticle.getViewCount()+"");
+        html = html.replace("###VIEWCOUNT###", phArticle.getViewCount() + "");
 
         Date date = phArticle.getApproval();
-        html = html.replace("###CREATETIME###", DateFormatUtils.format(null==date?phArticle.getCreateTime():date, "yyyy-MM-dd"));
+        html = html.replace("###CREATETIME###", DateFormatUtils.format(null == date ? phArticle.getCreateTime() : date, "yyyy-MM-dd"));
 
         String content = phArticle.getContent();
         html = html.replace("###CONTENT###", content);
@@ -386,16 +389,16 @@ public class ArticleController {
         html = html.replace("###NAME###", phArticle.getName());
 
         String re = "";
-        if("info".equals(type)){
+        if ("info".equals(type)) {
             html = html.replace("<\\s*?script[^>]*?>[\\s\\S]*?<\\s*?/\\s*?script\\s*?>", "");
             html = html.replace("foot-btn", "undis");
             html = html.replace("foot-none", "undis");
-        }else{
+        } else {
 
             String goodsIds = phArticle.getGoodsIds();
-            if(StringUtils.isNotBlank(goodsIds)){
+            if (StringUtils.isNotBlank(goodsIds)) {
                 String[] ids = goodsIds.split(",");
-                if(ids.length >0){
+                if (ids.length > 0) {
                     Long[] idLs = new Long[ids.length];
                     int i = 0;
                     for (String s : ids) {
@@ -405,8 +408,8 @@ public class ArticleController {
                     for (PhGoods goods : goodss) {
                         re += "<div style=\"width: 6.75rem;height: 1.9rem;box-shadow: 0 0 0.1rem 0 rgba(127,127,127,0.50);margin: .1rem .0 .1rem 0.04rem;display: flex;align-items: center;\" onclick=\"window.location.href='https://sj.qq.com/myapp/detail.htm?apkName=com.puhao.offway'\">\n" +
                                 "  <div style=\"width: 1.4rem;height: 1.4rem;margin: .2rem .2rem auto;\">\n" +
-                                "  <img style=\"width: 100%;height: 100%;\" src=\""+goods.getImage()+"\"></div>\n" +
-                                "  <div style=\"width: 3.8rem;font-size: .24rem;text-align: left;line-height: .3rem\">"+goods.getName()+"</div>\n" +
+                                "  <img style=\"width: 100%;height: 100%;\" src=\"" + goods.getImage() + "\"></div>\n" +
+                                "  <div style=\"width: 3.8rem;font-size: .24rem;text-align: left;line-height: .3rem\">" + goods.getName() + "</div>\n" +
                                 "  <div style=\"width: .02rem;height: 1rem;background: #F4F4F4;margin-left: .2rem;\"></div>\n" +
                                 "  <div style=\"width: .45rem;height: .45rem;font-size: 0;margin-left: .25rem;\">\n" +
                                 "  <img style=\"width: 100%;height: 100%;\" src=\"http://qiniu.offway.cn/image/wx/50/48/e04f9904-5d31-01e9-7089-b9dba5897f6e.png\"></div>\n" +
