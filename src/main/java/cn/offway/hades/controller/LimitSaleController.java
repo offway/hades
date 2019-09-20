@@ -125,6 +125,17 @@ public class LimitSaleController {
     }
 
     @ResponseBody
+    @RequestMapping("/limit_sale_convert")
+    public boolean convert(Long id) throws IOException {
+        PhLimitedSale limitedSale = limitedSaleService.findOne(id);
+        if (limitedSale != null) {
+            limitedSale.setInfo(ArticleController.filterWxPicAndReplace(limitedSale.getInfo(), qiniuService));
+            limitedSaleService.save(limitedSale);
+        }
+        return true;
+    }
+
+    @ResponseBody
     @RequestMapping("/limit_sale_add")
     public boolean add(PhLimitedSale limitedSale) throws IOException {
         if (limitedSale.getId() == null) {
