@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +47,10 @@ public class StarSameController {
     private PhBrandService brandService;
     @Autowired
     private QiniuProperties qiniuProperties;
+    @Autowired
+    private PhNoticeService noticeService;
+    @Autowired
+    private PhUserInfoService userInfoService;
 
     @RequestMapping("/starSame.html")
     public String index(ModelMap map) {
@@ -119,7 +124,21 @@ public class StarSameController {
     @Transactional
     public boolean deleteComment(@RequestParam("ids[]") Long[] ids) {
         for (Long id : ids) {
-            starsameCommentsService.delete(id);
+            PhStarsameComments comments = starsameCommentsService.findOne(id);
+            if (comments != null) {
+                PhUserInfo userInfo = userInfoService.findOne(comments.getUserId());
+                if (userInfo != null) {
+                    //删除评论时，发一条系统通知
+                    PhNotice notice = new PhNotice();
+                    notice.setUserId(userInfo.getId());
+                    notice.setCreateTime(new Date());
+                    notice.setIsRead("0");/* 是否已读[0-否,1-是] **/
+                    notice.setType("0");/* 类型[0-系统消息，1-订单通知，2-活动通知] **/
+                    notice.setContent(MessageFormat.format("用户您好，您发送的评论“{0}”涉嫌违规，已被系统删除。", comments.getContent()));
+                    noticeService.save(notice);
+                }
+                starsameCommentsService.delete(id);
+            }
         }
         return true;
     }
