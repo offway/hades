@@ -54,7 +54,7 @@ public class PhStarsameCommentsServiceImpl implements PhStarsameCommentsService 
             @Override
             public Predicate toPredicate(Root<PhStarsameComments> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
                 List<Predicate> params = new ArrayList<Predicate>();
-                params.add(cb.equal(root.get("articleId"), pid));
+                params.add(cb.equal(root.get("starsameId"), pid));
                 if (!"".equals(id)) {
                     params.add(cb.equal(root.get("id"), id));
                 }
