@@ -73,7 +73,7 @@ ph:
   file: 
     path: D:/workspace/hades/src/main/resources/static
     server: http://127.0.0.1:8088
-  url: https://t.offway.cn
+  url: lan
 qiniu:
   url: http://qiniu.offway.cn
   access-key: WU33Cpp1WJZAf4oIIHknc2ga3ZhQpgJo3UL-JUdB
