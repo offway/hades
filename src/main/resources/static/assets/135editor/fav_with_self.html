@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>完整demo</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<script>
+var BASEURL = '';
+//window.UEDITOR_HOME_URL = 'http://static.135ediutor.com/js/ueditor/';
+</script>
+    <script type="text/javascript" charset="utf-8" src="./ueditor.config.js"></script>
+	<script type="text/javascript" charset="utf-8" src="./third-party/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="./ueditor.all.min.js"> </script>
+<script type="text/javascript" charset="utf-8" src="./a92d301d77.js"> </script>
+
+ 
+	<link rel="stylesheet" type="text/css" href="./themes/default/_css/ueditor.css" />
+    <link rel="stylesheet" type="text/css" href="./themes/96619a5672.css" />
+    <style type="text/css">
+        div{
+            width:100%;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <h1>demo</h1>
+    <script id="editor" type="text/plain" style="width:1024px;height:500px;"></script>
+</div>
+<script>
+
+var current_editor = UE.getEditor('editor',{
+    initialFrameHeight:420,
+    style_url : 'https://www.135editor.com/editor_styles/open?inajax=1&v=pageself&appkey=566d34e0-4bac-443b-8a80-37f89fde689a',
+    style_width:340,
+    appkey:'566d34e0-4bac-443b-8a80-37f89fde689a',
+    zIndex : 1000,
+    page_url : 'https://www.135editor.com/editor_styles/open_styles?inajax=1&appkey=566d34e0-4bac-443b-8a80-37f89fde689a',
+    
+    pageLoad:true,  open_editor:true,
+    focus:true,
+    focusInEnd:true
+});
+
+
+</script>
+
+</body>
+</html>

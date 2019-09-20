@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <style>
+html,body{
+    height:100%;
+    width:100%;
+    padding:0;
+    margin:0;background-color: #333 !important;
+}
+#preview{
+    width:100%;
+    height:100%;
+    padding:0;
+    margin:0;
+}
+#preview *{font-family:sans-serif;font-size:16px;}
+::-webkit-scrollbar {   width:6px;height:6px;}
+::-webkit-scrollbar-thumb {-webkit-box-shadow: inset 0 0 16px #645654;}
+::-webkit-input-placeholder { color:    #ddd;}
+        </style>
+        <script type="text/javascript" src="../internal.js"></script>
+        <script src="../../ueditor.parse.js"></script>
+        <title></title>
+    </head>
+    <body class="view">
+        <section id="preview-phone" style="width:360px;height: 658px;margin:10px auto;padding: 2px 0;border-radius: 28px;background-color: #FFF;background-image:url(http://ww2.sinaimg.cn/large/65c9d425gw1f63gvt2wy7j20hs0wmdgf.jpg);background-size: cover;"><section id="preview-body" style="padding: 15px 12px;overflow-x:hidden;overflow-y:auto;margin-top: 90px;height: 500px;"><section style="margin-bottom:28px;"><p style="margin-bottom: 14px;padding:0;font-size:24px;line-height: 1.6;">135编辑器内容预览</p><p style="font-size:14px;color: #8c8c8c;">2017-09-08 &nbsp; <a href="#" style="color: #607fa6;">公众号名称</a> </p></section><section id="preview">
+
+</section><p><br></p><section id="preview-msg-footer"><p style="color: #9c9c9c;">阅读 1000000+  &nbsp;&nbsp; <i class="fa fa-thumbs-o-up"></i> 1350</p></section></section></section>
+
+    </body>
+    <script>
+        document.getElementById('preview').innerHTML = editor.getContent();
+        uParse('#preview',{
+            rootPath : '../../',
+            chartContainerHeight:500
+        })
+        dialog.oncancel = function(){
+            document.getElementById('preview').innerHTML = '';
+        }
+    </script>
+</html>
