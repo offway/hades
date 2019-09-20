@@ -20,8 +20,8 @@ public class PhStarsameComments implements Serializable {
     /** 用户ID **/
     private Long userId;
 
-    /** 文章ID **/
-    private Long articleId;
+    /** 明星同款ID **/
+    private Long starsameId;
 
     /** 评论内容 **/
     private String content;
@@ -53,15 +53,16 @@ public class PhStarsameComments implements Serializable {
         this.userId = userId;
     }
 
-    @Column(name = "article_id", length = 11)
-    public Long getArticleId() {
-        return articleId;
+    @Column(name = "starsame_id", length = 11)
+    public Long getStarsameId() {
+        return starsameId;
     }
 
-    public void setArticleId(Long articleId) {
-        this.articleId = articleId;
+    public void setStarsameId(Long articleId) {
+        this.starsameId = articleId;
     }
 
+    @Column(name = "content", length = 200)
     public String getContent() {
         return content;
     }

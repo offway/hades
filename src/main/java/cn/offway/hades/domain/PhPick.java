@@ -29,6 +29,9 @@ public class PhPick implements Serializable {
     /** 备注 **/
     private String remark;
 
+    /** 分享图片 **/
+    private String shareImg;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +51,15 @@ public class PhPick implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Column(name = "share_img", length = 100)
+    public String getShareImg() {
+        return shareImg;
+    }
+
+    public void setShareImg(String shareImg) {
+        this.shareImg = shareImg;
     }
 
     @Column(name = "image_url", length = 100)
