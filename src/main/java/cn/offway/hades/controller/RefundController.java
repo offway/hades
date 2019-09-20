@@ -248,7 +248,7 @@ public class RefundController {
                     goodsInfo.put("brandName", goods.getBrandName());
                     goodsInfo.put("type", goods.getType() + goods.getCategory());
                     goodsInfo.put("merchantName", goods.getMerchantName());
-                    goodsInfo.put("stockImg", goodsStock.getImage());
+                    goodsInfo.put("stockImg", goodsStock == null ? goods.getImage() : goodsStock.getImage());
                     goodsInfo.put("toStockImage", refundGoods.getToStockImage());
                     goodsInfo.put("toStockDesc", refundGoods.getToStockDesc());
                     goodsInfo.put("toStockId", refundGoods.getToStockId());

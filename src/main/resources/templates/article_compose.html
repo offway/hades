@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <head th:replace="head"></head>
+    <head th:replace="newHead"></head>
     <title>资讯管理</title>
     <link rel="stylesheet" href="assets/js/select2/select2.css"/>
     <link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
     <link rel="stylesheet" href="assets/css/selectize.bootstrap3.css"/>
     <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+    <link rel="stylesheet" href="assets/135editor/themes/96619a5672.css"/>
     <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
     <style type="text/css">
         .form-group img {
@@ -150,12 +151,9 @@
             </div>
         </div>
 
-        <footer th:replace="footer"></footer>
+        <footer th:replace="newFooter"></footer>
     </div>
 </div>
-
-<div th:replace="body-under"></div>
-
 <input type="hidden" id="video_poster"/>
 <input type="hidden" id="video_width"/>
 <input type="hidden" id="video_height"/>
@@ -171,15 +169,31 @@
 <script src="assets/js/jquery-ui.min.js"></script>
 <script src="assets/js/selectize.min.js"></script>
 <!-- 配置文件 -->
-<script type="text/javascript" src="assets/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="assets/135editor/ueditor.config.js"></script>
 <!-- 编辑器源码文件 -->
-<script type="text/javascript" src="assets/ueditor/ueditor.all.js"></script>
+<script type="text/javascript" src="assets/135editor/ueditor.all.min.js"></script>
+<script type="text/javascript" src="assets/135editor/a92d301d77.js"></script>
 <!-- 播放器使用的是videojs开源插件 -->
-<script type="text/javascript" src="assets/ueditor/ueditor.parse.js"></script>
+<!--<script type="text/javascript" src="assets/135editor/ueditor.parse.js"></script>-->
 <script th:inline="javascript">
     /*<![CDATA[*/
 
-    var editor = UE.getEditor('editor_id');
+    var appkey = '5c99c2c4-98a4-4b6c-b065-4fc3ac109a29';
+    window.BASEURL = 'http://www.135editor.com';
+    var editor = UE.getEditor('editor_id', {
+        plat_host: 'www.135editor.com',
+        appkey: appkey, open_editor: true, pageLoad: true,
+        style_url: BASEURL + '/editor_styles/open?inajax=1&appkey=' + appkey,
+        style_width: 340,
+        uploadFormData: {'referer': window.document.referrer},
+        initialFrameHeight: 680,
+        zIndex: 1000,
+        focus: true,
+        autoFloatEnabled: false, autoHeightEnabled: false, scaleEnabled: false,
+        focusInEnd: true
+    });
+
+    // var editor = UE.getEditor('editor_id');
 
     // KindEditor.ready(function (K) {
     //     window.editor = K.create('#editor_id', {
