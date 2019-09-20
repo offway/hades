@@ -164,7 +164,7 @@ public class PickController {
 
     @RequestMapping("/pick_save")
     @ResponseBody
-    public boolean save(Long id, String name, String imageUrl, @RequestParam(name = "goodsID") Long[] goodsIDs) {
+    public boolean save(Long id, String name, String imageUrl, String shareImg, @RequestParam(name = "goodsID") Long[] goodsIDs) {
         PhPick pick;
         if ("".equals(id) || id == null) {
             pick = new PhPick();
@@ -175,6 +175,7 @@ public class PickController {
         }
         pick.setName(name);
         pick.setImageUrl(imageUrl);
+        pick.setShareImg(shareImg);
         PhPick pickSaved = pickService.save(pick);
         for (Long gid : goodsIDs) {
             PhPickGoods pickGoods = new PhPickGoods();

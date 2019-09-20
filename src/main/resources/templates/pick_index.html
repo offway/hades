@@ -105,9 +105,19 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">优选图片</label>
-									<input type="file" name="imageUrlFile" onchange="uploadImg(this)" />
+									<input type="file" name="imageUrlFile" onchange="uploadImg(this,false)" />
 									<img src="" name="imageUrlImg" />
 									<input type="hidden" name="imageUrl" />
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">优选分享图片</label>
+									<input type="file" name="shareImgFile" onchange="uploadImg(this,true)" />
+									<img src="" name="shareImgImg" />
+									<input type="hidden" name="shareImg" />
 								</div>
 							</div>
 						</div>
@@ -277,6 +287,7 @@
 				contentStr += appendToPreview("编号:", mainObj["id"]);
 				contentStr += appendToPreview("优选名称:", mainObj["name"]);
 				contentStr += appendToPreview("图片URL:", buildImg(mainObj["imageUrl"]));
+				contentStr += appendToPreview("分享图片URL:", buildImg(mainObj["shareImg"]));
 				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
 				contentStr += appendToPreview("备注:", mainObj["remark"]);
 				contentStr += "<hr/>";
@@ -367,7 +378,7 @@
 		});
 	}
 
-	function uploadImg(self) {
+	function uploadImg(self, isShare) {
 		var that = $(self);
 		if (self.files.length > 0) {
 			var file = self.files[0];
@@ -379,11 +390,19 @@
 					console.log(err);
 				}, function (res) {
 					var url = qiniuUrl + "/" + res.key;
-					that.parent().find("[name=imageUrl]").val(url);
-					that.parent().find("[name=imageUrlImg]").attr("src", url);
-					that.parent().find("[name=imageUrlImg]").attr("width", "100px");
-					that.parent().find("[name=imageUrlImg]").attr("height", "100px");
-					that.parent().find("[name=imageUrlImg]").show();
+					if (isShare) {
+						that.parent().find("[name=shareImg]").val(url);
+						that.parent().find("[name=shareImgImg]").attr("src", url);
+						that.parent().find("[name=shareImgImg]").attr("width", "100px");
+						that.parent().find("[name=shareImgImg]").attr("height", "100px");
+						that.parent().find("[name=shareImgImg]").show();
+					} else {
+						that.parent().find("[name=imageUrl]").val(url);
+						that.parent().find("[name=imageUrlImg]").attr("src", url);
+						that.parent().find("[name=imageUrlImg]").attr("width", "100px");
+						that.parent().find("[name=imageUrlImg]").attr("height", "100px");
+						that.parent().find("[name=imageUrlImg]").show();
+					}
 				});
 			});
 		} else {
@@ -609,6 +628,14 @@
 				},
 				{
 					targets: 4,
+					data: "shareImg",
+					title: "分享图片",
+					render: function (data, type, full, meta) {
+						return buildImg(data);
+					}
+				},
+				{
+					targets: 5,
 					data: "sub",
 					title: "优选商品",
 					render: function (data, type, row, meta) {
@@ -622,7 +649,7 @@
 					}
 				},
 				{
-					targets: 5,
+					targets: 6,
 					data: "createTime",
 					title: "创建时间",
 					render: function (data, type, row, meta) {
@@ -630,7 +657,7 @@
 					}
 				},
 				{
-					targets: 6,
+					targets: 7,
 					data: "id",
 					orderable: false,
 					title: "操作",
@@ -684,6 +711,7 @@
 			$("#goodsSelect").html("");
 			$("#goodsPool").html("");
 			$("img[name='imageUrlImg']").hide();
+			$("img[name='shareImgImg']").hide();
 		}
 		
 		$(".searchBtn").click(function(){
@@ -735,9 +763,10 @@
 			var form = $("#saveForm");
 			var name = form.find("input[name='name']").val();
 			var imageUrl = form.find("input[name='imageUrl']").val();
+			var shareImg = form.find("input[name='shareImg']").val();
 			var goodsIds = form.find("input[name='goodsID']");
 
-			if (name == '' || imageUrl == '' || goodsIds.length == 0) {
+			if (name == '' || imageUrl == '' || shareImg == '' || goodsIds.length == 0) {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
