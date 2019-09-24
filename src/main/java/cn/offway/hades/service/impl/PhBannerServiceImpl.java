@@ -33,6 +33,11 @@ public class PhBannerServiceImpl implements PhBannerService {
     }
 
     @Override
+    public List<PhBanner> save(List<PhBanner> phBanners){
+        return bannerRepository.save(phBanners);
+    }
+
+    @Override
     public PhBanner findOne(Long id) {
         return bannerRepository.findOne(id);
     }
@@ -72,6 +77,11 @@ public class PhBannerServiceImpl implements PhBannerService {
     }
 
     @Override
+    public void deleteByPosition(String position){
+        bannerRepository.deleteByPosition(position);
+    }
+
+    @Override
     public void updatetime() {
         bannerRepository.updatetime();
     }
@@ -99,5 +109,10 @@ public class PhBannerServiceImpl implements PhBannerService {
     @Override
     public void downSame(){
         bannerRepository.updateSamestate();
+    }
+
+    @Override
+    public List<PhBanner> findAllByStatus(){
+       return bannerRepository.findAllByStatusAndPosition("1","0");
     }
 }

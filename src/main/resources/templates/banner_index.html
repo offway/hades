@@ -748,10 +748,10 @@
 
 		$(".btn.btn-info.same").click(function () {
 			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
+			// if (activityId.length < 1) {
+			// 	toastr.error("请至少选择一条数据操作", "温馨提示");
+			// 	return;
+			// }
 
 			var ids = [];
 			activityId.each(function (i, e) {

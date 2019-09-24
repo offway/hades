@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -33,4 +34,11 @@ public interface PhBannerRepository extends JpaRepository<PhBanner, Long>, JpaSp
     @Modifying
     @Query(nativeQuery = true, value = "update `ph_banner` set `status` = 0 where `position` = 4 ")
     void updateSamestate();
+
+    List<PhBanner> findAllByStatusAndPosition(String status,String position);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true,value = "delete from `ph_banner` where `position` = ?1 and status = 0")
+    void deleteByPosition(String position);
 }
