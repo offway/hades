@@ -402,16 +402,67 @@
         that.parent().parent().remove();
     }
 
+	function updateNode(self,isLogo,isMini) {
+		var that = $(self);
+		that.parent().parent().remove();
+
+		var preview = $("#preview_body");
+		var id = preview.find("input[name='id']");
+		var image = preview.find("input[name='image']");
+		var ids = [];
+		id.each(function (i, e) {
+			ids.push(e.value);
+		});
+		var images = [];
+		image.each(function (i, e) {
+			images.push(e.value);
+		});
+		$.post("/brand_pin_save", {
+			"ids": ids,
+			"images": images,
+			"isLogo": isLogo,
+			"isMini": isMini
+		}, function (data) {
+			var activityId = $("input[name='activityId']:checked");
+			if (activityId.length < 1) {
+				toastr.error("请至少选择一条数据操作", "温馨提示");
+				return;
+			}
+			var ids = [];
+			activityId.each(function (i, e) {
+				ids.push(e.value);
+			});
+			$.post("/brand_pin", {"ids": ids, "to": "logo"}, function (data) {
+				if (data) {
+					$.post("/brand_pin_list", {"to": "logo"}, function (data) {
+						if (data) {
+							listIt(data, true, false);
+						}
+					});
+				}
+			});
+		});
+	}
+
 	function listIt(data, isLogo, isMini) {
+		var activityId = $("input[name='activityId']:checked");
+		var ids = [];
+		activityId.each(function (i, e) {
+			ids.push(e.value);
+		});
         var preview = $("#preview_body");
         var contentStr = "";
         var mainObj = data;
+        var val = "<input type='button' name='delete' value='删除' onclick='delNode(this)' />";
+        if ((data.length + ids.length)>7){
+			val = "<input type='button' name='delete' value='替换' onclick='updateNode(this,"+isLogo+","+isMini+")' />";
+		}
 		for (var i in mainObj) {
 			var item = mainObj[i];
 			var imgUrl = isLogo ? item["logoBig"] : item["banner"];
 			var idHidden = "<input type='hidden' name='id' value='VALUE' />".replace("VALUE", item["id"]);
 			var imgHidden = "<input type='hidden' name='image' value='VALUE' />".replace("VALUE", imgUrl == null ? "NONE" : imgUrl);
-			var delButton = "<input type='button' name='delete' value='删除' onclick='delNode(this)' />";
+			var delButton = val;
 			contentStr += appendToPreviewList(item["id"], item["name"], buildImg(item["logo"], 100, 100), buildImg(imgUrl, 100, 100), delButton, idHidden + imgHidden);
 		}
         preview.html(contentStr);
@@ -881,8 +932,11 @@
 			$.post("/brand_pin_sum", {}, function (data) {
 				if (data) {
 					if ((data + ids.length)>7){
-						toastr.error("超过最大上限！", "温馨提示");
-						return;
+						$.post("/brand_pin_list", {"to": "logo"}, function (data) {
+							if (data) {
+								listIt(data, true, false);
+							}
+						});
 					}else {
 						$.post("/brand_pin", {"ids": ids, "to": "logo"}, function (data) {
 							if (data) {

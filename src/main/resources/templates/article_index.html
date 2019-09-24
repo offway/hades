@@ -685,7 +685,7 @@
     var qiniuUrl = [[${qiniuUrl}]];
     var url = [[${url}]];
     jQuery(document).ready(function ($) {
-        if(url = 'lan'){
+        if(url == 'lan'){
             url = document.location.protocol + "//" + document.location.host;
         }
         jQuery.datetimepicker.setLocale('zh');

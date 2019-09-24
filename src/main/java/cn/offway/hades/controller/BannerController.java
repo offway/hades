@@ -1,6 +1,7 @@
 package cn.offway.hades.controller;
 
 import cn.offway.hades.domain.PhBanner;
+import cn.offway.hades.domain.PhBrand;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhBannerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping//("/banner")
@@ -150,24 +149,43 @@ public class BannerController {
 
     @ResponseBody
     @RequestMapping("/banner_same")
-    public boolean same(@RequestParam("ids[]") Long[] ids){
-        bannerService.downSame();
-        for (Long id : ids) {
-            PhBanner banner= bannerService.findOne(id);
+    public boolean same(){
+        List<PhBanner> phBanners = bannerService.findAllByStatus();
+        List<PhBanner> savebanner = new ArrayList<>();
+        bannerService.deleteByPosition("4");
+        for (PhBanner phBanner : phBanners) {
             PhBanner newbanner = new PhBanner();
             newbanner.setCreateTime(new Date());
-            newbanner.setSort(banner.getSort());
-            newbanner.setStatus(banner.getStatus());
-            newbanner.setUrl(banner.getUrl());
-            newbanner.setBanner(banner.getBanner());
-            newbanner.setBeginTime(banner.getBeginTime());
-            newbanner.setEndTime(banner.getEndTime());
-            newbanner.setRedirectId(banner.getRedirectId());
-            newbanner.setRemark(banner.getRemark());
-            newbanner.setType(banner.getType());
+            newbanner.setSort(phBanner.getSort());
+            newbanner.setStatus(phBanner.getStatus());
+            newbanner.setUrl(phBanner.getUrl());
+            newbanner.setBanner(phBanner.getBanner());
+            newbanner.setBeginTime(phBanner.getBeginTime());
+            newbanner.setEndTime(phBanner.getEndTime());
+            newbanner.setRedirectId(phBanner.getRedirectId());
+            newbanner.setRemark(phBanner.getRemark());
+            newbanner.setType(phBanner.getType());
             newbanner.setPosition("4");
-            bannerService.save(newbanner);
+            savebanner.add(newbanner);
         }
+        bannerService.save(savebanner);
+//        bannerService.downSame();
+//        for (Long id : ids) {
+//            PhBanner banner= bannerService.findOne(id);
+//            PhBanner newbanner = new PhBanner();
+//            newbanner.setCreateTime(new Date());
+//            newbanner.setSort(banner.getSort());
+//            newbanner.setStatus(banner.getStatus());
+//            newbanner.setUrl(banner.getUrl());
+//            newbanner.setBanner(banner.getBanner());
+//            newbanner.setBeginTime(banner.getBeginTime());
+//            newbanner.setEndTime(banner.getEndTime());
+//            newbanner.setRedirectId(banner.getRedirectId());
+//            newbanner.setRemark(banner.getRemark());
+//            newbanner.setType(banner.getType());
+//            newbanner.setPosition("4");
+//            bannerService.save(newbanner);
+//        }
         return true;
     }
 }
