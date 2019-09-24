@@ -159,7 +159,7 @@
 <input type="hidden" id="video_height"/>
 <video style="display: none" id="videoObj"></video>
 <input type="hidden" name="articleid" id="articleid" value=""/>
-<script src="js/common.js"></script>
+<script src="js/common1.js"></script>
 <script src="assets/js/moment.min.js"></script>
 <script src="assets/js/select2/select2.min.js"></script>
 <script src="assets/js/async.min.js"></script>
@@ -400,7 +400,7 @@
         var type = form.find("input[name='type']").val();
         var tag = form.find("input[name='tag']").val();
         var content = editor.getContent();
-        form.find("input[name='content']").val(content);
+        form.find("textarea[name='content']").val(content);
 
         var viewCount = form.find("input[name='viewCount']").val();
         var praiseCount = form.find("input[name='praiseCount']").val();
