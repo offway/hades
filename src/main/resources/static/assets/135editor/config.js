@@ -11,7 +11,7 @@
 	"scrawlActionName": "uploadscrawl",
 	"scrawlFieldName": "upload",
 	"scrawlPathFormat": "\/ueditor\/php\/upload\/image\/{yyyy}{mm}{dd}\/{time}{rand:6}",
-	"scrawlMaxSize": 2048000,
+	"scrawlMaxSize": 2048000000,
 	"scrawlUrlPrefix": "",
 	"scrawlInsertAlign": "none",
 	"snapscreenActionName": "uploadimage",
