@@ -6,6 +6,7 @@ server:
   port: 8088
   # 限制大小为5MB
   max-http-header-size: 5000000
+  connection-timeout: 60000
   session:  
     #session超时时间，单位秒
     timeout:  28800
