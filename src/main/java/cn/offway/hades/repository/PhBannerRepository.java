@@ -39,6 +39,6 @@ public interface PhBannerRepository extends JpaRepository<PhBanner, Long>, JpaSp
 
     @Modifying
     @Transactional
-    @Query(nativeQuery = true,value = "delete from `ph_banner` where `position` = ?1 and status = 0")
+    @Query(nativeQuery = true,value = "delete from `ph_banner` where `position` = ?1 and status = 1")
     void deleteByPosition(String position);
 }
