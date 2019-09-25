@@ -25,7 +25,7 @@
 
     var postHost;
 
-    if (HOST.indexOf("https") >= 0) {
+    if (HOST.indexOf("https") >= 0 && false) {
         postHost = "http://admin.offway.cn:8088"
     } else {
         postHost = HOST;

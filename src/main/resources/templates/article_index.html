@@ -682,6 +682,15 @@
         });
     }
 
+    function getPrefix() {
+        var protocol = document.location.protocol;
+        if (protocol === "https") {
+            return "http://admin.offway.cn:8088";
+        } else {
+            return "";
+        }
+    }
+
     var qiniuUrl = [[${qiniuUrl}]];
     var url = [[${url}]];
     jQuery(document).ready(function ($) {
@@ -872,7 +881,7 @@
         });
 
         $(".btn.btn-info.add").click(function () {
-            window.open('/article_add.html', "_blank");
+            window.open(getPrefix() + '/article_add.html', "_blank");
         });
 
         $('[name="type"]').click(function () {
@@ -954,7 +963,7 @@
                 toastr.error("请选择一条数据操作", "温馨提示");
                 return;
             }
-            window.open('/article_edit.html?id=' + activityId.val(), "_blank");
+            window.open(getPrefix() + '/article_edit.html?id=' + activityId.val(), "_blank");
         });
 
         $(".btn.btn-info.del").click(function () {
