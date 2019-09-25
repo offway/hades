@@ -23,6 +23,14 @@
 
     var HOST = document.location.protocol + "//" + document.location.host;
 
+    var postHost;
+
+    if (HOST.indexOf("https") >= 0) {
+        postHost = "http://admin.offway.cn:8088"
+    } else {
+        postHost = HOST;
+    }
+
     /**
      * 配置项主体。注意，此处所有涉及到路径的配置别遗漏URL变量。
      */
@@ -33,7 +41,7 @@
 
         // 服务器统一请求接口路径
         // , serverUrl: URL + "php/controller.php"
-        , serverUrl: HOST + "/file/upload_qn_new"
+        , serverUrl: postHost + "/file/upload_qn_new"
 
         //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的从新定义
         
