@@ -171,7 +171,7 @@
 <!-- 配置文件 -->
 <script type="text/javascript" src="assets/135editor/ueditor.config.js"></script>
 <!-- 编辑器源码文件 -->
-<script type="text/javascript" src="assets/135editor/ueditor.all.min.v.js"></script>
+<script type="text/javascript" src="assets/135editor/ueditor.all.min.v2.js"></script>
 <script type="text/javascript" src="assets/135editor/a92d301d77.js"></script>
 <!-- 播放器使用的是videojs开源插件 -->
 <!--<script type="text/javascript" src="assets/135editor/ueditor.parse.js"></script>-->
@@ -386,7 +386,7 @@
                 var old = editor.getContent();
                 console.log(old);
                 editor.setContent(old.replace(uuid, imgBase64));
-            }, 800);
+            }, 1000);
         };
         video.crossOrigin = "anonymous";
         video.src = url + "#t=3";
