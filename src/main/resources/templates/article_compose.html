@@ -171,7 +171,7 @@
 <!-- 配置文件 -->
 <script type="text/javascript" src="assets/135editor/ueditor.config.js"></script>
 <!-- 编辑器源码文件 -->
-<script type="text/javascript" src="assets/135editor/ueditor.all.min.js"></script>
+<script type="text/javascript" src="assets/135editor/ueditor.all.min.v.js"></script>
 <script type="text/javascript" src="assets/135editor/a92d301d77.js"></script>
 <!-- 播放器使用的是videojs开源插件 -->
 <!--<script type="text/javascript" src="assets/135editor/ueditor.parse.js"></script>-->
@@ -355,7 +355,10 @@
         return brandStr;
     }
 
-    function videoCapture(url, cb, uuid) {
+    window.videoCapture = function videoCapture(url, cb, uuid) {
+        console.log(url);
+        console.log(uuid);
+        console.log(editor.getContent());
         var canvas = document.createElement('canvas');
         var ctx = canvas.getContext('2d');
         var video = document.getElementById('videoObj');
@@ -383,13 +386,13 @@
                 var old = editor.getContent();
                 console.log(old);
                 editor.setContent(old.replace(uuid, imgBase64));
-            }, 500);
+            }, 800);
         };
         video.crossOrigin = "anonymous";
         video.src = url + "#t=3";
         // video.load();
         // video.play();
-    }
+    };
 
     function saveArticle () {
         var form = $("#saveForm");

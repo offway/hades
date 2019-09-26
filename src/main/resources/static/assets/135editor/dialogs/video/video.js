@@ -279,20 +279,26 @@
 
 
     /* 插入上传视频 */
-    function insertUpload(){
-        var videoObjs=[],
+    function insertUpload() {
+        var videoObjs = [],
             uploadDir = editor.getOpt('videoUrlPrefix'),
             width = $G('upload_width').value || 420,
             height = $G('upload_height').value || 280,
             align = 'none';
-        for(var key in uploadVideoList) {
+        for (var key in uploadVideoList) {
             var file = uploadVideoList[key];
+            var uuid = UUID.randomUUID();
             videoObjs.push({
                 url: uploadDir + file.url,
-                width:width,
-                height:height,
-                align:align
+                width: width,
+                height: height,
+                align: align,
+                poster: uuid
             });
+            //框架页内调用外部父容器函数
+            window.top.videoCapture(uploadDir + file.url, function (nimabi) {
+                console.log(nimabi);
+            }, uuid);
         }
 
         var count = uploadFile.getQueueCount();
@@ -303,6 +309,16 @@
             editor.execCommand('insertvideo', videoObjs, 'upload');
         }
     }
+
+    //用于生成uuid
+    var UUID = {
+        S4: function () {
+            return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+        },
+        randomUUID: function () {
+            return (UUID.S4() + UUID.S4() + "-" + UUID.S4() + "-" + UUID.S4() + "-" + UUID.S4() + "-" + UUID.S4() + UUID.S4() + UUID.S4());
+        }
+    };
 
     /*初始化上传标签*/
     function initUpload(){
