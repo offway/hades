@@ -802,6 +802,13 @@
                 return;
             }
 
+			if (info.length > 150) {
+				toastr.error("简介不得超过 150 字", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return;
+			}
+
             var isOK = checkImg([[logoFile, "logo"], [logoBigFile, "logoBig"], [bannerFile, "banner"], [bannerBigFile, "bannerBig"], [backgroundFile, "background"]]);
             if (typeof isOK == 'boolean') {
                 return;
