@@ -117,9 +117,17 @@ public class GoodsController {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
         if (roles.contains(BigInteger.valueOf(8L))) {
+            PhMerchant merchant = merchantService.findByAdminId(admin.getId());
+            /* 商户类型[0-品牌商,1-买手店] **/
+            if (merchant != null && "0".equals(merchant.getType())) {
+                map.addAttribute("isBrand", "1");
+            } else {
+                map.addAttribute("isBrand", "0");
+            }
             map.addAttribute("isAdmin", "0");
         } else {
             map.addAttribute("isAdmin", "1");
+            map.addAttribute("isBrand", "0");
         }
         map.addAttribute("isLimit", "0");
         return "goods_add";

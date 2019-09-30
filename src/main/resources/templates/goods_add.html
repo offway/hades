@@ -231,7 +231,7 @@
 										<div class="col-md-4">
 											<div class="form-group">
 												<label class="control-label"><font color="red">*</font>标签</label>
-												<label><input name="tags" class="notMe" type="checkbox" value="0"/>品牌保障</label>
+												<label><input name="tags" class="notMe" id="guarantee" type="checkbox" value="0"/>品牌保障</label>
 												<label><input name="tags" class="notMe" id="sevenDay" type="checkbox" value="1" onchange="toggleA(this)"/>7天退换货</label>
 												<label style="display: none"><input name="tags" class="notMe" type="checkbox" value="2"/>限量商品</label>
 												<label><input name="tags" class="notMe" id="noSevenDay" type="checkbox" value="3" onchange="toggleB(this)"/>特殊商品(不支持7天退换货)</label>
@@ -1223,6 +1223,7 @@
 	var qiniuUrl = [[${qiniuUrl}]];
 	var isAdmin = [[${isAdmin}]];
 	var isLimit = [[${isLimit}]];
+	var isBrand = [[${isBrand}]];
 	jQuery(document).ready(function ($) {
         $.base64.utf8encode = true;
         $.base64.utf8decode = true;
@@ -1292,6 +1293,9 @@
 
 		if (isLimit == "1") {
 			$("input[name='label']").val("1");
+		}
+		if (isBrand == "1") {
+			$("#guarantee").prop("checked", true);
 		}
 
 		//保存
