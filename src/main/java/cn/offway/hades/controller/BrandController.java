@@ -106,6 +106,10 @@ public class BrandController {
     @ResponseBody
     @RequestMapping("/brand_save")
     public boolean save(PhBrand brand) {
+        if (brand.getId() == null) {
+            /* 状态[0-未上架,1-已上架] **/
+            brand.setStatus("0");
+        }
         if ("".equals(brand.getBanner().trim())) {
             brand.setBanner(null);
         }
@@ -248,7 +252,7 @@ public class BrandController {
 
     @ResponseBody
     @RequestMapping("/brand_pin_sum")
-    public Long pinsum(){
+    public Long pinsum() {
         String jsonStr = configService.findContentByName("INDEX_BRAND_LOGO");
         JSONArray jsonArray;
         if (jsonStr != null && !"".equals(jsonStr)) {
