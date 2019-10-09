@@ -261,9 +261,6 @@
 			language: {
                 url: "../assets/Chinese.txt"
             },
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
 			bFilter : false,
 			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
             sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
@@ -272,7 +269,6 @@
                 var searchArray = $(".form-inline").serializeArray();
                 $.merge(aData, searchArray);
             },
-            order: [[ 6, "desc" ]],
 			columnDefs: [
 				{
 					targets: 0,
@@ -297,11 +293,13 @@
 				},
 				{
 					targets: 3,
+					orderable: false,
 					data: "merchantName",
 					title: "商户名称"
 				},
 				{
 					targets: 4,
+					orderable: false,
 					data: "merchantLogo",
 					title: "商户LOGO",
 					render: function (data, type, row, meta) {
@@ -353,6 +351,7 @@
 				},
 				{
 					targets: 13,
+					orderable: false,
 					data: "remark",
 					title: "备注"
 				},

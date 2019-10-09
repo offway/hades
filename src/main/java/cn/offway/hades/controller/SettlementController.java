@@ -227,7 +227,9 @@ public class SettlementController {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
-        Sort sort = new Sort("id");
+        String sortCol = request.getParameter("iSortCol_0");
+        String sortName = request.getParameter("mDataProp_" + sortCol);
+        String sortDir = request.getParameter("sSortDir_0");
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
         Object mid = null;
         if (roles.contains(BigInteger.valueOf(8L))) {
@@ -239,7 +241,7 @@ public class SettlementController {
         if (StringUtils.isNotBlank(merchantId)) {
             mid = merchantId;
         }
-        Page<PhSettlementInfo> pages = settlementInfoService.findAll(mid, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        Page<PhSettlementInfo> pages = settlementInfoService.findAll(mid, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Sort.Direction.fromString(sortDir), sortName));
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
