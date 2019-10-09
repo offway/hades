@@ -1420,6 +1420,10 @@
                     introList.push(iUrl);
                 }
             }
+			if (introList.length === 0) {
+				toastr.error("请填写完整数据后提交", "温馨提示");
+				return;
+			}
 			//获取token
 			$.get("/qiniu/token", {}, function (token) {
 				if (token != '') {
