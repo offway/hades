@@ -223,10 +223,7 @@ public class SettlementController {
 
     @ResponseBody
     @RequestMapping("/settle_list")
-    public Map<String, Object> getSettleList(HttpServletRequest request, String merchantId, @AuthenticationPrincipal PhAdmin admin) {
-        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
-        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
-        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
+    public Map<String, Object> getSettleList(HttpServletRequest request, String merchantId, @AuthenticationPrincipal PhAdmin admin, int sEcho, int iDisplayStart, int iDisplayLength) {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
@@ -262,15 +259,17 @@ public class SettlementController {
 
     @ResponseBody
     @RequestMapping("/settle_inner_list")
-    public Map<String, Object> getSettleSubList(HttpServletRequest request, String sTime, String eTime, String orderStatus, String status, String payChannel) {
+    public Map<String, Object> getSettleSubList(HttpServletRequest request, String sTime, String eTime, String orderStatus, String status, String payChannel, int sEcho, int iDisplayStart, int iDisplayLength) {
         ObjectMapper objectMapper = new ObjectMapper();
         List<Object> list = new ArrayList<>();
-        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
-        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
-        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         String id = request.getParameter("theId");
-        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "id"));
-        PageRequest pageRequest = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
+        String sortCol = request.getParameter("iSortCol_0");
+        String sortName = request.getParameter("mDataProp_" + sortCol);
+//        if ("mvoucherAmount".equals(sortName)) {
+//            sortName = "mVoucherAmount";
+//        }
+        String sortDir = request.getParameter("sSortDir_0");
+        PageRequest pageRequest = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Sort.Direction.fromString(sortDir), sortName);
         Page<PhSettlementDetail> pages = (Page<PhSettlementDetail>) settlementDetailService.findAll(Long.valueOf(id), strToDate(sTime), strToDate(eTime), orderStatus, status, payChannel, pageRequest);
         for (PhSettlementDetail detail : pages.getContent()) {
             Map m = objectMapper.convertValue(detail, Map.class);
