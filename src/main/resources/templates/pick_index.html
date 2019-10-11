@@ -839,10 +839,10 @@
 				form.find("input:not(.notMe)").val("");
 				for (var i in data) {
 					if (i == "sub") {
-                        for (var j in data[i]) {
-                            var obj = data[i][j];
-                            addMoreGoodsDisplay(obj["id"], obj["name"], obj["img"]);
-                        }
+						for (var j in data[i]) {
+							var obj = data[i][j];
+							addMoreGoodsDisplay(obj["id"], obj["name"] + "__￥" + obj["price"], obj["img"]);
+						}
 					} else {
 						var ele = form.find("input[name='" + i + "']");
 						switch (ele.attr("type")) {

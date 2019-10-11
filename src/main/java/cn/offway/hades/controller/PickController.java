@@ -138,9 +138,11 @@ public class PickController {
                         if (goods != null) {
                             obj.put("name", goods.getName());
                             obj.put("img", goods.getImage());
+                            obj.put("price", goods.getPrice());
                         } else {
                             obj.put("name", "未知");
                             obj.put("img", "");
+                            obj.put("price", "未知");
                         }
                         return obj;
                     }
