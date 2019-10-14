@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -77,6 +78,8 @@ public class RefundController {
     private PhRefundOrderGoodsRepository refundOrderGoodsRepository;
     @Autowired
     private PhSettlementDetailService settlementDetailService;
+    @Autowired
+    private AlipayService alipayService;
 
     @RequestMapping("/refund.html")
     public String index(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
@@ -377,6 +380,13 @@ public class RefundController {
             remarkInfo.put("remark", refund.getCheckReason() == null ? "无" : refund.getCheckReason());
             remarkInfoList.add(remarkInfo);
             dataList.put("remarkInfo", remarkInfoList);
+            //支付宝信息
+            PhUserInfo userInfo = userInfoService.findOne(refund.getUserId());
+            if (userInfo != null) {
+                map.addAttribute("alipayNickName", userInfo.getAlipayNickName());
+                map.addAttribute("alipayUserId", userInfo.getAlipayUserId());
+            }
+            map.addAttribute("amount", refund.getAmount());
         }
         map.addAttribute("jsonStr", JSON.toJSONString(dataList));
         map.addAttribute("readOnly", readOnly);
@@ -461,7 +471,6 @@ public class RefundController {
                         /* 状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
                         orderInfo.setStatus("4");
                         orderInfoService.save(orderInfo);
-
                         //恢复钱包余额
                         PhUserInfo userInfo = userInfoService.findOne(orderInfo.getUserId());
                         userInfo.setBalance((userInfo.getBalance() + orderInfo.getWalletAmount()));
@@ -488,9 +497,10 @@ public class RefundController {
                             voucherInfo.setStatus("0");
                             voucherInfoService.save(voucherInfo);
                         }
-
                     }
                 }
+                //调用支付宝SDK退款至付款账户
+                doRefund(refund);
                 //更新财务系统订单状态
                 PhSettlementDetail detail = settlementDetailService.findOne(refund.getOrderNo());
                 if (detail != null) {
@@ -508,6 +518,11 @@ public class RefundController {
         refundService.save(refund);
         refundOrderGoodsService.updateByRefund(refund);
         return true;
+    }
+
+    private void doRefund(PhRefund refund) {
+        String requestNo = MessageFormat.format("{0}_{1}", refund.getOrderNo(), UUID.randomUUID().toString());
+        alipayService.refund(refund.getAmount(), refund.getOrderNo(), requestNo, refund.getReason());
     }
 
     @ResponseBody

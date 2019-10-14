@@ -20,12 +20,13 @@ public class AlipayServiceImpl implements AlipayService {
     private AlipayClient alipayClient;
 
     @Override
-    public AlipayTradeRefundResponse refund(double amount, String tradeNo) {
+    public AlipayTradeRefundResponse refund(double amount, String out_trade_no, String out_request_no, String refund_reason) {
         AlipayTradeRefundRequest request = new AlipayTradeRefundRequest();
         AlipayTradeRefundModel model = new AlipayTradeRefundModel();
-        model.setOutTradeNo(tradeNo);//支付宝交易号，和商户订单号不能同时为空
+        model.setOutTradeNo(out_trade_no);//支付宝交易号，和商户订单号不能同时为空
+        model.setOutRequestNo(out_request_no);//标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
         model.setRefundAmount(String.valueOf(amount));//需要退款的金额，该金额不能大于订单金额,单位为元，支持两位小数
-        model.setRefundReason("用户申请退款");//退款的原因说明
+        model.setRefundReason("用户申请退款:" + refund_reason);//退款的原因说明
         request.setBizModel(model);
         try {
             return alipayClient.execute(request);

@@ -429,6 +429,9 @@
 	var readOnly = [[${readOnly}]];
 	var action = [[${action}]];
 	var theId = [[${theId}]];
+	var alipayNickName = [[${alipayNickName}]];
+	var alipayUserId = [[${alipayUserId}]];
+	var amount = [[${amount}]];
 
     jQuery(document).ready(function($)
 	{
@@ -443,7 +446,8 @@
 		} else {
 			agreeEle.show();
 			agreeEle.click(function () {
-				var confirm = window.confirm("你确定要这么做？");
+				var str = "打款AAA元给BBB(CCC),你确定要这么做？".replace("AAA", amount).replace("BBB", alipayNickName).replace("CCC", alipayUserId);
+				var confirm = window.confirm(str);
 				if (confirm == false) {
 					return;
 				}
