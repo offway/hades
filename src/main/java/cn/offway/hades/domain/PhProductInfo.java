@@ -60,6 +60,9 @@ public class PhProductInfo implements Serializable {
     /** 背景图片 **/
     private String background;
 
+    /** 封面图 **/
+    private String coverImage;
+
     /** 活动开始时间 **/
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date beginTime;
@@ -306,6 +309,15 @@ public class PhProductInfo implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Column(name = "cover_image", length = 200)
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
     }
 	
 

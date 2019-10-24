@@ -164,6 +164,18 @@
 							</div>
 						</div>
 					</div>
+						<div class="row">
+							<div class="col-md-12">
+
+								<div class="form-group">
+									<label for="field-4" class="control-label">封面图</label>
+									<input type="file" class="form-control" name="coverFile" placeholder="封面图"/>
+									<input type="hidden" class="form-control" name="coverImage" />
+									<img alt="" src="" name="coverImage" style="display:none;"/>
+									<button class="btn btn-info modify cover" style="display:none;">更换</button>
+								</div>
+							</div>
+						</div>
 					<div class="row">
 						<div class="col-md-12">
 							
@@ -638,6 +650,7 @@
 				var thumbnailVal = form.find("input[name='thumbnailFile']").val();
 				var imageVal = form.find("input[name='imageFile']").val();
 				var bannerVal = form.find("input[name='bannerFile']").val();
+				var coverVal = form.find("input[name='coverFile']").val();
 				var shareImageVal = form.find("input[name='shareImageFile']").val();
 				var saveImageVal = form.find("input[name='saveImageFile']").val();
 				var backgroundVal = form.find("input[name='backgroundFile']").val();
@@ -646,6 +659,7 @@
 				var showImageVals = form.find("input[name='showImage']").val();
 				var imageVals = form.find("input[name='image']").val();
 				var bannerVals = form.find("input[name='banner']").val();
+				var coverVals = form.find("input[name='coverImage']").val();
 				var shareImageVals = form.find("input[name='shareImage']").val();
 				var backgroundVals = form.find("input[name='background']").val();
 				var saveImageVals = form.find("input[name='saveImage']").val();
@@ -661,7 +675,7 @@
 					(imageVal=='' && imageVals=='')
 					||(bannerVal=='' &&bannerVals=='' )||(shareImageVal=='' &&shareImageVals=='')
 					||(thumbnailVal=='' &&thumbnailVals=='')
-					|| channel==0){
+					|| channel==0 || (coverVals == '' && coverVal == '')){
 					toastr.error("请填写完整数据后提交", "温馨提示");
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
@@ -692,6 +706,7 @@
 				
 				var imageFile = '';
 				var bannerFile ='';
+				var coverFile = '';
 				var showImageFile ='';
 				var shareImageFile ='';
 				var saveImageFile ='';
@@ -706,6 +721,9 @@
 				if(bannerVal!=''){
 					bannerFile = form.find("input[name='bannerFile']")[0].files[0];
 
+				}
+				if (coverVal!=''){
+					coverFile = form.find("input[name='coverFile']")[0].files[0];
 				}
 				if(showImageVal!=''){
 					showImageFile = form.find("input[name='showImageFile']")[0].files[0];	
@@ -811,30 +829,44 @@
 											},function(res){
 												//上传成功
 												console.log(res);
-												/* if(res!=''){
+												if(res!=''){
+													form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+												}
+												//UpladFile("background",backgroundFile,function(res){
+												upload("coverImage",token,coverFile,function(res){},function(err){
+													console.log("coverFile:"+err);
+													footer.find("button").show();
+													footer.find(".bg-lg").hide();
+													toastr.error("操作失败", "温馨提示");
+												},function(res){
+													//上传成功
+													console.log(res);
+													//UpladFile("background",backgroundFile,function(res){
+													/* if(res!=''){
 													var res = JSON.parse(res.target.responseText);
 													if(res!=''){
 														form.find("input[name='"+res.param+"']").val(res.key);
 													}
 												} */
-												if(res!=''){
-													form.find("input[name='"+res.param+"']").val("https://qn.offway.cn/"+res.key);
-												}
-												
-												
-												//提交保存
-												$.post("/products-save",$("#saveForm").serialize(),function(data){
-													if(data){
-														footer.find("button").show();
-														footer.find(".bg-lg").hide();
-														jQuery('#modal-6').modal('hide');
-														toastr.success("操作已成功！", "温馨提示");
-														oTable.fnDraw(); 
-													}else{
-														footer.find("button").show();
-														footer.find(".bg-lg").hide();
-														toastr.error("操作失败", "温馨提示");
+													if(res!=''){
+														form.find("input[name='"+res.param+"']").val("https://qn.offway.cn/"+res.key);
 													}
+
+
+													//提交保存
+													$.post("/products-save",$("#saveForm").serialize(),function(data){
+														if(data){
+															footer.find("button").show();
+															footer.find(".bg-lg").hide();
+															jQuery('#modal-6').modal('hide');
+															toastr.success("操作已成功！", "温馨提示");
+															oTable.fnDraw();
+														}else{
+															footer.find("button").show();
+															footer.find(".bg-lg").hide();
+															toastr.error("操作失败", "温馨提示");
+														}
+													});
 												});
 											});
 										});
@@ -882,8 +914,9 @@
 					form.find("input[name='endTime']").val(endTimeStr);
 					
 					form.find("input[name='showImage']").val(data.showImage);
-					form.find("input[name='image']").val(data.image);
+					form.find("input[name='image']").val(data.image);coverImage
 					form.find("input[name='banner']").val(data.banner);
+					form.find("input[name='coverImage']").val(data.coverImage);
 					form.find("input[name='shareImage']").val(data.shareImage);
 					form.find("input[name='saveImage']").val(data.saveImage);
 					form.find("input[name='background']").val(data.background);
@@ -918,7 +951,14 @@
 						form.find("img[name='bannerImage']").attr("src",data.banner);
 						form.find("img[name='bannerImage']").show();
 						form.find(".btn.banner").show();
-						
+
+					}
+					if(''!=data.cover){
+						form.find("input[name='coverFile']").hide();
+						form.find("img[name='coverImage']").attr("src",data.coverImage);
+						form.find("img[name='coverImage']").show();
+						form.find(".btn.cover").show();
+
 					}
 					if(''!=data.shareImage){
 						form.find("input[name='shareImageFile']").hide();
