@@ -7,6 +7,9 @@
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
 	<link rel="stylesheet" href="assets/css/jquery-editable-select.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 		.form-group img{
@@ -102,7 +105,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="row">
+							<div class="row" id="bannerDIV">
 								<div class="col-md-2">
 									<div class="form-group">
 										<label class="control-label">banner 轮播图</label>
@@ -304,6 +307,7 @@
 <script src="assets/js/jquery.base64.js"></script>
 <script src="assets/js/distpicker.js"></script>
 <script src="assets/js/jquery-editable-select.min.js"></script>
+<script src="assets/js/jquery-ui.min.js"></script>
 <script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -1243,6 +1247,11 @@
 						addIntroFile("#addIntroFileBtn", image["imageUrl"]);
 					}
 				}
+				//可拖动
+				$("#bannerDIV").sortable();
+				$("#bannerDIV").disableSelection();
+				$("#introDIV").sortable();
+				$("#introDIV").disableSelection();
 				//规格
 				var savedSku = {
 					// "颜色": [
