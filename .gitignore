@@ -5,9 +5,8 @@
 /.factorypath
 /.gitignore
 /.project
-hades.iml
-D:/
-*xml
-*yml
+*.iml
+*.xml
+*.yml
 .settings
 .vscode
