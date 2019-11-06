@@ -207,7 +207,7 @@ public class RefundController {
     }
 
     @RequestMapping("/refund_detail.html")
-    public String orderDetail(ModelMap map, Long id, String readOnly) {
+    public String orderDetail(ModelMap map, Long id, String readOnly, String needCheck) {
         Map<String, Object> dataList = new HashMap<>();
         PhRefund refund = refundService.findOne(id);
         String action = "";
@@ -390,6 +390,7 @@ public class RefundController {
         }
         map.addAttribute("jsonStr", JSON.toJSONString(dataList));
         map.addAttribute("readOnly", readOnly);
+        map.addAttribute("needCheck", needCheck);
         map.addAttribute("action", action);
         map.addAttribute("theId", id);
         return "refund_detail";

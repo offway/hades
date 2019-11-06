@@ -427,6 +427,7 @@
 	var jsonObj = JSON.parse(jsonStr);
 	console.log(jsonObj);
 	var readOnly = [[${readOnly}]];
+	var needCheck = [[${needCheck}]];
 	var action = [[${action}]];
 	var theId = [[${theId}]];
 	var alipayNickName = [[${alipayNickName}]];
@@ -446,7 +447,12 @@
 		} else {
 			agreeEle.show();
 			agreeEle.click(function () {
-				var str = "打款AAA元给BBB(CCC),你确定要这么做？".replace("AAA", amount).replace("BBB", alipayNickName).replace("CCC", alipayUserId);
+				var str;
+				if (parseInt(needCheck) == 1) {
+					str = "你确定要这么做？";
+				} else {
+					str = "打款AAA元给BBB(CCC),你确定要这么做？".replace("AAA", amount).replace("BBB", alipayNickName).replace("CCC", alipayUserId);
+				}
 				var confirm = window.confirm(str);
 				if (confirm == false) {
 					return;
@@ -998,7 +1004,6 @@
 				}
 			]
 		});
-
 		//保存
 		$(".btn.btn-info.save").click(function () {
 			var footer = $(this).parent(".modal-footer");
@@ -1052,8 +1057,6 @@
 				}
 			});
 		});
-
-
 	});
 	/*]]>*/
 	</script>
