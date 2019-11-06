@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * 商户品牌关系Repository接口
  *
@@ -28,4 +30,7 @@ public interface PhMerchantBrandRepository extends JpaRepository<PhMerchantBrand
     @Modifying
     @Query(nativeQuery = true, value = "UPDATE `ph_merchant_brand` SET `brand_logo` = ?2 , `brand_name` = ?3 WHERE (`brand_id` = ?1)")
     void updateBrandInfo(Long bid, String bLogo, String bName);
+
+    @Query(nativeQuery = true, value = "SELECT count(b.id) as ct,a.brand_id,a.brand_name,a.merchant_id,a.merchant_name,a.id as pk,b.id as fk FROM ph_merchant_brand a left join ph_goods b on a.brand_id = b.brand_id group by a.brand_id ,a.merchant_id")
+    List<Object[]> checkEmptyBrand();
 }

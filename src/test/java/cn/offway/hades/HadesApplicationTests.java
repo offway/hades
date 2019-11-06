@@ -4,6 +4,7 @@ import cn.offway.hades.domain.PhMerchant;
 import cn.offway.hades.domain.PhOrderInfo;
 import cn.offway.hades.domain.PhSettlementDetail;
 import cn.offway.hades.domain.PhSettlementInfo;
+import cn.offway.hades.repository.PhMerchantBrandRepository;
 import cn.offway.hades.service.PhMerchantService;
 import cn.offway.hades.service.PhOrderInfoService;
 import cn.offway.hades.service.PhSettlementDetailService;
@@ -41,6 +42,9 @@ public class HadesApplicationTests {
 
     @Autowired
     private PhMerchantService phMerchantService;
+
+    @Autowired
+    private PhMerchantBrandRepository merchantBrandRepository;
 
     @Test
     public void contextLoads() {
@@ -157,5 +161,15 @@ public class HadesApplicationTests {
         //账户:clnt.user().* 签名:clnt.sign().* 模版:clnt.tpl().* 短信:clnt.sms().* 语音:clnt.voice().* 流量:clnt.flow().* 隐私通话:clnt.call().*
         //释放clnt
         client.close();
+    }
+
+    @Test
+    public void testSQL() {
+        List<Object[]> o = merchantBrandRepository.checkEmptyBrand();
+        for (Object[] a : o) {
+            for (Object b : a) {
+                System.out.println(b);
+            }
+        }
     }
 }

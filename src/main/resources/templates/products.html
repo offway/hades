@@ -1090,12 +1090,12 @@
 					var imageFile = '';
 					var channel = data.channel;
 					if((channel & 4) == 4){
-						if(openVideoFile==''){
+						/*if(openVideoFile==''){
 							toastr.error("开奖视频不能为空", "温馨提示");
 							footer.find("button").show();
 							footer.find(".bg-lg").hide();
 							return ;
-						}
+						}*/
 						//上传文件获得文件地址
 						if(openVideoFile!=''){
 							imageFile = form.find("input[name='openVideoFile']")[0].files[0];
