@@ -62,6 +62,13 @@
 									<option value="3">明星同款详情页</option>
 									<option value="5">单篇资讯</option>
 									<option value="6">免费抽</option>
+									<option value="7">App内部H5</option>
+									<option value="11">中国力量首页</option>
+									<option value="12">高街时尚首页</option>
+									<option value="13">买手店首页</option>
+									<option value="14">买手店详情页</option>
+									<option value="15">跳转限量商品</option>
+									<option value="98">不跳转</option>
 								</select>
 							</div>
 							<div class="input-group">
@@ -166,6 +173,12 @@
                                     <label><input name="type" class="notMe" type="radio" value="5"/>单篇资讯</label>
                                     <label><input name="type" class="notMe" type="radio" value="6"/>免费抽</label>
 									<label><input name="type" class="notMe" type="radio" value="15"/>限量商品</label>
+									<label><input name="type" class="notMe" type="radio" value="7"/>App内部H5</label>
+									<label><input name="type" class="notMe" type="radio" value="11"/>中国力量首页</label>
+									<label><input name="type" class="notMe" type="radio" value="12"/>高街时尚首页</label>
+									<label><input name="type" class="notMe" type="radio" value="13"/>买手店首页</label>
+									<label><input name="type" class="notMe" type="radio" value="14"/>买手店详情页</label>
+									<label><input name="type" class="notMe" type="radio" value="98"/>不跳转</label>
                                 </div>
 							</div>
 						</div>
@@ -493,6 +506,18 @@
                         var map = ["跳转URL(带参)", "品牌首页", "单品", "活动首页", "明星同款详情页", "单篇资讯", "免费抽", "跳转URL(不带参)"];
                         if (data == 15){
                         	return "限量商品"
+						}else if (data == 7 ){
+							return "App内部H5"
+						}else if (data == 11){
+							return "中国力量首页"
+						}else if (data == 12){
+							return "高街时尚首页"
+						}else if (data == 13){
+							return "买手店首页"
+						}else if (data == 14){
+							return "买手店详情页"
+						}else if (data == 98){
+							return "不跳转"
 						}else {
 							return map[parseInt(data)];
 						}
@@ -666,7 +691,7 @@
 			var url = form.find("input[name='url']").val();
 			var pushTime = form.find("input[name='pushTime']").val();
 
-			if (name == '' || content == '' || pushTime == '' || (redirectId == '' && url == '')) {
+			if (name == '' || content == '' || pushTime == '' ) {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
