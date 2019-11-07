@@ -784,6 +784,12 @@ public class GoodsController {
             goods.setStatus("1");
             goods.setUpTime(new Date());
             goodsService.save(goods);
+            //关联品牌库内品牌状态跟随上架
+            PhBrand brand = brandService.findOne(goods.getBrandId());
+            if (brand != null && "0".equals(brand.getStatus())) {
+                brand.setStatus("1");
+                brandService.save(brand);
+            }
         }
         return true;
     }
