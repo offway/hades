@@ -1,7 +1,10 @@
 package cn.offway.hades.job;
 
+import cn.offway.hades.domain.PhBrand;
+import cn.offway.hades.domain.PhGoods;
 import cn.offway.hades.domain.PhMerchantBrand;
 import cn.offway.hades.repository.PhMerchantBrandRepository;
+import cn.offway.hades.service.PhBrandService;
 import cn.offway.hades.service.PhGoodsService;
 import cn.offway.hades.service.PhMerchantBrandService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,8 @@ public class Job {
     private PhMerchantBrandRepository merchantBrandRepository;
     @Autowired
     private PhGoodsService goodsService;
+    @Autowired
+    private PhBrandService brandService;
 
     @Scheduled(cron = "0 * * * * *")
     public void disableEmptyBrand() {
@@ -29,6 +34,9 @@ public class Job {
                 long pk = Long.valueOf(String.valueOf(item[5]));
                 PhMerchantBrand merchantBrand = merchantBrandService.findOne(pk);
                 if (merchantBrand != null) {
+                    PhBrand brand = brandService.findOne(merchantBrand.getBrandId());
+                    brand.setStatus("0");
+                    brandService.save(brand);
                     //
                 }
             }
