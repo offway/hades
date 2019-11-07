@@ -1,14 +1,8 @@
 package cn.offway.hades;
 
-import cn.offway.hades.domain.PhMerchant;
-import cn.offway.hades.domain.PhOrderInfo;
-import cn.offway.hades.domain.PhSettlementDetail;
-import cn.offway.hades.domain.PhSettlementInfo;
+import cn.offway.hades.domain.*;
 import cn.offway.hades.repository.PhMerchantBrandRepository;
-import cn.offway.hades.service.PhMerchantService;
-import cn.offway.hades.service.PhOrderInfoService;
-import cn.offway.hades.service.PhSettlementDetailService;
-import cn.offway.hades.service.PhSettlementInfoService;
+import cn.offway.hades.service.*;
 import cn.offway.hades.utils.HttpClientUtil;
 import cn.offway.hades.utils.MathUtils;
 import com.alibaba.fastjson.JSON;
@@ -17,6 +11,8 @@ import com.yunpian.sdk.model.Result;
 import com.yunpian.sdk.model.SmsSingleSend;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
@@ -24,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 @RunWith(SpringRunner.class)
@@ -45,6 +42,14 @@ public class HadesApplicationTests {
 
     @Autowired
     private PhMerchantBrandRepository merchantBrandRepository;
+
+    @Autowired
+    private PhMerchantBrandService merchantBrandService;
+
+    @Autowired
+    private PhBrandService brandService;
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
     public void contextLoads() {
@@ -171,5 +176,30 @@ public class HadesApplicationTests {
                 System.out.println(b);
             }
         }
+    }
+
+    @Test
+    public void testEmptyBrand() {
+        //SELECT count(b.id) as ct,a.id as pk,a.name FROM phweb.ph_brand a left join phweb.ph_goods b on a.id = b.brand_id group by a.id
+        List<Object[]> list = merchantBrandRepository.checkAllEmptyBrand();
+        int ct = 0;
+        for (Object[] item : list) {
+            long count = Long.valueOf(String.valueOf(item[0]));
+            if (count == 0) {
+                long pk = Long.valueOf(String.valueOf(item[1]));
+                String name = String.valueOf(item[2]);
+                PhBrand brand = brandService.findOne(pk);
+                if (brand != null) {
+                    /* 状态[0-未上架,1-已上架] **/
+                    brand.setStatus("0");
+                    brandService.save(brand);
+                    System.out.println(MessageFormat.format("{0}品牌被下架,ID 为{1}", name, brand.getId()));
+                    logger.info(MessageFormat.format("{0}品牌被下架,ID 为{1}", name, brand.getId()));
+                    ct++;
+                }
+            }
+        }
+        System.out.println(MessageFormat.format("品牌被下架总数为{0}", ct));
+        logger.info(MessageFormat.format("品牌被下架总数为{0}", ct));
     }
 }

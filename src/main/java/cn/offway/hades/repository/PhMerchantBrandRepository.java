@@ -33,4 +33,7 @@ public interface PhMerchantBrandRepository extends JpaRepository<PhMerchantBrand
 
     @Query(nativeQuery = true, value = "SELECT count(b.id) as ct,a.brand_id,a.brand_name,a.merchant_id,a.merchant_name,a.id as pk,b.id as fk FROM ph_merchant_brand a left join ph_goods b on a.brand_id = b.brand_id group by a.brand_id ,a.merchant_id")
     List<Object[]> checkEmptyBrand();
+
+    @Query(nativeQuery = true, value = "SELECT count(b.id) as ct,a.id as pk,a.name FROM ph_brand a left join ph_goods b on a.id = b.brand_id group by a.id")
+    List<Object[]> checkAllEmptyBrand();
 }
