@@ -16,7 +16,7 @@ public class Job {
     @Autowired
     private PhBrandService brandService;
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void disableEmptyBrand() {
         List<Object[]> list = merchantBrandRepository.checkAllEmptyBrand();
         for (Object[] item : list) {
