@@ -800,8 +800,8 @@
                 return;
             }
 
-			if (info.length > 150) {
-				toastr.error("简介不得超过 150 字", "温馨提示");
+			if (info.length > 1000) {
+				toastr.error("简介不得超过 1000 字", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
 				return;
