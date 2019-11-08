@@ -201,7 +201,7 @@ public class ProductController {
 							extras.put("type", "6");//0-H5,1-精选文章,2-活动
 							extras.put("id", null);
 							extras.put("url", null);
-							jPushService.createSingleSchedule(String.valueOf(phProductInfo.getId()), "0", "抽奖通知", phProductInfo.getBeginTime(), "抽奖通知", "【免费送】"+phProductInfo.getShareDesc(), extras);
+							jPushService.createSingleSchedule(String.valueOf(phProductInfo.getId()), "0", "抽奖通知", phProductInfo.getBeginTime(), "免费送", "0元送你" + phProductInfo.getShareDesc(), extras);
 						}else if(status.equals("0")){
 							jPushService.deleteSchedule(String.valueOf(phProductInfo.getId()), "0");
 						}
