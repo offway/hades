@@ -83,6 +83,8 @@ public class PhUserInfo implements Serializable {
     /** 连续积分签到天数 **/
     private Long signCount;
 
+    /** 注册来源[0-电子刊,1-网页,2-很潮小程序,3-很潮app,4-未知] **/
+    private String source;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -293,6 +295,15 @@ public class PhUserInfo implements Serializable {
 
     public void setSignCount(Long signCount) {
         this.signCount = signCount;
+    }
+
+    @Column(name = "source", length = 2)
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
 }
