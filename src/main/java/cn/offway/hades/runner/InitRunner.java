@@ -18,6 +18,12 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,12 +50,7 @@ public class InitRunner implements ApplicationRunner {
     private static Logger logger = LoggerFactory.getLogger(ApplicationRunner.class);
 
     @Override
-    public void run(ApplicationArguments applicationArguments) throws Exception {
-//        Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-//        JobDetail job = JobBuilder.newJob().build();
-//        scheduler.addJob(job, true);
-//        scheduler.start();
-
+    public void run(ApplicationArguments applicationArguments) {
         DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
         String jsonStr = configService.findContentByName("CRONJOB");
         if (jsonStr == null || "".equals(jsonStr.trim())) {
@@ -79,7 +80,7 @@ public class InitRunner implements ApplicationRunner {
                     continue;
                 }
                 JSONArray taskList = jsonObject.getJSONArray(key);
-                createJob(taskList, key, sTime, eTime, now, goodsService, stockService, orderInfoService, configService, userInfoService, accumulatePointsService);
+                createJob(taskList, key, sTime, eTime, now);
             }
         }
     }
@@ -93,6 +94,44 @@ public class InitRunner implements ApplicationRunner {
             return false;
         }
         return true;
+    }
+
+    public static void createJob(JSONArray taskList, String key, Date sTime, Date eTime, Date now) {
+        long delaySeconds = sTime.getTime() - now.getTime();
+        long delaySecondsReverse = eTime.getTime() - now.getTime();
+        Socket clientSocket = null;
+        PrintWriter out = null;
+        BufferedReader in = null;
+        try {
+            clientSocket = new Socket("127.0.0.1", 9501);
+            out = new PrintWriter(clientSocket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("action", "add");
+            JSONObject dataObj = new JSONObject();
+            dataObj.put("key", key);
+            dataObj.put("value", taskList);
+            jsonObject.put("data", dataObj);
+            out.println(jsonObject.toJSONString());
+            logger.info(MessageFormat.format("server echo is:{0}", in.readLine()));
+        } catch (IOException e) {
+            logger.error("socket open error", e);
+        } finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+                if (out != null) {
+                    out.close();
+                }
+                if (clientSocket != null) {
+                    clientSocket.close();
+                }
+            } catch (IOException e) {
+                logger.error("socket close error", e);
+            }
+        }
+
     }
 
     public static void createJob(JSONArray taskList, String key, Date sTime, Date eTime, Date now, PhGoodsService goodsService, PhGoodsStockService stockService, PhOrderInfoService orderInfoService, PhConfigService configService, PhUserInfoService userInfoService, PhAccumulatePointsService accumulatePointsService) {
