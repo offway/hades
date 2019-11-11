@@ -301,7 +301,7 @@ public class InitRunner implements ApplicationRunner {
         }
     }
 
-    private static void points(Long userId, String type, Long points, String remark, PhAccumulatePointsService accumulatePointsService, PhUserInfoService userInfoService) {
+    public static void points(Long userId, String type, Long points, String remark, PhAccumulatePointsService accumulatePointsService, PhUserInfoService userInfoService) {
         PhAccumulatePoints accumulatePoints = new PhAccumulatePoints();
         accumulatePoints.setUserId(userId);
         accumulatePoints.setCreateTime(new Date());
@@ -315,7 +315,7 @@ public class InitRunner implements ApplicationRunner {
         userInfoService.addPoints(userId, points);
     }
 
-    private static void calcPriceRange(Long gid, PhGoodsStockService stockService, PhGoodsService goodsService) {
+    public static void calcPriceRange(Long gid, PhGoodsStockService stockService, PhGoodsService goodsService) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -336,7 +336,7 @@ public class InitRunner implements ApplicationRunner {
         }).start();
     }
 
-    private static void checkAndPurgeTask(String key, PhConfigService configService) {
+    public static void checkAndPurgeTask(String key, PhConfigService configService) {
         new Thread(new Runnable() {
             @Override
             public void run() {
