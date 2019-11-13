@@ -464,6 +464,10 @@ public class RefundController {
                 }
                 break;
             case "3":
+                List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+                if (roles.contains(BigInteger.valueOf(8L))) {
+                    return false;
+                }
                 refund.setStatus("4");
                 /* 是否整单退款[0-否,1-是] **/
                 if ("1".equals(refund.getIsComplete())) {
