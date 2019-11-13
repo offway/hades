@@ -718,7 +718,7 @@ public class GoodsController {
             Date sTime = DateTime.parse(startTimeText, format).toDate();
             Date eTime = DateTime.parse(stopTimeText, format).toDate();
             JSONArray taskList = jsonObject.getJSONArray(key);
-            InitRunner.createJob(taskList, key, sTime, eTime, new Date());
+            InitRunner.createJob(taskList, key, sTime, eTime, new Date(), goodsService, goodsStockService, null, configService, null, null);
         }
         return true;
     }
@@ -886,7 +886,7 @@ public class GoodsController {
             Date sTime = DateTime.parse(beginTime, format).toDate();
             Date eTime = DateTime.parse(endTime, format).toDate();
             taskList = jsonObject.getJSONArray(key);
-            InitRunner.createJob(taskList, key, sTime, eTime, new Date());
+            InitRunner.createJob(taskList, key, sTime, eTime, new Date(), goodsService, goodsStockService, null, configService, null, null);
         } else {
             //create instant jobs
             String key = "NOW" + "_" + "NONE" + "_" + ids + "_" + discount;
@@ -900,7 +900,7 @@ public class GoodsController {
                 list.add(map);
             }
             taskList = JSONArray.parseArray(JSON.toJSONString(list));
-            InitRunner.createJob(taskList, key, now, now, now);
+            InitRunner.createJob(taskList, key, now, now, now, goodsService, goodsStockService, null, configService, null, null);
         }
         return true;
     }

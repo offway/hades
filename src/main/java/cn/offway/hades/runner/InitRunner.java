@@ -80,7 +80,7 @@ public class InitRunner implements ApplicationRunner {
                     continue;
                 }
                 JSONArray taskList = jsonObject.getJSONArray(key);
-                createJob(taskList, key, sTime, eTime, now);
+                createJob(taskList, key, sTime, eTime, now, goodsService, stockService, orderInfoService, configService, userInfoService, accumulatePointsService);
             }
         }
     }
