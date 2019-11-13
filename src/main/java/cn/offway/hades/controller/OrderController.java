@@ -139,6 +139,11 @@ public class OrderController {
                 receiverInfo.put("realName", address.getRealName());
                 receiverInfo.put("phone", address.getPhone());
                 receiverInfo.put("location", address.getProvince() + address.getCity() + address.getCounty() + address.getContent());
+            }else {
+                PhOrderExpressInfo orderExpressInfo1 = orderExpressInfoService.findByPid(orderInfo.getOrderNo(),"0");
+                receiverInfo.put("realName", orderExpressInfo1.getToRealName());
+                receiverInfo.put("phone", orderExpressInfo1.getToPhone());
+                receiverInfo.put("location", orderExpressInfo1.getToProvince() + orderExpressInfo1.getToCity() + orderExpressInfo1.getToCounty() + orderExpressInfo1.getToContent());
             }
             receiverInfoList.add(receiverInfo);
             dataList.put("receiverInfo", receiverInfoList);
