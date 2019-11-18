@@ -48,6 +48,8 @@ public class InitRunner implements ApplicationRunner {
     @Autowired
     private PhAccumulatePointsService accumulatePointsService;
     private static Logger logger = LoggerFactory.getLogger(ApplicationRunner.class);
+    private static final String LOG_TEXT_GOODS = "定时任务：商品{0}价格从{1}改到{2}";
+    private static final String LOG_TEXT_STOCK = "定时任务：库存{0}价格从{1}改到{2}";
 
     @Override
     public void run(ApplicationArguments applicationArguments) {
@@ -166,16 +168,20 @@ public class InitRunner implements ApplicationRunner {
                                 } else {
                                     goods.setOriginalPrice(goods.getPrice());
                                 }
-                                goods.setPrice(goods.getPrice() * discount);
+                                double tmp = goods.getPrice();
+                                goods.setPrice(tmp * discount);
                                 //update stock
                                 List<Double> priceList = new ArrayList<>();
                                 for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
-                                    stock.setPrice(stock.getPrice() * discount);
+                                    double tmpInner = stock.getPrice();
+                                    stock.setPrice(tmpInner * discount);
                                     PhGoodsStock stockSaved = stockService.save(stock);
+                                    logger.info(MessageFormat.format(LOG_TEXT_STOCK, stock.getId(), tmpInner, stock.getPrice()));
                                     priceList.add(stockSaved.getPrice());
                                 }
                                 goods.setPriceRange(genPriceRange(priceList));
                                 goodsService.save(goods);
+                                logger.info(MessageFormat.format(LOG_TEXT_GOODS, goods.getId(), tmp, goods.getPrice()));
                             }
                             break;
                         case "goodsPrice":
@@ -183,12 +189,14 @@ public class InitRunner implements ApplicationRunner {
                             double goodsPriceOriginal = task.getDoubleValue("goodsPriceOriginal");
                             goods = goodsService.findOne(id);
                             if (goods != null) {
+                                double tmp = goods.getPrice();
                                 goods.setPrice(goodsPrice);
                                 goods.setOriginalPrice(goodsPriceOriginal);
                                 logger.info("setPrice to " + goodsPrice);
                                 logger.info("setOriginalPrice to " + goodsPriceOriginal);
                                 logger.info("now is " + new Date());
                                 goodsService.save(goods);
+                                logger.info(MessageFormat.format(LOG_TEXT_GOODS, goods.getId(), tmp, goods.getPrice()));
                                 //re-calc priceRange 3 seconds later
                                 calcPriceRange(id, stockService, goodsService);
                             }
@@ -197,8 +205,10 @@ public class InitRunner implements ApplicationRunner {
                             double stockPrice = task.getDoubleValue("stockPrice");
                             goodsStock = stockService.findOne(id);
                             if (goodsStock != null) {
+                                double tmp = goodsStock.getPrice();
                                 goodsStock.setPrice(stockPrice);
                                 stockService.save(goodsStock);
+                                logger.info(MessageFormat.format(LOG_TEXT_STOCK, goodsStock.getId(), tmp, goodsStock.getPrice()));
                             }
                             break;
                         case "confirmPackage":
@@ -243,29 +253,35 @@ public class InitRunner implements ApplicationRunner {
                                 goods = goodsService.findOne(id);
                                 if (goods != null) {
                                     //update goods
-                                    goods.setPrice(goods.getPrice() / discount);
+                                    double tmp = goods.getPrice();
+                                    goods.setPrice(tmp / discount);
                                     goods.setOriginalPrice(null);
                                     //update stock
                                     List<Double> priceList = new ArrayList<>();
                                     for (PhGoodsStock stock : stockService.findByPid(goods.getId())) {
-                                        stock.setPrice(stock.getPrice() / discount);
+                                        double tmpInner = stock.getPrice();
+                                        stock.setPrice(tmpInner / discount);
                                         PhGoodsStock stockSaved = stockService.save(stock);
+                                        logger.info(MessageFormat.format(LOG_TEXT_STOCK, stock.getId(), tmpInner, stock.getPrice()));
                                         priceList.add(stockSaved.getPrice());
                                     }
                                     goods.setPriceRange(genPriceRange(priceList));
                                     goodsService.save(goods);
+                                    logger.info(MessageFormat.format(LOG_TEXT_GOODS, goods.getId(), tmp, goods.getPrice()));
                                 }
                                 break;
                             case "goodsPrice":
                                 double goodsPrice = task.getDoubleValue("goodsPriceOriginal");
                                 goods = goodsService.findOne(id);
                                 if (goods != null) {
+                                    double tmp = goods.getPrice();
                                     goods.setPrice(goodsPrice);
                                     goods.setOriginalPrice(null);
                                     logger.info("setPrice to " + goodsPrice);
                                     logger.info("setOriginalPrice to NULL");
                                     logger.info("now is " + new Date());
                                     goodsService.save(goods);
+                                    logger.info(MessageFormat.format(LOG_TEXT_GOODS, goods.getId(), tmp, goods.getPrice()));
                                     //re-calc priceRange 3 seconds later
                                     calcPriceRange(id, stockService, goodsService);
                                 }
@@ -274,8 +290,10 @@ public class InitRunner implements ApplicationRunner {
                                 double stockPrice = task.getDoubleValue("stockPriceOriginal");
                                 goodsStock = stockService.findOne(id);
                                 if (goodsStock != null) {
+                                    double tmp = goodsStock.getPrice();
                                     goodsStock.setPrice(stockPrice);
                                     stockService.save(goodsStock);
+                                    logger.info(MessageFormat.format(LOG_TEXT_STOCK, goodsStock.getId(), tmp, goodsStock.getPrice()));
                                 }
                                 break;
                         }
