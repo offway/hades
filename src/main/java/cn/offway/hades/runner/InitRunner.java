@@ -230,8 +230,10 @@ public class InitRunner implements ApplicationRunner {
             };
             if (delaySeconds >= 0) {
                 pool.schedule(callable, delaySeconds, TimeUnit.MILLISECONDS);
+                poolNow.shutdownNow();
             } else {
                 poolNow.submit(callable);
+                pool.shutdownNow();
             }
             //reverse job
             //calc the delay in seconds
@@ -301,6 +303,8 @@ public class InitRunner implements ApplicationRunner {
                         return null;
                     }
                 }, delaySecondsReverse, TimeUnit.MILLISECONDS);
+            } else {
+                poolReverse.shutdownNow();
             }
         }
         //link to global register
