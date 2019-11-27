@@ -44,7 +44,7 @@ public class MerchantOrderController {
 
     @ResponseBody
     @RequestMapping("/merchantOrder_list")
-    public List<Map<String, Object>> getList(HttpServletRequest request, @AuthenticationPrincipal PhAdmin admin) {
+    public Map<String, Object> getList(HttpServletRequest request, @AuthenticationPrincipal PhAdmin admin) {
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
         if (roles.contains(BigInteger.valueOf(8L))) {
             return null;
@@ -66,7 +66,9 @@ public class MerchantOrderController {
                 map.put("merchantGoodsCount", goodsCount);
                 data.add(map);
             }
-            return data;
+            Map<String, Object> res = new HashMap<>();
+            res.put("data", data);
+            return res;
         }
     }
 }
