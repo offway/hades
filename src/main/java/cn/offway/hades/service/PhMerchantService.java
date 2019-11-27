@@ -35,4 +35,8 @@ public interface PhMerchantService {
     void resetSort(Long sort);
 
     List<PhMerchant> findAll(String type);
+
+    List<Object[]> stat();
+
+    List<Object[]> statOrder(Long id);
 }

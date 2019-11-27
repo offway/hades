@@ -124,6 +124,16 @@ public class PhMerchantServiceImpl implements PhMerchantService {
     }
 
     @Override
+    public List<Object[]> stat() {
+        return phMerchantRepository.stat();
+    }
+
+    @Override
+    public List<Object[]> statOrder(Long id) {
+        return phMerchantRepository.statOrder(id);
+    }
+
+    @Override
     public List<PhMerchant> findAll(String type) {
         return phMerchantRepository.findAll(getFilter(null, type), new Sort("sort"));
     }
