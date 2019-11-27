@@ -72,6 +72,10 @@
 		return "<img width='100px' height='100px' src='#' />".replace("#", url);
 	}
 
+    function goToDetail(id) {
+        window.open('/order.html?mid=' + id, "_blank");
+    }
+
 	var table_global;
 	jQuery(document).ready(function($)
 	{
@@ -123,7 +127,15 @@
 					targets: 5,
 					data: "merchantGoodsCount",
 					title: "商品数"
-				}
+				},
+                {
+                    targets: 6,
+                    data: "merchantId",
+                    title: "操作",
+                    render: function (data, type, row, meta) {
+                        return `<input type="button" value="查看" onclick="goToDetail(ID)" />`.replace("ID", data);
+                    }
+                }
 			]
 		});
 		table_global = oTable;

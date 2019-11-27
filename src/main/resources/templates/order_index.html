@@ -426,10 +426,11 @@
 		}
 	}
 
+	var qiniuUrl = [[${qiniuUrl}]];
+	var theId = [[${theId}]];
+	var mid = [[${mid}]];
     jQuery(document).ready(function($)
 	{
-        var qiniuUrl = [[${qiniuUrl}]];
-        var theId = [[${theId}]];
         if (theId != null) {
             var form = $("#queryForm");
             form.hide();
@@ -461,6 +462,9 @@
 
 		$.getJSON("/merchant_list_all", {}, function (data) {
 			bindMerchantSelector(data);
+			if (mid != null && !isNaN(mid)) {
+				$("#merchantId").val(mid);
+			}
 			oTable = $("#example-1").dataTable({
 				language: {
 					url: "../assets/Chinese.txt"

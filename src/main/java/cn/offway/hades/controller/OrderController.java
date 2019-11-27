@@ -79,11 +79,16 @@ public class OrderController {
     private PhRefundGoodsService refundGoodsService;
 
     @RequestMapping("/order.html")
-    public String index(ModelMap map, String theId) {
+    public String index(ModelMap map, String theId, String mid) {
         if (theId != null) {
             map.addAttribute("theId", theId);
         } else {
             map.addAttribute("theId", null);
+        }
+        if (mid != null) {
+            map.addAttribute("mid", mid);
+        } else {
+            map.addAttribute("mid", null);
         }
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         return "order_index";
