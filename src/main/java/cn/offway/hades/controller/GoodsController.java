@@ -952,7 +952,7 @@ public class GoodsController {
         int i = 0;
         //2019-05-24 03:00:01_2019-06-01 03:00:01_59,62
         for (String key : JobHolder.getHolder().keySet()) {
-            if (key.endsWith("REVERSE")) {
+            if (key.endsWith("REVERSE") || key.endsWith("ConfirmPackage")) {
                 continue;
             }
             Map<String, Object> m = new HashMap<>();
