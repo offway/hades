@@ -201,6 +201,11 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
     }
 
     @Override
+    public List<Object[]> stat() {
+        return phOrderInfoRepository.stat();
+    }
+
+    @Override
     public PhOrderInfo findOne(Long id) {
         return phOrderInfoRepository.findOne(id);
     }
