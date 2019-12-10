@@ -5,7 +5,7 @@
 	<title>商家管理</title>
 	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
 	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<link rel="stylesheet" href="assets/css/jquery-editable-select.min.css"/>
 	<link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
 	<link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
 	<link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
@@ -59,6 +59,14 @@
 									<option value="" selected="selected">全部</option>
 									<option value="0">品牌商</option>
 									<option value="1">买手店</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group ">
+							<div class="input-group">
+								<select id="brandId" name="brandId" class="form-control" style="height:35px" placeholder="品牌">
+									<option value="">品牌</option>
+									<option  th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}"></option>
 								</select>
 							</div>
 						</div>
@@ -267,12 +275,10 @@
 
 	<script src="js/common.js"></script>
 	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
 	<script src="assets/js/jquery-ui.min.js"></script>
+	<script src="assets/js/jquery-editable-select.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
@@ -443,11 +449,12 @@
 				'</div>' +
 				'</div>';
 	}
-
+	var qiniuUrl = [[${qiniuUrl}]];
+	var isAdmin = [[${isAdmin}]];
 	jQuery(document).ready(function($)
 	{
-		var qiniuUrl = [[${qiniuUrl}]];
-		var isAdmin = [[${isAdmin}]];
+		$("#brandId").editableSelect();
+
 		if (parseInt(isAdmin) == 0) {
 			$("button.add").hide();
 			$("button.edit").hide();

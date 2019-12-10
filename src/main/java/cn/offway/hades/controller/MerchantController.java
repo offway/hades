@@ -63,6 +63,7 @@ public class MerchantController {
         } else {
             map.addAttribute("isAdmin", 1);
         }
+        map.addAttribute("brands", brandService.findAll());
         return "merchant_index";
     }
 
@@ -87,7 +88,7 @@ public class MerchantController {
 
     @ResponseBody
     @RequestMapping("/merchant_list")
-    public Map<String, Object> getList(HttpServletRequest request, @AuthenticationPrincipal PhAdmin admin, String name, String type) {
+    public Map<String, Object> getList(HttpServletRequest request, @AuthenticationPrincipal PhAdmin admin, String name, String type, String brandId) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
@@ -98,7 +99,7 @@ public class MerchantController {
             PhMerchant merchant = merchantService.findByAdminId(admin.getId());
             pages = merchantService.findAll(merchant.getId(), new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         } else {
-            pages = merchantService.findAll(name, type, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+            pages = merchantService.findAll(name, type, brandId, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
         }
         List<PhMerchant> list = pages.getContent();
         List<Object> data = new ArrayList<>();
@@ -304,7 +305,7 @@ public class MerchantController {
         address.setPhone(phone);
         String json = address.getRemark();
         JSONObject jsonObject = JSON.parseObject(json);
-        jsonObject.put("phone",phone);
+        jsonObject.put("phone", phone);
         String remark = JSON.toJSONString(jsonObject);
         address.setRemark(remark);
         addressService.save(address);

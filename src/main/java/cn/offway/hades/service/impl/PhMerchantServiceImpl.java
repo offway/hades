@@ -1,8 +1,10 @@
 package cn.offway.hades.service.impl;
 
 import cn.offway.hades.domain.PhMerchant;
+import cn.offway.hades.domain.PhMerchantBrand;
 import cn.offway.hades.repository.PhMerchantRepository;
 import cn.offway.hades.service.PhMerchantService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +44,7 @@ public class PhMerchantServiceImpl implements PhMerchantService {
     }
 
     @Override
-    public Page<PhMerchant> findAll(String name, String type, Pageable pageable) {
+    public Page<PhMerchant> findAll(String name, String type, String brandId, Pageable pageable) {
         return phMerchantRepository.findAll(new Specification<PhMerchant>() {
             @Override
             public Predicate toPredicate(Root<PhMerchant> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -54,6 +53,16 @@ public class PhMerchantServiceImpl implements PhMerchantService {
                     params.add(criteriaBuilder.equal(root.get("type"), type));
                 }
                 params.add(criteriaBuilder.like(root.get("name"), "%" + name + "%"));
+                if (StringUtils.isNotBlank(brandId)) {
+                    Subquery<PhMerchantBrand> subquery = criteriaQuery.subquery(PhMerchantBrand.class);
+                    Root<PhMerchantBrand> subRoot = subquery.from(PhMerchantBrand.class);
+                    subquery.select(subRoot);
+                    subquery.where(
+                            criteriaBuilder.equal(root.get("id"), subRoot.get("merchantId")),
+                            criteriaBuilder.equal(subRoot.get("brandName"), brandId)
+                    );
+                    params.add(criteriaBuilder.exists(subquery));
+                }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
                 return null;

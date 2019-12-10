@@ -26,7 +26,7 @@ public interface PhMerchantService {
 
     Page<PhMerchant> findAll(Pageable pageable);
 
-    Page<PhMerchant> findAll(String name, String type, Pageable pageable);
+    Page<PhMerchant> findAll(String name, String type, String brandId, Pageable pageable);
 
     Page<PhMerchant> findAll(Long id, Pageable pageable);
 
