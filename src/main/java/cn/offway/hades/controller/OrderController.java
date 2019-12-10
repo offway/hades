@@ -79,7 +79,7 @@ public class OrderController {
     private PhRefundGoodsService refundGoodsService;
 
     @RequestMapping("/order.html")
-    public String index(ModelMap map, String theId, String mid) {
+    public String index(ModelMap map, String theId, String mid, String uid) {
         if (theId != null) {
             map.addAttribute("theId", theId);
         } else {
@@ -89,6 +89,11 @@ public class OrderController {
             map.addAttribute("mid", mid);
         } else {
             map.addAttribute("mid", null);
+        }
+        if (uid != null) {
+            map.addAttribute("uid", uid);
+        } else {
+            map.addAttribute("uid", null);
         }
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         return "order_index";
@@ -144,8 +149,8 @@ public class OrderController {
                 receiverInfo.put("realName", address.getRealName());
                 receiverInfo.put("phone", address.getPhone());
                 receiverInfo.put("location", address.getProvince() + address.getCity() + address.getCounty() + address.getContent());
-            }else {
-                PhOrderExpressInfo orderExpressInfo1 = orderExpressInfoService.findByPid(orderInfo.getOrderNo(),"0");
+            } else {
+                PhOrderExpressInfo orderExpressInfo1 = orderExpressInfoService.findByPid(orderInfo.getOrderNo(), "0");
                 receiverInfo.put("realName", orderExpressInfo1.getToRealName());
                 receiverInfo.put("phone", orderExpressInfo1.getToPhone());
                 receiverInfo.put("location", orderExpressInfo1.getToProvince() + orderExpressInfo1.getToCity() + orderExpressInfo1.getToCounty() + orderExpressInfo1.getToContent());

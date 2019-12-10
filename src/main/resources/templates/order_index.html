@@ -429,6 +429,7 @@
 	var qiniuUrl = [[${qiniuUrl}]];
 	var theId = [[${theId}]];
 	var mid = [[${mid}]];
+	var uid = [[${uid}]];
     jQuery(document).ready(function($)
 	{
         if (theId != null) {
@@ -464,6 +465,9 @@
 			bindMerchantSelector(data);
 			if (mid != null && !isNaN(mid)) {
 				$("#merchantId").val(mid);
+			}
+			if (uid != null && !isNaN(uid)) {
+				$("#userId").val(uid);
 			}
 			oTable = $("#example-1").dataTable({
 				language: {
