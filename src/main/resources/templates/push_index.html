@@ -108,7 +108,7 @@
 				</div>
 				
 				<div class="modal-body">
-					<form role="form" id="saveForm">
+					<form role="form" id="saveForm" enctype="multipart/form-data">
 						<input type="hidden" name="id"/>
 						<div class="row">
 							<div class="col-md-12">
@@ -149,6 +149,7 @@
                                     <label class="control-label">推送用户</label>
                                     <label><input name="pushAll" class="notMe" type="radio" checked="checked" value="0"/>全部用户 </label>
                                     <label><input name="pushAll" class="notMe" type="radio" value="1"/>指定用户 </label>
+									<label><input name="pushAll" class="notMe" type="radio" value="2"/>来自Excel </label>
                                 </div>
                             </div>
                         </div>
@@ -160,6 +161,14 @@
                                 </div>
                             </div>
                         </div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group excelFile" style="display: none">
+									<label class="control-label">excel 文件</label>
+									<input type="file" class="form-control" name="excelFile" placeholder="excel 文件"/>
+								</div>
+							</div>
+						</div>
 						<div class="row">
 							<div class="col-md-12">
                                 <div class="form-group">
@@ -627,12 +636,21 @@
 		$('[name="pushAll"]').click(function () {
 			var value = $(this).val();  //获取选中的radio的值
 			var theId = $(".userIdStr");
+			var excel = $(".excelFile");
 			switch (parseInt(value)) {
 				case 0:
 					theId.hide();
+					excel.hide();
+					break;
+				case 1:
+					theId.show();
+					excel.hide();
+					break;
+				case 2:
+					theId.hide();
+					excel.show();
 					break;
 				default:
-					theId.show();
 					break;
 			}
 		});
@@ -710,19 +728,36 @@
 						},
 						three: function (callback) {
 							//提交保存
-							$.post("/push_save", $("#saveForm").serialize(), function (data) {
-								if (data) {
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									jQuery('#modal-6').modal('hide');
-									toastr.success("操作已成功！", "温馨提示");
-									oTable.fnDraw();
-								} else {
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败", "温馨提示");
+							// Get form
+							var form = $('#saveForm')[0];
+							// Create an FormData object
+							var data = new FormData(form);
+							$.ajax({
+								type: "POST",
+								enctype: 'multipart/form-data',
+								url: "/push_save",
+								data: data,
+								processData: false,
+								contentType: false,
+								cache: false,
+								timeout: 60000,
+								success: function (data) {
+									if (data) {
+										footer.find("button").show();
+										footer.find(".bg-lg").hide();
+										jQuery('#modal-6').modal('hide');
+										toastr.success("操作已成功！", "温馨提示");
+										oTable.fnDraw();
+									} else {
+										footer.find("button").show();
+										footer.find(".bg-lg").hide();
+										toastr.error("操作失败", "温馨提示");
+									}
+									callback();
+								},
+								error: function (e) {
+									callback();
 								}
-								callback();
 							});
 						}
 					}, function (err, results) {

@@ -4,6 +4,11 @@ import cn.offway.hades.domain.PhPush;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.JPushService;
 import cn.offway.hades.service.PhPushService;
+import com.alibaba.excel.ExcelReader;
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.event.AnalysisEventListener;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -18,12 +23,11 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -83,11 +87,31 @@ public class PushController {
 
     @ResponseBody
     @RequestMapping("/push_save")
-    public boolean save(PhPush push, String pushAll, String userIdStr, String pushNow) {
+    public boolean save(PhPush push, String pushAll, String userIdStr, String pushNow, @RequestParam("excelFile") MultipartFile excelFile) throws IOException {
         PhPush pushSaved;
         String[] users = null;
+        ArrayList<String> tmpArr = new ArrayList<String>();
         if ("1".equals(pushAll) && !"".equals(userIdStr.trim())) {
             users = userIdStr.split(",");
+        } else if ("2".equals(pushAll) && excelFile != null) {
+            ExcelReader reader = new ExcelReader(excelFile.getInputStream(), "", new AnalysisEventListener<ArrayList>() {
+
+                @Override
+                public void invoke(ArrayList data, AnalysisContext analysisContext) {
+                    String s = String.valueOf(data.get(0));
+                    if (NumberUtils.isNumber(s)) {
+                        tmpArr.add(s);
+                    }
+                }
+
+                @Override
+                public void doAfterAllAnalysed(AnalysisContext analysisContext) {
+                    //
+                }
+            });
+            reader.read();
+            String[] tpl = new String[tmpArr.size()];
+            users = tmpArr.toArray(tpl);
         }
         if (push.getId() == null) {
             String uuid = UUID.randomUUID().toString();
@@ -105,6 +129,7 @@ public class PushController {
                 return jPushService.createSingleSchedule(uuid, "2", purgeString(pushSaved.getName()), pushSaved.getPushTime(), pushSaved.getName(), pushSaved.getContent(), args, users);
             } else {
                 if (users != null) {
+                    logger.info(StringUtils.join(users, ","));
                     return jPushService.sendPushUser(push.getName(), push.getContent(), args, users);
                 } else {
                     return jPushService.sendPush(push.getName(), push.getContent(), args);
