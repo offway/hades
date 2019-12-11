@@ -6,7 +6,12 @@ import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhMerchantService;
 import cn.offway.hades.service.PhVoucherInfoService;
 import cn.offway.hades.service.PhVoucherProjectService;
+import cn.offway.hades.utils.HttpClientUtil;
+import com.alibaba.excel.ExcelReader;
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.event.AnalysisEventListener;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -23,8 +28,11 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.*;
 
 @Controller
@@ -43,6 +51,7 @@ public class CouponController {
 
     @Value("${ph.url}")
     private String urlApi;
+
     @RequestMapping("/coupon.html")
     public String index(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
@@ -65,6 +74,42 @@ public class CouponController {
             voucherProject.setIsPrivate("1");
         }
         voucherProjectService.save(voucherProject);
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/coupon_send")
+    public boolean save(String code, String mode, String userId, @RequestParam("excel") MultipartFile excelFile) throws IOException {
+        if ("0".equals(mode)) {
+            //var url = urlApi + "/voucher/giveByVpId?userId=AAA&voucherProjectId=BBB".replace("AAA", userId).replace("BBB", code);
+            String queryUrl = MessageFormat.format("{0}/voucher/giveByVpId?userId={1}&voucherProjectId={2}", urlApi, userId, code);
+            String resp = HttpClientUtil.post(queryUrl, "");
+            logger.info(resp);
+        } else {
+            ExcelReader reader = new ExcelReader(excelFile.getInputStream(), "", new AnalysisEventListener<ArrayList>() {
+
+                @Override
+                public void invoke(ArrayList data, AnalysisContext analysisContext) {
+                    String s = String.valueOf(data.get(0));
+                    if (NumberUtils.isNumber(s)) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                String queryUrl = MessageFormat.format("{0}/voucher/giveByVpId?userId={1}&voucherProjectId={2}", urlApi, s, code);
+                                String resp = HttpClientUtil.post(queryUrl, "");
+                                logger.info(resp);
+                            }
+                        }).start();
+                    }
+                }
+
+                @Override
+                public void doAfterAllAnalysed(AnalysisContext analysisContext) {
+                    //
+                }
+            });
+            reader.read();
+        }
         return true;
     }
 

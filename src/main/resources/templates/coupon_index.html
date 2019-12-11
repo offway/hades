@@ -218,6 +218,60 @@
 		</div>
 	</div>
 
+	<div class="modal fade in" id="modal-7">
+		<div class="modal-dialog">
+			<div class="modal-content" style="width: 800px;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">发放优惠券</h4>
+				</div>
+				<div class="modal-body">
+					<form role="form" id="sendForm">
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">优惠券ID</label>
+									<input type="number" class="form-control" name="code" placeholder="优惠券ID"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">发放方式</label>
+									<label><input name="mode" class="notMe" type="radio" onclick="toggleMode(0)" checked="checked" value="0"/>用户ID</label>
+									<label><input name="mode" class="notMe" type="radio" onclick="toggleMode(1)" value="1"/>从excel</label>
+								</div>
+							</div>
+						</div>
+						<div class="row userId">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">用户ID</label>
+									<input type="number" class="form-control" name="userId" placeholder="用户ID"/>
+								</div>
+							</div>
+						</div>
+						<div class="row excel" style="display:none;">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">Excel</label>
+									<input type="file" class="form-control" name="excel" placeholder="Excel"/>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-info sendData">保存</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
 	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -253,6 +307,19 @@
         var that = $(self);
         that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
     }
+
+	function toggleMode(v) {
+		var form = $("#sendForm");
+		var a = form.find("div.userId");
+		var b = form.find("div.excel");
+		if (v == "0") {
+			a.show();
+			b.hide();
+		} else {
+			b.show();
+			a.hide();
+		}
+	}
 
     function closeIt(self) {
         var that = $(self);
@@ -586,24 +653,56 @@
 		});
 
 		$(".btn.btn-danger.sendCode").click(function () {
-			var userId = prompt("输入用户ID", "0");
-			if (isNaN(userId) || userId == null) {
-				alert("请输入数字！");
-			} else {
-				var code = prompt("输入优惠券ID", "0");
-				if (isNaN(code) || code == null) {
-					alert("请输入数字！");
-				} else {
-					var url = urlApi + "/voucher/giveByVpId?userId=AAA&voucherProjectId=BBB".replace("AAA", userId).replace("BBB", code);
-					$.post(url, {}, function (data) {
-						if (data) {
-							toastr.success("操作已成功！", "温馨提示");
-						} else {
-							toastr.error("操作失败", "温馨提示");
-						}
-					});
+			var form = $("#sendForm");
+			form.find("input:not(.notMe)").val("");
+			jQuery('#modal-7').modal('show', {backdrop: 'fade'});
+			// var userId = prompt("输入用户ID", "0");
+			// if (isNaN(userId) || userId == null) {
+			// 	alert("请输入数字！");
+			// } else {
+			// 	var code = prompt("输入优惠券ID", "0");
+			// 	if (isNaN(code) || code == null) {
+			// 		alert("请输入数字！");
+			// 	} else {
+			// 		var url = urlApi + "/voucher/giveByVpId?userId=AAA&voucherProjectId=BBB".replace("AAA", userId).replace("BBB", code);
+			// 		$.post(url, {}, function (data) {
+			// 			if (data) {
+			// 				toastr.success("操作已成功！", "温馨提示");
+			// 			} else {
+			// 				toastr.error("操作失败", "温馨提示");
+			// 			}
+			// 		});
+			// 	}
+			// }
+		});
+
+		$(".btn.btn-info.sendData").click(function () {
+			//提交保存
+			// Get form
+			var form = $('#sendForm')[0];
+			// Create an FormData object
+			var data = new FormData(form);
+			$.ajax({
+				type: "POST",
+				enctype: 'multipart/form-data',
+				url: "/coupon_send",
+				data: data,
+				processData: false,
+				contentType: false,
+				cache: false,
+				timeout: 60000,
+				success: function (data) {
+					if (data) {
+						jQuery('#modal-7').modal('hide');
+						toastr.success("操作已成功！", "温馨提示");
+					} else {
+						toastr.error("操作失败", "温馨提示");
+					}
+				},
+				error: function (e) {
+					toastr.error("操作失败", "温馨提示");
 				}
-			}
+			});
 		});
 		//保存
 		$(".btn.btn-info.save").click(function () {
