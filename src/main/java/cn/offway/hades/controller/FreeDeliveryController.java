@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -125,6 +126,7 @@ public class FreeDeliveryController {
 
     @ResponseBody
     @RequestMapping("/freeDelivery_save")
+    @Transactional
     public boolean save(String json, @AuthenticationPrincipal PhAdmin admin) {
         int sumGooodsCount = 0;
         int sumBoostCount = 0;
@@ -146,6 +148,7 @@ public class FreeDeliveryController {
         freeProduct.setCreator(admin.getNickname());
         freeProduct.setCreateTime(new Date());
         freeProduct = freeProductService.save(freeProduct);
+        freeDeliveryService.deleteByproductId(freeProduct.getId());
         if (gidsList.size() > 0) {
             List<Long> did = gidsList.toJavaList(Long.class);
             if (did.size() > 0) {
@@ -155,12 +158,7 @@ public class FreeDeliveryController {
         }
         PhFreeDelivery freeDeliveries;
         for (int i = 0; i < goodsIdList.size(); i++) {
-            if (isNew) {
-                freeDeliveries = new PhFreeDelivery();
-            } else {
-                List<PhFreeDelivery> freeDeliveriesList = freeDeliveryService.findOneByProductId(freeProduct.getId());
-                freeDeliveries = freeDeliveriesList.get(i);
-            }
+            freeDeliveries = new PhFreeDelivery();
             if (!"0".equals(goodsIdList.get(i).toString())) {
                 PhGoods goods = goodsService.findOne(Long.valueOf(goodsIdList.get(i).toString()));
                 freeDeliveries.setBrandLogo(goods.getBrandLogo());
