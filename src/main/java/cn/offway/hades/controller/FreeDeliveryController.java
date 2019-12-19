@@ -149,13 +149,7 @@ public class FreeDeliveryController {
         freeProduct.setCreateTime(new Date());
         freeProduct = freeProductService.save(freeProduct);
         freeDeliveryService.deleteByproductId(freeProduct.getId());
-        if (gidsList.size() > 0) {
-            List<Long> did = gidsList.toJavaList(Long.class);
-            if (did.size() > 0) {
-                isNew = false;
-//                freeDeliveryService.deleteByproductId(freeProduct.getId());
-            }
-        }
+
         PhFreeDelivery freeDeliveries;
         for (int i = 0; i < goodsIdList.size(); i++) {
             freeDeliveries = new PhFreeDelivery();
@@ -178,9 +172,7 @@ public class FreeDeliveryController {
             freeDeliveries.setGoodsSize(goodsSizeList.get(i).toString());
             freeDeliveries.setPrice(Double.valueOf(priceList.get(i).toString()));
             freeDeliveries.setCreateTime(new Date());
-            if (isNew){
-                freeDeliveries.setStatus("0");
-            }
+            freeDeliveries.setStatus("0");
             freeDeliveries.setVersion(0L);
             freeDeliveries.setSort((long) i);
             freeDeliveries.setProductId(freeProduct.getId());
