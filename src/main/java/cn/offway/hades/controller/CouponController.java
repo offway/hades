@@ -85,10 +85,13 @@ public class CouponController {
         if ("0".equals(mode)) {
             //var url = urlApi + "/voucher/giveByVpId?userId=AAA&voucherProjectId=BBB".replace("AAA", userId).replace("BBB", code);
             String[] codes = code.split(",");
-            for (String s : codes) {
-                String queryUrl = MessageFormat.format("{0}/voucher/giveByVpId?userId={1}&voucherProjectId={2}", urlApi, userId, s);
-                String resp = HttpClientUtil.post(queryUrl, "");
-                logger.info(resp);
+            String[] userIds = userId.split(",");
+            for (String id : userIds) {
+                for (String s : codes) {
+                    String queryUrl = MessageFormat.format("{0}/voucher/giveByVpId?userId={1}&voucherProjectId={2}", urlApi, id, s);
+                    String resp = HttpClientUtil.post(queryUrl, "");
+                    logger.info(resp);
+                }
             }
         } else {
             InputStream buffered = new BufferedInputStream(excelFile.getInputStream());
