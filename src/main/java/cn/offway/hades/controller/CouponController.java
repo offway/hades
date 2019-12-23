@@ -31,7 +31,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -89,7 +91,8 @@ public class CouponController {
                 logger.info(resp);
             }
         } else {
-            ExcelReader reader = new ExcelReader(excelFile.getInputStream(), "", new AnalysisEventListener<ArrayList>() {
+            InputStream buffered = new BufferedInputStream(excelFile.getInputStream());
+            ExcelReader reader = new ExcelReader(buffered, "", new AnalysisEventListener<ArrayList>() {
 
                 @Override
                 public void invoke(ArrayList data, AnalysisContext analysisContext) {

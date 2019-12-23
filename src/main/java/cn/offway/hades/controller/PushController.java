@@ -26,7 +26,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -94,7 +96,8 @@ public class PushController {
         if ("1".equals(pushAll) && !"".equals(userIdStr.trim())) {
             users = userIdStr.split(",");
         } else if ("2".equals(pushAll) && excelFile != null) {
-            ExcelReader reader = new ExcelReader(excelFile.getInputStream(), "", new AnalysisEventListener<ArrayList>() {
+            InputStream buffered = new BufferedInputStream(excelFile.getInputStream());
+            ExcelReader reader = new ExcelReader(buffered, "", new AnalysisEventListener<ArrayList>() {
 
                 @Override
                 public void invoke(ArrayList data, AnalysisContext analysisContext) {
