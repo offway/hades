@@ -82,9 +82,12 @@ public class CouponController {
     public boolean save(String code, String mode, String userId, @RequestParam("excel") MultipartFile excelFile) throws IOException {
         if ("0".equals(mode)) {
             //var url = urlApi + "/voucher/giveByVpId?userId=AAA&voucherProjectId=BBB".replace("AAA", userId).replace("BBB", code);
-            String queryUrl = MessageFormat.format("{0}/voucher/giveByVpId?userId={1}&voucherProjectId={2}", urlApi, userId, code);
-            String resp = HttpClientUtil.post(queryUrl, "");
-            logger.info(resp);
+            String[] codes = code.split(",");
+            for (String s : codes) {
+                String queryUrl = MessageFormat.format("{0}/voucher/giveByVpId?userId={1}&voucherProjectId={2}", urlApi, userId, s);
+                String resp = HttpClientUtil.post(queryUrl, "");
+                logger.info(resp);
+            }
         } else {
             ExcelReader reader = new ExcelReader(excelFile.getInputStream(), "", new AnalysisEventListener<ArrayList>() {
 
