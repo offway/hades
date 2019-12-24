@@ -149,7 +149,8 @@ public class PhLotteryTicketServiceImpl implements PhLotteryTicketService {
 					"o9I8Z0n5tu6ivLHr_6gkSdNf8aZU",
 					"o9I8Z0qLeYEGRVK-1A0ESvtSk2go",
 					"o9I8Z0ioHMeRuYyb8k7sIB9SHndo",
-					"o9I8Z0tLd1ZtvYujM6wL2irNAxVw"
+					"o9I8Z0tLd1ZtvYujM6wL2irNAxVw",
+					"o9I8Z0q8zPh0U2SJjezqrYPPYmxs"
 			};
 			for (String at : personnels) {
 				in.value(at);
