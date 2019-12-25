@@ -104,9 +104,12 @@ public class CouponController {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                String queryUrl = MessageFormat.format("{0}/voucher/giveByVpId?userId={1}&voucherProjectId={2}", urlApi, s, code);
-                                String resp = HttpClientUtil.post(queryUrl, "");
-                                logger.info(resp);
+                                String[] codes = code.split(",");
+                                for (String item : codes) {
+                                    String queryUrl = MessageFormat.format("{0}/voucher/giveByVpId?userId={1}&voucherProjectId={2}", urlApi, s, item);
+                                    String resp = HttpClientUtil.post(queryUrl, "");
+                                    logger.info(resp);
+                                }
                             }
                         }).start();
                     }
