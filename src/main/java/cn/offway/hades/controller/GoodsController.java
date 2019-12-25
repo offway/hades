@@ -43,6 +43,7 @@ import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -85,6 +86,8 @@ public class GoodsController {
     private PhLimitedSaleService limitedSaleService;
     @Autowired
     private QiniuService qiniuService;
+    @Autowired
+    private PhDiscountLogService discountLogService;
 
     @RequestMapping("/goods.html")
     public String index(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
@@ -628,13 +631,15 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_stock_update_mix_tree")
-    public boolean updateStockListMixTree(@RequestParam("sid") Long[] sids, @RequestParam("stockPrice") Double[] stockPrices, @RequestParam("gid") Long[] gids, @RequestParam("price") Double[] prices, @RequestParam("originalPrice") String[] originalPrices, @RequestParam("originalPriceHidden") String[] originalPriceHiddens, String startTimeText, String stopTimeText) {
+    public boolean updateStockListMixTree(@RequestParam("sid") Long[] sids, @RequestParam("stockPrice") Double[] stockPrices, @RequestParam("gid") Long[] gids, @RequestParam("price") Double[] prices, @RequestParam("originalPrice") String[] originalPrices, @RequestParam("originalPriceHidden") String[] originalPriceHiddens, String startTimeText, String stopTimeText,@AuthenticationPrincipal PhAdmin admin) throws ParseException {
         if (sids.length != stockPrices.length || gids.length != prices.length || gids.length != originalPrices.length) {
             return false;
         }
+        SimpleDateFormat sdf =   new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
         if ("".equals(startTimeText) && "".equals(stopTimeText)) {
             //立即改价
             Map<Long, List<Double>> priceList = new HashMap<>();
+            List<PhDiscountLog> list1 = new ArrayList<>();
             for (int i = 0; i < sids.length; i++) {
                 PhGoodsStock goodsStock = goodsStockService.findOne(sids[i]);
                 goodsStock.setPrice(stockPrices[i]);
@@ -646,6 +651,13 @@ public class GoodsController {
                     tmpList.add(goodsStock.getPrice());
                     priceList.put(goodsStock.getGoodsId(), tmpList);
                 }
+                PhDiscountLog discountLog = new PhDiscountLog();
+                discountLog.setDate(new Date());
+                discountLog.setDiscount(stockPrices[i].toString());
+                discountLog.setType("stockPrice");
+                discountLog.setGoodsid(sids[i].toString());
+                discountLog.setUser(admin.getNickname());
+                list1.add(discountLog);
             }
             for (int i = 0; i < gids.length; i++) {
                 PhGoods goods = goodsService.findOne(gids[i]);
@@ -660,8 +672,10 @@ public class GoodsController {
                 goods.setPriceRange(range);
                 goodsService.save(goods);
             }
+            discountLogService.save(list1);
         } else {
             List<Map<String, Object>> list = new ArrayList<>();
+            List<PhDiscountLog> list1 = new ArrayList<>();
             String key = startTimeText + "_" + stopTimeText + "_" + "{0}" + "_" + "DirectChange";
             StringBuilder sb = new StringBuilder();
             int i = 0;
@@ -680,6 +694,15 @@ public class GoodsController {
                 i++;
                 sb.append(gid);
                 sb.append(",");
+                PhDiscountLog discountLog = new PhDiscountLog();
+                discountLog.setDate(new Date());
+                discountLog.setDiscount(stockPrices[i].toString());
+                discountLog.setType("stockPrice");
+                discountLog.setGoodsid(sids[i].toString());
+                discountLog.setUser(admin.getNickname());
+                discountLog.setStime(sdf.parse(startTimeText));
+                discountLog.setEtime(sdf.parse(stopTimeText));
+                list1.add(discountLog);
             }
             int j = 0;
             for (Long sid : sids) {
@@ -712,6 +735,7 @@ public class GoodsController {
             }
             PhConfig config = configService.findOne("CRONJOB");
             config.setContent(jsonObject.toJSONString());
+            discountLogService.save(list1);
             configService.save(config);
             //create the jobs
             DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
@@ -846,7 +870,7 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_discount_add")
-    public boolean discount(@RequestParam("ids") String ids, String beginTime, String endTime, String discount, @AuthenticationPrincipal PhAdmin admin) {
+    public boolean discount(@RequestParam("ids") String ids, String beginTime, String endTime, String discount, @AuthenticationPrincipal PhAdmin admin) throws ParseException {
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
         if (roles.contains(BigInteger.valueOf(8L))) {
             return false;
@@ -855,14 +879,26 @@ public class GoodsController {
         if (!"".equals(beginTime.trim()) && !"".equals(endTime.trim())) {
             String key = beginTime + "_" + endTime + "_" + ids + "_" + discount;
             List<Map<String, Object>> list = new ArrayList<>();
+            List<PhDiscountLog> list1 = new ArrayList<>();
+            SimpleDateFormat sdf =   new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
             for (String id : ids.split(",")) {
                 HashMap<String, Object> map = new HashMap<>();
+                PhDiscountLog discountLog = new PhDiscountLog();
+                discountLog.setDate(new Date());
+                discountLog.setDiscount(discount);
+                discountLog.setType("discount");
+                discountLog.setStime(sdf.parse(beginTime));
+                discountLog.setEtime(sdf.parse(endTime));
+                discountLog.setGoodsid(id);
+                discountLog.setUser(admin.getNickname());
+                list1.add(discountLog);
                 map.put("id", id);
                 map.put("discount", discount);
                 map.put("type", "discount");
                 map.put("sTime", beginTime);
                 map.put("eTime", endTime);
                 list.add(map);
+
             }
             //save to DB
             String jsonStr = configService.findContentByName("CRONJOB");
@@ -881,6 +917,7 @@ public class GoodsController {
             PhConfig config = configService.findOne("CRONJOB");
             config.setContent(jsonObject.toJSONString());
             configService.save(config);
+            discountLogService.save(list1);
             //create the jobs
             DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
             Date sTime = DateTime.parse(beginTime, format).toDate();
@@ -892,13 +929,23 @@ public class GoodsController {
             String key = "NOW" + "_" + "NONE" + "_" + ids + "_" + discount;
             Date now = new Date();
             List<Map<String, Object>> list = new ArrayList<>();
+            List<PhDiscountLog> list1 = new ArrayList<>();
+            SimpleDateFormat sdf =   new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
             for (String id : ids.split(",")) {
                 HashMap<String, Object> map = new HashMap<>();
+                PhDiscountLog discountLog = new PhDiscountLog();
+                discountLog.setDate(new Date());
+                discountLog.setDiscount(discount);
+                discountLog.setType("discount");
+                discountLog.setGoodsid(id);
+                discountLog.setUser(admin.getNickname());
+                list1.add(discountLog);
                 map.put("id", id);
                 map.put("discount", discount);
                 map.put("type", "discount");
                 list.add(map);
             }
+            discountLogService.save(list1);
             taskList = JSONArray.parseArray(JSON.toJSONString(list));
             InitRunner.createJob(taskList, key, now, now, now, goodsService, goodsStockService, null, configService, null, null);
         }
