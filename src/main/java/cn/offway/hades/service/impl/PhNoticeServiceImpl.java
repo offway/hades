@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 /**
  * 消息通知Service接口实现
@@ -28,6 +30,11 @@ public class PhNoticeServiceImpl implements PhNoticeService {
     @Override
     public PhNotice save(PhNotice phNotice) {
         return phNoticeRepository.save(phNotice);
+    }
+
+    @Override
+    public List<PhNotice> save(List<PhNotice> phNotices) {
+        return phNoticeRepository.save(phNotices);
     }
 
     @Override

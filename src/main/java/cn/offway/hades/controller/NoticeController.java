@@ -5,6 +5,7 @@ import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhNoticeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,10 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping
@@ -73,12 +71,24 @@ public class NoticeController {
 
     @ResponseBody
     @RequestMapping("/notice_save")
-    public boolean save(PhNotice notice) {
-        if (notice.getId() == null) {
-            notice.setCreateTime(new Date());
-            notice.setIsRead("0");
+    public boolean save(PhNotice notice,String userIds) {
+        List<PhNotice> phNotices = new ArrayList<>();
+        if (!"".equals(userIds) && userIds != null){
+            String[] userId = userIds.split(",");
+            for (String id : userId) {
+                PhNotice phNotice = new PhNotice();
+                BeanUtils.copyProperties(notice, phNotice);
+                phNotice.setCreateTime(new Date());
+                phNotice.setIsRead("0");
+                phNotice.setUserId(Long.valueOf(id));
+                phNotices.add(phNotice);
+            }
         }
-        noticeService.save(notice);
+//        if (notice.getId() == null) {
+//            notice.setCreateTime(new Date());
+//            notice.setIsRead("0");
+//        }
+        noticeService.save(phNotices);
         return true;
     }
 }
