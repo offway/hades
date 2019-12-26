@@ -438,9 +438,10 @@
 					data: "status",
 					title: "结算状态",
 					render: function (data, type, row, meta) {
+						return "";
 						/** 状态[0-待结算,1-结算中,2-已结算] **/
-						var map = ["待结算", "结算中(不再使用)", "已结算"];
-						return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "";
+						// var map = ["待结算", "结算中(不再使用)", "已结算"];
+						// return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "";
 					}
 				},
 				// {
@@ -472,21 +473,21 @@
 					render: function (data, type, full, meta) {
 						return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
 					}
-				},
-				{
-					targets: 17,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						switch (parseInt(full["status"])) {
-							case 0:
-								return '<input type="button" name="checkIt" onclick="batchSettle([' + data + '])" value="结算"/>';
-							case 2:
-								return '<input type="button" name="checkIt" disabled="disabled" value="已结算"/>';
-						}
-					}
 				}
+				// {
+				// 	targets: 17,
+				// 	data: "id",
+				// 	orderable: false,
+				// 	title: "操作",
+				// 	render: function (data, type, full, meta) {
+				// 		switch (parseInt(full["status"])) {
+				// 			case 0:
+				// 				return '<input type="button" name="checkIt" onclick="batchSettle([' + data + '])" value="结算"/>';
+				// 			case 2:
+				// 				return '<input type="button" name="checkIt" disabled="disabled" value="已结算"/>';
+				// 		}
+				// 	}
+				// }
 			],
             "footerCallback": function (row, data, start, end, display) {
                 var api = this.api();
