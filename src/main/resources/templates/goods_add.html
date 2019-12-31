@@ -608,18 +608,20 @@
         }
     }
 
-    function switchToCommon() {
-        initCommonSku();
-        $("#addMoreAttrButton").hide();
-        // generateSKUList();
-    }
+	function switchToCommon() {
+		$("#skuProperty").find(".row").remove();
+		initCommonSku();
+		$("#addMoreAttrButton").hide();
+		// generateSKUList();
+		$("#skuContainer").html("");
+	}
 
-    function switchToCustom() {
-        $("#skuProperty").find(".row").remove();
-        $("#addMoreAttrButton").show();
-        generateSKUList();
+	function switchToCustom() {
+		$("#skuProperty").find(".row").remove();
+		$("#addMoreAttrButton").show();
+		generateSKUList();
 		$("#addMoreAttrButton").click();
-    }
+	}
 
     function delNode(self, refresh) {
         var that = $(self);
