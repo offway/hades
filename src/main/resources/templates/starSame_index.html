@@ -560,7 +560,8 @@
 			form.find("input[name='goodsIDSame']").remove();
 			form.find("div.toDel").remove();
 			form.find("input[type='file']").show();
-			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+			// jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+			jQuery('#modal-6').modal({backdrop: 'static' ,keyboard: false});
 		});
 
 		var qiniuUrl = [[${qiniuUrl}]];
