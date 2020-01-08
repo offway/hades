@@ -60,10 +60,13 @@ public class MerchantOrderController {
                 List<Object[]> listOrder = merchantService.statOrder(Long.valueOf(String.valueOf(l[0])));
                 map.put("merchantOrderCount", listOrder.size());
                 int goodsCount = 0;
+                double price = 0;
                 for (Object[] ll : listOrder) {
                     goodsCount += Integer.valueOf(String.valueOf(ll[2]));
+                    price += Double.valueOf(String.valueOf(ll[4]));
                 }
                 map.put("merchantGoodsCount", goodsCount);
+                map.put("merchantPrice", price);
                 data.add(map);
             }
             Map<String, Object> res = new HashMap<>();

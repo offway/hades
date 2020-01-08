@@ -24,6 +24,6 @@ public interface PhMerchantRepository extends JpaRepository<PhMerchant, Long>, J
     @Query(nativeQuery = true, value = "SELECT a.id,a.name,a.logo,count(b.id) as ct,group_concat(b.id) as ids FROM ph_merchant a left join ph_merchant_brand b on a.id = b.merchant_id group by a.id")
     List<Object[]> stat();
 
-    @Query(nativeQuery = true, value = "SELECT a.order_no,count(a.id) as ct,sum(b.goods_count) as tt,group_concat(b.id) as ids FROM ph_order_info a left join ph_order_goods b on a.order_no = b.order_no where a.merchant_id = ?1 and a.status in (1,2,3) and a.order_no not in (SELECT order_no FROM ph_refund where status = 4) group by a.order_no")
+    @Query(nativeQuery = true, value = "SELECT a.order_no,count(a.id) as ct,sum(b.goods_count) as tt,group_concat(b.id) as ids,sum(b.price) as pp FROM ph_order_info a left join ph_order_goods b on a.order_no = b.order_no where a.merchant_id = ?1 and a.status in (1,2,3) and a.order_no not in (SELECT order_no FROM ph_refund where status = 4) group by a.order_no")
     List<Object[]> statOrder(Long id);
 }
