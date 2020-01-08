@@ -131,7 +131,10 @@
 				{
 					targets: 6,
 					data: "merchantPrice",
-					title: "订单总金额"
+					title: "订单总金额",
+					render: function (data, type, row, meta) {
+						return data.toFixed(2);
+					}
 				},
                 {
                     targets: 7,
