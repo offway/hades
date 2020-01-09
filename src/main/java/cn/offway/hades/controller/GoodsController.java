@@ -631,11 +631,11 @@ public class GoodsController {
 
     @ResponseBody
     @RequestMapping("/goods_stock_update_mix_tree")
-    public boolean updateStockListMixTree(@RequestParam("sid") Long[] sids, @RequestParam("stockPrice") Double[] stockPrices, @RequestParam("gid") Long[] gids, @RequestParam("price") Double[] prices, @RequestParam("originalPrice") String[] originalPrices, @RequestParam("originalPriceHidden") String[] originalPriceHiddens, String startTimeText, String stopTimeText,@AuthenticationPrincipal PhAdmin admin) throws ParseException {
+    public boolean updateStockListMixTree(@RequestParam("sid") Long[] sids, @RequestParam("stockPrice") Double[] stockPrices, @RequestParam("gid") Long[] gids, @RequestParam("price") Double[] prices, @RequestParam("originalPrice") String[] originalPrices, @RequestParam("originalPriceHidden") String[] originalPriceHiddens, String startTimeText, String stopTimeText, @AuthenticationPrincipal PhAdmin admin) throws ParseException {
         if (sids.length != stockPrices.length || gids.length != prices.length || gids.length != originalPrices.length) {
             return false;
         }
-        SimpleDateFormat sdf =   new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         if ("".equals(startTimeText) && "".equals(stopTimeText)) {
             //立即改价
             Map<Long, List<Double>> priceList = new HashMap<>();
@@ -676,7 +676,8 @@ public class GoodsController {
         } else {
             List<Map<String, Object>> list = new ArrayList<>();
             List<PhDiscountLog> list1 = new ArrayList<>();
-            String key = startTimeText + "_" + stopTimeText + "_" + "{0}" + "_" + "DirectChange";
+            String nowStr = new DateTime().toString("yyyy-MM-dd HH:mm:ss");
+            String key = startTimeText + "_" + stopTimeText + "_" + "{0}" + "_" + nowStr + "_" + "DirectChange";
             StringBuilder sb = new StringBuilder();
             int i = 0;
             for (Long gid : gids) {
@@ -880,7 +881,7 @@ public class GoodsController {
             String key = beginTime + "_" + endTime + "_" + ids + "_" + discount;
             List<Map<String, Object>> list = new ArrayList<>();
             List<PhDiscountLog> list1 = new ArrayList<>();
-            SimpleDateFormat sdf =   new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (String id : ids.split(",")) {
                 HashMap<String, Object> map = new HashMap<>();
                 PhDiscountLog discountLog = new PhDiscountLog();
@@ -930,7 +931,7 @@ public class GoodsController {
             Date now = new Date();
             List<Map<String, Object>> list = new ArrayList<>();
             List<PhDiscountLog> list1 = new ArrayList<>();
-            SimpleDateFormat sdf =   new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             for (String id : ids.split(",")) {
                 HashMap<String, Object> map = new HashMap<>();
                 PhDiscountLog discountLog = new PhDiscountLog();
