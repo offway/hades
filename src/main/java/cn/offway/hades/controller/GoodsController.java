@@ -1049,9 +1049,19 @@ public class GoodsController {
                 m.put("subList", goodsList);
                 if (i == 1) {
                     m.put("type", "change");
+                    if (args.length == 5) {
+                        m.put("createTime", args[3]);
+                    } else {
+                        m.put("createTime", "未知");
+                    }
                 } else if (i == 2) {
                     m.put("type", "discount");
                     m.put("discount", args[3]);
+                    if (args.length == 5) {
+                        m.put("createTime", args[4]);
+                    } else {
+                        m.put("createTime", "未知");
+                    }
                 }
             }
             list.add(m);
