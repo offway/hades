@@ -878,7 +878,8 @@ public class GoodsController {
         }
         JSONArray taskList;
         if (!"".equals(beginTime.trim()) && !"".equals(endTime.trim())) {
-            String key = beginTime + "_" + endTime + "_" + ids + "_" + discount;
+            String nowStr = new DateTime().toString("yyyy-MM-dd HH:mm:ss");
+            String key = beginTime + "_" + endTime + "_" + ids + "_" + discount + "_" + nowStr;
             List<Map<String, Object>> list = new ArrayList<>();
             List<PhDiscountLog> list1 = new ArrayList<>();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
