@@ -64,7 +64,7 @@ public class CallbackController {
                 SettlementController.sendSMS("【很潮】app提醒您：您购买的商品正在派送中，请注意签收哦~", userInfo.getPhone());
             }
         } else if (state == 3) {
-            String key = "{0}_{1}_{2}_ConfirmPackage";//beginTime + "_" + endTime + "_" + ids + "_" + discount;
+            String key = "{0}_{1}_{2}_{3}_ConfirmPackage";//beginTime + "_" + endTime + "_" + ids + "_" + discount;
             DateTime oneWeekLater = new DateTime().plusDays(7);
             DateTime twoWeeksLater = oneWeekLater.plusDays(7);
             JSONArray jsonArray = new JSONArray();
@@ -74,7 +74,7 @@ public class CallbackController {
             map.put("sTime", oneWeekLater.toString("yyyy-MM-dd HH:mm:ss"));
             map.put("eTime", twoWeeksLater.toString("yyyy-MM-dd HH:mm:ss"));
             jsonArray.add(map);
-            key = MessageFormat.format(key, oneWeekLater.toString("yyyy-MM-dd HH:mm:ss"), twoWeeksLater.toString("yyyy-MM-dd HH:mm:ss"), oid);
+            key = MessageFormat.format(key, oneWeekLater.toString("yyyy-MM-dd HH:mm:ss"), twoWeeksLater.toString("yyyy-MM-dd HH:mm:ss"), oid, new DateTime().toString("yyyy-MM-dd HH:mm:ss"));
             //save to DB
             String jsonStr = configService.findContentByName("CRONJOB");
             JSONObject jsonObjectSaved;
