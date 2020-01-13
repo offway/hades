@@ -49,6 +49,7 @@
 					<form role="form" class="form-inline" id="queryForm">
                         <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
                             <input type="hidden" name="theId"/>
+							<input type="hidden" name="channel"/>
 							<div class="input-group">
 								<label for="merchantId" class="control-label">商户</label>
 								<select id="merchantId" name="merchantId" class="form-control" style="height:35px">
@@ -428,8 +429,12 @@
 	var theId = [[${theId}]];
 	var mid = [[${mid}]];
 	var uid = [[${uid}]];
+	var channel = [[${channel}]];
     jQuery(document).ready(function($)
 	{
+		if (channel) {
+			$("#queryForm").find("[name='channel']").val(channel);
+		}
         if (theId != null) {
             var form = $("#queryForm");
             form.hide();

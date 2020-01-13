@@ -79,7 +79,7 @@ public class OrderController {
     private PhRefundGoodsService refundGoodsService;
 
     @RequestMapping("/order.html")
-    public String index(ModelMap map, String theId, String mid, String uid) {
+    public String index(ModelMap map, String theId, String mid, String uid, String channel) {
         if (theId != null) {
             map.addAttribute("theId", theId);
         } else {
@@ -94,6 +94,11 @@ public class OrderController {
             map.addAttribute("uid", uid);
         } else {
             map.addAttribute("uid", null);
+        }
+        if (channel != null) {
+            map.addAttribute("channel", channel);
+        } else {
+            map.addAttribute("channel", null);
         }
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         return "order_index";
@@ -230,7 +235,7 @@ public class OrderController {
 
     @ResponseBody
     @RequestMapping("/order_list")
-    public Map<String, Object> getOrderList(HttpServletRequest request, @RequestParam(name = "status[]", required = false, defaultValue = "") String[] status, String theId, String orderNo, String userId, String payMethod, String type, String category) {
+    public Map<String, Object> getOrderList(HttpServletRequest request, @RequestParam(name = "status[]", required = false, defaultValue = "") String[] status, String theId, String orderNo, String userId, String payMethod, String type, String category, String channel) {
         int sEcho = Integer.parseInt(request.getParameter("sEcho"));
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
@@ -251,9 +256,10 @@ public class OrderController {
             }
             if ("".equals(type) && "".equals(category)) {
                 Sort sort = new Sort("id");
-                pages = (Page<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+                PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
+                pages = (Page<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, channel, pr);
             } else {
-                List<PhOrderInfo> tmpList = (List<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, null);
+                List<PhOrderInfo> tmpList = (List<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, channel, null);
                 lists = filter(tmpList, type, category);
             }
         } else {
@@ -365,7 +371,7 @@ public class OrderController {
             if (!"".equals(eTimeStr)) {
                 eTime = DateTime.parse(eTimeStr, format).toDate();
             }
-            List<PhOrderInfo> list = (List<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, null);
+            List<PhOrderInfo> list = (List<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, "", null);
             lists = filter(list, type, category);
         } else {
             lists = orderInfoService.findAll(theId);
@@ -401,7 +407,7 @@ public class OrderController {
             if (!"".equals(eTimeStr)) {
                 eTime = DateTime.parse(eTimeStr, format).toDate();
             }
-            List<PhOrderInfo> list = (List<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, null);
+            List<PhOrderInfo> list = (List<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, "", null);
             lists = filter(list, type, category);
         } else {
             lists = orderInfoService.findAll(theId);

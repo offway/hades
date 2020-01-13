@@ -1,8 +1,10 @@
 package cn.offway.hades.service.impl;
 
 import cn.offway.hades.domain.PhOrderInfo;
+import cn.offway.hades.domain.PhUserInfo;
 import cn.offway.hades.repository.PhOrderInfoRepository;
 import cn.offway.hades.service.PhOrderInfoService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,7 +40,7 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
     }
 
     @Override
-    public Iterable<PhOrderInfo> findAll(Long mid, String orderNo, Date sTime, Date eTime, String userId, String payMethod, String[] status, Pageable pageable) {
+    public Iterable<PhOrderInfo> findAll(Long mid, String orderNo, Date sTime, Date eTime, String userId, String payMethod, String[] status, String channel, Pageable pageable) {
         Specification<PhOrderInfo> specification = new Specification<PhOrderInfo>() {
             @Override
             public Predicate toPredicate(Root<PhOrderInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
@@ -75,6 +74,16 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
                     if (isOk) {
                         params.add(in);
                     }
+                }
+                if (StringUtils.isNotBlank(channel)) {
+                    Subquery<PhUserInfo> subquery = criteriaQuery.subquery(PhUserInfo.class);
+                    Root<PhUserInfo> subRoot = subquery.from(PhUserInfo.class);
+                    subquery.select(subRoot);
+                    subquery.where(
+                            criteriaBuilder.equal(root.get("userId"), subRoot.get("id")),
+                            criteriaBuilder.equal(subRoot.get("channel"), channel)
+                    );
+                    params.add(criteriaBuilder.exists(subquery));
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));

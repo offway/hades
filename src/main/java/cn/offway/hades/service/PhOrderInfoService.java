@@ -21,7 +21,7 @@ public interface PhOrderInfoService {
 
     PhOrderInfo findOne(String orderNo);
 
-    Iterable<PhOrderInfo> findAll(Long mid, String orderNo, Date sTime, Date eTime, String userId, String payMethod, String[] status, Pageable pageable);
+    Iterable<PhOrderInfo> findAll(Long mid, String orderNo, Date sTime, Date eTime, String userId, String payMethod, String[] status, String channel, Pageable pageable);
 
     List<PhOrderInfo> findAll(Long mid, String orderNo, Date sTime, Date eTime, String userId, String payMethod, String[] status);
 
