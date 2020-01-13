@@ -83,7 +83,7 @@ public class ChannelUserController {
     }
 
     @ResponseBody
-    @RequestMapping("/channel_list")
+    @RequestMapping("/channel_settle_list")
     public Map<String, Object> list(HttpServletRequest request, String channel, int sEcho, int iDisplayStart, int iDisplayLength) {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
@@ -97,12 +97,13 @@ public class ChannelUserController {
             Map<String, Object> m = mapper.convertValue(channelUser, Map.class);
             m.put("userCount", phChannelUserService.statUsers(channelUser.getChannel()));
             Object[] l = phChannelUserService.statOrder(channelUser.getChannel());
-            m.put("totalPrice", l[0]);
-            m.put("totalCount", l[1]);
-            if (l[0] == null || StringUtils.isNumeric(String.valueOf(l[0]))) {
+            Object[] row = (Object[]) l[0];
+            m.put("totalPrice", row[0]);
+            m.put("totalCount", row[1]);
+            if (row[0] == null || StringUtils.isNumeric(String.valueOf(row[0]))) {
                 m.put("backAmount", 0);
             } else {
-                m.put("backAmount", Double.valueOf(String.valueOf(l[0])) * channelUser.getProportion());
+                m.put("backAmount", Double.valueOf(String.valueOf(row[0])) * channelUser.getProportion());
             }
             list.add(m);
         }
