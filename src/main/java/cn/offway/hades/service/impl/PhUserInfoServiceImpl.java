@@ -3,6 +3,7 @@ package cn.offway.hades.service.impl;
 import cn.offway.hades.domain.PhUserInfo;
 import cn.offway.hades.repository.PhUserInfoRepository;
 import cn.offway.hades.service.PhUserInfoService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,5 +86,19 @@ public class PhUserInfoServiceImpl implements PhUserInfoService {
     @Override
     public PhUserInfo findOne(Long id) {
         return phUserInfoRepository.findOne(id);
+    }
+
+    @Override
+    public Page<PhUserInfo> findAllByPage(String channel, Pageable page) {
+        return phUserInfoRepository.findAll(new Specification<PhUserInfo>() {
+            @Override
+            public Predicate toPredicate(Root<PhUserInfo> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(criteriaBuilder.equal(root.get("channel"), channel));
+                Predicate[] predicates = new Predicate[params.size()];
+                criteriaQuery.where(params.toArray(predicates));
+                return null;
+            }
+        }, page);
     }
 }
