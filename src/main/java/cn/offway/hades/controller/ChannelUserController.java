@@ -62,12 +62,12 @@ public class ChannelUserController {
     @RequestMapping("/channel_user_save")
     public boolean save(PhChannelUser phChannelUser) {
         if (null != phChannelUser){
-            PhChannelUser channelUser = phChannelUserService.findByUserId(phChannelUser.getUserId());
-            if (channelUser != null){
-                return false;
-            }
             PhUserInfo userInfo = phUserInfoService.findOne(phChannelUser.getUserId());
             if (null != userInfo){
+                PhChannelUser channelUser = phChannelUserService.findByUserId(phChannelUser.getUserId());
+                if (channelUser != null && phChannelUser.getUserId()== null){
+                    return false;
+                }
                 if(userInfo.getHeadimgurl() != null){
                     phChannelUser.setUserHeadimgurl(userInfo.getHeadimgurl());
                 }

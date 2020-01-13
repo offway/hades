@@ -120,6 +120,12 @@
                                    style="height:35px" type="text"/>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input class="form-control" name="adminId" placeholder="后台登录ID"
+                                   style="height:35px" type="text"/>
+                        </div>
+                    </div>
                 </form>
             </div>
 
@@ -461,6 +467,11 @@
                     },
                     {
                         targets: 10,
+                        data: "adminId",
+                        title: "后台登录id"
+                    },
+                    {
+                        targets: 11,
                         data: "channel",
                         title: "渠道注册用户查看",
                         render:function (data, type, row, meta) {
