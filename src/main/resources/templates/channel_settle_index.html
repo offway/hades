@@ -45,11 +45,11 @@
 					<form role="form" class="form-inline">
 						<div class="form-group ">
 							<div class="input-group">
-								<label for="merchantId" class="control-label">渠道</label>
+								<label for="channel" class="control-label">渠道</label>
 							</div>
 							<div class="input-group">
-								<select id="merchantId" name="merchantId" class="form-control" style="height:35px">
-									<option th:each="brand : ${brands}" th:text="${brand.name}" th:value="${brand.id}"></option>
+								<select id="channel" name="channel" class="form-control" style="height:35px">
+									<option th:each="channel : ${channels}" th:text="${channel.channelName}" th:value="${channel.channel}"></option>
 								</select>
 							</div>
 						</div>
@@ -97,16 +97,16 @@
 	{
 		var oTable = $("#example-1").dataTable({
 			language: {
-                url: "../assets/Chinese.txt"
-            },
-			bFilter : false,
-			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/channel_list",//通过ajax实现分页的url路径。
-            fnServerParams : function(aData){
-                var searchArray = $(".form-inline").serializeArray();
-                $.merge(aData, searchArray);
-            },
+				url: "../assets/Chinese.txt"
+			},
+			bFilter: false,
+			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+			sAjaxSource: "/channel_list",//通过ajax实现分页的url路径。
+			fnServerParams: function (aData) {
+				var searchArray = $(".form-inline").serializeArray();
+				$.merge(aData, searchArray);
+			},
 			columnDefs: [
 				{
 					targets: 0,
@@ -126,19 +126,18 @@
 				},
 				{
 					targets: 2,
-					data: "merchantId",
+					data: "channelName",
 					title: "渠道名称"
 				},
 				{
 					targets: 3,
-					orderable: false,
-					data: "merchantName",
+					data: "userId",
 					title: "渠道用户id"
 				},
 				{
 					targets: 4,
 					orderable: false,
-					data: "merchantLogo",
+					data: "userHeadimgurl",
 					title: "用户头像",
 					render: function (data, type, row, meta) {
 						return buildImg(data);
@@ -146,41 +145,37 @@
 				},
 				{
 					targets: 5,
-					data: "merchantGoodsCount",
+					data: "userPhone",
 					title: "渠道用户手机号"
 				},
 				{
 					targets: 6,
-					data: "orderAmount",
+					data: "userCount",
 					title: "渠道注册用户数"
 				},
 				{
 					targets: 7,
-					data: "orderCount",
+					data: "totalPrice",
 					title: "订单成交总金额"
 				},
 				{
 					targets: 8,
-					data: "statisticalTime",
-					title: "订单成交总笔数",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
+					data: "totalCount",
+					title: "订单成交总笔数"
 				},
 				{
 					targets: 9,
-					orderable: false,
-					data: "remark",
+					data: "proportion",
 					title: "提成比例"
 				},
 				{
 					targets: 10,
-					data: "version",
+					data: "backAmount",
 					title: "应结金额"
 				},
 				{
 					targets: 11,
-					data: "merchantId",
+					data: "channel",
 					orderable: false,
 					title: "操作",
 					render: function (data, type, full, meta) {
@@ -191,8 +186,8 @@
 		});
 
 		table_global = oTable;
-		
-		$(".searchBtn").click(function(){
+
+		$(".searchBtn").click(function () {
 			$("#checkbox-all").attr("checked", false);
 			oTable.fnDraw(); //or fnReloadAjax()  
 			return false;

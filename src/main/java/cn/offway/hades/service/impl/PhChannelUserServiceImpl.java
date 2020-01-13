@@ -77,6 +77,20 @@ public class PhChannelUserServiceImpl implements PhChannelUserService {
     }
 
     @Override
+    public PhChannelUser findByAdminId(Long id) {
+        return phChannelUserRepository.findOne(new Specification<PhChannelUser>() {
+            @Override
+            public Predicate toPredicate(Root<PhChannelUser> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                List<Predicate> params = new ArrayList<Predicate>();
+                params.add(cb.equal(root.get("adminId"), Long.valueOf(id)));
+                Predicate[] predicates = new Predicate[params.size()];
+                query.where(params.toArray(predicates));
+                return null;
+            }
+        });
+    }
+
+    @Override
     public void delete(Long id) {
         phChannelUserRepository.delete(id);
     }

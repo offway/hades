@@ -75,7 +75,9 @@ public class ChannelUserController {
             list.add(all);
             map.addAttribute("channels", list);
         } else {
-            map.addAttribute("channels", phChannelUserService.findByUserId(admin.getId()));
+            List<PhChannelUser> list = new ArrayList<>();
+            list.add(phChannelUserService.findByAdminId(admin.getId()));
+            map.addAttribute("channels", list);
         }
         return "channel_settle_index";
     }

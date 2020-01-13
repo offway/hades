@@ -34,4 +34,6 @@ public interface PhChannelUserService {
     Object[] statOrder(String channel);
 
     List<PhChannelUser> listAll();
+
+    PhChannelUser findByAdminId(Long id);
 }
