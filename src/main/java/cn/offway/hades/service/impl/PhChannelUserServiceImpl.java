@@ -63,7 +63,7 @@ public class PhChannelUserServiceImpl implements PhChannelUserService {
     @Override
     public Long statUsers(String channel) {
         Optional<String> res = phChannelUserRepository.statUsers(channel);
-        return res.isPresent() ? Long.valueOf(res.get()) : 0L;
+        return res.isPresent() ? Long.valueOf(String.valueOf(res.get())) : 0L;
     }
 
     @Override
