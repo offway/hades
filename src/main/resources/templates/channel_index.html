@@ -133,6 +133,18 @@
     </div>
 </div>
 
+<div class="modal fade in" data-backdrop="static" id="modal-remark">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 800px;">
+            <table id="example-3" class="table table-striped table-bordered" cellspacing="0" width="100%">
+            </table>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div aria-hidden="false" class="modal fade in" id="preview" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -268,6 +280,81 @@
         return returnList;
     }
 
+    function addremark(channel){
+        oTable0 = $("#example-3").dataTable({
+            language: {
+                url: "../assets/Chinese.txt"
+            },
+            bFilter : false,
+            bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp : "aData",//是服务器分页的标志，必须有
+            sAjaxSource : "/channel_user_info?channel="+channel,//通过ajax实现分页的url路径。
+            destroy:true,
+            fnServerParams : function(aData){
+            },
+            columnDefs: [
+                {
+                    targets: 0,
+                    data: "id",
+                    width: "5%",
+                    orderable: false,
+                    className: 'select-checkbox',
+                    title: '<input type="checkbox" id="checkbox-all"/>',
+                    render: function (data, type, full, meta) {
+                        return '<input type="checkbox" name="activityId" value="' + data + '" />';
+                    }
+                },
+                {
+                    targets: 1,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+                    targets: 2,
+                    data: "phone",
+                    title: "手机"
+                },
+                {
+                    targets: 3,
+                    data: "nickname",
+                    title: "昵称"
+                },
+                {
+                    targets: 4,
+                    data: "sex",
+                    title: "性别",
+                    render: function (data, type, row, meta) {
+                        /** 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知 **/
+                        var map = ["未知", "男性", "女性"];
+                        return data == null ? "未知" : map[parseInt(data)];
+                    }
+                },
+                {
+                    targets: 5,
+                    data: "headimgurl",
+                    title: "头像",
+                    render: function (data, type, row, meta) {
+                        return buildImg(data);
+                    }
+                },
+                {
+                    targets: 6,
+                    data: "remark",
+                    title: "备注"
+                },
+                {
+                    targets: 7,
+                    data: "createTime",
+                    title: "注册时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                }
+            ]
+        });
+        jQuery('#modal-remark').modal('show', {backdrop: 'fade'});
+    }
+
     jQuery(document).ready(function ($) {
         var qiniuUrl = [[${qiniuUrl}]];
 
@@ -371,6 +458,14 @@
                         targets: 9,
                         data: "number",
                         title: "渠道注册人数"
+                    },
+                    {
+                        targets: 10,
+                        data: "channel",
+                        title: "渠道注册用户查看",
+                        render:function (data, type, row, meta) {
+                            return '<input type="button" name="remark" id="remark" onclick="addremark(\''+data+'\')" value="查看注册用户"/>';
+                        }
                     }
                 ]
             });

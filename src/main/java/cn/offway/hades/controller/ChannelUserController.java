@@ -153,4 +153,26 @@ public class ChannelUserController {
         }
         return true;
     }
+
+    @ResponseBody
+    @RequestMapping("/channel_user_info")
+    public Map<String, Object> channelUsersData(HttpServletRequest request, String channel) {
+        String sortCol = request.getParameter("iSortCol_0");
+        String sortName = request.getParameter("mDataProp_" + sortCol);
+        String sortDir = request.getParameter("sSortDir_0");
+        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
+        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
+        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
+        Sort sort = new Sort("id");
+        Page<PhUserInfo> pages = phUserInfoService.findAllByPage(channel, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
+        // 为操作次数加1，必须这样做
+        int initEcho = sEcho + 1;
+        Map<String, Object> map = new HashMap<>();
+        map.put("sEcho", initEcho);
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        map.put("aData", pages.getContent());//数据集合
+        return map;
+    }
+
 }
