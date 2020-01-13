@@ -1,25 +1,30 @@
 package cn.offway.hades.controller;
 
+import cn.offway.hades.domain.PhAdmin;
 import cn.offway.hades.domain.PhChannelUser;
 import cn.offway.hades.domain.PhGoodsType;
 import cn.offway.hades.domain.PhUserInfo;
 import cn.offway.hades.service.PhChannelUserService;
+import cn.offway.hades.service.PhRoleadminService;
 import cn.offway.hades.service.PhUserInfoService;
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.math.BigInteger;
+import java.util.*;
 
 @Controller
 @RequestMapping
@@ -29,6 +34,8 @@ public class ChannelUserController {
     private PhChannelUserService phChannelUserService;
     @Autowired
     private PhUserInfoService phUserInfoService;
+    @Autowired
+    private PhRoleadminService roleadminService;
 
 
     @RequestMapping("/channelhtml.html")
@@ -58,17 +65,70 @@ public class ChannelUserController {
         return map;
     }
 
+    @RequestMapping("/channel_settle_index.html")
+    public String listIndex(ModelMap map, @AuthenticationPrincipal PhAdmin admin) {
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (roles.contains(BigInteger.valueOf(1L))) {
+            List<PhChannelUser> list = phChannelUserService.listAll();
+            PhChannelUser all = new PhChannelUser();
+            all.setChannelName("全部");
+            all.setChannel("");
+            list.add(all);
+            map.addAttribute("channels", list);
+        } else {
+            List<PhChannelUser> list = new ArrayList<>();
+            list.add(phChannelUserService.findByAdminId(admin.getId()));
+            map.addAttribute("channels", list);
+        }
+        return "channel_settle_index";
+    }
+
+    @ResponseBody
+    @RequestMapping("/channel_settle_list")
+    public Map<String, Object> list(HttpServletRequest request, String channel, int sEcho, int iDisplayStart, int iDisplayLength) {
+        String sortCol = request.getParameter("iSortCol_0");
+        String sortName = request.getParameter("mDataProp_" + sortCol);
+        String sortDir = request.getParameter("sSortDir_0");
+        Sort sort = new Sort("id");
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
+        Page<PhChannelUser> pages = phChannelUserService.list(channel, pr);
+        ObjectMapper mapper = new ObjectMapper();
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (PhChannelUser channelUser : pages.getContent()) {
+            Map<String, Object> m = mapper.convertValue(channelUser, Map.class);
+            m.put("userCount", phChannelUserService.statUsers(channelUser.getChannel()));
+            Object[] l = phChannelUserService.statOrder(channelUser.getChannel());
+            Object[] row = (Object[]) l[0];
+            m.put("totalPrice", row[0]);
+            m.put("totalCount", row[1]);
+            if (row[0] == null || StringUtils.isNumeric(String.valueOf(row[0]))) {
+                m.put("backAmount", 0);
+            } else {
+                m.put("backAmount", Double.valueOf(String.valueOf(row[0])) * channelUser.getProportion());
+            }
+            list.add(m);
+        }
+        // 为操作次数加1，必须这样做
+        int initEcho = sEcho + 1;
+        Map<String, Object> map = new HashMap<>();
+        map.put("sEcho", initEcho);
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        map.put("aData", list);//数据集合
+        return map;
+    }
+
     @ResponseBody
     @RequestMapping("/channel_user_save")
     public boolean save(PhChannelUser phChannelUser) {
-        if (null != phChannelUser){
+        if (null != phChannelUser) {
+            PhChannelUser channelUser = phChannelUserService.findByUserId(phChannelUser.getUserId());
+            if (channelUser != null) {
+                return false;
+            }
             PhUserInfo userInfo = phUserInfoService.findOne(phChannelUser.getUserId());
-            if (null != userInfo){
-                PhChannelUser channelUser = phChannelUserService.findByUserId(phChannelUser.getUserId());
-                if (channelUser != null && phChannelUser.getUserId()== null){
-                    return false;
-                }
-                if(userInfo.getHeadimgurl() != null){
+            if (null != userInfo) {
+                if (userInfo.getHeadimgurl() != null) {
                     phChannelUser.setUserHeadimgurl(userInfo.getHeadimgurl());
                 }
                 phChannelUser.setUserPhone(userInfo.getPhone());
