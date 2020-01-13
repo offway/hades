@@ -87,9 +87,9 @@
         return "<img width='100px' height='100px' src='#' />".replace("#", url);
     }
 
-	function checkItsList(id) {
-		window.location.href = '/settle_inner.html?id=' + id;
-	}
+    function checkItsList(id) {
+        window.location.href = '/order.html?channel=' + id;
+    }
 
 	var table_global;
 	var qiniuUrl = [[${qiniuUrl}]];
@@ -173,15 +173,15 @@
 					data: "backAmount",
 					title: "应结金额"
 				},
-				{
-					targets: 11,
-					data: "channel",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="checkItsList(' + data + ')" value="查看详细对账"/>';
-					}
-				}
+                {
+                    targets: 11,
+                    data: "channel",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        return '<input type="button" name="checkIt" onclick="checkItsList(\'AAAA\')" value="查看详细对账"/>'.replace("AAAA", data);
+                    }
+                }
 			]
 		});
 
