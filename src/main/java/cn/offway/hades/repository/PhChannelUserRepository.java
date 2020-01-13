@@ -16,9 +16,9 @@ import java.util.Optional;
 public interface PhChannelUserRepository extends JpaRepository<PhChannelUser, Long>, JpaSpecificationExecutor<PhChannelUser> {
     PhChannelUser findByUserId(Long id);
 
-    @Query(nativeQuery = true, value = "SELECT count(id) as ct FROM ph_user_info where source = ?1")
+    @Query(nativeQuery = true, value = "SELECT count(id) FROM ph_user_info where (`channel` = ?1)")
     Optional<String> statUsers(String channel);
 
-    @Query(nativeQuery = true, value = "SELECT sum(price) as price,count(id) as total FROM ph_order_info where user_id in (SELECT id FROM ph_user_info where source = ?1) and status in (1,2,3) and order_no not in (SELECT order_no FROM ph_refund where status = 4)")
+    @Query(nativeQuery = true, value = "SELECT sum(price),count(id) FROM ph_order_info where user_id in (SELECT id FROM ph_user_info where channel = ?1) and status in (1,2,3) and order_no not in (SELECT order_no FROM ph_refund where status = 4)")
     Object[] statOrder(String channel);
 }
