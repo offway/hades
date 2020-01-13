@@ -356,7 +356,7 @@ public class OrderController {
 
     @ResponseBody
     @RequestMapping("/order_list_all")
-    public Map<String, Object> getOrderListAll(HttpServletRequest request, @RequestParam(name = "status[]", required = false, defaultValue = "") String[] status, String theId, String orderNo, String userId, String payMethod, String type, String category) {
+    public Map<String, Object> getOrderListAll(HttpServletRequest request, @RequestParam(name = "status[]", required = false, defaultValue = "") String[] status, String theId, String orderNo, String userId, String payMethod, String type, String category, String channel) {
         List<PhOrderInfo> lists = null;
         if ("".equals(theId)) {
             String merchantId = request.getParameter("merchantId");
@@ -371,7 +371,7 @@ public class OrderController {
             if (!"".equals(eTimeStr)) {
                 eTime = DateTime.parse(eTimeStr, format).toDate();
             }
-            List<PhOrderInfo> list = (List<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, "", null);
+            List<PhOrderInfo> list = (List<PhOrderInfo>) orderInfoService.findAll(Long.valueOf(merchantId), orderNo, sTime, eTime, userId, payMethod, status, channel, null);
             lists = filter(list, type, category);
         } else {
             lists = orderInfoService.findAll(theId);
