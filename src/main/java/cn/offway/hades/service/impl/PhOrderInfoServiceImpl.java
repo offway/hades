@@ -1,6 +1,7 @@
 package cn.offway.hades.service.impl;
 
 import cn.offway.hades.domain.PhOrderInfo;
+import cn.offway.hades.domain.PhRefund;
 import cn.offway.hades.domain.PhUserInfo;
 import cn.offway.hades.repository.PhOrderInfoRepository;
 import cn.offway.hades.service.PhOrderInfoService;
@@ -84,6 +85,14 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
                             criteriaBuilder.equal(subRoot.get("channel"), channel)
                     );
                     params.add(criteriaBuilder.exists(subquery));
+                    //排除售后订单
+                    Subquery<PhRefund> subqueryIn = criteriaQuery.subquery(PhRefund.class);
+                    Root<PhRefund> subRootIn = subqueryIn.from(PhRefund.class);
+                    subqueryIn.select(subRootIn.get("orderNo"));
+                    subqueryIn.where(
+                            criteriaBuilder.equal(subRootIn.get("status"), 4)
+                    );
+                    params.add(criteriaBuilder.not(criteriaBuilder.in(root.get("orderNo")).value(subqueryIn)));
                 }
                 Predicate[] predicates = new Predicate[params.size()];
                 criteriaQuery.where(params.toArray(predicates));
