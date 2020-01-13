@@ -47,6 +47,9 @@ public class PhChannelUser implements Serializable {
     /**  **/
     private Long number;
 
+    /**  **/
+    private Long adminId;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -148,6 +151,15 @@ public class PhChannelUser implements Serializable {
 
     public void setNumber(Long number) {
         this.number = number;
+    }
+
+    @Column(name = "admin_id", length = 11)
+    public Long getAdminId() {
+        return adminId;
+    }
+
+    public void setAdminId(Long adminId) {
+        this.adminId = adminId;
     }
 
 }
