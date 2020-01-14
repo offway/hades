@@ -76,7 +76,7 @@ ph:
     server: https://pic.offway.cn:8443/images/product
   url: https://zeus.offway.cn
 qiniu:
-  url: http://qiniu.offway.cn
+  url: https://qiniu.offway.cn
   access-key: WU33Cpp1WJZAf4oIIHknc2ga3ZhQpgJo3UL-JUdB
   secret-key: ALb95JFSVi3mvSScoQa564HzDby_y2EasUhhmniV
   bucket: offwaypro

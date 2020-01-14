@@ -363,6 +363,12 @@
 
     jQuery(document).ready(function ($) {
         var qiniuUrl = [[${qiniuUrl}]];
+        var admin = [[${ISADMIN}]];
+        if (!admin){
+            $(".btn.btn-info.add").hide();
+            $(".btn.btn-info.edit").hide();
+            $(".btn.btn-info.del").hide();
+        }
 
         jQuery.datetimepicker.setLocale('zh');
         jQuery('#sTime').datetimepicker(

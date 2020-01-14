@@ -39,13 +39,19 @@ public class ChannelUserController {
 
 
     @RequestMapping("/channelhtml.html")
-    public String list() {
+    public String list(ModelMap map,@AuthenticationPrincipal PhAdmin admin) {
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (!roles.contains(BigInteger.valueOf(1L))){
+            map.addAttribute("ISADMIN", false);
+        }else {
+            map.addAttribute("ISADMIN", true);
+        }
         return "channel_index";
     }
 
     @ResponseBody
     @RequestMapping("/channel_User_list")
-    public Map<String, Object> usersData(HttpServletRequest request, String channelName, String channel, String userId, String userPhone) {
+    public Map<String, Object> usersData(HttpServletRequest request, String channelName, String channel, String userId, String userPhone,@AuthenticationPrincipal PhAdmin admin) {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
@@ -53,6 +59,13 @@ public class ChannelUserController {
         int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
         int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
         Sort sort = new Sort("id");
+        List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
+        if (!roles.contains(BigInteger.valueOf(1L))){
+            PhChannelUser channelUser = phChannelUserService.findByAdminId(admin.getId());
+            channel = channelUser.getChannel();
+            channelName = channelUser.getChannelName();
+            userPhone = channelUser.getUserPhone();
+        }
         Page<PhChannelUser> pages = phChannelUserService.list(channelName, channel, userId, userPhone, new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort));
 
         // 为操作次数加1，必须这样做
@@ -122,12 +135,12 @@ public class ChannelUserController {
     @RequestMapping("/channel_user_save")
     public boolean save(PhChannelUser phChannelUser) {
         if (null != phChannelUser) {
-            PhChannelUser channelUser = phChannelUserService.findByUserId(phChannelUser.getUserId());
-            if (channelUser != null) {
-                return false;
-            }
             PhUserInfo userInfo = phUserInfoService.findOne(phChannelUser.getUserId());
             if (null != userInfo) {
+                PhChannelUser channelUser = phChannelUserService.findByUserId(phChannelUser.getUserId());
+                if (channelUser != null && phChannelUser.getId() == null) {
+                    return false;
+                }
                 if (userInfo.getHeadimgurl() != null) {
                     phChannelUser.setUserHeadimgurl(userInfo.getHeadimgurl());
                 }
