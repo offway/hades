@@ -36,7 +36,7 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
     private String orderNoCopy;
 
     /** 订单号副本 for 售后信息 **/
-    @ExcelProperty(value = "商品明细",index = 18)
+    @ExcelProperty(value = "售后信息",index = 18)
     private String orderNoCopyAlt;
 
     /** 用户ID **/
