@@ -491,6 +491,21 @@ public class OrderController {
                             }
                             cell.setCellValue(sbAddr.toString());
                             break;
+                        case 18:
+                            String orderNoAlt = cell.getStringCellValue();
+                            PhRefund refund = refundService.findOne(orderNoAlt, "0", "1", "2", "3", "4", "5");
+                            //类型[0-仅退款,1-退货退款,2-换货]
+                            String[] typeMap = new String[]{"仅退款", "退货退款", "换货"};
+                            //状态[0-审核中,1-待退货,2-退货中/换货中,3-退款中,4-退款成功/换货成功,5-退款取消,6-审核失败,7-已寄出]
+                            String[] statusMap = new String[]{"审核中", "待退货", "进行中", "退款中", "成功", "退款取消", "审核失败", "已寄出"};
+                            StringBuilder sbRefund = new StringBuilder();
+                            if (refund != null) {
+                                sbRefund.append(typeMap[Integer.valueOf(refund.getType())]);
+                                sbRefund.append("-");
+                                sbRefund.append(statusMap[Integer.valueOf(refund.getStatus())]);
+                            }
+                            cell.setCellValue(sbRefund.toString());
+                            break;
                         default:
                             break;
                     }

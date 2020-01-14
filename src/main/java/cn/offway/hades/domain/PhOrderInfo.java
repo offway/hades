@@ -35,6 +35,10 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
     @ExcelProperty(value = "商品明细",index = 13)
     private String orderNoCopy;
 
+    /** 订单号副本 for 售后信息 **/
+    @ExcelProperty(value = "商品明细",index = 18)
+    private String orderNoCopyAlt;
+
     /** 用户ID **/
     @ExcelProperty(value = "用户ID",index = 2)
     private Long userId;
@@ -113,14 +117,14 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
     /** 商户名称 **/
     @ExcelProperty(value = "商户名称",index = 15)
     private String merchantName;
-    
+
     /** 支付渠道[wxpay,alipay] **/
     @ExcelProperty(value = "支付渠道",index = 9)
     private String payChannel;
-    
+
     /** 是否隐藏[0-否，1-是] **/
     private String isHidden;
-    
+
     /** 确认收货时间  **/
     private Date receiptTime;
 
@@ -162,6 +166,7 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
         this.orderNoCopy = orderNo;
+        this.orderNoCopyAlt = orderNo;
     }
 
     @Column(name = "user_id", length = 11)
@@ -348,7 +353,7 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
     public void setMerchantName(String merchantName) {
         this.merchantName = merchantName;
     }
-    
+
     @Column(name = "pay_channel", length = 2)
     public String getPayChannel() {
         return payChannel;
@@ -357,7 +362,7 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
     public void setPayChannel(String payChannel) {
         this.payChannel = payChannel;
     }
-    
+
     @Column(name = "is_hidden", length = 2)
     public String getIsHidden() {
         return isHidden;
@@ -402,6 +407,15 @@ public class PhOrderInfo extends BaseRowModel implements Serializable {
 
     public void setOrderNoCopy(String orderNoCopy) {
         this.orderNoCopy = orderNoCopy;
+    }
+
+    @Transient
+    public String getOrderNoCopyAlt() {
+        return orderNoCopyAlt;
+    }
+
+    public void setOrderNoCopyAlt(String orderNoCopyAlt) {
+        this.orderNoCopyAlt = orderNoCopyAlt;
     }
 
     @Column(name = "promotion_amount", precision = 15, scale = 2)
