@@ -93,6 +93,7 @@ public class UserInfoController {
                         for (int i = 1; i <= 10; i++) {
                             ret.put(obj.getUsername() + i, obj.getNickname() + i);
                         }
+                        ret.put(obj.getUsername() + 11, obj.getNickname() + "新年推广");
                     } else {
                         ret.put(obj.getUsername(), obj.getNickname());
                     }
@@ -103,6 +104,7 @@ public class UserInfoController {
                 for (int i = 1; i <= 10; i++) {
                     ret.put(admin.getUsername() + i, admin.getNickname() + i);
                 }
+                ret.put(admin.getUsername() + 11, admin.getNickname() + "新年推广");
             } else {
                 ret.put(admin.getUsername(), admin.getNickname());
             }
