@@ -620,6 +620,7 @@
                                 "success": function (body) {
                                     if (body) {
                                         str = "<font color='red'>";
+                                        str += body["isComplete"] == "1" ? "全部" : "部分";
                                         str += typeMap[parseInt(body["type"])];
                                         str += "-";
                                         str += statusMap[parseInt(body["status"])];
@@ -630,8 +631,30 @@
                             return str;
                         }
 					},
+                    {
+                        targets: 12,
+                        orderable: false,
+                        data: "orderNo",
+                        title: "退款金额",
+                        render: function (data, type, row, meta) {
+                            var str = "";
+                            $.ajax({
+                                "url": "/refund_query_amount",
+                                "async": false,
+                                "data": {"orderNo": data},
+                                "success": function (body) {
+                                    if (body) {
+                                        str = "<font color='red'>";
+                                        str += body;
+                                        str += "</font>"
+                                    }
+                                }
+                            });
+                            return str;
+                        }
+                    },
 					{
-						targets: 12,
+						targets: 13,
 						orderable: false,
 						data: "payChannel",
 						title: "支付渠道",
@@ -642,7 +665,7 @@
 						}
 					},
 					{
-						targets: 13,
+						targets: 14,
 						orderable: false,
 						data: "preorderNo",
 						title: "总订单号",
@@ -657,7 +680,7 @@
 						}
 					},
 					{
-						targets: 14,
+						targets: 15,
 						orderable: false,
 						data: "createTime",
 						title: "创建时间",
@@ -665,14 +688,8 @@
 							return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
 						}
 					},
-					// {
-					// 	targets: 14,
-					// 	orderable: false,
-					// 	data: "merchantName",
-					// 	title: "商户名"
-					// },
 					{
-						targets: 15,
+						targets: 16,
 						orderable: false,
 						data: "id",
 						title: "操作",
@@ -685,7 +702,7 @@
 						}
 					},
 					{
-						targets: 16,
+						targets: 17,
 						orderable: false,
 						data: "id",
 						title: "操作",

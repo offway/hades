@@ -421,6 +421,19 @@ public class RefundController {
     }
 
     @ResponseBody
+    @RequestMapping("/refund_query_amount")
+    public double amount(String orderNo) {
+        double total = 0;
+        PhRefund refund = refundService.findOne(orderNo, "3", "4");
+        if (refund != null) {
+            for (PhRefundGoods goods : refundGoodsService.listByPid(refund.getId())) {
+                total += goods.getPrice();
+            }
+        }
+        return total;
+    }
+
+    @ResponseBody
     @RequestMapping("/refund_deny")
     public boolean deny(Long id, String reason, @AuthenticationPrincipal PhAdmin admin) {
         PhRefund refund = refundService.findOne(id);
