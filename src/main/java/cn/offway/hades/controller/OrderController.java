@@ -500,11 +500,23 @@ public class OrderController {
                             String[] statusMap = new String[]{"审核中", "待退货", "进行中", "退款中", "成功", "退款取消", "审核失败", "已寄出"};
                             StringBuilder sbRefund = new StringBuilder();
                             if (refund != null) {
+                                sbRefund.append("1".equals(refund.getIsComplete()) ? "全部" : "部分");
                                 sbRefund.append(typeMap[Integer.valueOf(refund.getType())]);
                                 sbRefund.append("-");
                                 sbRefund.append(statusMap[Integer.valueOf(refund.getStatus())]);
                             }
                             cell.setCellValue(sbRefund.toString());
+                            break;
+                        case 19:
+                            String orderNoAgain = cell.getStringCellValue();
+                            double total = 0;
+                            PhRefund refundAgain = refundService.findOne(orderNoAgain, "3", "4");
+                            if (refundAgain != null) {
+                                for (PhRefundGoods goods : refundGoodsService.listByPid(refundAgain.getId())) {
+                                    total += goods.getPrice();
+                                }
+                            }
+                            cell.setCellValue(total);
                             break;
                         default:
                             break;
