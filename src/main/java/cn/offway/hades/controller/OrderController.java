@@ -633,6 +633,10 @@ public class OrderController {
         PhOrderInfo orderInfo = orderInfoService.findOne(id);
         if (orderInfo != null) {
             if ("create".equals(action)) {
+                PhOrderExpressInfo isExist = orderExpressInfoService.findByPid(orderInfo.getOrderNo(), "0");
+                if (isExist != null) {
+                    return false;
+                }
                 PhOrderExpressInfo orderExpressInfo = new PhOrderExpressInfo();
                 orderExpressInfo.setExpressCode(expressCode);
                 orderExpressInfo.setMailNo(mailNo);
