@@ -1,8 +1,10 @@
 package cn.offway.hades.controller;
 
 import cn.offway.hades.domain.PhCelebrityList;
+import cn.offway.hades.domain.PhFollow;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhCelebrityListService;
+import cn.offway.hades.service.PhFollowService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class StarManagerController {
     @Autowired
     private PhCelebrityListService celebrityListService;
     @Autowired
+    private PhFollowService followService;
+    @Autowired
     private QiniuProperties qiniuProperties;
 
     @RequestMapping("/starList.html")
@@ -36,15 +40,41 @@ public class StarManagerController {
         return "starList_index";
     }
 
+    @RequestMapping("/starFansList.html")
+    public String listFans(ModelMap map, String pid) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("pid", pid);
+        return "starFansList_index";
+    }
+
     @ResponseBody
     @RequestMapping("/starList_list")
-    public Map<String, Object> usersData(HttpServletRequest request, int sEcho, int iDisplayStart, int iDisplayLength, String name) {
+    public Map<String, Object> starList(HttpServletRequest request, int sEcho, int iDisplayStart, int iDisplayLength, String name) {
         String sortCol = request.getParameter("iSortCol_0");
         String sortName = request.getParameter("mDataProp_" + sortCol);
         String sortDir = request.getParameter("sSortDir_0");
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
         Page<PhCelebrityList> pages = celebrityListService.list(name, pr);
+        // 为操作次数加1，必须这样做
+        int initEcho = sEcho + 1;
+        Map<String, Object> map = new HashMap<>();
+        map.put("sEcho", initEcho);
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        map.put("aData", pages.getContent());//数据集合
+        return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/starFansList_list")
+    public Map<String, Object> fansList(HttpServletRequest request, int sEcho, int iDisplayStart, int iDisplayLength, long pid) {
+        String sortCol = request.getParameter("iSortCol_0");
+        String sortName = request.getParameter("mDataProp_" + sortCol);
+        String sortDir = request.getParameter("sSortDir_0");
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
+        Page<PhFollow> pages = followService.list(pid, pr);
         // 为操作次数加1，必须这样做
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
