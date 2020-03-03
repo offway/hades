@@ -24,4 +24,8 @@ public interface PhCelebrityListService {
     List<PhCelebrityList> save(List<PhCelebrityList> entities);
 
     Page<PhCelebrityList> list(String name, Pageable pageable);
+
+    List<Object[]> list(String name, int offset);
+
+    long count(String name);
 }

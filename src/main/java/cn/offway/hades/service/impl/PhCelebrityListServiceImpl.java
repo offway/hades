@@ -66,6 +66,33 @@ public class PhCelebrityListServiceImpl implements PhCelebrityListService {
     }
 
     @Override
+    public List<Object[]> list(String name, int offset) {
+        if (StringUtils.isBlank(name)) {
+            return phCelebrityListRepository.list(offset);
+        } else {
+            return phCelebrityListRepository.list("%" + name + "%", offset);
+        }
+    }
+
+    @Override
+    public long count(String name) {
+        if (StringUtils.isBlank(name)) {
+            return phCelebrityListRepository.count();
+        } else {
+            return phCelebrityListRepository.count(new Specification<PhCelebrityList>() {
+                @Override
+                public Predicate toPredicate(Root<PhCelebrityList> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                    List<Predicate> params = new ArrayList<Predicate>();
+                    params.add(cb.like(root.get("name"), "%" + name + "%"));
+                    Predicate[] predicates = new Predicate[params.size()];
+                    query.where(params.toArray(predicates));
+                    return null;
+                }
+            });
+        }
+    }
+
+    @Override
     public List<PhCelebrityList> save(List<PhCelebrityList> entities) {
         return phCelebrityListRepository.save(entities);
     }

@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -50,19 +52,31 @@ public class StarManagerController {
     @ResponseBody
     @RequestMapping("/starList_list")
     public Map<String, Object> starList(HttpServletRequest request, int sEcho, int iDisplayStart, int iDisplayLength, String name) {
-        String sortCol = request.getParameter("iSortCol_0");
-        String sortName = request.getParameter("mDataProp_" + sortCol);
-        String sortDir = request.getParameter("sSortDir_0");
-        Sort sort = new Sort(Sort.Direction.DESC, "id");
-        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
-        Page<PhCelebrityList> pages = celebrityListService.list(name, pr);
+//        String sortCol = request.getParameter("iSortCol_0");
+//        String sortName = request.getParameter("mDataProp_" + sortCol);
+//        String sortDir = request.getParameter("sSortDir_0");
+//        Sort sort = new Sort(Sort.Direction.DESC, "id");
+//        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
+//        Page<PhCelebrityList> pages = celebrityListService.list(name, pr);
+        long totalCount = celebrityListService.count(name);
+        List<PhCelebrityList> list = new ArrayList<>();
+        for (Object[] o : celebrityListService.list(name, iDisplayStart)) {
+            PhCelebrityList model = new PhCelebrityList();
+            model.setId(Long.valueOf(String.valueOf(o[0])));
+            model.setName(String.valueOf(o[1]));
+            model.setHeadimgurl(String.valueOf(o[2]));
+            model.setProfession(String.valueOf(o[3]));
+            model.setFansSum(o[4] == null ? 0 : Long.valueOf(String.valueOf(o[4])));
+            model.setRemark(String.valueOf(o[5]));
+            list.add(model);
+        }
         // 为操作次数加1，必须这样做
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
-        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
-        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
-        map.put("aData", pages.getContent());//数据集合
+        map.put("iTotalRecords", totalCount);//数据总条数
+        map.put("iTotalDisplayRecords", totalCount);//显示的条数
+        map.put("aData", list);//数据集合
         return map;
     }
 
