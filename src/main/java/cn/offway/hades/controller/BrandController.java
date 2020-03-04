@@ -1,6 +1,7 @@
 package cn.offway.hades.controller;
 
 import cn.offway.hades.domain.PhBrand;
+import cn.offway.hades.domain.PhBrandRecommend;
 import cn.offway.hades.domain.PhConfig;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
@@ -32,6 +33,8 @@ public class BrandController {
     @Autowired
     private PhBrandService brandService;
     @Autowired
+    private PhBrandRecommendService brandRecommendService;
+    @Autowired
     private PhGoodsService goodsService;
     @Autowired
     private PhGoodsStockService goodsStockService;
@@ -46,6 +49,12 @@ public class BrandController {
         return "brand_index";
     }
 
+    @RequestMapping("/brandMini.html")
+    public String indexMini(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        return "brand_mini_index";
+    }
+
     @ResponseBody
     @RequestMapping("/brand_list")
     public Map<String, Object> getList(HttpServletRequest request, String status) {
@@ -57,6 +66,24 @@ public class BrandController {
         Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "isRecommend"), new Sort.Order(Sort.Direction.ASC, "sort"), new Sort.Order(Sort.Direction.ASC, "id"));
         PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
         Page<PhBrand> pages = brandService.findAll(name, type, status, pr);
+        int initEcho = sEcho + 1;
+        Map<String, Object> map = new HashMap<>();
+        map.put("sEcho", initEcho);
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        map.put("aData", pages.getContent());//数据集合
+        return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/brand_mini_list")
+    public Map<String, Object> getMiniList(HttpServletRequest request) {
+        int sEcho = Integer.parseInt(request.getParameter("sEcho"));
+        int iDisplayStart = Integer.parseInt(request.getParameter("iDisplayStart"));
+        int iDisplayLength = Integer.parseInt(request.getParameter("iDisplayLength"));
+        Sort sort = new Sort(new Sort.Order(Sort.Direction.DESC, "isRecommendMini"), new Sort.Order(Sort.Direction.ASC, "id"));
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, sort);
+        Page<PhBrandRecommend> pages = brandRecommendService.list(pr);
         int initEcho = sEcho + 1;
         Map<String, Object> map = new HashMap<>();
         map.put("sEcho", initEcho);
@@ -210,6 +237,41 @@ public class BrandController {
     }
 
     @ResponseBody
+    @RequestMapping("/brand_pin_mini")
+    @Transactional
+    public boolean pinMini(@RequestParam("ids[]") Long[] ids, String reason) {
+        String key = "NEW_INDEX_BRAND_MINI";
+        String jsonStr = configService.findContentByName(key);
+        JSONArray jsonArray;
+        if (jsonStr != null && !"".equals(jsonStr)) {
+            jsonArray = JSON.parseArray(jsonStr);
+        } else {
+            jsonArray = new JSONArray();
+        }
+        for (Long id : ids) {
+            PhBrandRecommend brand = brandRecommendService.findOne(id);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", brand.getId());
+            jsonObject.put("name", brand.getName());
+            jsonObject.put("image", brand.getLogoBig() == null ? "NONE" : brand.getLogoBig());
+            jsonObject.put("reason", reason);
+            jsonArray.add(jsonObject);
+            //update DB
+            brand.setIsRecommendMini("1");
+            brandRecommendService.save(brand);
+        }
+        PhConfig config = configService.findOne(key);
+        if (config == null) {
+            config = new PhConfig();
+            config.setName(key);
+            config.setCreateTime(new Date());
+        }
+        config.setContent(jsonArray.toJSONString());
+        configService.save(config);
+        return true;
+    }
+
+    @ResponseBody
     @RequestMapping("/brand_pin_list")
     public List<PhBrand> pinList(String to, @RequestParam(required = false, defaultValue = "0") int mini) {
         String key = "logo".equals(to) ? "INDEX_BRAND_LOGO" : (mini == 1 ? "INDEX_BRAND_GOODS_MINI" : "INDEX_BRAND_GOODS");
@@ -224,6 +286,18 @@ public class BrandController {
             list.add(brandService.findOne(object.getLongValue("id")));
         }
         return list;
+    }
+
+    @ResponseBody
+    @RequestMapping("/brand_pin_mini_list")
+    public JSONArray pinListMini() {
+        String key = "NEW_INDEX_BRAND_MINI";
+        String jsonStr = configService.findContentByName(key);
+        JSONArray jsonArray = new JSONArray();
+        if (jsonStr != null && !"".equals(jsonStr)) {
+            jsonArray = JSON.parseArray(jsonStr);
+        }
+        return jsonArray;
     }
 
     @ResponseBody
@@ -247,6 +321,43 @@ public class BrandController {
         }
         config.setContent(jsonArray.toJSONString());
         configService.save(config);
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/brand_pin_mini_save")
+    @Transactional
+    public boolean pinSaveMini(@RequestParam(name = "ids[]", required = false) String[] ids, @RequestParam(name = "images[]", required = false) String[] images,
+                               @RequestParam(name = "names[]", required = false) String[] names, @RequestParam(name = "reasons[]", required = false) String[] reasons,
+                               @RequestParam(name = "idsDel[]", required = false) Long[] idsDel) {
+        String key = "NEW_INDEX_BRAND_MINI";
+        PhConfig config = configService.findOne(key);
+        JSONArray jsonArray = new JSONArray();
+        if (ids != null) {
+            for (int i = 0; i < ids.length; i++) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", ids[i]);
+                jsonObject.put("image", images[i]);
+                jsonObject.put("name", names[i]);
+                jsonObject.put("reason", reasons[i]);
+                jsonArray.add(jsonObject);
+            }
+        }
+        if (config == null) {
+            config = new PhConfig();
+            config.setName(key);
+            config.setCreateTime(new Date());
+        }
+        config.setContent(jsonArray.toJSONString());
+        configService.save(config);
+        //update DB
+        if (idsDel != null) {
+            for (Long id : idsDel) {
+                PhBrandRecommend tmp = brandRecommendService.findOne(id);
+                tmp.setIsRecommendMini("0");
+                brandRecommendService.save(tmp);
+            }
+        }
         return true;
     }
 
