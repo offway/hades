@@ -1,7 +1,7 @@
 package cn.offway.hades.domain;
 
-import java.io.Serializable;
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * 品牌推荐表
@@ -10,14 +10,11 @@ import javax.persistence.*;
  * @version $v: 1.0.0, $time:2020-03-02 14:23:35 Exp $
  */
 @Entity
-@Table(name = "ph_brand_recommend")
+@Table(name = "ph_brand")
 public class PhBrandRecommend implements Serializable {
 
     /** ID **/
     private Long id;
-
-    /** 品牌ID **/
-    private Long brandId;
 
     /** 品牌名称 **/
     private String name;
@@ -25,21 +22,14 @@ public class PhBrandRecommend implements Serializable {
     /** 品牌LOGO **/
     private String logo;
 
-    /** 品牌LOGO（大图，推荐展示用） **/
+    /** 品牌LOGO(大) **/
     private String logoBig;
 
-    /** 是否推荐【0-否，1-是】 **/
-    private String isRecommend;
+    /** 类型[0-国内品牌，1-国际品牌] **/
+    private String type;
 
-    /** 推荐内容 **/
-    private String content;
-
-    /** 排序 **/
-    private Long sort;
-
-    /** 备注 **/
-    private String remake;
-
+    /** 是否小程序推荐[0-否，1-是] **/
+    private String isRecommendMini;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,15 +42,6 @@ public class PhBrandRecommend implements Serializable {
         this.id = id;
     }
 
-    @Column(name = "brand_id", length = 11)
-    public Long getBrandId() {
-        return brandId;
-    }
-
-    public void setBrandId(Long brandId) {
-        this.brandId = brandId;
-    }
-
     @Column(name = "name", length = 100)
     public String getName() {
         return name;
@@ -70,7 +51,7 @@ public class PhBrandRecommend implements Serializable {
         this.name = name;
     }
 
-    @Column(name = "logo", length = 100)
+    @Column(name = "logo", length = 200)
     public String getLogo() {
         return logo;
     }
@@ -79,7 +60,7 @@ public class PhBrandRecommend implements Serializable {
         this.logo = logo;
     }
 
-    @Column(name = "logo_big", length = 100)
+    @Column(name = "logo_big", length = 200)
     public String getLogoBig() {
         return logoBig;
     }
@@ -88,40 +69,21 @@ public class PhBrandRecommend implements Serializable {
         this.logoBig = logoBig;
     }
 
-    @Column(name = "is_recommend", length = 2)
-    public String getIsRecommend() {
-        return isRecommend;
+    @Column(name = "type", length = 2)
+    public String getType() {
+        return type;
     }
 
-    public void setIsRecommend(String isRecommend) {
-        this.isRecommend = isRecommend;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    @Column(name = "content", length = 255)
-    public String getContent() {
-        return content;
+    @Column(name = "is_recommend_mini", length = 2)
+    public String getIsRecommendMini() {
+        return isRecommendMini;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setIsRecommendMini(String isRecommendMini) {
+        this.isRecommendMini = isRecommendMini;
     }
-
-    @Column(name = "sort", length = 11)
-    public Long getSort() {
-        return sort;
-    }
-
-    public void setSort(Long sort) {
-        this.sort = sort;
-    }
-
-    @Column(name = "remake", length = 255)
-    public String getRemake() {
-        return remake;
-    }
-
-    public void setRemake(String remake) {
-        this.remake = remake;
-    }
-
 }
