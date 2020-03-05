@@ -178,11 +178,6 @@
 
     function listIt(data) {
         idsDel = [];
-        var activityId = $("input[name='activityId']:checked");
-        var ids = [];
-        activityId.each(function (i, e) {
-            ids.push(e.value);
-        });
         var preview = $("#preview_body");
         var contentStr = "";
         var mainObj = data;
