@@ -3,6 +3,7 @@ package cn.offway.hades.controller;
 import cn.offway.hades.domain.PhConfig;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhConfigService;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
@@ -14,10 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping
@@ -79,7 +77,8 @@ public class StyleController {
 
     @ResponseBody
     @RequestMapping("/style_save_sort")
-    public boolean updateStockListMix(@RequestParam("value") String[] values, @RequestParam("image") String[] images) {
+    public boolean updateStockListMix(@RequestParam("value") String[] values, @RequestParam("image") String[] images, @RequestParam("banner") String[] banners,
+                                      @RequestParam("reason") String[] reasons, @RequestParam("info") String[] infos) {
         if (values.length != images.length) {
             return false;
         }
@@ -89,6 +88,9 @@ public class StyleController {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("value", values[i]);
             jsonObject.put("image", images[i]);
+            jsonObject.put("banner", banners[i]);
+            jsonObject.put("reason", reasons[i]);
+            jsonObject.put("info", infos[i]);
             jsonArray.add(jsonObject);
             if (i <= 7) {
                 JSONObject jsonObject2 = new JSONObject();
@@ -109,18 +111,88 @@ public class StyleController {
 
     @RequestMapping("/style_save")
     @ResponseBody
-    public boolean save(Integer id, String name, String image) {
+    public boolean save(Integer id, String name, String image, String banner, String reason, String info) {
         String jsonStr = configService.findContentByName("INDEX_STYLE_FULL");
         JSONArray jsonArray = JSONArray.parseArray(jsonStr);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("value", name);
         jsonObject.put("image", image);
+        jsonObject.put("banner", banner);
+        jsonObject.put("reason", reason);
+        jsonObject.put("info", info);
         if (id == null) {
             jsonArray.add(jsonObject);
         } else {
             jsonArray.set(id, jsonObject);
         }
         PhConfig config = configService.findOne("INDEX_STYLE_FULL");
+        config.setContent(jsonArray.toJSONString());
+        configService.save(config);
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/style_pin_mini")
+    public boolean pinMini(@RequestParam("ids[]") Long[] ids) {
+        String key = "INDEX_STYLE_FULL_MINI";
+        String jsonStr = configService.findContentByName(key);
+        JSONArray jsonArray;
+        if (jsonStr != null && !"".equals(jsonStr)) {
+            jsonArray = JSON.parseArray(jsonStr);
+        } else {
+            jsonArray = new JSONArray();
+        }
+        for (Long id : ids) {
+            JSONObject jsonObject = fetch(id.intValue());
+            jsonArray.add(jsonObject);
+        }
+        PhConfig config = configService.findOne(key);
+        if (config == null) {
+            config = new PhConfig();
+            config.setName(key);
+            config.setCreateTime(new Date());
+        }
+        config.setContent(jsonArray.toJSONString());
+        configService.save(config);
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/style_pin_mini_list")
+    public JSONArray pinListMini() {
+        String key = "INDEX_STYLE_FULL_MINI";
+        String jsonStr = configService.findContentByName(key);
+        JSONArray jsonArray = new JSONArray();
+        if (jsonStr != null && !"".equals(jsonStr)) {
+            jsonArray = JSON.parseArray(jsonStr);
+        }
+        return jsonArray;
+    }
+
+    @ResponseBody
+    @RequestMapping("/style_pin_mini_save")
+    public boolean pinSaveMini(@RequestParam(name = "values[]", required = false) String[] values, @RequestParam(name = "images[]", required = false) String[] images,
+                               @RequestParam(name = "banners[]", required = false) String[] banners, @RequestParam(name = "reasons[]", required = false) String[] reasons,
+                               @RequestParam(name = "infos[]", required = false) String[] infos) {
+        String key = "INDEX_STYLE_FULL_MINI";
+        PhConfig config = configService.findOne(key);
+        JSONArray jsonArray = new JSONArray();
+        if (values != null) {
+            for (int i = 0; i < values.length; i++) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("value", values[i]);
+                jsonObject.put("image", images[i]);
+                jsonObject.put("banner", banners[i]);
+                jsonObject.put("reason", reasons[i]);
+                jsonObject.put("info", infos[i]);
+                jsonArray.add(jsonObject);
+            }
+        }
+        if (config == null) {
+            config = new PhConfig();
+            config.setName(key);
+            config.setCreateTime(new Date());
+        }
         config.setContent(jsonArray.toJSONString());
         configService.save(config);
         return true;

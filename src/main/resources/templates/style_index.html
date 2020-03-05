@@ -3,10 +3,6 @@
 <head>
 	<head th:replace="head"></head>
 	<title>商品风格管理</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
-	<link rel="stylesheet" href="assets/css/rowReorder.dataTables.min.css"/>
 	<link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
 	<link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
 	<link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
@@ -66,9 +62,9 @@
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
 				<button class="btn btn-info resort">排序</button>
+				<button class="btn btn-info addToMini">推荐至小程序</button>
+				<button class="btn btn-info listMini">小程序推荐列表</button>
 			</div>
-
-					
 			<footer th:replace="footer"></footer>
 		</div>
 	</div>
@@ -85,30 +81,58 @@
 				
 				<div class="modal-body">
 					<form role="form" id="saveForm">
-					<input type="hidden" name="id"/>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">名称</label>
-								<input type="text" class="form-control" name="name" placeholder="名称"/>
+						<input type="hidden" name="id"/>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">名称</label>
+									<input type="text" class="form-control" name="name" placeholder="名称"/>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">图片</label>
-								<input type="file" class="form-control" name="imageFile" placeholder="图片" onchange="uploadFile(this)"/>
-								<input type="hidden" class="form-control" name="image" />
-								<img alt="" src="" name="imageImage" style="display:none;"/>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">图片</label>
+									<input type="file" class="form-control" name="imageFile" placeholder="图片"
+										   onchange="uploadFile(this)"/>
+									<input type="hidden" class="form-control" name="image"/>
+									<img alt="" src="" name="imageImage" style="display:none;"/>
+								</div>
 							</div>
 						</div>
-					</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">推荐理由</label>
+									<input type="text" class="form-control" name="reason" placeholder="推荐理由"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">banner图片</label>
+									<input type="file" class="form-control" name="bannerFile" placeholder="banner图片"
+										   onchange="uploadBanner(this)"/>
+									<input type="hidden" class="form-control" name="banner"/>
+									<img alt="" src="" name="bannerImage" style="display:none;"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">详情</label>
+									<input type="text" class="form-control" name="info" placeholder="详情"/>
+								</div>
+							</div>
+						</div>
 					</form>
 				</div>
 				
 				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 					<button type="button" class="btn btn-info save">保存</button>
 					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 				</div>
@@ -134,10 +158,6 @@
 		</div>
 	</div>
 	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
-	<script src="assets/js/dataTables.rowReorder.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
 	<script src="assets/js/jquery-ui.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
@@ -171,6 +191,30 @@
 			confirm("未选择任何文件!");
 		}
 	}
+
+    function uploadBanner(self) {
+        var that = $(self);
+        if (self.files.length > 0) {
+            getQNToken(function (token) {
+                var file = self.files[0];
+                this.upload("", token, file, function () {
+                    //
+                }, function (err) {
+                    console.log("error");
+                    console.log(err);
+                }, function (res) {
+                    var url = qiniuUrl + "/" + res.key;
+                    that.parent().find("[name=banner]").val(url);
+                    that.parent().find("[name=bannerImage]").attr("src", url);
+                    that.parent().find("[name=bannerImage]").attr("width", "100px");
+                    that.parent().find("[name=bannerImage]").attr("height", "100px");
+                    that.parent().find("[name=bannerImage]").show();
+                });
+            });
+        } else {
+            confirm("未选择任何文件!");
+        }
+    }
 
 	function getQNToken(cb) {
 		$.get("/qiniu/token", {}, function (token) {
@@ -212,8 +256,77 @@
 		});
 	}
 
-	var qiniuUrl = [[${qiniuUrl}]];
+    function delNode(self) {
+        var that = $(self);
+        var div = that.parent().parent();
+        div.remove();
+    }
 
+    function listIt(data) {
+        var preview = $("#preview_body");
+        var contentStr = "";
+        var mainObj = data;
+        var val = "<input type='button' name='delete' value='删除' onclick='delNode(this)' />";
+        for (var i in mainObj) {
+            var item = mainObj[i];
+            var imgUrl = item["image"];
+            var bannerUrl = item["banner"];
+            var valueHidden = "<input type='hidden' name='value' value='VALUE' />".replace("VALUE", item["value"]);
+            var imgHidden = "<input type='hidden' name='image' value='VALUE' />".replace("VALUE", imgUrl == null ? "NONE" : imgUrl);
+            var bannerHidden = "<input type='hidden' name='banner' value='VALUE' />".replace("VALUE", bannerUrl == null ? "NONE" : bannerUrl);
+            var reasonHidden = "<input type='hidden' name='reason' value='VALUE' />".replace("VALUE", item["reason"]);
+            var infoHidden = "<input type='hidden' name='info' value='VALUE' />".replace("VALUE", item["info"]);
+            var delButton = val;
+            contentStr += appendToPreviewList(item["value"], buildImg(imgUrl, 100, 100), buildImg(bannerUrl, 100, 100), item["reason"], item["info"], delButton + valueHidden + imgHidden + bannerHidden + reasonHidden + infoHidden);
+        }
+        preview.html(contentStr);
+        preview.sortable();
+        preview.disableSelection();
+        var submit = $("#savePin");
+        submit.show();
+        submit.off("click");
+        submit.click(function () {
+            var value = preview.find("input[name='value']");
+            var image = preview.find("input[name='image']");
+            var banner = preview.find("input[name='banner']");
+            var reason = preview.find("input[name='reason']");
+            var info = preview.find("input[name='info']");
+            var values = [];
+            value.each(function (i, e) {
+                values.push(e.value);
+            });
+            var images = [];
+            image.each(function (i, e) {
+                images.push(e.value);
+            });
+            var banners = [];
+            banner.each(function (i, e) {
+                banners.push(e.value);
+            });
+            var reasons = [];
+            reason.each(function (i, e) {
+                reasons.push(e.value);
+            });
+            var infos = [];
+            info.each(function (i, e) {
+                infos.push(e.value);
+            });
+            $.post("/style_pin_mini_save", {
+                "values": values,
+                "images": images,
+                "banners": banners,
+                "reasons": reasons,
+                "infos": infos
+            }, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                }
+            });
+        });
+        jQuery('#preview').modal('show', {backdrop: 'fade'});
+    }
+
+	var qiniuUrl = [[${qiniuUrl}]];
 	jQuery(document).ready(function($)
 	{
 		$(".searchBtn").click(function(){
@@ -264,15 +377,29 @@
                     render: function (data, type, row, meta) {
                         return buildImg(data);
                     }
+                },
+                {
+                    targets: 4,
+                    data: "banner",
+                    title: "banner图片",
+                    render: function (data, type, row, meta) {
+                        return buildImg(data);
+                    }
+                },
+                {
+                    targets: 5,
+                    data: "reason",
+                    title: "推荐理由"
+                },
+                {
+                    targets: 6,
+                    data: "info",
+                    title: "详情"
                 }
             ]
 		});
 
 		table_global = oTable;
-
-		table_global.on('row-reorder', function (e, diff, edit) {
-			console.log(diff);
-		});
 
 		$(".btn.btn-info.resort").click(function () {
 			$.getJSON("/style_list", {}, function (data) {
@@ -281,16 +408,22 @@
 					var contentStr = "<form id='styleForm'>";
 					contentStr += "<hr/>";
 					var i =1;
-					for (var a in data["data"]) {
-						a = data["data"][a];
-						var nameEle = '名称:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["value"]);
-						var nameValEle = '<input type="hidden" name="value" value="VV" />'.replace("VV", a["value"]);
-						var imgEle = '<img src="VV" width="100px" height="100px" />'.replace("VV", a["image"]);
-						var imgValEle = '<input type="hidden" name="image" value="VV" />'.replace("VV", a["image"]);
-						contentStr += appendToPreviewList(i ,nameEle, nameValEle, imgEle, imgValEle,  "");
-						contentStr += "<hr/>";
-						i++;
-					}
+                    for (var a in data["data"]) {
+                        a = data["data"][a];
+                        var nameEle = '名称:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["value"]);
+                        var nameValEle = '<input type="hidden" name="value" value="VV" />'.replace("VV", a["value"]);
+                        var imgEle = '<img src="VV" width="100px" height="100px" />'.replace("VV", a["image"]);
+                        var imgValEle = '<input type="hidden" name="image" value="VV" />'.replace("VV", a["image"]);
+                        var bannerEle = '<img src="VV" width="100px" height="100px" />'.replace("VV", a["banner"]);
+                        var bannerValEle = '<input type="hidden" name="banner" value="VV" />'.replace("VV", a["banner"]);
+                        var reasonEle = '推荐理由:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["reason"]);
+                        var reasonValEle = '<input type="hidden" name="value" value="VV" />'.replace("VV", a["reason"]);
+                        var infoEle = '详情:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["info"]);
+                        var infoValEle = '<input type="hidden" name="value" value="VV" />'.replace("VV", a["info"]);
+                        contentStr += appendToPreviewList(i, nameEle, imgEle, bannerEle, reasonEle, infoEle + imgValEle + nameValEle + bannerValEle + reasonValEle + infoValEle);
+                        contentStr += "<hr/>";
+                        i++;
+                    }
 					var btnEle = '<input type="button" class="btn btn-info" value="保存" onclick="updateStyleBatch()" />';
 					contentStr += appendToPreviewList("", "", "", "", "", btnEle);
 					preview.html(contentStr + "</form>");
@@ -310,7 +443,6 @@
 			form.find("img").attr("src", "");
 			form.find("img").hide();
 			form.find("input[type='file']").show();
-			$(".imageShow").remove();
 			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 		});
 
@@ -383,48 +515,36 @@
 			});
 		});
 
-		$(".btn.btn-info.up").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
+        $(".btn.btn-info.addToMini").click(function () {
+            //提交保存
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
 
-			var ids = [];
-			activityId.each(function (i, e) {
-				ids.push(e.value);
-			});
+            $.post("/style_pin_mini", {"ids": ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                } else {
+                    toastr.error("操作失败", "温馨提示");
+                }
+            });
+        });
 
-			$.post("/banner_up", {"ids": ids, "position": position}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			});
-		});
-
-		$(".btn.btn-info.down").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
-
-			var ids = [];
-			activityId.each(function (i, e) {
-				ids.push(e.value);
-			});
-
-			$.post("/banner_down", {"ids": ids}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			});
-		});
+        $(".btn.btn-info.list").click(function () {
+            $.post("/style_pin_mini_list", {}, function (data) {
+                if (data) {
+                    listIt(data);
+                }
+            });
+        });
 	});
 	/*]]>*/
 	</script>
 </body>
-
 </html>
