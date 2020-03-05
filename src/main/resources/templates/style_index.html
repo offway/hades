@@ -142,7 +142,7 @@
 	</div>
 	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
 		<div class="modal-dialog">
-			<div class="modal-content">
+			<div class="modal-content" style="width: 1000px;">
 
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -152,6 +152,9 @@
 				<div class="modal-body" id="preview_body"></div>
 
 				<div class="modal-footer">
+					<button type="button" class="btn btn-white save" id="savePin" data-dismiss="modal"
+							style="display: none">保存
+					</button>
 					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 				</div>
 			</div>
@@ -320,6 +323,7 @@
             }, function (data) {
                 if (data) {
                     toastr.success("操作已成功！", "温馨提示");
+                    submit.hide();
                 }
             });
         });
@@ -401,13 +405,15 @@
 
 		table_global = oTable;
 
-		$(".btn.btn-info.resort").click(function () {
-			$.getJSON("/style_list", {}, function (data) {
-				if (data) {
-					var preview = $("#preview_body");
-					var contentStr = "<form id='styleForm'>";
-					contentStr += "<hr/>";
-					var i =1;
+        $(".btn.btn-info.resort").click(function () {
+            var submit = $("#savePin");
+            submit.hide();
+            $.getJSON("/style_list", {}, function (data) {
+                if (data) {
+                    var preview = $("#preview_body");
+                    var contentStr = "<form id='styleForm'>";
+                    contentStr += "<hr/>";
+                    var i = 1;
                     for (var a in data["data"]) {
                         a = data["data"][a];
                         var nameEle = '名称:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["value"]);
@@ -424,18 +430,18 @@
                         contentStr += "<hr/>";
                         i++;
                     }
-					var btnEle = '<input type="button" class="btn btn-info" value="保存" onclick="updateStyleBatch()" />';
-					contentStr += appendToPreviewList("", "", "", "", "", btnEle);
-					preview.html(contentStr + "</form>");
-					$("#styleForm").sortable();
-					$("#styleForm").disableSelection();
-					jQuery('#preview').modal({backdrop: 'static', keyboard: false});
-					toastr.success("操作已成功！", "温馨提示");
-				} else {
-					toastr.error("操作失败", "温馨提示");
-				}
-			});
-		});
+                    var btnEle = '<input type="button" class="btn btn-info" value="保存" onclick="updateStyleBatch()" />';
+                    contentStr += appendToPreviewList("", "", "", "", "", btnEle);
+                    preview.html(contentStr + "</form>");
+                    $("#styleForm").sortable();
+                    $("#styleForm").disableSelection();
+                    jQuery('#preview').modal({backdrop: 'static', keyboard: false});
+                    toastr.success("操作已成功！", "温馨提示");
+                } else {
+                    toastr.error("操作失败", "温馨提示");
+                }
+            });
+        });
 
 		$(".btn.btn-info.add").click(function () {
 			var form = $("#saveForm");
@@ -536,7 +542,7 @@
             });
         });
 
-        $(".btn.btn-info.list").click(function () {
+        $(".btn.btn-info.listMini").click(function () {
             $.post("/style_pin_mini_list", {}, function (data) {
                 if (data) {
                     listIt(data);
