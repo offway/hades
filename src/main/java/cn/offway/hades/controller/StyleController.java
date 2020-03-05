@@ -42,6 +42,9 @@ public class StyleController {
         List<Map> mapList = new ArrayList<>();
         for (Map m : jsonArray.toJavaList(Map.class)) {
             m.put("id", i);
+            m.putIfAbsent("banner", "");
+            m.putIfAbsent("reason", "");
+            m.putIfAbsent("info", "");
             i++;
             mapList.add(m);
         }
