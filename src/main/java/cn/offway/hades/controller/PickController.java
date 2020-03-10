@@ -3,6 +3,9 @@ package cn.offway.hades.controller;
 import cn.offway.hades.domain.*;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.*;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -42,6 +45,8 @@ public class PickController {
     private PhGoodsService goodsService;
     @Autowired
     private PhBrandService brandService;
+    @Autowired
+    private PhConfigService configService;
 
     @RequestMapping("/pick.html")
     public String index(ModelMap map) {
@@ -325,6 +330,90 @@ public class PickController {
         for (Long id : ids) {
             themeService.delete(id);
             themeGoodsService.delByPid(id);
+        }
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/theme_pin_mini_list")
+    public JSONArray pinListMini() {
+        String key = "NEW_INDEX_THEME_MINI";
+        String jsonStr = configService.findContentByName(key);
+        JSONArray jsonArray = new JSONArray();
+        if (jsonStr != null && !"".equals(jsonStr)) {
+            jsonArray = JSON.parseArray(jsonStr);
+        }
+        return jsonArray;
+    }
+
+    @ResponseBody
+    @RequestMapping("/theme_pin_mini")
+    @Transactional
+    public boolean pinMini(@RequestParam("ids[]") Long[] ids) {
+        String key = "NEW_INDEX_THEME_MINI";
+        String jsonStr = configService.findContentByName(key);
+        JSONArray jsonArray;
+        if (jsonStr != null && !"".equals(jsonStr)) {
+            jsonArray = JSON.parseArray(jsonStr);
+        } else {
+            jsonArray = new JSONArray();
+        }
+        for (Long id : ids) {
+            PhTheme theme = themeService.findOne(id);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", theme.getId());
+            jsonObject.put("name", theme.getName());
+            jsonObject.put("content", theme.getContent());
+            jsonObject.put("image", theme.getRemark() == null ? "NONE" : theme.getRemark());
+            jsonArray.add(jsonObject);
+            //update DB
+            theme.setIsRecommend("1");
+            themeService.save(theme);
+        }
+        PhConfig config = configService.findOne(key);
+        if (config == null) {
+            config = new PhConfig();
+            config.setName(key);
+            config.setCreateTime(new Date());
+        }
+        config.setContent(jsonArray.toJSONString());
+        configService.save(config);
+        return true;
+    }
+
+    @ResponseBody
+    @RequestMapping("/theme_pin_mini_save")
+    @Transactional
+    public boolean pinSaveMini(@RequestParam(name = "ids[]", required = false) String[] ids, @RequestParam(name = "images[]", required = false) String[] images,
+                               @RequestParam(name = "names[]", required = false) String[] names, @RequestParam(name = "contents[]", required = false) String[] contents,
+                               @RequestParam(name = "idsDel[]", required = false) Long[] idsDel) {
+        String key = "NEW_INDEX_THEME_MINI";
+        PhConfig config = configService.findOne(key);
+        JSONArray jsonArray = new JSONArray();
+        if (ids != null) {
+            for (int i = 0; i < ids.length; i++) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", ids[i]);
+                jsonObject.put("name", names[i]);
+                jsonObject.put("content", contents[i]);
+                jsonObject.put("image", images[i]);
+                jsonArray.add(jsonObject);
+            }
+        }
+        if (config == null) {
+            config = new PhConfig();
+            config.setName(key);
+            config.setCreateTime(new Date());
+        }
+        config.setContent(jsonArray.toJSONString());
+        configService.save(config);
+        //update DB
+        if (idsDel != null) {
+            for (Long id : idsDel) {
+                PhTheme tmp = themeService.findOne(id);
+                tmp.setIsRecommend("0");
+                themeService.save(tmp);
+            }
         }
         return true;
     }

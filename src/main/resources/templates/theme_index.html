@@ -72,6 +72,8 @@
 				<button class="btn btn-info add">添加</button>
 				<button class="btn btn-info edit">修改</button>
 				<button class="btn btn-info del">删除</button>
+				<button class="btn btn-info addToMini">推荐至小程序</button>
+				<button class="btn btn-info listMini">小程序首页推荐列表</button>
 			</div>
 			
 					
@@ -230,6 +232,7 @@
 				<div class="modal-body" id="preview_body"></div>
 
 				<div class="modal-footer">
+					<button type="button" class="btn btn-white save" id="savePin" data-dismiss="modal" style="display: none;">保存</button>
 					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 				</div>
 			</div>
@@ -266,6 +269,8 @@
 	}
 
     function checkIt(data) {
+        var submit = $("#savePin");
+        submit.hide();
         $.post("/theme_get", {"id": data}, function (data) {
             if (data) {
                 var preview = $("#preview_body");
@@ -396,6 +401,14 @@
 		that.remove();
 	}
 
+    function delTheNode(self) {
+        var that = $(self);
+        var div = that.parent().parent();
+        //save the id to del
+        idsDel.push(div.find("input[name='id']").val());
+        div.remove();
+    }
+
 	function renderGoodsSelect(self, id) {
 		var theId;
 		if (self == null) {
@@ -496,6 +509,91 @@
 			bindGoods(data);
 		});
 	}
+
+    function appendToPreviewList(one, two, three, four, five, six) {
+        return '<div class="row">' +
+            '<div class="col-md-2">' +
+            one +
+            '</div>' +
+            '<div class="col-md-2">' +
+            two +
+            '</div>' +
+            '<div class="col-md-2">' +
+            three +
+            '</div>' +
+            '<div class="col-md-2">' +
+            four +
+            '</div>' +
+            '<div class="col-md-2">' +
+            five +
+            '</div>' +
+            '<div class="col-md-2">' +
+            six +
+            '</div>' +
+            '</div>';
+    }
+
+    var idsDel = [];
+
+    function listIt(data) {
+        idsDel = [];
+        var preview = $("#preview_body");
+        var contentStr = "";
+        var mainObj = data;
+        var val = "<input type='button' name='delete' value='删除' onclick='delTheNode(this)' />";
+        for (var i in mainObj) {
+            var item = mainObj[i];
+            var imgUrl = item["image"];
+            var idHidden = "<input type='hidden' name='id' value='VALUE' />".replace("VALUE", item["id"]);
+            var nameHidden = "<input type='hidden' name='name' value='VALUE' />".replace("VALUE", item["name"]);
+            var contentHidden = "<input type='hidden' name='content' value='VALUE' />".replace("VALUE", item["content"]);
+            var imgHidden = "<input type='hidden' name='image' value='VALUE' />".replace("VALUE", imgUrl == null ? "NONE" : imgUrl);
+            var delButton = val;
+            contentStr += appendToPreviewList(item["id"], item["name"], item["content"], buildImg(imgUrl, 100, 100), delButton, idHidden + nameHidden + contentHidden + imgHidden);
+        }
+        preview.html(contentStr);
+        preview.sortable();
+        preview.disableSelection();
+        var submit = $("#savePin");
+        submit.show();
+        submit.off("click");
+        submit.click(function () {
+            var id = preview.find("input[name='id']");
+            var name = preview.find("input[name='name']");
+            var content = preview.find("input[name='content']");
+            var image = preview.find("input[name='image']");
+            var ids = [];
+            id.each(function (i, e) {
+                ids.push(e.value);
+            });
+            var names = [];
+            name.each(function (i, e) {
+                names.push(e.value);
+            });
+            var contents = [];
+            content.each(function (i, e) {
+                contents.push(e.value);
+            });
+            var images = [];
+            image.each(function (i, e) {
+                images.push(e.value);
+            });
+            $.post("/theme_pin_mini_save", {
+                "ids": ids,
+                "names": names,
+                "contents": contents,
+                "images": images,
+                "idsDel": idsDel
+            }, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    table_global.fnDraw();
+                }
+            });
+        });
+        jQuery('#preview').modal('show', {backdrop: 'fade'});
+        $(".modal-backdrop").css("z-index", 999);
+    }
 
     var table_global;
 	var qiniuUrl = [[${qiniuUrl}]];
@@ -797,6 +895,35 @@
                     oTable.fnDraw();
                 }
             })
+        });
+
+        $(".btn.btn-info.addToMini").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
+
+            $.post("/theme_pin_mini", {"ids": ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                } else {
+                    toastr.error("操作失败", "温馨提示");
+                }
+            });
+        });
+
+        $(".btn.btn-info.listMini").click(function () {
+            $.post("/theme_pin_mini_list", {}, function (data) {
+                if (data) {
+                    listIt(data);
+                }
+            });
         });
 	});
 	/*]]>*/
