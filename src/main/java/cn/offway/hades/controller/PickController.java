@@ -1,14 +1,8 @@
 package cn.offway.hades.controller;
 
-import cn.offway.hades.domain.PhBrand;
-import cn.offway.hades.domain.PhGoods;
-import cn.offway.hades.domain.PhPick;
-import cn.offway.hades.domain.PhPickGoods;
+import cn.offway.hades.domain.*;
 import cn.offway.hades.properties.QiniuProperties;
-import cn.offway.hades.service.PhBrandService;
-import cn.offway.hades.service.PhGoodsService;
-import cn.offway.hades.service.PhPickGoodsService;
-import cn.offway.hades.service.PhPickService;
+import cn.offway.hades.service.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -20,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,6 +35,10 @@ public class PickController {
     @Autowired
     private PhPickGoodsService pickGoodsService;
     @Autowired
+    private PhThemeService themeService;
+    @Autowired
+    private PhThemeGoodsService themeGoodsService;
+    @Autowired
     private PhGoodsService goodsService;
     @Autowired
     private PhBrandService brandService;
@@ -48,6 +47,12 @@ public class PickController {
     public String index(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
         return "pick_index";
+    }
+
+    @RequestMapping("/theme.html")
+    public String indexTheme(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        return "theme_index";
     }
 
     @ResponseBody
@@ -87,6 +92,44 @@ public class PickController {
 //            for (PhPickGoods i : l) {
 //                goodsList.add(goodsService.findOne(i.getGoodsId()));
 //            }
+            m.put("sub", l);
+            list.add(m);
+        }
+        map.put("aData", list);//数据集合
+        return map;
+    }
+
+    @ResponseBody
+    @RequestMapping("/theme_list")
+    public Map<String, Object> themeList(HttpServletRequest request, int sEcho, int iDisplayStart, int iDisplayLength) {
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String sortCol = request.getParameter("iSortCol_0");
+        String sortName = request.getParameter("mDataProp_" + sortCol);
+        String sortDir = request.getParameter("sSortDir_0");
+        //time
+        String sTimeStr = request.getParameter("sTime");
+        String eTimeStr = request.getParameter("eTime");
+        Date sTime = null, eTime = null;
+        if (!"".equals(sTimeStr) && !"".equals(eTimeStr)) {
+            sTime = DateTime.parse(sTimeStr, format).toDate();
+            eTime = DateTime.parse(eTimeStr, format).toDate();
+        }
+        String id = request.getParameter("id");
+        id = "".trim().equals(id) ? "0" : id;
+        String name = request.getParameter("name");
+        PageRequest pr = new PageRequest(iDisplayStart == 0 ? 0 : iDisplayStart / iDisplayLength, iDisplayLength < 0 ? 9999999 : iDisplayLength, Sort.Direction.fromString(sortDir), sortName);
+        Page<PhTheme> pages = themeService.list(Long.valueOf(id), name, sTime, eTime, pr);
+        // 为操作次数加1，必须这样做
+        int initEcho = sEcho + 1;
+        Map<String, Object> map = new HashMap<>();
+        map.put("sEcho", initEcho);
+        map.put("iTotalRecords", pages.getTotalElements());//数据总条数
+        map.put("iTotalDisplayRecords", pages.getTotalElements());//显示的条数
+        List<Map> list = new ArrayList<>();
+        for (PhTheme item : pages.getContent()) {
+            Map m = objectMapper.convertValue(item, Map.class);
+            List<PhThemeGoods> l = themeGoodsService.findByPid(item.getId());
             m.put("sub", l);
             list.add(m);
         }
@@ -164,6 +207,53 @@ public class PickController {
         return null;
     }
 
+    @RequestMapping("/theme_get")
+    @ResponseBody
+    public Map<String, Object> getTheme(Long id) throws InterruptedException, ExecutionException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        PhTheme theme = themeService.findOne(id);
+        if (theme != null) {
+            Map m = objectMapper.convertValue(theme, Map.class);
+            LinkedList<Map> list = new LinkedList<>();
+            List<PhThemeGoods> themeGoodsList = themeGoodsService.findByPid(theme.getId());
+            ExecutorService pool = Executors.newFixedThreadPool(themeGoodsList.size());
+            List<Future<Map>> returnList = new ArrayList<>();
+            for (PhThemeGoods themeGoods : themeGoodsList) {
+                Future<Map> future = pool.submit(new Callable<Map>() {
+                    @Override
+                    public Map call() throws Exception {
+                        Map<String, Object> obj = new HashMap<>();
+                        PhGoods goods = goodsService.findOne(themeGoods.getGoodsId());
+                        obj.put("id", themeGoods.getGoodsId());
+                        if (goods != null) {
+                            obj.put("name", goods.getName());
+                            obj.put("img", goods.getImage());
+                            obj.put("price", goods.getPrice());
+                        } else {
+                            obj.put("name", "未知");
+                            obj.put("img", "");
+                            obj.put("price", "未知");
+                        }
+                        return obj;
+                    }
+                });
+                returnList.add(future);
+            }
+            int timeout = returnList.size() / 100;
+            timeout = timeout == 0 ? 1 : timeout;
+            pool.awaitTermination(timeout, TimeUnit.SECONDS);
+            for (Future<Map> f : returnList) {
+                if (f.isDone()) {
+                    list.add(f.get());
+                }
+            }
+            pool.shutdown();
+            m.put("sub", list);
+            return m;
+        }
+        return null;
+    }
+
     @RequestMapping("/pick_save")
     @ResponseBody
     public boolean save(Long id, String name, String imageUrl, String shareImg, @RequestParam(name = "goodsID") Long[] goodsIDs) {
@@ -189,12 +279,52 @@ public class PickController {
         return true;
     }
 
+    @RequestMapping("/theme_save")
+    @ResponseBody
+    @Transactional
+    public boolean saveTheme(Long id, String name, String imageUrl, String content, String remark, @RequestParam(name = "goodsID") Long[] goodsIDs) {
+        PhTheme theme;
+        if ("".equals(id) || id == null) {
+            theme = new PhTheme();
+            theme.setCreateTime(new Date());
+            theme.setIsRecommend("0");
+            ;
+        } else {
+            theme = themeService.findOne(id);
+            themeGoodsService.delByPid(theme.getId());
+        }
+        theme.setName(name);
+        theme.setImageUrl(imageUrl);
+        theme.setContent(content);
+        theme.setRemark(remark);
+        PhTheme themeSaved = themeService.save(theme);
+        for (Long gid : goodsIDs) {
+            PhThemeGoods themeGoods = new PhThemeGoods();
+            themeGoods.setGoodsId(gid);
+            themeGoods.setThemeId(themeSaved.getId());
+            themeGoods.setCreateTime(new Date());
+            themeGoodsService.save(themeGoods);
+        }
+        return true;
+    }
+
     @RequestMapping("/pick_del")
     @ResponseBody
     public boolean delete(@RequestParam(name = "ids[]") Long[] ids) {
         for (Long id : ids) {
             pickService.del(id);
             pickGoodsService.delByPid(id);
+        }
+        return true;
+    }
+
+    @RequestMapping("/theme_del")
+    @ResponseBody
+    @Transactional
+    public boolean deleteTheme(@RequestParam(name = "ids[]") Long[] ids) {
+        for (Long id : ids) {
+            themeService.delete(id);
+            themeGoodsService.delByPid(id);
         }
         return true;
     }
