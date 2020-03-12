@@ -123,8 +123,19 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
+									<label class="control-label">小程序封面图片</label>
+									<input type="file" class="form-control" name="coverFile" placeholder="小程序封面图片"
+										   onchange="uploadCover(this)"/>
+									<input type="hidden" class="form-control" name="cover"/>
+									<img alt="" src="" name="coverImage" style="display:none;"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
 									<label class="control-label">详情</label>
-									<input type="text" class="form-control" name="info" placeholder="详情"/>
+									<textarea type="text" class="form-control" name="info" placeholder="详情"></textarea>
 								</div>
 							</div>
 						</div>
@@ -219,6 +230,30 @@
         }
     }
 
+    function uploadCover(self) {
+        var that = $(self);
+        if (self.files.length > 0) {
+            getQNToken(function (token) {
+                var file = self.files[0];
+                this.upload("", token, file, function () {
+                    //
+                }, function (err) {
+                    console.log("error");
+                    console.log(err);
+                }, function (res) {
+                    var url = qiniuUrl + "/" + res.key;
+                    that.parent().find("[name=cover]").val(url);
+                    that.parent().find("[name=coverImage]").attr("src", url);
+                    that.parent().find("[name=coverImage]").attr("width", "100px");
+                    that.parent().find("[name=coverImage]").attr("height", "100px");
+                    that.parent().find("[name=coverImage]").show();
+                });
+            });
+        } else {
+            confirm("未选择任何文件!");
+        }
+    }
+
 	function getQNToken(cb) {
 		$.get("/qiniu/token", {}, function (token) {
 			cb(token);
@@ -274,13 +309,15 @@
             var item = mainObj[i];
             var imgUrl = item["image"];
             var bannerUrl = item["banner"];
+            var coverUrl = item["cover"];
             var valueHidden = "<input type='hidden' name='value' value='VALUE' />".replace("VALUE", item["value"]);
             var imgHidden = "<input type='hidden' name='image' value='VALUE' />".replace("VALUE", imgUrl == null ? "NONE" : imgUrl);
             var bannerHidden = "<input type='hidden' name='banner' value='VALUE' />".replace("VALUE", bannerUrl == null ? "NONE" : bannerUrl);
+            var coverHidden = "<input type='hidden' name='cover' value='VALUE' />".replace("VALUE", coverUrl == null ? "NONE" : coverUrl);
             var reasonHidden = "<input type='hidden' name='reason' value='VALUE' />".replace("VALUE", item["reason"]);
             var infoHidden = "<input type='hidden' name='info' value='VALUE' />".replace("VALUE", item["info"]);
             var delButton = val;
-            contentStr += appendToPreviewList(item["value"], buildImg(imgUrl, 100, 100), buildImg(bannerUrl, 100, 100), item["reason"], item["info"], delButton + valueHidden + imgHidden + bannerHidden + reasonHidden + infoHidden);
+            contentStr += appendToPreviewList(item["value"], buildImg(imgUrl, 100, 100), buildImg(bannerUrl, 100, 100), buildImg(coverUrl, 100, 100), item["reason"], item["info"] + delButton + valueHidden + imgHidden + bannerHidden + coverHidden + reasonHidden + infoHidden);
         }
         preview.html(contentStr);
         preview.sortable();
@@ -292,6 +329,7 @@
             var value = preview.find("input[name='value']");
             var image = preview.find("input[name='image']");
             var banner = preview.find("input[name='banner']");
+            var cover = preview.find("input[name='cover']");
             var reason = preview.find("input[name='reason']");
             var info = preview.find("input[name='info']");
             var values = [];
@@ -306,6 +344,10 @@
             banner.each(function (i, e) {
                 banners.push(e.value);
             });
+            var covers = [];
+            cover.each(function (i, e) {
+                covers.push(e.value);
+            });
             var reasons = [];
             reason.each(function (i, e) {
                 reasons.push(e.value);
@@ -318,6 +360,7 @@
                 "values": values,
                 "images": images,
                 "banners": banners,
+                "covers": covers,
                 "reasons": reasons,
                 "infos": infos
             }, function (data) {
@@ -392,11 +435,19 @@
                 },
                 {
                     targets: 5,
+                    data: "cover",
+                    title: "小程序封面图片",
+                    render: function (data, type, row, meta) {
+                        return buildImg(data);
+                    }
+                },
+                {
+                    targets: 6,
                     data: "reason",
                     title: "推荐理由"
                 },
                 {
-                    targets: 6,
+                    targets: 7,
                     data: "info",
                     title: "详情"
                 }
@@ -422,11 +473,13 @@
                         var imgValEle = '<input type="hidden" name="image" value="VV" />'.replace("VV", a["image"]);
                         var bannerEle = '<img src="VV" width="100px" height="100px" />'.replace("VV", a["banner"]);
                         var bannerValEle = '<input type="hidden" name="banner" value="VV" />'.replace("VV", a["banner"]);
+                        var coverEle = '<img src="VV" width="100px" height="100px" />'.replace("VV", a["cover"]);
+                        var coverValEle = '<input type="hidden" name="cover" value="VV" />'.replace("VV", a["cover"]);
                         var reasonEle = '推荐理由:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["reason"]);
                         var reasonValEle = '<input type="hidden" name="value" value="VV" />'.replace("VV", a["reason"]);
                         var infoEle = '详情:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["info"]);
                         var infoValEle = '<input type="hidden" name="value" value="VV" />'.replace("VV", a["info"]);
-                        contentStr += appendToPreviewList(i, nameEle, imgEle, bannerEle, reasonEle, infoEle + imgValEle + nameValEle + bannerValEle + reasonValEle + infoValEle);
+                        contentStr += appendToPreviewList(nameEle, imgEle, bannerEle, coverEle, reasonEle, infoEle + imgValEle + nameValEle + bannerValEle + coverValEle + reasonValEle + infoValEle);
                         contentStr += "<hr/>";
                         i++;
                     }
@@ -443,14 +496,15 @@
             });
         });
 
-		$(".btn.btn-info.add").click(function () {
-			var form = $("#saveForm");
-			form.find("input:not(.notMe)").val("");
-			form.find("img").attr("src", "");
-			form.find("img").hide();
-			form.find("input[type='file']").show();
-			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-		});
+        $(".btn.btn-info.add").click(function () {
+            var form = $("#saveForm");
+            form.find("input:not(.notMe)").val("");
+            form.find("textarea").val("");
+            form.find("img").attr("src", "");
+            form.find("img").hide();
+            form.find("input[type='file']").show();
+            jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+        });
 
 		$(".btn.btn-info.save").click(function () {
 			var footer = $(this).parent(".modal-footer");
@@ -483,23 +537,31 @@
 			});
 		});
 
-		$(".btn.btn-info.edit").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return;
-			}
+        $(".btn.btn-info.edit").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
 
-			$.post("/style_find", {"id": activityId.val()}, function (data) {
-				var form = $("#saveForm");
-				form.find("input[name='id']").val(activityId.val());
-				form.find("input[name='name']").val(data.value);
-				form.find("input[name='image']").val(data.image);
-				form.find("img[name='imageImage']").attr("src", data.image);
-				form.find("img[name='imageImage']").show();
-				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-			});
-		});
+            $.post("/style_find", {"id": activityId.val()}, function (data) {
+                var form = $("#saveForm");
+                form.find("input[name='id']").val(activityId.val());
+                form.find("input[name='name']").val(data.value);
+                form.find("input[name='reason']").val(data.reason);
+                form.find("textarea[name='info']").val(data.info);
+                form.find("input[name='image']").val(data.image);
+                form.find("img[name='imageImage']").attr("src", data.image);
+                form.find("img[name='imageImage']").show();
+                form.find("input[name='banner']").val(data.banner);
+                form.find("img[name='bannerImage']").attr("src", data.banner);
+                form.find("img[name='bannerImage']").show();
+                form.find("input[name='cover']").val(data.cover);
+                form.find("img[name='coverImage']").attr("src", data.cover);
+                form.find("img[name='coverImage']").show();
+                jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+            });
+        });
 
 		$(".btn.btn-info.del").click(function () {
 			var activityId = $("input[name='activityId']:checked");

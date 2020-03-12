@@ -43,6 +43,7 @@ public class StyleController {
         for (Map m : jsonArray.toJavaList(Map.class)) {
             m.put("id", i);
             m.putIfAbsent("banner", "");
+            m.putIfAbsent("cover", "");
             m.putIfAbsent("reason", "");
             m.putIfAbsent("info", "");
             i++;
@@ -81,7 +82,7 @@ public class StyleController {
     @ResponseBody
     @RequestMapping("/style_save_sort")
     public boolean updateStockListMix(@RequestParam("value") String[] values, @RequestParam("image") String[] images, @RequestParam("banner") String[] banners,
-                                      @RequestParam("reason") String[] reasons, @RequestParam("info") String[] infos) {
+                                      @RequestParam("reason") String[] reasons, @RequestParam("info") String[] infos, @RequestParam("cover") String[] covers) {
         if (values.length != images.length) {
             return false;
         }
@@ -92,6 +93,7 @@ public class StyleController {
             jsonObject.put("value", values[i]);
             jsonObject.put("image", images[i]);
             jsonObject.put("banner", banners[i]);
+            jsonObject.put("cover", covers[i]);
             jsonObject.put("reason", reasons[i]);
             jsonObject.put("info", infos[i]);
             jsonArray.add(jsonObject);
@@ -114,13 +116,14 @@ public class StyleController {
 
     @RequestMapping("/style_save")
     @ResponseBody
-    public boolean save(Integer id, String name, String image, String banner, String reason, String info) {
+    public boolean save(Integer id, String name, String image, String banner, String cover, String reason, String info) {
         String jsonStr = configService.findContentByName("INDEX_STYLE_FULL");
         JSONArray jsonArray = JSONArray.parseArray(jsonStr);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("value", name);
         jsonObject.put("image", image);
         jsonObject.put("banner", banner);
+        jsonObject.put("cover", cover);
         jsonObject.put("reason", reason);
         jsonObject.put("info", info);
         if (id == null) {
@@ -176,7 +179,7 @@ public class StyleController {
     @RequestMapping("/style_pin_mini_save")
     public boolean pinSaveMini(@RequestParam(name = "values[]", required = false) String[] values, @RequestParam(name = "images[]", required = false) String[] images,
                                @RequestParam(name = "banners[]", required = false) String[] banners, @RequestParam(name = "reasons[]", required = false) String[] reasons,
-                               @RequestParam(name = "infos[]", required = false) String[] infos) {
+                               @RequestParam(name = "infos[]", required = false) String[] infos, @RequestParam(name = "covers[]", required = false) String[] covers) {
         String key = "INDEX_STYLE_FULL_MINI";
         PhConfig config = configService.findOne(key);
         JSONArray jsonArray = new JSONArray();
@@ -186,6 +189,7 @@ public class StyleController {
                 jsonObject.put("value", values[i]);
                 jsonObject.put("image", images[i]);
                 jsonObject.put("banner", banners[i]);
+                jsonObject.put("cover", covers[i]);
                 jsonObject.put("reason", reasons[i]);
                 jsonObject.put("info", infos[i]);
                 jsonArray.add(jsonObject);
