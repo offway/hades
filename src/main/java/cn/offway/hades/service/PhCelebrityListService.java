@@ -28,4 +28,6 @@ public interface PhCelebrityListService {
     List<Object[]> list(String name, int offset);
 
     long count(String name);
+
+    List<PhCelebrityList> findAll();
 }

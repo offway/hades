@@ -116,6 +116,12 @@ public class StarManagerController {
         return true;
     }
 
+    @RequestMapping("/starList_getAll")
+    @ResponseBody
+    public List<PhCelebrityList> findAll() {
+        return celebrityListService.findAll();
+    }
+
     @RequestMapping("/starList_get")
     @ResponseBody
     public PhCelebrityList findOne(long id) {
