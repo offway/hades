@@ -512,8 +512,13 @@ public class OrderController {
                             double total = 0;
                             PhRefund refundAgain = refundService.findOne(orderNoAgain, "3", "4");
                             if (refundAgain != null) {
-                                for (PhRefundGoods goods : refundGoodsService.listByPid(refundAgain.getId())) {
-                                    total += goods.getPrice();
+                                //是否整单退款
+                                if ("1".equals(refundAgain.getIsComplete())) {
+                                    total = refundAgain.getAmount();
+                                } else {
+                                    for (PhRefundGoods goods : refundGoodsService.listByPid(refundAgain.getId())) {
+                                        total += goods.getPrice();
+                                    }
                                 }
                             }
                             cell.setCellValue(total);
