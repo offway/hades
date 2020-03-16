@@ -69,6 +69,22 @@ public class PhStarsame implements Serializable {
      **/
     private Long sortMini;
 
+    /**
+     * 小程序排序
+     **/
+    private Long celebrityId;
+
+    /**
+     * 小程序排序
+     **/
+    private Long type;
+
+    /**
+     * 小程序排序
+     **/
+    private Long video;
+
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -170,6 +186,33 @@ public class PhStarsame implements Serializable {
 
     public void setSortMini(Long sortMini) {
         this.sortMini = sortMini;
+    }
+
+    @Column(name = "celebrity_id", length = 11)
+    public Long getCelebrityId() {
+        return celebrityId;
+    }
+
+    public void setCelebrityId(Long celebrityId) {
+        this.celebrityId = celebrityId;
+    }
+
+    @Column(name = "type", length = 2 )
+    public Long getType() {
+        return type;
+    }
+
+    public void setType(Long type) {
+        this.type = type;
+    }
+
+    @Column(name = "video", length = 200)
+    public Long getVideo() {
+        return video;
+    }
+
+    public void setVideo(Long video) {
+        this.video = video;
     }
 
 }
