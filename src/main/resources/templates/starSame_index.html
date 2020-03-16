@@ -444,132 +444,154 @@
 			$("#return").show();
 			vis = false;
 		}
-		var oTable = $("#example-1").dataTable({
-			language: {
-				url: "../assets/Chinese.txt"
-			},
-			bFilter: false,
-			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
-			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
-			sAjaxSource: "/starSame_list",//通过ajax实现分页的url路径。
-			fnServerParams: function (aData) {
-				var searchArray = $(".form-inline").serializeArray();
-				$.merge(aData, searchArray);
-			},
-			columnDefs: [
-				{
-					targets: 0,
-					data: "id",
-					width: "5%",
-					orderable: false,
-					className: 'select-checkbox',
-					title: '<input type="checkbox" id="checkbox-all"/>',
-					render: function (data, type, full, meta) {
-						return '<input type="checkbox" name="activityId" value="' + data + '" />';
-					}
-				},
-				{
-					targets: 1,
-					data: "id",
-					title: "序号"
-				},
-				{
-					targets: 2,
-					data: "title",
-					title: "标题"
-				},
-				{
-					targets: 3,
-					data: "imageUrl",
-					title: "图片URL",
-					render: function (data, type, row, meta) {
-						return buildImg(data);
-					}
-				},
-				{
-					targets: 4,
-					data: "starName",
-					title: "明星姓名"
-				},
-				{
-					targets: 5,
-					data: "viewCount",
-					title: "浏览数"
-				},
-				{
-					targets: 6,
-					data: "praiseCount",
-					title: "点赞数"
-				},
-				// {
-				// 	targets: 7,
-				// 	data: "callCount",
-				// 	title: "打call数"
-				// },
-				{
-					targets: 7,
-					data: "sort",
-					title: "排序",
-					render: function (data, type, row, meta) {
-						return parseInt(data) < 6 ? data : "";
-					},
-					visible: vis
-				},
-				{
-					targets: 8,
-					data: "sortMini",
-					title: "小程序排序",
-					render: function (data, type, row, meta) {
-						return parseInt(data) < 6 ? data : "";
-					},
-					visible: !vis
-				},
-				{
-					targets: 9,
-					data: "createTime",
-					title: "创建时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				},
-				{
-					targets: 10,
-					data: "remark",
-					title: "备注"
-				},
-				{
-					targets: 11,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						var str = '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-						str += '<input type="button" name="checkIt" onclick="checkItsList(' + data + ')" value="查看评论"/>';
-						return str;
-					}
-				},
-				{
-					targets: 12,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						var str = "";
-						if (full["sort"] == null || parseInt(full["sort"]) > 5 && who == null) {
-							str = '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶"/>';
-						} else if (who == null) {
-							str = '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶排序"/>';
-						}
-						if (full["sortMini"] == null || parseInt(full["sortMini"]) > 5 && who != null) {
-							str += '<input type="button" name="checkIt" onclick="topItMini(' + data + ')" value="小程序置顶"/>';
-						} else if (who != null) {
-							str += '<input type="button" name="checkIt" onclick="topItMini(' + data + ')" value="小程序置顶排序"/>';
-						}
-						return str;
-					}
-				}
-			]
-		});
+        var oTable = $("#example-1").dataTable({
+            language: {
+                url: "../assets/Chinese.txt"
+            },
+            bFilter: false,
+            bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+            sAjaxSource: "/starSame_list",//通过ajax实现分页的url路径。
+            fnServerParams: function (aData) {
+                var searchArray = $(".form-inline").serializeArray();
+                $.merge(aData, searchArray);
+            },
+            columnDefs: [
+                {
+                    targets: 0,
+                    data: "id",
+                    width: "5%",
+                    orderable: false,
+                    className: 'select-checkbox',
+                    title: '<input type="checkbox" id="checkbox-all"/>',
+                    render: function (data, type, full, meta) {
+                        return '<input type="checkbox" name="activityId" value="' + data + '" />';
+                    }
+                },
+                {
+                    targets: 1,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+                    targets: 2,
+                    data: "type",
+                    title: "类型",
+                    render: function (data, type, row, meta) {
+                        return data == "1" ? "视频" : "图片";
+                    }
+                },
+                {
+                    targets: 3,
+                    data: "starName",
+                    title: "明星姓名"
+                },
+                {
+                    targets: 4,
+                    data: "title",
+                    title: "标题",
+                    render: function (data, type, row, meta) {
+                        return row["type"] == "1" ? "" : data;
+                    }
+                },
+                {
+                    targets: 5,
+                    data: "imageUrl",
+                    title: "图片URL",
+                    render: function (data, type, row, meta) {
+                        return row["type"] == "1" ? "" : buildImg(data);
+                    }
+                },
+                {
+                    targets: 6,
+                    data: "video",
+                    title: "视频地址",
+                    render: function (data, type, row, meta) {
+                        return row["type"] == "1" ? data : "";
+                    }
+                },
+                {
+                    targets: 7,
+                    data: "video",
+                    title: "视频封面",
+                    render: function (data, type, row, meta) {
+                        return row["type"] == "1" ? "" : "";
+                    }
+                },
+                {
+                    targets: 8,
+                    data: "viewCount",
+                    title: "浏览数"
+                },
+                {
+                    targets: 9,
+                    data: "praiseCount",
+                    title: "点赞数"
+                },
+                {
+                    targets: 10,
+                    data: "sort",
+                    title: "排序",
+                    render: function (data, type, row, meta) {
+                        return parseInt(data) < 6 ? data : "";
+                    },
+                    visible: vis
+                },
+                {
+                    targets: 11,
+                    data: "sortMini",
+                    title: "小程序排序",
+                    render: function (data, type, row, meta) {
+                        return parseInt(data) < 6 ? data : "";
+                    },
+                    visible: !vis
+                },
+                {
+                    targets: 12,
+                    data: "createTime",
+                    title: "创建时间",
+                    render: function (data, type, row, meta) {
+                        return formatTime(data);
+                    }
+                },
+                {
+                    targets: 13,
+                    data: "remark",
+                    title: "备注"
+                },
+                {
+                    targets: 14,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        var str = '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+                        str += '<input type="button" name="checkIt" onclick="checkItsList(' + data + ')" value="查看评论"/>';
+                        return str;
+                    }
+                },
+                {
+                    targets: 15,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        var str = "";
+                        if (full["sort"] == null || parseInt(full["sort"]) > 5 && who == null) {
+                            str = '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶"/>';
+                        } else if (who == null) {
+                            str = '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶排序"/>';
+                        }
+                        if (full["sortMini"] == null || parseInt(full["sortMini"]) > 5 && who != null) {
+                            str += '<input type="button" name="checkIt" onclick="topItMini(' + data + ')" value="小程序置顶"/>';
+                        } else if (who != null) {
+                            str += '<input type="button" name="checkIt" onclick="topItMini(' + data + ')" value="小程序置顶排序"/>';
+                        }
+                        return str;
+                    }
+                }
+            ]
+        });
 
 		table_global = oTable;
 
