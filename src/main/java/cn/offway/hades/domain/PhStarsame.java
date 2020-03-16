@@ -70,19 +70,19 @@ public class PhStarsame implements Serializable {
     private Long sortMini;
 
     /**
-     * 小程序排序
+     * 明星列表id
      **/
     private Long celebrityId;
 
     /**
-     * 小程序排序
+     * 类型[0-图片，1-视频]
      **/
-    private Long type;
+    private String type;
 
     /**
-     * 小程序排序
+     * 视频URL
      **/
-    private Long video;
+    private String video;
 
 
 
@@ -198,20 +198,20 @@ public class PhStarsame implements Serializable {
     }
 
     @Column(name = "type", length = 2 )
-    public Long getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(Long type) {
+    public void setType(String type) {
         this.type = type;
     }
 
     @Column(name = "video", length = 200)
-    public Long getVideo() {
+    public String getVideo() {
         return video;
     }
 
-    public void setVideo(Long video) {
+    public void setVideo(String video) {
         this.video = video;
     }
 
