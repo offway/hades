@@ -23,5 +23,5 @@ public interface PhBrandRecommendService {
 
     List<PhBrandRecommend> save(List<PhBrandRecommend> entities);
 
-    Page<PhBrandRecommend> list(Pageable pageable);
+    Page<PhBrandRecommend> list(String name, String type, Pageable pageable);
 }

@@ -3,9 +3,7 @@
 <head>
 	<head th:replace="head"></head>
 	<title>明星同款管理</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+	<link rel="stylesheet" href="assets/css/selectize.bootstrap3.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
 	.form-group img{
@@ -75,14 +73,9 @@
 				<button class="btn btn-danger same">排序同步至小程序</button>
 				<button class="btn btn-danger mini">小程序排序</button>
 			</div>
-			
-					
 			<footer th:replace="footer"></footer>
 		</div>
 	</div>
-	
-	<div th:replace="body-under"></div>
-	
 	<div class="modal fade in" id="modal-6">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 800px;">
@@ -90,131 +83,110 @@
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 					<h4 class="modal-title">添加明星同款</h4>
 				</div>
-				
 				<div class="modal-body">
 					<form role="form" id="saveForm">
-					<input type="hidden" name="id"/>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">明星名称</label>
-								<input type="text" class="form-control" name="starName" placeholder="明星名称"/>
+						<input type="hidden" name="id"/>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">明星名称</label>
+									<select class="form-control" name="starName" id="starName"></select>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">主图</label>
-								<input type="file" class="form-control" name="imageUrlFile" placeholder="主图"/>
-								<input type="hidden" class="form-control" name="imageUrl" />
-								<img alt="" src="" name="imageUrlImg" class="initial" style="display:none;"/>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">主图</label>
+									<input type="file" class="form-control" name="imageUrlFile" placeholder="主图"/>
+									<input type="hidden" class="form-control" name="imageUrl"/>
+									<img alt="" src="" name="imageUrlImg" class="initial" style="display:none;"/>
+								</div>
 							</div>
 						</div>
-					</div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="control-label">标题</label>
-                                <input type="text" class="form-control" name="title" value="0" placeholder="标题"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="control-label">详情图</label>
-								<!--<input type="file" class="form-control initial" name="detailImageFile" placeholder="详情图"/>-->
-								<input type="button" id="addMoreImgEle" class="notMe" value="添加" onclick="addMoreImg(this,null);"/>
-								<input type="hidden" class="form-control" name="imagesJSONStr" value="" />
-                            </div>
-                        </div>
-                    </div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">备注</label>
-								<input type="text" class="form-control" name="remark" placeholder="备注"/>
-							</div>	
-						</div>
-					</div>
-<!--
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="field-4" class="control-label">添加标签</label>
-								<input type="text" class="form-control" name="tag" placeholder="添加标签,逗号隔开"/>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">标题</label>
+									<input type="text" class="form-control" name="title" value="0" placeholder="标题"/>
+								</div>
 							</div>
 						</div>
-					</div>
--->
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">详情图</label>
+									<input type="button" id="addMoreImgEle" class="notMe" value="添加"
+										   onclick="addMoreImg(this,null);"/>
+									<input type="hidden" class="form-control" name="imagesJSONStr" value=""/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">备注</label>
+									<input type="text" class="form-control" name="remark" placeholder="备注"/>
+								</div>
+							</div>
+						</div>
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">填写品牌ID</label>
-									<!--<input type="number" class="form-control initial" name="goodsID" placeholder="填写商品ID"/>-->
 									<input type="button" id="addMoreTextEleSame" class="notMe" value="添加"
 										   onclick="addMoreTextSame(this,null);"/>
 									<input type="hidden" class="form-control" name="goodsIDStrSame" value=""/>
 								</div>
 							</div>
 						</div>
-
-					<div class="row">
-						<div class="col-md-12">
-                            <div class="form-group">
-                                <label class="control-label">填写商品ID</label>
-                                <!--<input type="number" class="form-control initial" name="goodsID" placeholder="填写商品ID"/>-->
-                                <input type="button" id="addMoreTextEle" class="notMe" value="添加" onclick="addMoreText(this,null);"/>
-                                <input type="hidden" class="form-control" name="goodsIDStr" value="" />
-                            </div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">默认点赞数量</label>
-								<input type="number" class="form-control" value="0" name="praiseCount" placeholder="默认点赞数量"/>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">填写商品ID</label>
+									<input type="button" id="addMoreTextEle" class="notMe" value="添加"
+										   onclick="addMoreText(this,null);"/>
+									<input type="hidden" class="form-control" name="goodsIDStr" value=""/>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">默认浏览数量</label>
-								<input type="number" class="form-control" value="0" name="viewCount" placeholder="默认浏览数量"/>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">默认点赞数量</label>
+									<input type="number" class="form-control" value="0" name="praiseCount"
+										   placeholder="默认点赞数量"/>
+								</div>
 							</div>
 						</div>
-					</div>
-<!--					<div class="row">-->
-<!--						<div class="col-md-12">-->
-<!--							<div class="form-group">-->
-<!--								<label class="control-label">默认打call数</label>-->
-<!--								<input type="number" class="form-control" value="0" name="callCount" placeholder="默认打call数"/>-->
-<!--							</div>-->
-<!--						</div>-->
-<!--					</div>-->
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="control-label">排序</label>
-                                <input type="number" readonly="readonly" class="form-control" value="99" name="sort" placeholder="排序(数值越小越靠前)"/>
-                            </div>
-                        </div>
-                    </div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">默认浏览数量</label>
+									<input type="number" class="form-control" value="0" name="viewCount"
+										   placeholder="默认浏览数量"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="form-group">
+									<label class="control-label">排序</label>
+									<input type="number" readonly="readonly" class="form-control" value="99" name="sort"
+										   placeholder="排序(数值越小越靠前)"/>
+								</div>
+							</div>
+						</div>
 					</form>
 				</div>
-				
 				<div class="modal-footer">
 					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 					<button type="button" class="btn btn-info save">保存</button>
 					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 				</div>
-				
 			</div>
 		</div>
 	</div>
-
     <div id="preview" style="display: none;
     position: fixed;
     top: 190px;
@@ -223,15 +195,9 @@
     overflow: scroll;
     border: solid; width: 700px; height: 600px;
     z-index: 9999;" onclick="closeIt(this)">
-
     </div>
-
 	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
+	<script src="assets/js/selectize.min.js"></script>
 	<script src="assets/js/async.min.js"></script>
 	<script th:inline="javascript">
 	/*<![CDATA[*/
@@ -363,8 +329,6 @@
 		window.location.href = '/starSameComment.html?id=' + id;
 	}
 
-    var table_global;
-
 	function topIt(id) {
 		var num = prompt("输入置顶位置,从0开始,0为第一位", "0");
 		if (isNaN(num) || num == null) {
@@ -401,11 +365,21 @@
 		window.location.href = '/starSame.html';
 	}
 
+	function bindStarSelector(data) {
+		var starStr = "";
+		for (var star of data) {
+			starStr += '<option value="VALUE">KEY</option>'.replace("VALUE", star["name"]).replace("KEY", star["name"]);
+		}
+		return starStr;
+	}
+
 	var who = [[${who}]];
 	var vis = true;
+	var table_global;
+	var qiniuUrl = [[${qiniuUrl}]];
     jQuery(document).ready(function($)
 	{
-		if (who == "Mini"){
+		if (who == "Mini") {
 			$(".btn.btn-info.add").hide();
 			$(".btn.btn-info.edit").hide();
 			$(".btn.btn-info.del").hide();
@@ -416,45 +390,45 @@
 		}
 		var oTable = $("#example-1").dataTable({
 			language: {
-                url: "../assets/Chinese.txt"
-            },
-			bFilter : false,
-			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/starSame_list",//通过ajax实现分页的url路径。
-            fnServerParams : function(aData){
-                var searchArray = $(".form-inline").serializeArray();
-                $.merge(aData, searchArray);
-            },
-            columnDefs: [
-				{	
+				url: "../assets/Chinese.txt"
+			},
+			bFilter: false,
+			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+			sAjaxSource: "/starSame_list",//通过ajax实现分页的url路径。
+			fnServerParams: function (aData) {
+				var searchArray = $(".form-inline").serializeArray();
+				$.merge(aData, searchArray);
+			},
+			columnDefs: [
+				{
 					targets: 0,
-				    data: "id",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="activityId" value="'+data+'" />';  
-				    }
+					data: "id",
+					width: "5%",
+					orderable: false,
+					className: 'select-checkbox',
+					title: '<input type="checkbox" id="checkbox-all"/>',
+					render: function (data, type, full, meta) {
+						return '<input type="checkbox" name="activityId" value="' + data + '" />';
+					}
 				},
-                {
-                    targets: 1,
-                    data: "id",
-                    title: "序号"
-                },
-                {
-               		targets: 2,
-	                data: "title",
-	                title: "标题"
-            	},
+				{
+					targets: 1,
+					data: "id",
+					title: "序号"
+				},
+				{
+					targets: 2,
+					data: "title",
+					title: "标题"
+				},
 				{
 					targets: 3,
 					data: "imageUrl",
 					title: "图片URL",
-                    render: function (data, type, row, meta) {
-                        return "<img src="+data+"></img>";
-                    }
+					render: function (data, type, row, meta) {
+						return buildImg(data);
+					}
 				},
 				{
 					targets: 4,
@@ -466,11 +440,11 @@
 					data: "viewCount",
 					title: "浏览数"
 				},
-                {
-               		targets: 6,
-	                data: "praiseCount",
-	                title: "点赞数"
-            	},
+				{
+					targets: 6,
+					data: "praiseCount",
+					title: "点赞数"
+				},
 				// {
 				// 	targets: 7,
 				// 	data: "callCount",
@@ -483,7 +457,7 @@
 					render: function (data, type, row, meta) {
 						return parseInt(data) < 6 ? data : "";
 					},
-					visible:vis
+					visible: vis
 				},
 				{
 					targets: 8,
@@ -492,16 +466,16 @@
 					render: function (data, type, row, meta) {
 						return parseInt(data) < 6 ? data : "";
 					},
-					visible:!vis
+					visible: !vis
 				},
-                {
-                    targets: 9,
-                    data: "createTime",
-                    title: "创建时间",
-                    render: function (data, type, row, meta) {
-                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-                    }
-                },
+				{
+					targets: 9,
+					data: "createTime",
+					title: "创建时间",
+					render: function (data, type, row, meta) {
+						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+					}
+				},
 				{
 					targets: 10,
 					data: "remark",
@@ -525,25 +499,25 @@
 					title: "操作",
 					render: function (data, type, full, meta) {
 						var str = "";
-						if (full["sort"] == null || parseInt(full["sort"]) > 5 && who==null) {
+						if (full["sort"] == null || parseInt(full["sort"]) > 5 && who == null) {
 							str = '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶"/>';
 						} else if (who == null) {
 							str = '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="置顶排序"/>';
 						}
-						if (full["sortMini"] == null || parseInt(full["sortMini"]) > 5 && who !=null) {
+						if (full["sortMini"] == null || parseInt(full["sortMini"]) > 5 && who != null) {
 							str += '<input type="button" name="checkIt" onclick="topItMini(' + data + ')" value="小程序置顶"/>';
-						} else if ( who !=null) {
+						} else if (who != null) {
 							str += '<input type="button" name="checkIt" onclick="topItMini(' + data + ')" value="小程序置顶排序"/>';
 						}
 						return str;
 					}
 				}
-               ]
+			]
 		});
 
 		table_global = oTable;
-		
-		$(".searchBtn").click(function(){
+
+		$(".searchBtn").click(function () {
 			$("#checkbox-all").attr("checked", false);
 			oTable.fnDraw(); //or fnReloadAjax()  
 			return false;
@@ -561,12 +535,10 @@
 			form.find("div.toDel").remove();
 			form.find("input[type='file']").show();
 			// jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
-			jQuery('#modal-6').modal({backdrop: 'static' ,keyboard: false});
+			jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 		});
 
-		var qiniuUrl = [[${qiniuUrl}]];
-		//保存
-		$(".btn.btn-info.save").click(function(){
+		$(".btn.btn-info.save").click(function () {
 			var footer = $(this).parent(".modal-footer");
 			footer.find("button").hide();
 			footer.find(".bg-lg").show();
@@ -616,29 +588,30 @@
 			}
 			// form.find("input[name='imagesJSONStr']").val("");
 			//获取token
-			$.get("/qiniu/token",{},function(token){
-				if(token !=''){
+			$.get("/qiniu/token", {}, function (token) {
+				if (token != '') {
 					async.series({
-						one: function(callback) {
-							upload("imageUrl",token,imageFile,function(res){},function(err){
-								console.log("上传imageFile异常:"+err);
+						one: function (callback) {
+							upload("imageUrl", token, imageFile, function (res) {
+							}, function (err) {
+								console.log("上传imageFile异常:" + err);
 								callback(err);
-							},function(res){
+							}, function (res) {
 								//上传成功
-								if(res!=''){
-									form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
+								if (res != '') {
+									form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
 								}
 								callback();
 							});
 						},
-						two: function(callback){
+						two: function (callback) {
 							//上传详情图
 							var imageFileList = form.find("input[name='detailImageFile']");
 							var i = 0;
 							async.eachSeries(imageFileList, function (item, cb) {
 								var f = item.files[0];
 								var v = item.value;
-								if(v == ''){
+								if (v == '') {
 									cb();
 									return;
 								}
@@ -681,16 +654,16 @@
 								callback();
 							});
 						},
-						three: function(callback){
+						three: function (callback) {
 							//提交保存
-							$.post("/starSame_save",$("#saveForm").serialize(),function(data){
-								if(data){
+							$.post("/starSame_save", $("#saveForm").serialize(), function (data) {
+								if (data) {
 									footer.find("button").show();
 									footer.find(".bg-lg").hide();
 									jQuery('#modal-6').modal('hide');
 									toastr.success("操作已成功！", "温馨提示");
 									oTable.fnDraw();
-								}else{
+								} else {
 									footer.find("button").show();
 									footer.find(".bg-lg").hide();
 									toastr.error("操作失败", "温馨提示");
@@ -698,10 +671,10 @@
 								callback();
 							});
 						}
-					}, function(err, results) {
+					}, function (err, results) {
 						console.log("OK");
 					});
-				}else{
+				} else {
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
 					toastr.error("上传文件错误，请联系管理员", "温馨提示");
@@ -709,14 +682,14 @@
 			});
 		});
 
-		$(".btn.btn-info.edit").click(function(){
+		$(".btn.btn-info.edit").click(function () {
 			var activityId = $("input[name='activityId']:checked");
 			if (activityId.length != 1) {
 				toastr.error("请选择一条数据操作", "温馨提示");
 				return;
 			}
 
-			$.post("/starSame_find",{id:activityId.val()},function(data){
+			$.post("/starSame_find", {id: activityId.val()}, function (data) {
 				var form = $("#saveForm");
 				form.find("input:not(.notMe)").val("");
 				form.find("input[name='detailImageFile']").remove();
@@ -762,73 +735,37 @@
 					addMoreText("#addMoreTextEle", goodsList[k]["goodsId"]);
 				}
 				//品牌
-				for (var l in goodsListSame){
-					addMoreTextSame("#addMoreTextEleSame",goodsListSame[l]["brandId"]);
+				for (var l in goodsListSame) {
+					addMoreTextSame("#addMoreTextEleSame", goodsListSame[l]["brandId"]);
 				}
+				//明星名称
+				var that = $("#starName");
+				that.selectize()[0].selectize.clear(true);//Resets / clears all selected items from the control. If silent is truthy, no change event will be fired on the original input.
+				that.selectize()[0].selectize.setValue(main["starName"], true);//Resets the selected items to the given value.
 				form.find(".btn.image").show();
 				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
 			});
 		});
 
-		$(".btn.btn-info.del").click(function(){
+		$(".btn.btn-info.del").click(function () {
 			var activityId = $("input[name='activityId']:checked");
-			if(activityId.length < 1){
+			if (activityId.length < 1) {
 				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return ;
+				return;
 			}
 
 			var ids = [];
-			activityId.each(function(i,e){
+			activityId.each(function (i, e) {
 				ids.push(e.value);
 			});
 
-			$.post("/starSame_del",{ids:ids},function(data){
-				if(data){
+			$.post("/starSame_del", {ids: ids}, function (data) {
+				if (data) {
 					toastr.success("操作已成功！", "温馨提示");
 					oTable.fnDraw();
 				}
 			})
 		});
-
-        $(".btn.btn-info.up").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
-
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
-
-            $.post("/banner_up",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
-
-        $(".btn.btn-info.down").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
-
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
-
-            $.post("/banner_down",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
 
 		$(".btn.btn-danger.same").click(function () {
 			// window.location.href = '/starSame_Mini.html?who=' + "Mini";
@@ -839,8 +776,27 @@
 				}
 			})
 		});
+
 		$(".btn.btn-danger.mini").click(function () {
 			window.location.href = '/starSame_Mini.html?who=' + "Mini";
+		});
+
+		$.getJSON("/starList_getAll", {}, function (data) {
+			var contentStr = bindStarSelector(data);
+			var that = $("#starName");
+			that.html(contentStr);
+			that.selectize({
+				// "plugins": ['drag_drop', 'remove_button'],
+				"items": [],
+				"persist": false,
+				"create": false,
+				"maxItems": 1,//The max number of items the user can select. 1 makes the control mono-selection, null allows an unlimited number of items.
+				"delimiter": ",",
+				"hideSelected": true,
+				"sortField": "text",
+				"searchField": ['text'],
+				"placeholder": "选择明星"
+			});
 		});
 	});
 	/*]]>*/

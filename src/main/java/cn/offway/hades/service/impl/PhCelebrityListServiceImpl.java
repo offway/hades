@@ -93,6 +93,11 @@ public class PhCelebrityListServiceImpl implements PhCelebrityListService {
     }
 
     @Override
+    public List<PhCelebrityList> findAll() {
+        return phCelebrityListRepository.findAll();
+    }
+
+    @Override
     public List<PhCelebrityList> save(List<PhCelebrityList> entities) {
         return phCelebrityListRepository.save(entities);
     }
