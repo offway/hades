@@ -97,28 +97,51 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group">
-									<label class="control-label">主图</label>
-									<input type="file" class="form-control" name="imageUrlFile" placeholder="主图"/>
-									<input type="hidden" class="form-control" name="imageUrl"/>
-									<img alt="" src="" name="imageUrlImg" class="initial" style="display:none;"/>
+									<label class="control-label">选择类型</label>
+									<label><input name="type" class="notMe" type="radio" checked="checked" value="0"/>图片</label>
+									<label><input name="type" class="notMe" type="radio" value="1"/>视频</label>
 								</div>
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">标题</label>
-									<input type="text" class="form-control" name="title" value="0" placeholder="标题"/>
+						<div id="imageDiv" style="display: block;">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label class="control-label">标题</label>
+										<input type="text" class="form-control" name="title" value="0" placeholder="标题"/>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label class="control-label">主图</label>
+										<input type="file" class="form-control" name="imageUrlFile" placeholder="主图"/>
+										<input type="hidden" class="form-control" name="imageUrl"/>
+										<img alt="" src="" name="imageUrlImg" class="initial" style="display:none;"/>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label class="control-label">详情图</label>
+										<input type="button" id="addMoreImgEle" class="notMe" value="添加"
+											   onclick="addMoreImg(this,null);"/>
+										<input type="hidden" class="form-control" name="imagesJSONStr" value=""/>
+									</div>
 								</div>
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">详情图</label>
-									<input type="button" id="addMoreImgEle" class="notMe" value="添加"
-										   onclick="addMoreImg(this,null);"/>
-									<input type="hidden" class="form-control" name="imagesJSONStr" value=""/>
+						<div id="videoDiv" style="display: none;">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<label class="control-label">视频</label>
+										<input type="file" class="form-control" name="videoFile" placeholder="视频" onchange="uploadVideo(this)"/>
+										<input type="hidden" class="form-control" name="video"/>
+										<img alt="" src="" name="videoImg" class="initial" style="display:none;"/>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -372,6 +395,36 @@
 		}
 		return starStr;
 	}
+
+    function uploadVideo(self) {
+        var that = $(self);
+        if (self.files.length > 0) {
+            getQNToken(function (token) {
+                var file = self.files[0];
+                this.upload("", token, file, function () {
+                    //
+                }, function (err) {
+                    console.log("error");
+                    console.log(err);
+                }, function (res) {
+                    var url = qiniuUrl + "/" + res.key;
+                    that.parent().find("[name=video]").val(url);
+                    // that.parent().find("[name=videoImg]").attr("src", url);
+                    // that.parent().find("[name=videoImg]").attr("width", "100px");
+                    // that.parent().find("[name=videoImg]").attr("height", "100px");
+                    // that.parent().find("[name=videoImg]").show();
+                });
+            });
+        } else {
+            confirm("未选择任何文件!");
+        }
+    }
+
+    function getQNToken(cb) {
+        $.get("/qiniu/token", {}, function (token) {
+            cb(token);
+        });
+    }
 
 	var who = [[${who}]];
 	var vis = true;
@@ -781,26 +834,43 @@
 			window.location.href = '/starSame_Mini.html?who=' + "Mini";
 		});
 
-		$.getJSON("/starList_getAll", {}, function (data) {
-			var contentStr = bindStarSelector(data);
-			var that = $("#starName");
-			that.html(contentStr);
-			that.selectize({
-				// "plugins": ['drag_drop', 'remove_button'],
-				"items": [],
-				"persist": false,
-				"create": false,
-				"maxItems": 1,//The max number of items the user can select. 1 makes the control mono-selection, null allows an unlimited number of items.
-				"delimiter": ",",
-				"hideSelected": true,
-				"sortField": "text",
-				"searchField": ['text'],
-				"placeholder": "选择明星"
-			});
-		});
+        $.getJSON("/starList_getAll", {}, function (data) {
+            var contentStr = bindStarSelector(data);
+            var that = $("#starName");
+            that.html(contentStr);
+            that.selectize({
+                // "plugins": ['drag_drop', 'remove_button'],
+                "items": [],
+                "persist": false,
+                "create": false,
+                "maxItems": 1,//The max number of items the user can select. 1 makes the control mono-selection, null allows an unlimited number of items.
+                "delimiter": ",",
+                "hideSelected": true,
+                "sortField": "text",
+                "searchField": ['text'],
+                "placeholder": "选择明星"
+            });
+        });
+
+        $('[name="type"]').click(function () {
+            var value = $(this).val();  //获取选中的radio的值
+            var imageDiv = $("#imageDiv");
+            var videoDiv = $("#videoDiv");
+            switch (parseInt(value)) {
+                case 0:
+                    imageDiv.show();
+                    videoDiv.hide();
+                    break;
+                case 1:
+                    imageDiv.hide();
+                    videoDiv.show();
+                    break;
+                default:
+                    break;
+            }
+        });
 	});
 	/*]]>*/
 	</script>
 </body>
-
 </html>
