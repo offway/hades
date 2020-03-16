@@ -98,8 +98,8 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">选择类型</label>
-									<label><input name="type" class="notMe" type="radio" checked="checked" value="0"/>图片</label>
-									<label><input name="type" class="notMe" type="radio" value="1"/>视频</label>
+									<label><input name="type" id="radioImage" class="notMe" type="radio" checked="checked" value="0"/>图片</label>
+									<label><input name="type" id="radioVideo" class="notMe" type="radio" value="1"/>视频</label>
 								</div>
 							</div>
 						</div>
@@ -141,6 +141,7 @@
 										<input type="file" class="form-control" name="videoFile" placeholder="视频" onchange="uploadVideo(this)"/>
 										<input type="hidden" class="form-control" name="video"/>
 										<img alt="" src="" name="videoImg" class="initial" style="display:none;"/>
+										<a name="videoHref" style="display: none" href="#" target="_blank">下载</a>
 									</div>
 								</div>
 							</div>
@@ -409,10 +410,12 @@
                 }, function (res) {
                     var url = qiniuUrl + "/" + res.key;
                     that.parent().find("[name=video]").val(url);
+                    alert("视频上传成功");
+                    that.parent().find("[name=videoHref]").attr("href", url);
                     // that.parent().find("[name=videoImg]").attr("src", url);
                     // that.parent().find("[name=videoImg]").attr("width", "100px");
                     // that.parent().find("[name=videoImg]").attr("height", "100px");
-                    // that.parent().find("[name=videoImg]").show();
+                    that.parent().find("[name=videoHref]").show();
                 }, 100, true);
             });
         } else {
@@ -794,6 +797,15 @@
 				var that = $("#starName");
 				that.selectize()[0].selectize.clear(true);//Resets / clears all selected items from the control. If silent is truthy, no change event will be fired on the original input.
 				that.selectize()[0].selectize.setValue(main["starName"], true);//Resets the selected items to the given value.
+                //视频下载
+                form.find("a[name='videoHref']").attr("href", main["video"]);
+                form.find("a[name='videoHref']").show();
+                //图片、视频切换
+                if (main["type"] == "1") {
+                    $("#radioVideo").click();
+                } else {
+                    $("#radioImage").click();
+                }
 				form.find(".btn.image").show();
                 jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 			});
