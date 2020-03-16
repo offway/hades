@@ -587,7 +587,6 @@
 			form.find("input[name='goodsIDSame']").remove();
 			form.find("div.toDel").remove();
 			form.find("input[type='file']").show();
-			// jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 			jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 		});
 
@@ -796,7 +795,7 @@
 				that.selectize()[0].selectize.clear(true);//Resets / clears all selected items from the control. If silent is truthy, no change event will be fired on the original input.
 				that.selectize()[0].selectize.setValue(main["starName"], true);//Resets the selected items to the given value.
 				form.find(".btn.image").show();
-				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+                jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 			});
 		});
 
