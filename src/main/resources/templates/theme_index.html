@@ -104,7 +104,7 @@
 							<div class="col-md-12">
 								<div class="form-group">
 									<label class="control-label">主题内容</label>
-									<input type="text" class="form-control" name="content" placeholder="主题内容"/>
+									<textarea class="form-control" name="content" placeholder="主题内容"></textarea>
 								</div>
 							</div>
 						</div>
@@ -774,7 +774,7 @@
             footer.find(".bg-lg").show();
             var form = $("#saveForm");
             var name = form.find("input[name='name']").val();
-            var content = form.find("input[name='content']").val();
+            var content = form.find("textarea[name='content']").val();
             var imageUrl = form.find("input[name='imageUrl']").val();
             var remark = form.find("input[name='remark']").val();
             var goodsIds = form.find("input[name='goodsID']");
@@ -850,27 +850,28 @@
             $.post("/theme_get", {id: activityId.val()}, function (data) {
                 var form = $("#saveForm");
                 form.find("input:not(.notMe)").val("");
-                for (var i in data) {
-                    if (i == "sub") {
-                        for (var j in data[i]) {
-                            var obj = data[i][j];
-                            addMoreGoodsDisplay(obj["id"], obj["name"] + "__￥" + obj["price"], obj["img"]);
-                        }
-                    } else {
-                        var ele = form.find("input[name='" + i + "']");
-                        switch (ele.attr("type")) {
-                            case "radio":
-                                ele.val([data[i]]);
-                                break;
-                            default:
-                                ele.val(data[i]);
-                        }
-                        var eleSelect = form.find("select[name='" + i + "']");
-                        eleSelect.val(data[i]);
-                        form.find("img[name='" + i + "Img']").attr("src", data[i]);
-                        form.find("img[name='" + i + "Img']").show();
-                    }
-                }
+				for (var i in data) {
+					if (i == "sub") {
+						for (var j in data[i]) {
+							var obj = data[i][j];
+							addMoreGoodsDisplay(obj["id"], obj["name"] + "__￥" + obj["price"], obj["img"]);
+						}
+					} else {
+						var ele = form.find("input[name='" + i + "']");
+						switch (ele.attr("type")) {
+							case "radio":
+								ele.val([data[i]]);
+								break;
+							default:
+								ele.val(data[i]);
+						}
+						var eleSelect = form.find("select[name='" + i + "']");
+						eleSelect.val(data[i]);
+						form.find("img[name='" + i + "Img']").attr("src", data[i]);
+						form.find("img[name='" + i + "Img']").show();
+						form.find("textarea[name='" + i + "']").val(data[i]);
+					}
+				}
                 form.find(".btn.image").show();
                 jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
                 $(".modal-backdrop").css("z-index", 999);
