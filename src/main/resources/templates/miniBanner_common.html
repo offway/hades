@@ -135,6 +135,7 @@
 		});
 	}
 
+	var isApp = [[${isApp}]];
 	var json = [[${json}]];
 	var pos = [[${pos}]];
 	var qiniuUrl = [[${qiniuUrl}]];
@@ -196,6 +197,7 @@
 					//提交保存
 					var data = $("#saveForm").serializeArray();
 					data.push({"name": "pos", "value": pos});
+					data.push({"name": "isApp", "value": isApp});
 					$.post("/miniBanner_save", data, function (data) {
 						if (data) {
 							footer.find("button").show();
@@ -217,5 +219,4 @@
 	/*]]>*/
 	</script>
 </body>
-
 </html>

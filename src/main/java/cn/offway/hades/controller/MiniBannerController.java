@@ -27,29 +27,59 @@ public class MiniBannerController {
     @RequestMapping("/miniBanner_a.html")
     public String first(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("isApp", "1");
         map.addAttribute("pos", "a");
-        map.addAttribute("json", getData("a"));
+        map.addAttribute("json", getData("a", true));
         return "miniBanner_common";
     }
 
     @RequestMapping("/miniBanner_b.html")
     public String second(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("isApp", "1");
         map.addAttribute("pos", "b");
-        map.addAttribute("json", getData("b"));
+        map.addAttribute("json", getData("b", true));
         return "miniBanner_common";
     }
 
     @RequestMapping("/miniBanner_c.html")
     public String third(ModelMap map) {
         map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("isApp", "1");
         map.addAttribute("pos", "c");
-        map.addAttribute("json", getData("c"));
+        map.addAttribute("json", getData("c", true));
         return "miniBanner_common";
     }
 
-    private String getData(String pos) {
-        String key = "INDEX_SELL_WELL";
+    @RequestMapping("/miniBanner_d.html")
+    public String fourth(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("isApp", "0");
+        map.addAttribute("pos", "a");
+        map.addAttribute("json", getData("a", false));
+        return "miniBanner_common";
+    }
+
+    @RequestMapping("/miniBanner_e.html")
+    public String fifth(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("isApp", "0");
+        map.addAttribute("pos", "b");
+        map.addAttribute("json", getData("b", false));
+        return "miniBanner_common";
+    }
+
+    @RequestMapping("/miniBanner_f.html")
+    public String sixth(ModelMap map) {
+        map.addAttribute("qiniuUrl", qiniuProperties.getUrl());
+        map.addAttribute("isApp", "0");
+        map.addAttribute("pos", "c");
+        map.addAttribute("json", getData("c", false));
+        return "miniBanner_common";
+    }
+
+    private String getData(String pos, boolean isApp) {
+        String key = isApp ? "INDEX_SELL_WELL" : "INDEX_SELL_WELL_MINI";
         String jsonStr = configService.findContentByName(key);
         if (jsonStr != null) {
             JSONArray jsonArray = JSONArray.parseArray(jsonStr);
@@ -84,7 +114,7 @@ public class MiniBannerController {
 
     @ResponseBody
     @RequestMapping("/miniBanner_save")
-    public boolean save(String pos, String img, String redirectType, String redirectTarget, String remark) {
+    public boolean save(String pos, String img, String redirectType, String redirectTarget, String remark, String isApp) {
         int i = posToIndex(pos);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("banner", img);
@@ -93,15 +123,14 @@ public class MiniBannerController {
         if ("0".equals(redirectType)) {
             jsonObject.put("url", redirectTarget);
             jsonObject.put("redirectId", "0");
-        }else if ("7".equals(redirectType)){
+        } else if ("7".equals(redirectType)) {
             jsonObject.put("url", redirectTarget);
             jsonObject.put("redirectId", "0");
-        }
-        else {
+        } else {
             jsonObject.put("url", "");
             jsonObject.put("redirectId", "".equals(redirectTarget) ? "0" : redirectTarget);
         }
-        String key = "INDEX_SELL_WELL";
+        String key = "1".equals(isApp) ? "INDEX_SELL_WELL" : "INDEX_SELL_WELL_MINI";
         PhConfig config = configService.findOne(key);
         JSONArray container;
         if (config == null) {
