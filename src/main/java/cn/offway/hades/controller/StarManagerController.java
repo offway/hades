@@ -68,6 +68,7 @@ public class StarManagerController {
             model.setProfession(String.valueOf(o[3]));
             model.setFansSum(o[4] == null ? 0 : Long.valueOf(String.valueOf(o[4])));
             model.setRemark(String.valueOf(o[5]));
+            model.setFans(o[6] == null ? 0 : Long.valueOf(String.valueOf(o[6])));
             list.add(model);
         }
         // 为操作次数加1，必须这样做
