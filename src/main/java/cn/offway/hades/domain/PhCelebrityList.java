@@ -25,8 +25,11 @@ public class PhCelebrityList implements Serializable {
     /** 职业 **/
     private String profession;
 
-    /** 粉丝数量 **/
+    /** 真实粉丝数量 **/
     private Long fansSum;
+
+    /** 虚拟粉丝数量 **/
+    private Long fans;
 
     /** 备注 **/
     private String remark;
@@ -77,6 +80,15 @@ public class PhCelebrityList implements Serializable {
 
     public void setFansSum(Long fansSum) {
         this.fansSum = fansSum;
+    }
+
+    @Column(name = "fans", length = 11)
+    public Long getFans() {
+        return fans;
+    }
+
+    public void setFans(Long fans) {
+        this.fans = fans;
     }
 
     @Column(name = "remark", length = 200)

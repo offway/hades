@@ -105,8 +105,16 @@
 					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
-								<label class="control-label">粉丝数量</label>
-								<input type="number" class="form-control" readonly="readonly" name="fansSum" placeholder="粉丝数量"/>
+								<label class="control-label">真实粉丝数量</label>
+								<input type="number" class="form-control" readonly="readonly" name="fansSum" placeholder="真实粉丝数量"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">虚拟粉丝数量</label>
+								<input type="number" class="form-control" name="fans" placeholder="虚拟粉丝数量"/>
 							</div>
 						</div>
 					</div>
@@ -273,10 +281,15 @@
                 {
                     targets: 5,
                     data: "fansSum",
-                    title: "粉丝数量"
+                    title: "真实粉丝数量"
                 },
+				{
+					targets: 6,
+					data: "fans",
+					title: "虚拟粉丝数量"
+				},
                 {
-                    targets: 6,
+                    targets: 7,
                     data: "id",
                     title: "操作",
                     render: function (data, type, row, meta) {
@@ -284,7 +297,7 @@
                     }
                 },
                 {
-                    targets: 7,
+                    targets: 8,
                     data: "remark",
                     title: "备注"
                 }
@@ -346,6 +359,7 @@
                 form.find("img[name='headimgurlImg']").show();
                 form.find("input[name='profession']").val(data.profession);
                 form.find("input[name='fansSum']").val(data.fansSum);
+				form.find("input[name='fans']").val(data.fans);
                 form.find("input[name='remark']").val(data.remark);
                 jQuery('#modal-6').modal('show', {backdrop: 'fade'});
             });
