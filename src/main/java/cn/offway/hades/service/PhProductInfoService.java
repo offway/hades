@@ -1,12 +1,11 @@
 package cn.offway.hades.service;
 
-import java.util.Date;
-import java.util.List;
-
+import cn.offway.hades.domain.PhProductInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import cn.offway.hades.domain.PhProductInfo;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 活动产品表Service接口
@@ -14,25 +13,27 @@ import cn.offway.hades.domain.PhProductInfo;
  * @author wn
  * @version $v: 1.0.0, $time:2018-10-15 16:49:00 Exp $
  */
-public interface PhProductInfoService{
+public interface PhProductInfoService {
 
-	PhProductInfo save(PhProductInfo phProductInfo);
-	
-	PhProductInfo findOne(Long id);
+    PhProductInfo save(PhProductInfo phProductInfo);
 
-	List<PhProductInfo> findByEndTime(Date endTime);
+    PhProductInfo findOne(Long id);
 
-	PhProductInfo saveProduct(PhProductInfo phProductInfo);
+    List<PhProductInfo> findByEndTime(Date endTime);
 
-	int updateSort(Long productId);
+    PhProductInfo saveProduct(PhProductInfo phProductInfo);
 
-	List<PhProductInfo> findAll(List<Long> ids);
+    int updateSort(Long productId);
 
-	List<PhProductInfo> save(List<PhProductInfo> phProductInfos);
+    List<PhProductInfo> findAll(List<Long> ids);
 
-	Page<PhProductInfo> findByPage(String name, String type, String status, Long channel, Pageable page);
+    List<PhProductInfo> save(List<PhProductInfo> phProductInfos);
 
-	Page<PhProductInfo> findByType(String type, Long channel, Pageable page);
+    Page<PhProductInfo> findByPage(String name, String type, String status, Long channel, Pageable page);
 
-	boolean notice(Long productId, String video, String codes) throws Exception;
+    Page<PhProductInfo> findByType(String type, Long channel, Pageable page);
+
+    boolean notice(Long productId, String video, String codes) throws Exception;
+
+    Long getJoin(Long productId);
 }

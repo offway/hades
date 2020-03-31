@@ -416,9 +416,6 @@
 			language: {
                 url: "../assets/Chinese.txt"
             },
-			aLengthproduct: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
 			bFilter : false,
 			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
             sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
@@ -530,6 +527,51 @@
             	},
                 {
                     targets: 10,
+                    data: "id",
+                    title: "参与人数",
+                    render: function (data, type, row, meta) {
+                        var str = "";
+                        $.ajax({
+                            "url": "/products-join-count",
+                            "async": false,
+                            "data": {"id": data},
+                            "success": function (body) {
+                                if (body) {
+                                    str = "<font color='red'>";
+                                    str += body;
+                                    str += "</font>"
+                                }
+                            }
+                        });
+                        return str;
+                    }
+                },
+                {
+                    targets: 11,
+                    data: "id",
+                    title: "中奖号码",
+                    render: function (data, type, row, meta) {
+                        var str = "";
+                        $.ajax({
+                            "url": "/products-win-code",
+                            "async": false,
+                            "data": {"id": data},
+                            "dataType": "json",
+                            "success": function (body) {
+                                console.log(body);
+                                if (body) {
+                                    // var json = JSON.parse(body);
+                                    for (var obj of body) {
+                                        str += obj["code"] + ",";
+                                    }
+                                }
+                            }
+                        });
+                        return str;
+                    }
+                },
+                {
+                    targets: 12,
                     data: "createTime",
                     title: "创建时间",
                     render: function (data, type, row, meta) {
