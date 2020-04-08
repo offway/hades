@@ -98,6 +98,12 @@ public class PhProductInfo implements Serializable {
     /** 状态[0-未上架,1-已上架] **/
     private String status;
 
+    /** 开奖方式[0-默认，1-直播间开奖]**/
+    private String type;
+
+    /** 开奖图片，小程序直播间开奖时不为空 **/
+    private String imageUrl;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -319,6 +325,23 @@ public class PhProductInfo implements Serializable {
     public void setCoverImage(String coverImage) {
         this.coverImage = coverImage;
     }
-	
+
+    @Column(name = "type", length = 2)
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    @Column(name = "image_url", length = 200)
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
 }
