@@ -282,8 +282,8 @@ public class HadesApplicationTests {
 
     private class BzyClient {
         private String url = "http://dataapi.bazhuayu.com/";
-        private String username = "13764353666";
-        private String password = "tianzai001";
+        private String username = "puhao2019";
+        private String password = "puhao2018";
         private String grant_type = "password";
         private TokenResp tokenVo = null;
 
