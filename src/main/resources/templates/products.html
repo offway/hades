@@ -1033,31 +1033,31 @@
 				
 			});
 
-		$(".btn.btn-info.open").click(function () {
-			var productId = $("input[name='productId']:checked");
-			if (productId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return;
-			}
-			productId = productId[0].value;
-			$.post("/products-one", {id: productId}, function (data) {
-				var type = data.type;
-				if (type == '1') {
-					$("#openVideoDiv").show();
-					$("#openImgDiv").hide();
-				} else {
-					$("#openVideoDiv").hide();
-					$("#openImgDiv").show();
-				}
-				$(".btn.btn-info.notice").attr("productId", productId);
-				$("#codes").val("");
-				var form = $("#openForm");
-				form.find("input[name='type']").val(type);
-				form.find("input[name='openVideoFile']").val("");
-				form.find("input[name='openImgFile']").val("");
-				jQuery('#modal-1').modal('show', {backdrop: 'fade'});
-			});
-		});
+        $(".btn.btn-info.open").click(function () {
+            var productId = $("input[name='productId']:checked");
+            if (productId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
+            productId = productId[0].value;
+            $.post("/products-one", {id: productId}, function (data) {
+                var type = data.type;
+                if (type == '1') {
+                    $("#openVideoDiv").hide();
+                    $("#openImgDiv").show();
+                } else {
+                    $("#openVideoDiv").show();
+                    $("#openImgDiv").hide();
+                }
+                $(".btn.btn-info.notice").attr("productId", productId);
+                $("#codes").val("");
+                var form = $("#openForm");
+                form.find("input[name='type']").val(type);
+                form.find("input[name='openVideoFile']").val("");
+                form.find("input[name='openImgFile']").val("");
+                jQuery('#modal-1').modal('show', {backdrop: 'fade'});
+            });
+        });
 
 		$(".btn.btn-info.notice").click(function () {
 			var footer = $(this).parent(".modal-footer");
