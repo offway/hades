@@ -30,15 +30,12 @@
 				</div>
 
 				<div class="breadcrumb-env">
-
 					<ol class="breadcrumb bc-1">
 						<li><a href="/"><i class="fa-home"></i>Home</a></li>
 						<li><a>限时豪礼</a></li>
 						<li class="active"><strong>活动管理</strong></li>
 					</ol>
-
 				</div>
-
 			</div>
 			
 			<div class="panel panel-default">
@@ -68,7 +65,6 @@
 								</select>
 							</div>
 						</div>
-						
 						<div class="form-group ">
 							<div class="input-group">
 								<select name="channel" class="form-control" style="height:35px" placeholder="渠道">
@@ -83,13 +79,11 @@
 						<div class="form-group">
 							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
 						</div>
-						
 					</form>
 				</div>
 				<div class="panel-body">
 					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
 					</table>
-					
 				</div>
 				 <button class="btn btn-info add" >添加</button>
 				<button class="btn btn-info edit">修改</button>
@@ -98,65 +92,50 @@
 				<button class="btn btn-info updateStatus">上架</button>
 				<button class="btn btn-info updateStatus">下架</button>
 			</div>
-			
-					
 			<footer th:replace="footer"></footer>
 		</div>
 	</div>
 	
-	<div th:replace="body-under"></div>
-	
 	<div class="modal fade in" id="modal-6" data-backdrop="static">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 800px;">
-				
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 					<h4 class="modal-title">添加活动</h4>
 				</div>
-				
 				<div class="modal-body">
 					<form role="form" id="saveForm">
 					<input type="hidden" name="id"/>
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-3" class="control-label">活动名称</label>
-								
+								<label class="control-label">活动名称</label>
 								<input type="text" class="form-control" name="name" placeholder="活动名称"/>
-							</div>	
-							
+							</div>
 						</div>
 					</div>
-				
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">规格</label>
-								
+								<label class="control-label">规格</label>
 								<input type="text" class="form-control" name="productDesc" placeholder="规格"/>
 							</div>	
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">开始时间-截止时间</label>
+								<label class="control-label">开始时间-截止时间</label>
 								<input type="text" id="daterange" class="form-control daterange" placeholder="开始时间-截止时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
 								<input type="hidden" class="form-control" name="beginTime" />
 								<input type="hidden" class="form-control" name="endTime" />
 							</div>
 						</div>
 					</div>
-					
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">活动列表图</label>
+								<label class="control-label">活动列表图</label>
 								<input type="file" class="form-control" name="imageFile" placeholder="活动列表图"/>
 								<input type="hidden" class="form-control" name="image" />
 								<img alt="" src="" name="imageImage" style="display:none;"/>
@@ -166,9 +145,8 @@
 					</div>
 						<div class="row">
 							<div class="col-md-12">
-
 								<div class="form-group">
-									<label for="field-4" class="control-label">封面图</label>
+									<label class="control-label">封面图</label>
 									<input type="file" class="form-control" name="coverFile" placeholder="封面图"/>
 									<input type="hidden" class="form-control" name="coverImage" />
 									<img alt="" src="" name="coverImage" style="display:none;"/>
@@ -178,9 +156,8 @@
 						</div>
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">活动详情GIF</label>
+								<label class="control-label">活动详情GIF</label>
 								<input type="file" class="form-control" name="bannerFile" placeholder="活动详情GIF"/>
 								<input type="hidden" class="form-control" name="banner" />
 								<img alt="" src="" name="bannerImage" style="display:none;"/>
@@ -190,18 +167,16 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">奖品价值</label>
+								<label class="control-label">奖品价值</label>
 								<input type="text" class="form-control" name="price" placeholder="奖品价值"/>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">其他活动展示图</label>
+								<label class="control-label">其他活动展示图</label>
 								<input type="file" class="form-control" name="showImageFile" placeholder="其他活动展示图"/>
 								<input type="hidden" class="form-control" name="showImage" />
 								<img alt="" src="" name="showImageImage" style="display:none;"/>
@@ -209,12 +184,10 @@
 							</div>
 						</div>
 					</div>
-					
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">缩略图</label>
+								<label class="control-label">缩略图</label>
 								<input type="file" class="form-control" name="thumbnailFile" placeholder="缩略图"/>
 								<input type="hidden" class="form-control" name="thumbnail" />
 								<img alt="" src="" name="thumbnailImage" style="display:none;"/>
@@ -224,9 +197,8 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">分享图片</label>
+								<label class="control-label">分享图片</label>
 								<input type="file" class="form-control" name="shareImageFile" placeholder="分享图片"/>
 								<input type="hidden" class="form-control" name="shareImage" />
 								<img alt="" src="" name="shareImageImage" style="display:none;"/>
@@ -236,27 +208,24 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">分享标题</label>
+								<label class="control-label">分享标题</label>
 								<input type="text" class="form-control" name="shareTitle" placeholder="分享标题"/>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">分享描述</label>
+								<label class="control-label">分享描述</label>
 								<input type="text" class="form-control" name="shareDesc" placeholder="分享描述"/>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">有码图片</label>
+								<label class="control-label">有码图片</label>
 								<input type="file" class="form-control" name="saveImageFile" placeholder="有码图片"/>
 								<input type="hidden" class="form-control" name="saveImage" />
 								<img alt="" src="" name="saveImageImage" style="display:none;"/>
@@ -266,9 +235,8 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">无码图片</label>
+								<label class="control-label">无码图片</label>
 								<input type="file" class="form-control" name="backgroundFile" placeholder="无码图片"/>
 								<input type="hidden" class="form-control" name="background" />
 								<img alt="" src="" name="backgroundImage" style="display:none;"/>
@@ -278,19 +246,17 @@
 					</div>
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">开奖视频</label>
-								<input type="text" class="form-control" name="video" placeholder="开奖视频"/>
+								<label class="control-label">开奖方式</label>
+								<label><input name="type" class="notMe" type="radio" checked="checked" value="0"/>默认</label>
+								<label><input name="type" class="notMe" type="radio" value="1"/>直播间开奖</label>
 							</div>
 						</div>
 					</div>
-					
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
-								<label for="field-4" class="control-label">发布渠道</label>
+								<label class="control-label">发布渠道</label>
 								<input type='hidden' name="channel"/>
 								 <div class="form-block">
 									<label>
@@ -316,16 +282,13 @@
 							</div>
 						</div>
 					</div>
-					
 					</form>
 				</div>
-				
 				<div class="modal-footer">
 					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 					<button type="button" class="btn btn-info save">保存</button>
 					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 				</div>
-				
 			</div>
 		</div>
 	</div>
@@ -333,32 +296,26 @@
 	<div class="modal fade in" id="modal-rule">
 		<div class="modal-dialog">
 			<div class="modal-content" style="width: 800px;">
-				
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 					<h4 class="modal-title">添加活动规则</h4>
 				</div>
-				
 				<div class="modal-body">
 					<form role="form" id="productRuleForm">
 					<input type="hidden" name="id"/>
 					<div class="row">
 						<div class="col-md-12">
-							
 							<div class="form-group">
 								<textarea class="form-control autogrow" id="rule-content" cols="5" placeholder="请在此处添加活动规则..."></textarea>
-							</div>	
-							
+							</div>
 						</div>
 					</div>
 					</form>
 				</div>
-				
 				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 					<button type="button" class="btn btn-info saveRule">保存</button>
 				</div>
-				
 			</div>
 		</div>
 	</div>
@@ -367,36 +324,37 @@
 	<div class="modal fade" id="modal-1">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					<h4 class="modal-title">温馨提示</h4>
 				</div>
-				
 				<div class="modal-body">
 					<form role="form" id="openForm">
-					<div class="row">
-						<div class="col-md-12">
-						
-							<div class="form-group">
-								<label for="field-4" class="control-label">开奖视频</label>
-								<input type="file" class="form-control" name="openVideoFile" placeholder="开奖视频"/>
+						<div class="row">
+							<div class="col-md-12">
+								<input type="hidden" name="type"/>
+								<div class="form-group" id="openVideoDiv">
+									<label class="control-label">开奖视频</label>
+									<input type="file" class="form-control" name="openVideoFile" placeholder="开奖视频" onchange="uploadVideo(this)"/>
+									<input type="hidden" name="openVideo"/>
+								</div>
+								<div class="form-group" id="openImgDiv" style="display: none;">
+									<label class="control-label">开奖图片</label>
+									<input type="file" class="form-control" name="openImgFile" placeholder="开奖图片" onchange="uploadImg(this)"/>
+									<input type="hidden" name="openImg"/>
+								</div>
+								<div class="form-group">
+									<textarea class="form-control autogrow" id="codes" name="codes" cols="5"
+											  placeholder="中奖号码（注意大小写，多个请换行）"></textarea>
+								</div>
 							</div>
-							
-							<div class="form-group">
-								<textarea class="form-control autogrow" id="codes" cols="5" placeholder="中奖号码（注意大小写，多个请换行）"></textarea>
-							</div>	
-							
 						</div>
-					</div>
 					</form>
 				</div>
-				
 				<div class="modal-footer">
 					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
 					<button type="button" class="btn btn-info notice">确定</button>
 					<button type="button" class="btn btn-white bg-lg" style="display:none">处理中，请稍等....</button>
-					
 				</div>
 			</div>
 		</div>
@@ -409,7 +367,57 @@
 	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
 	<script src="assets/js/select2/select2.min.js"></script>
 	<script th:inline="javascript">
-	/*<![CDATA[*/	
+	/*<![CDATA[*/
+
+	function uploadVideo(self) {
+		var that = $(self);
+		if (self.files.length > 0) {
+			getQNToken(function (token) {
+				var file = self.files[0];
+				this.upload("", token, file, function () {
+					//
+				}, function (err) {
+					console.log("error");
+					console.log(err);
+				}, function (res) {
+					var url = qiniuUrl + "/" + res.key;
+					that.parent().find("[name=openVideo]").val(url);
+					alert("视频上传成功");
+				}, 100, true);
+			});
+		} else {
+			confirm("未选择任何文件!");
+		}
+	}
+
+	function uploadImg(self) {
+		var that = $(self);
+		if (self.files.length > 0) {
+			getQNToken(function (token) {
+				var file = self.files[0];
+				this.upload("", token, file, function () {
+					//
+				}, function (err) {
+					console.log("error");
+					console.log(err);
+				}, function (res) {
+					var url = qiniuUrl + "/" + res.key;
+					that.parent().find("[name=openImg]").val(url);
+					alert("图片上传成功");
+				}, 5, false);
+			});
+		} else {
+			confirm("未选择任何文件!");
+		}
+	}
+
+	function getQNToken(cb) {
+		$.get("/qiniu/token", {}, function (token) {
+			cb(token);
+		});
+	}
+
+	var qiniuUrl = [[${qiniuUrl}]];
 	jQuery(document).ready(function($)
 	{
 		var oTable = $("#example-1").dataTable({
@@ -580,101 +588,37 @@
                 }
                ]
 		});
-		
-		$(".searchBtn").click(function(){
+
+		$(".searchBtn").click(function () {
 			$("#checkbox-all").attr("checked", false);
 			oTable.fnDraw(); //or fnReloadAjax()  
 			return false;
 		});
-		
-		 $('#example-1').on('click',"#checkbox-all",function() {  
+
+		$('#example-1').on('click', "#checkbox-all", function () {
 			var obj = $(this);
-			$("input[name='productId']").each(function(i,e){
-				 this.checked = obj[0].checked;
+			$("input[name='productId']").each(function (i, e) {
+				this.checked = obj[0].checked;
 			});
-		})
-		
-		function clear(){
-		 	var form = $("#saveForm");
-			form.find("input:not(input[type='checkbox'])").val("");
+		});
+
+		function clear() {
+			var form = $("#saveForm");
+			form.find("input:not(input[type='checkbox']):not(.notMe)").val("");
 			form.find("input[type='checkbox']").removeAttr("checked");
 			$(".cbr-replaced.cbr-checked").removeClass("cbr-checked");
-			form.find("img").attr("src","");
+			form.find("img").attr("src", "");
 			form.find("img").hide();
 			form.find("input[type='file']").show();
 			form.find(".btn.btn-info.modify").text("更换");
 			form.find(".btn.btn-info.modify").hide();
 		}
-			 
-			
-			
-			$(".btn.btn-info.add").click(function(){
-				
-				clear();
-				
-				jQuery('#modal-6').modal('show');
-				
-			});
 
+		$(".btn.btn-info.add").click(function () {
+			clear();
+			jQuery('#modal-6').modal('show');
+		});
 
-			 
-			 function uploadVideo(param,token,file,next, error, complete){
-				    if(file==''){
-				    	complete('');
-				    	
-				    }else{
-						var filename = file.name;
-					    var postf = filename.substring(filename.lastIndexOf("."));
-					    
-					    var config = {
-					    		  useCdnDomain: true,
-					    		  region: qiniu.region.z0
-					    		};
-					    var putExtra = {
-					    		  fname: "",
-					    		  params: {"x:param":param}
-					    		};
-					    var observable = qiniu.upload(file, "video/wx/"+UUID.randomUUID()+postf, token,
-					    		putExtra, config);
-						var subscription = observable.subscribe(next, error, complete);
-				    }
-				 }
-			 
-			 //图片上传
-	        var xhr;
-	        //上传文件方法
-	        function UpladFile(param,fileObj,uploadComplete) {
-	        	if(fileObj==''){
-	        		uploadComplete('');
-			    	
-			    }else{
-		            var url =  "/file/upload"; // 接收上传文件的后台地址
-	
-		            var form = new FormData(); // FormData 对象
-		            form.append("file", fileObj);// 文件对象
-		            form.append("param", param);
-		            
-		            xhr = new XMLHttpRequest();  // XMLHttpRequest 对象
-		            xhr.open("post", url, true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
-		            xhr.onload = uploadComplete; //请求完成
-		            xhr.onerror =  function(evt) {
-		                console.log("上传失败！");
-		            }; //请求失败
-	
-		            xhr.upload.onprogress = function(evt){
-		            	
-		            };//【上传进度调用方法实现】
-		            xhr.upload.onloadstart = function(){//上传开始执行方法
-		                ot = new Date().getTime();   //设置上传开始时间
-		                oloaded = 0;//设置上传开始时，以上传的文件大小为0
-		            };
-	
-		            xhr.send(form); //开始上传，发送form数据
-			    }
-	        	
-	        }
-			
-			 var qiniuUrl = [[${qiniuUrl}]];
 			//保存
 			$(".btn.btn-info.save").click(function(){
 				var footer = $(this).parent(".modal-footer")
@@ -1088,113 +1032,61 @@
 				})
 				
 			});
-			
-			$(".btn.btn-info.open").click(function(){
-				var productId = $("input[name='productId']:checked");
-				if(productId.length!=1){
-					toastr.error("请选择一条数据操作", "温馨提示");
-					return ;
+
+		$(".btn.btn-info.open").click(function () {
+			var productId = $("input[name='productId']:checked");
+			if (productId.length != 1) {
+				toastr.error("请选择一条数据操作", "温馨提示");
+				return;
+			}
+			productId = productId[0].value;
+			$.post("/products-one", {id: productId}, function (data) {
+				var type = data.type;
+				if (type == '1') {
+					$("#openVideoDiv").show();
+					$("#openImgDiv").hide();
+				} else {
+					$("#openVideoDiv").hide();
+					$("#openImgDiv").show();
 				}
-				
-				
-				jQuery('#modal-1').modal('show', {backdrop: 'fade'});
-				
-				productId = productId[0].value;
-				
-				$(".btn.btn-info.notice").attr("productId",productId);
+				$(".btn.btn-info.notice").attr("productId", productId);
 				$("#codes").val("");
 				var form = $("#openForm");
+				form.find("input[name='type']").val(type);
 				form.find("input[name='openVideoFile']").val("");
-				
-				
+				form.find("input[name='openImgFile']").val("");
+				jQuery('#modal-1').modal('show', {backdrop: 'fade'});
 			});
-			
-			
-			$(".btn.btn-info.notice").click(function(){
-				
-				var footer = $(this).parent(".modal-footer")
-				footer.find("button").hide();
-				footer.find(".bg-lg").show();
-				
-				var productId = $(".btn.btn-info.notice").attr("productId");
-				var form = $("#openForm");
-				var openVideoFile = form.find("input[name='openVideoFile']")[0].value;
-				
-				var codes = $("#codes").val();
-				if(codes==''){
-					toastr.error("请输入中奖号码", "温馨提示");
+		});
+
+		$(".btn.btn-info.notice").click(function () {
+			var footer = $(this).parent(".modal-footer");
+			footer.find("button").hide();
+			footer.find(".bg-lg").show();
+			var productId = $(".btn.btn-info.notice").attr("productId");
+			var form = $("#openForm");
+			var codes = $("#codes").val();
+			if (codes == '') {
+				toastr.error("请输入中奖号码", "温馨提示");
+				footer.find("button").show();
+				footer.find(".bg-lg").hide();
+				return;
+			}
+			var args = form.serializeArray();
+			// args.push({"name": "theId", "value": theId});//append pid
+			$.post("/products-notice/" + productId, args, function (data) {
+				if (data) {
+					jQuery('#modal-1').modal('hide');
 					footer.find("button").show();
 					footer.find(".bg-lg").hide();
-					return ;
+					toastr.success("操作已成功！", "温馨提示");
+				} else {
+					toastr.error("操作失败，请检查抽奖码", "温馨提示");
+					footer.find("button").show();
+					footer.find(".bg-lg").hide();
 				}
-				
-				$.post("/products-one",{id:productId},function(data){
-					var imageFile = '';
-					var channel = data.channel;
-					if((channel & 4) == 4){
-						/*if(openVideoFile==''){
-							toastr.error("开奖视频不能为空", "温馨提示");
-							footer.find("button").show();
-							footer.find(".bg-lg").hide();
-							return ;
-						}*/
-						//上传文件获得文件地址
-						if(openVideoFile!=''){
-							imageFile = form.find("input[name='openVideoFile']")[0].files[0];
-							if(imageFile!='' && imageFile.size/1024>20000){
-								toastr.error("开奖视频超过20M,请压缩处理后上传", "温馨提示");
-								footer.find("button").show();
-								footer.find(".bg-lg").hide();
-								return ;
-							}
-						}
-					}
-
-					$.get("/qiniu/token",{},function(token){
-						if(token !=''){
-							uploadVideo("video",token,imageFile,function(res){},function(err){
-								console.log("上传video异常:"+err);
-								toastr.error("操作失败"+err, "温馨提示");
-								footer.find("button").show();
-								footer.find(".bg-lg").hide();
-							},function(res){
-								//上传成功
-								console.log(res);
-								var videoUrl = '';
-								if(res!=''){
-									videoUrl = qiniuUrl+"/"+res.key;
-								}else {
-									videoUrl = 'nu';
-								}
-
-								$.post("/products-notice/"+productId,{video:videoUrl,codes:codes},function(data){
-									if(data){
-										jQuery('#modal-1').modal('hide');
-										footer.find("button").show();
-										footer.find(".bg-lg").hide();
-										toastr.success("操作已成功！", "温馨提示");
-									}else{
-										toastr.error("操作失败，请检查抽奖码", "温馨提示");
-										footer.find("button").show();
-										footer.find(".bg-lg").hide();
-									}
-								});
-							});
-						}
-					});
-					// $.post("/ticket-check",{productId:productId,codes:codes},function(d){
-					// 	if(d){
-					//
-					// 	}else{
-					// 		toastr.error("操作失败，抽奖码错误", "温馨提示");
-					// 		footer.find("button").show();
-					// 		footer.find(".bg-lg").hide();
-					// 	}
-					// });
-					
-				});
-				
 			});
+		});
 			
 			$(".btn.btn-info.updateStatus").click(function(){
 				var activityId = $("input[name='productId']:checked");
@@ -1218,12 +1110,8 @@
 					}
 				})
 			});
-			
-			
-		
 	});
 	/*]]>*/
 	</script>
 </body>
-
 </html>

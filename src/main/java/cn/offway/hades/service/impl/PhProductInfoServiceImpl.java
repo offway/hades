@@ -281,40 +281,41 @@ public class PhProductInfoServiceImpl implements PhProductInfoService {
 	}
 
 	@Override
-	public boolean notice(@PathVariable Long productId,String video,String codes) throws Exception {
+	public boolean notice(@PathVariable Long productId, String video, String img, String codes, String type) {
 		int count = phWinningRecordService.saveWin(productId, Arrays.asList(codes.split("\n")));
-		if(count==0){
+		if (count == 0) {
 			return false;
 		}
 		PhProductInfo phProductInfo = findOne(productId);
-		if(StringUtils.isNotBlank(video)){
-			String videoOld = phProductInfo.getVideo();
-			if(null!= videoOld &&!videoOld.equals(video)){
-				//如果资源变动则删除七牛资源
-				qiniuService.qiniuDelete(videoOld.replace(qiniuProperties.getUrl()+"/", ""));
+		if ("1".equals(type)) {
+			if (StringUtils.isNotBlank(img)) {
+				phProductInfo.setImageUrl(img);
 			}
-			phProductInfo.setVideo(video);
-			save(phProductInfo);
+		} else {
+			if (StringUtils.isNotBlank(video)) {
+				phProductInfo.setVideo(video);
+			}
 		}
+		save(phProductInfo);
 
 		Long channel = phProductInfo.getChannel();
-		if(BitUtil.has(channel.intValue(), BitUtil.APP)){
+		if (BitUtil.has(channel.intValue(), BitUtil.APP)) {
 			//开奖推送
 			Map<String, String> extras = new HashMap<>();
 			extras.put("type", "6");//0-H5,1-精选文章,2-活动
 			extras.put("id", null);
 			extras.put("url", null);
-			jPushService.sendPush("开奖通知", "【免费抽"+phProductInfo.getName()+"】活动已开奖，幸运儿是你吗？点击查看>>", extras);
+			jPushService.sendPush("开奖通知", "【免费抽" + phProductInfo.getName() + "】活动已开奖，幸运儿是你吗？点击查看>>", extras);
 		}
 
-		if(BitUtil.has(channel.intValue(), BitUtil.MINI)){
+		if (BitUtil.has(channel.intValue(), BitUtil.MINI)) {
 
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try {
 						String token = phLotteryTicketService.getToken();
-						phLotteryTicketService.notice(token,phProductInfo);
+						phLotteryTicketService.notice(token, phProductInfo);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

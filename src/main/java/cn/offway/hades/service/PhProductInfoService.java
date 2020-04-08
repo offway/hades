@@ -33,7 +33,7 @@ public interface PhProductInfoService {
 
     Page<PhProductInfo> findByType(String type, Long channel, Pageable page);
 
-    boolean notice(Long productId, String video, String codes) throws Exception;
+    boolean notice(Long productId, String video, String img, String codes, String type);
 
     Long getJoin(Long productId);
 }

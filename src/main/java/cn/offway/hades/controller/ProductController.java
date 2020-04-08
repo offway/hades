@@ -153,8 +153,8 @@ public class ProductController {
      */
     @RequestMapping("/products-notice/{productId}")
     @ResponseBody
-    public boolean notice(@PathVariable Long productId, String video, String codes) throws Exception {
-        return phProductInfoService.notice(productId, video, codes);
+    public boolean notice(@PathVariable Long productId, String openVideo, String openImg, String codes, String type) {
+        return phProductInfoService.notice(productId, openVideo, openImg, codes, type);
     }
 
     @PostMapping("/products-rule")
