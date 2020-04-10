@@ -4,6 +4,7 @@ import cn.offway.hades.domain.PhAdmin;
 import cn.offway.hades.properties.QiniuProperties;
 import cn.offway.hades.service.PhMerchantService;
 import cn.offway.hades.service.PhRoleadminService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class MerchantOrderController {
 
     @ResponseBody
     @RequestMapping("/merchantOrder_list")
-    public Map<String, Object> getList(HttpServletRequest request, @AuthenticationPrincipal PhAdmin admin) {
+    public Map<String, Object> getList(HttpServletRequest request, @AuthenticationPrincipal PhAdmin admin, String sTime, String eTime, String mName) {
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
         if (roles.contains(BigInteger.valueOf(8L))) {
             return null;
@@ -55,9 +56,12 @@ public class MerchantOrderController {
                 Map<String, Object> map = new HashMap<>();
                 map.put("merchantId", l[0]);
                 map.put("merchantName", l[1]);
+                if (StringUtils.isNotBlank(mName) && !String.valueOf(l[1]).contains(mName)) {
+                    continue;
+                }
                 map.put("merchantLogo", l[2]);
                 map.put("merchantBrandCount", l[3]);
-                List<Object[]> listOrder = merchantService.statOrder(Long.valueOf(String.valueOf(l[0])));
+                List<Object[]> listOrder = merchantService.statOrder(Long.valueOf(String.valueOf(l[0])), sTime, eTime);
                 map.put("merchantOrderCount", listOrder.size());
                 int goodsCount = 0;
                 double price = 0;

@@ -38,5 +38,5 @@ public interface PhMerchantService {
 
     List<Object[]> stat();
 
-    List<Object[]> statOrder(Long id);
+    List<Object[]> statOrder(Long id, String sTime, String eTime);
 }

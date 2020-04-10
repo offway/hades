@@ -26,4 +26,13 @@ public interface PhMerchantRepository extends JpaRepository<PhMerchant, Long>, J
 
     @Query(nativeQuery = true, value = "SELECT a.order_no,count(a.id) as ct,sum(b.goods_count) as tt,group_concat(b.id) as ids,sum(b.price) as pp FROM ph_order_info a left join ph_order_goods b on a.order_no = b.order_no where a.merchant_id = ?1 and a.status in (1,2,3) and a.order_no not in (SELECT order_no FROM ph_refund where status = 4) group by a.order_no")
     List<Object[]> statOrder(Long id);
+
+    @Query(nativeQuery = true, value = "SELECT a.order_no,count(a.id) as ct,sum(b.goods_count) as tt,group_concat(b.id) as ids,sum(b.price) as pp FROM ph_order_info a left join ph_order_goods b on a.order_no = b.order_no where a.merchant_id = ?1 and a.status in (1,2,3) and a.order_no not in (SELECT order_no FROM ph_refund where status = 4) and a.create_time > ?2 group by a.order_no")
+    List<Object[]> statOrderGt(Long id, String sTime);
+
+    @Query(nativeQuery = true, value = "SELECT a.order_no,count(a.id) as ct,sum(b.goods_count) as tt,group_concat(b.id) as ids,sum(b.price) as pp FROM ph_order_info a left join ph_order_goods b on a.order_no = b.order_no where a.merchant_id = ?1 and a.status in (1,2,3) and a.order_no not in (SELECT order_no FROM ph_refund where status = 4) and a.create_time < ?2 group by a.order_no")
+    List<Object[]> statOrderLt(Long id, String eTime);
+
+    @Query(nativeQuery = true, value = "SELECT a.order_no,count(a.id) as ct,sum(b.goods_count) as tt,group_concat(b.id) as ids,sum(b.price) as pp FROM ph_order_info a left join ph_order_goods b on a.order_no = b.order_no where a.merchant_id = ?1 and a.status in (1,2,3) and a.order_no not in (SELECT order_no FROM ph_refund where status = 4) and a.create_time between ?2 and ?3 group by a.order_no")
+    List<Object[]> statOrder(Long id, String sTime, String eTime);
 }

@@ -138,8 +138,16 @@ public class PhMerchantServiceImpl implements PhMerchantService {
     }
 
     @Override
-    public List<Object[]> statOrder(Long id) {
-        return phMerchantRepository.statOrder(id);
+    public List<Object[]> statOrder(Long id, String sTime, String eTime) {
+        if (StringUtils.isNotBlank(sTime) && StringUtils.isNotBlank(eTime)) {
+            return phMerchantRepository.statOrder(id, sTime, eTime);
+        } else if (StringUtils.isNotBlank(sTime)) {
+            return phMerchantRepository.statOrderGt(id, sTime);
+        } else if (StringUtils.isNotBlank(eTime)) {
+            return phMerchantRepository.statOrderLt(id, eTime);
+        } else {
+            return phMerchantRepository.statOrder(id);
+        }
     }
 
     @Override
