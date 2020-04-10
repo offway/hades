@@ -9,6 +9,7 @@ import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.event.WriteHandler;
 import com.alibaba.excel.metadata.Sheet;
 import com.alibaba.excel.support.ExcelTypeEnum;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
@@ -45,13 +46,13 @@ public class PurchaseRankController {
 
     @ResponseBody
     @RequestMapping("/purchase_rank_list")
-    public Map<String, Object> getList(@AuthenticationPrincipal PhAdmin admin) {
+    public Map<String, Object> getList(@AuthenticationPrincipal PhAdmin admin, String sTime, String eTime, String sPrice, String ePrice) {
         List<Long> roles = roleadminService.findRoleIdByAdminId(admin.getId());
         if (roles.contains(BigInteger.valueOf(8L))) {
             return null;
         } else {
             List<Map<String, Object>> data = new ArrayList<>();
-            List<Object[]> list = orderInfoService.stat();
+            List<Object[]> list = orderInfoService.stat(sTime, eTime);
             for (Object[] l : list) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("amount", l[0]);
@@ -67,7 +68,22 @@ public class PurchaseRankController {
                     map.put("nickname", "");
                     map.put("createTime", "");
                 }
-                data.add(map);
+                double amt = Double.valueOf(String.valueOf(l[0]));
+                if (StringUtils.isNotBlank(sPrice) && StringUtils.isNotBlank(ePrice)) {
+                    if ((Integer.valueOf(sPrice) <= amt) && (Integer.valueOf(ePrice) >= amt)) {
+                        data.add(map);
+                    }
+                } else if (StringUtils.isNotBlank(sPrice)) {
+                    if ((Integer.valueOf(sPrice) <= amt)) {
+                        data.add(map);
+                    }
+                } else if (StringUtils.isNotBlank(ePrice)) {
+                    if ((Integer.valueOf(ePrice) >= amt)) {
+                        data.add(map);
+                    }
+                } else {
+                    data.add(map);
+                }
             }
             Map<String, Object> res = new HashMap<>();
             res.put("data", data);
@@ -89,7 +105,7 @@ public class PurchaseRankController {
     @RequestMapping("/purchase_rank_list_export.html")
     public void export(HttpServletResponse response) {
         List<List<String>> dataList = new ArrayList<List<String>>();
-        List<Object[]> list = orderInfoService.stat();
+        List<Object[]> list = orderInfoService.stat(null, null);
         for (Object[] l : list) {
             List<String> data = new ArrayList<String>(6);
             data.add(0, String.valueOf(l[1]));

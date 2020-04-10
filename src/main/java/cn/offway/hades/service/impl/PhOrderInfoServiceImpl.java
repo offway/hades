@@ -219,8 +219,16 @@ public class PhOrderInfoServiceImpl implements PhOrderInfoService {
     }
 
     @Override
-    public List<Object[]> stat() {
-        return phOrderInfoRepository.stat();
+    public List<Object[]> stat(String sTime, String eTime) {
+        if (StringUtils.isNotBlank(sTime) && StringUtils.isNotBlank(eTime)) {
+            return phOrderInfoRepository.stat(sTime, eTime);
+        } else if (StringUtils.isNotBlank(sTime)) {
+            return phOrderInfoRepository.statGt(sTime);
+        } else if (StringUtils.isNotBlank(eTime)) {
+            return phOrderInfoRepository.statLt(eTime);
+        } else {
+            return phOrderInfoRepository.stat();
+        }
     }
 
     @Override

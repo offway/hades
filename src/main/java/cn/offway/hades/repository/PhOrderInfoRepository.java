@@ -16,4 +16,13 @@ import java.util.List;
 public interface PhOrderInfoRepository extends JpaRepository<PhOrderInfo, Long>, JpaSpecificationExecutor<PhOrderInfo> {
     @Query(nativeQuery = true, value = "SELECT sum(amount) as amount,user_id,count(*) as ct FROM ph_order_info where status in (1,2,3) group by user_id order by sum(amount) desc limit 100")
     List<Object[]> stat();
+
+    @Query(nativeQuery = true, value = "SELECT sum(amount) as amount,user_id,count(*) as ct FROM ph_order_info where status in (1,2,3) and create_time > ?1 group by user_id order by sum(amount) desc limit 100")
+    List<Object[]> statGt(String sTime);
+
+    @Query(nativeQuery = true, value = "SELECT sum(amount) as amount,user_id,count(*) as ct FROM ph_order_info where status in (1,2,3) and create_time < ?1 group by user_id order by sum(amount) desc limit 100")
+    List<Object[]> statLt(String eTime);
+
+    @Query(nativeQuery = true, value = "SELECT sum(amount) as amount,user_id,count(*) as ct FROM ph_order_info where status in (1,2,3) and create_time between ?1 and ?2 group by user_id order by sum(amount) desc limit 100")
+    List<Object[]> stat(String sTime, String eTime);
 }

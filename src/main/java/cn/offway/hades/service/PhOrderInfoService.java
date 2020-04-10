@@ -35,5 +35,5 @@ public interface PhOrderInfoService {
 
     List<PhOrderInfo> findByPreorderNoAndStatus(String preorderno, String... status);
 
-    List<Object[]> stat();
+    List<Object[]> stat(String sTime, String eTime);
 }
