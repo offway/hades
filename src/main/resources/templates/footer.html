@@ -1,63 +1,47 @@
-<!-- Main Footer -->
-<!-- Choose between footer styles: "footer-type-1" or "footer-type-2" -->
-<!-- Add class "sticky" to  always stick the footer to the end of page (if page contents is small) -->
-<!-- Or class "fixed" to  always fix the footer to the end of page -->
-<footer class="main-footer sticky footer-type-1">
-
-	<div class="footer-inner">
-
-		<!-- Add your copyright text here -->
-		<div class="footer-text">&copy; Copyright OFFWAY 2018. All
-			Rights Reserved</div>
-
-
-		<!-- Go to Top Link, just add rel="go-top" to any link to add this functionality -->
-		<div class="go-up">
-
-			<a href="#" rel="go-top"> <i class="fa-angle-up"></i>
-			</a>
-
-		</div>
-
-	</div>
+<footer class="main-footer">
+	<div class="pull-right d-none d-sm-inline-block">
+		<ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
+			<li class="nav-item">
+				<a class="nav-link" href="javascript:void(0)">FAQ</a>
+			</li>
+		</ul>
+	</div> &copy; Copyright OFFWAY 2020. All Rights Reserved.
 </footer>
 
-<script src="assets/js/jquery-1.11.1.min.js"></script>
-<!-- Bottom Scripts -->
-<script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/TweenMax.min.js"></script>
-<script src="assets/js/resizeable.js"></script>
-<script src="assets/js/joinable.js"></script>
-<script src="assets/js/xenon-api.js"></script>
-<script src="assets/js/xenon-toggles.js"></script>
-<script src="assets/js/datatables/js/jquery.dataTables.min.js"></script>
+<!-- popper -->
+<script src="new/assets/vendor_components/popper/dist/popper.min.js"></script>
 
+<!-- Bootstrap 4.0-->
+<script src="new/assets/vendor_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
-<!-- Imported scripts on this page -->
-<script src="assets/js/datatables/dataTables.bootstrap.js"></script>
-<script src="assets/js/datatables/yadcf/jquery.dataTables.yadcf.js"></script>
-<script src="assets/js/datatables/tabletools/dataTables.tableTools.min.js"></script>
+<!-- SlimScroll -->
+<script src="new/assets/vendor_components/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 
-<!-- Imported scripts on this page -->
-<script src="assets/js/toastr/toastr.min.js"></script>
+<!-- FastClick -->
+<script src="new/assets/vendor_components/fastclick/lib/fastclick.js"></script>
 
+<!-- Sparkline -->
+<script src="new/assets/vendor_components/jquery-sparkline/dist/jquery.sparkline.min.js"></script>
 
-<!-- JavaScripts initializations and stuff -->
-<script src="assets/js/xenon-custom.js"></script>
+<!-- This is data table -->
+<script src="new/assets/vendor_components/datatable/datatables.min.js"></script>
 
-<script type="text/javascript" src="../js/common.js"></script>
+<!-- AIUI Admin App -->
+<script src="new/js/template.js"></script>
+
+<!-- AIUI Admin App -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
 <script type="text/javascript">
-	var locaHref = window.location.href;
-	$(".main-menu").find("a").each(function(i,e){
-		if(locaHref ==e.href){
-			e.parentElement.classList.add("active");
-			$(this).parents("li").find("ul").css("display","block");
-			var c = e.parentElement.parentElement.parentElement.classList;
-			c.add("active");
-			c.add("opend");
-			c.add("expanded");
-			return;
-		}
-	});
+	setTimeout(function () {
+		var localHref = window.location.href;
+		$("#main-menu").find("a").each(function (i, e) {
+			if (localHref == e.href) {
+				e.parentElement.classList.add("active");
+				var c = e.parentElement.parentElement.parentElement.classList;
+				c.add("active");
+				c.add("menu-open");
+			}
+		});
+	}, 500);
 </script>
