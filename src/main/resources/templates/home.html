@@ -2,191 +2,155 @@
 <html lang="en">
 <head>
 	<head th:replace="head"></head>
-	<title>OFFWAY</title>
-	<!-- Bottom Scripts -->
-	<script src="assets/js/bootstrap.min.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/TweenMax.min.js"></script>
-	<script src="assets/js/resizeable.js"></script>
-	<script src="assets/js/joinable.js"></script>
-	<script src="assets/js/xenon-api.js"></script>
-	<script src="assets/js/xenon-toggles.js"></script>
-	<!-- Imported scripts on this page -->
-	<script src="assets/js/xenon-widgets.js"></script>
-	<script src="assets/js/devexpress-web-14.1/js/globalize.min.js"></script>
-	<script src="assets/js/devexpress-web-14.1/js/dx.chartjs.js"></script>
-	<script src="assets/js/toastr/toastr.min.js"></script>
+	<title>后台首页</title>
+	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 </head>
-<body class="page-body">
-
-	<div class="settings-pane">
-			
-		<a href="#" data-toggle="settings-pane" data-animate="true">
-			&times;
-		</a>
-		
-		<div class="settings-pane-inner">
-			<div class="row">
-				<div class="col-md-4">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+	<header th:replace="navbar"></header>
+	<aside th:replace="sidebar-menu"></aside>
+	<!-- Content Wrapper. Contains page content -->
+	<div class="content-wrapper">
+		<!-- Content Header (Page header) -->
+		<div class="content-header d-none d-md-block">
+			<div class="d-flex align-items-center">
+				<div class="mr-auto">
+					<h3 class="page-title br-0">后台首页</h3>
 				</div>
-				<div class="col-md-8 link-blocks-env">
-					<div class="links-block left-sep">
-					</div>
-					<div class="links-block left-sep">
-					</div>
+				<div class="right-title">
 				</div>
 			</div>
 		</div>
-		
-	</div>
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-					
-			<nav th:replace="navbar"></nav>
-			<script type="text/javascript">
-				/*<![CDATA[*/
-				jQuery(document).ready(function ($) {
-					// Notifications
-					setTimeout(function () {
-						var opts = {
-							"closeButton": true,
-							"debug": false,
-							"positionClass": "toast-top-right toast-default",
-							"toastClass": "black",
-							"onclick": null,
-							"showDuration": "100",
-							"hideDuration": "1000",
-							"timeOut": "5000",
-							"extendedTimeOut": "1000",
-							"showEasing": "swing",
-							"hideEasing": "linear",
-							"showMethod": "fadeIn",
-							"hideMethod": "fadeOut"
-						};
 
-						toastr.info("您好,欢迎使用OFFWAY运营系统,祝您使用愉快！", "温馨提示", opts);
-					}, 3000);
-
-					// checkIt();
-
-					function formatTime(time) {
-						return moment(new Date(time)).format("YYYY-MM-DD hh:mm:ss")
-					}
-
-					function formatDate(time) {
-						return moment(new Date(time)).format("YYYY-MM-DD")
-					}
-
-					function buildImg(url) {
-						return "<img width='100px' height='100px' src='#' />".replace("#", url);
-					}
-
-					function appendToPreview(key, value) {
-						return '<div class="row">' +
-								'<div class="col-sm-2">' +
-								key +
-								'</div>' +
-								'<div class="col-sm-10">' +
-								value +
-								'</div>' +
-								'</div>';
-					}
-
-					function checkIt() {
-						$.post("/merchant_get", {}, function (data) {
-							if (data) {
-								$.post("/merchant_find", {"id": data["id"]}, function (data) {
-									if (data) {
-										var preview = $("#preview_body");
-										var contentStr = "";
-										var mainObj = data["main"];
-										contentStr += appendToPreview("编号:", mainObj["id"]);
-										contentStr += appendToPreview("商户名称:", mainObj["name"]);
-										contentStr += appendToPreview("商户LOGO:", buildImg(mainObj["logo"]));
-										contentStr += appendToPreview("商户地址:", mainObj["address"]);
-										contentStr += appendToPreview("联系电话:", mainObj["phone"]);
-										contentStr += appendToPreview("商户邮箱:", mainObj["email"]);
-										contentStr += appendToPreview("合同编号:", mainObj["contractNo"]);
-										contentStr += appendToPreview("签约日期:", formatDate(mainObj["signDate"]));
-										contentStr += appendToPreview("到期日期:", formatDate(mainObj["expireDate"]));
-										contentStr += appendToPreview("状态:", mainObj["status"]);
-										contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
-										contentStr += appendToPreview("备注:", mainObj["remark"]);
-
-										for (var brand in data["brandList"]) {
-											brand = data["brandList"][brand];
-											contentStr += appendToPreview("品牌id:", brand["brandId"]);
-											contentStr += appendToPreview("品牌Logo:", buildImg(brand["brandLogo"]));
-											contentStr += appendToPreview("品牌名:", brand["brandName"]);
-											contentStr += appendToPreview("创建时间:", formatTime(brand["createTime"]));
-											contentStr += appendToPreview("商户ID:", brand["merchantId"]);
-											contentStr += appendToPreview("商户LOGO:", buildImg(brand["merchantLogo"]));
-											contentStr += appendToPreview("商户名称:", brand["merchantName"]);
-											contentStr += appendToPreview("编号:", brand["id"]);
-											contentStr += appendToPreview("备注:", brand["remark"]);
-										}
-
-										for (var file in data["fileList"]) {
-											file = data["fileList"][file];
-											contentStr += appendToPreview("附件URL:", buildImg(file["fileUrl"]));
-											contentStr += appendToPreview("商户LOGO:", buildImg(file["logo"]));
-											contentStr += appendToPreview("创建时间:", formatTime(file["createTime"]));
-											contentStr += appendToPreview("商户ID:", file["merchantId"]);
-											contentStr += appendToPreview("商户名称:", file["name"]);
-											contentStr += appendToPreview("编号:", file["id"]);
-											contentStr += appendToPreview("备注:", file["remark"]);
-										}
-										preview.html(contentStr);
-										preview.show();
-									} else {
-									}
-								});
-							} else {
-							}
-						});
-					}
-				});
-
-				/*]]>*/
-			</script>
-			<div id="preview_body"></div>
-			
-			<!-- Main Footer -->
-			<!-- Choose between footer styles: "footer-type-1" or "footer-type-2" -->
-			<!-- Add class "sticky" to  always stick the footer to the end of page (if page contents is small) -->
-			<!-- Or class "fixed" to  always fix the footer to the end of page -->
-			<footer class="main-footer sticky footer-type-1">
-				
-				<div class="footer-inner">
-				
-					<!-- Add your copyright text here -->
-					<div class="footer-text">
-						&copy; Copyright OFFWAY 2018. All Rights Reserved
+		<!-- Main content -->
+		<section class="content">
+			<div class="container-full">
+				<div class="row">
+					<div class="col-12">
+						<div class="box">
+							<div class="box-header with-border">
+								<h4 class="box-title">后台首页</h4>
+							</div>
+							<div class="box-body">
+								欢迎使用OFFWAY APP后台
+							</div>
+							<!-- /.box-body -->
+							<div class="box-footer">
+							</div>
+							<!-- /.box-footer-->
+						</div>
 					</div>
-					
-					
-					<!-- Go to Top Link, just add rel="go-top" to any link to add this functionality -->
-					<div class="go-up">
-					
-						<a href="#" rel="go-top">
-							<i class="fa-angle-up"></i>
-						</a>
-						
-					</div>
-					
 				</div>
-				
-			</footer>
-		</div>
+				<!--				<div class="row">-->
+				<!--					<div class="col-lg-3 col-md-6 col-12">-->
+				<!--						<div class="box box-primary pull-up">-->
+				<!--							<div class="box-body">-->
+				<!--								<div class="d-flex align-items-center font-size-18">-->
+				<!--									<div class="icon">-->
+				<!--										<i class="mdi mdi-star-circle text-white mr-10"></i>-->
+				<!--									</div>-->
+				<!--									<p class="font-weight-medium mb-0 text-white">电子刊数量</p>-->
+				<!--								</div>-->
+				<!--								<div class="d-flex align-items-center flex-wrap">-->
+				<!--									<h2 class="font-weight-normal text-white" th:text="${bookNumber}">587</h2>-->
+				<!--									&lt;!&ndash;									<div class="badge badge-outline badge-pill ml-5">&ndash;&gt;-->
+				<!--									&lt;!&ndash;										<div class="d-flex align-items-baseline">&ndash;&gt;-->
+				<!--									&lt;!&ndash;											<span class="mr-2">Hi.</span>&ndash;&gt;-->
+				<!--									&lt;!&ndash;											<span class="mb-0">85</span>&ndash;&gt;-->
+				<!--									&lt;!&ndash;											<span class="mdi mdi-arrow-up"></span>&ndash;&gt;-->
+				<!--									&lt;!&ndash;										</div>&ndash;&gt;-->
+				<!--									&lt;!&ndash;									</div>&ndash;&gt;-->
+				<!--								</div>-->
+				<!--								<small class="font-weight-medium d-block text-white-50">发售至今</small>-->
+				<!--							</div>-->
+				<!--						</div>-->
+				<!--					</div>-->
+				<!--					<div class="col-lg-3 col-md-6 col-12">-->
+				<!--						<div class="box box-info pull-up">-->
+				<!--							<div class="box-body">-->
+				<!--								<div class="d-flex align-items-center font-size-18">-->
+				<!--									<div class="icon">-->
+				<!--										<i class="mdi mdi-truck text-white mr-10"></i>-->
+				<!--									</div>-->
+				<!--									<p class="font-weight-medium mb-0 text-white">电子刊销量</p>-->
+				<!--								</div>-->
+				<!--								<div class="d-flex align-items-center flex-wrap">-->
+				<!--									<h2 class="font-weight-normal text-white" th:text="${soldNumber}">469</h2>-->
+				<!--									&lt;!&ndash;									<div class="badge badge-outline badge-pill ml-5">&ndash;&gt;-->
+				<!--									&lt;!&ndash;										<div class="d-flex align-items-baseline">&ndash;&gt;-->
+				<!--									&lt;!&ndash;											<span class="mr-2">Hi.</span>&ndash;&gt;-->
+				<!--									&lt;!&ndash;											<span class="mb-0">56</span>&ndash;&gt;-->
+				<!--									&lt;!&ndash;											<span class="mdi mdi-arrow-up"></span>&ndash;&gt;-->
+				<!--									&lt;!&ndash;										</div>&ndash;&gt;-->
+				<!--									&lt;!&ndash;									</div>&ndash;&gt;-->
+				<!--								</div>-->
+				<!--								<small class="font-weight-medium d-block text-white-50">发售至今</small>-->
+				<!--							</div>-->
+				<!--						</div>-->
+				<!--					</div>-->
+				<!--					<div class="col-lg-3 col-md-6 col-12">-->
+				<!--						<div class="box box-warning pull-up">-->
+				<!--							<div class="box-body">-->
+				<!--								<div class="d-flex align-items-center font-size-18">-->
+				<!--									<div class="icon">-->
+				<!--										<i class="mdi mdi-basket text-white mr-10"></i>-->
+				<!--									</div>-->
+				<!--									<p class="font-weight-medium mb-0 text-white">电子刊订阅数</p>-->
+				<!--								</div>-->
+				<!--								<div class="d-flex align-items-center flex-wrap">-->
+				<!--									<h2 class="font-weight-normal text-white" th:text="${subscribeSum}">745</h2>-->
+				<!--									&lt;!&ndash;									<div class="badge badge-outline badge-pill ml-5">&ndash;&gt;-->
+				<!--									&lt;!&ndash;										<div class="d-flex align-items-baseline">&ndash;&gt;-->
+				<!--									&lt;!&ndash;											<span class="mr-2">Low</span>&ndash;&gt;-->
+				<!--									&lt;!&ndash;											<span class="mb-0">12</span>&ndash;&gt;-->
+				<!--									&lt;!&ndash;											<span class="mdi mdi-arrow-down"></span>&ndash;&gt;-->
+				<!--									&lt;!&ndash;										</div>&ndash;&gt;-->
+				<!--									&lt;!&ndash;									</div>&ndash;&gt;-->
+				<!--								</div>-->
+				<!--								<small class="font-weight-medium d-block text-white-50">发售至今</small>-->
+				<!--							</div>-->
+				<!--						</div>-->
+				<!--					</div>-->
+				<!--					<div class="col-lg-3 col-md-6 col-12">-->
+				<!--						<div class="box box-danger pull-up">-->
+				<!--							<div class="box-body">-->
+				<!--								<div class="d-flex align-items-center font-size-18">-->
+				<!--									<div class="icon">-->
+				<!--										<i class="mdi mdi-package-down text-white mr-10"></i>-->
+				<!--									</div>-->
+				<!--									<p class="font-weight-medium mb-0 text-white">电子刊阅读数</p>-->
+				<!--								</div>-->
+				<!--								<div class="d-flex align-items-center flex-wrap">-->
+				<!--									<h2 class="font-weight-normal text-white" th:text="${readingNumber}">254</h2>-->
+				<!--									&lt;!&ndash;									<div class="badge badge-outline badge-pill ml-5">&ndash;&gt;-->
+				<!--									&lt;!&ndash;										<div class="d-flex align-items-baseline">&ndash;&gt;-->
+				<!--									&lt;!&ndash;											<span class="mr-2">Low</span>&ndash;&gt;-->
+				<!--									&lt;!&ndash;											<span class="mb-0">23</span>&ndash;&gt;-->
+				<!--									&lt;!&ndash;											<span class="mdi mdi-arrow-down"></span>&ndash;&gt;-->
+				<!--									&lt;!&ndash;										</div>&ndash;&gt;-->
+				<!--									&lt;!&ndash;									</div>&ndash;&gt;-->
+				<!--								</div>-->
+				<!--								<small class="font-weight-medium d-block text-white-50">发售至今</small>-->
+				<!--							</div>-->
+				<!--						</div>-->
+				<!--					</div>-->
+				<!--				</div>-->
+			</div>
+		</section>
+		<!-- /.content -->
 	</div>
-	
-	
-	<div class="page-loading-overlay">
-		<div class="loader-2"></div>
-	</div>
-	
-	<div th:replace="body-under"></div>
+	<!-- /.content-wrapper -->
+	<footer th:replace="footer"></footer>
+</div>
+
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	jQuery(document).ready(function ($) {
+		console.log("OK");
+	});
+	/*]]>*/
+</script>
 </body>
 </html>
