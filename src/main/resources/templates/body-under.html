@@ -12,7 +12,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="form-group">
-							<label for="field-3" class="control-label">旧密码</label>
+							<label class="control-label">旧密码</label>
 							<input type="password" class="form-control" name="password" placeholder="旧密码" />
 						</div>	
 					</div>
@@ -20,7 +20,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="form-group">
-							<label for="field-3" class="control-label">新密码</label>
+							<label class="control-label">新密码</label>
 							<input type="password" class="form-control" name="password1" placeholder="新密码"/>
 						</div>	
 					</div>
@@ -28,7 +28,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="form-group">
-							<label for="field-3" class="control-label">再次输入新密码</label>
+							<label class="control-label">再次输入新密码</label>
 							<input type="password" class="form-control" name="password2" placeholder="再次输入新密码"/>
 						</div>	
 					</div>
@@ -50,36 +50,35 @@
 <script th:inline="javascript">
 /*<![CDATA[*/
            //保存
-	$(".btn.btn-info.editPwd").click(function(){
-		var form = $("#editPwdForm");
-		var password = form.find("input[name='password']").val();
-		var password1 = form.find("input[name='password1']").val();
-		var password2 = form.find("input[name='password2']").val();
-		if(password =='' || password1 =='' ||password2 ==''){
-			toastr.error("请输入完整信息后再保存", "温馨提示");
-			return ;
-		}
-		if(password1 !=password2 ){
-			toastr.error("两次新密码不一致", "温馨提示");
-			return ;
-		}
-		
-		
-		$.post("/users-editPwd",{
-			newpassword:password1,
-			password:password
-		},function(data){
-			if(data){
-				jQuery('#modal-editPwd').modal('hide');
-				toastr.success("操作已成功！", "温馨提示");
-				setTimeout(function(){
-					window.location.href="/signOut";
-				}, 1000);
+$(".btn.btn-info.editPwd").click(function () {
+	var form = $("#editPwdForm");
+	var password = form.find("input[name='password']").val();
+	var password1 = form.find("input[name='password1']").val();
+	var password2 = form.find("input[name='password2']").val();
+	if (password == '' || password1 == '' || password2 == '') {
+		toastr.error("请输入完整信息后再保存", "温馨提示");
+		return;
+	}
+	if (password1 != password2) {
+		toastr.error("两次新密码不一致", "温馨提示");
+		return;
+	}
 
-			}else{
-				toastr.error("操作失败,请检查老密码是否正确", "温馨提示");
-			}
-		});
+	$.post("/users-editPwd", {
+		newpassword: password1,
+		password: password
+	}, function (data) {
+		if (data) {
+			jQuery('#modal-editPwd').modal('hide');
+			toastr.success("操作已成功！", "温馨提示");
+			setTimeout(function () {
+				window.location.href = "/signOut";
+			}, 1000);
+
+		} else {
+			toastr.error("操作失败,请检查老密码是否正确", "温馨提示");
+		}
 	});
+});
 /*]]>*/
 </script>
