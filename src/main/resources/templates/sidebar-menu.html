@@ -1,107 +1,136 @@
-<div class="sidebar-menu toggle-others fixed">
-			
-			<div class="sidebar-menu-inner">	
-				
-				<header class="logo-env">
-					
-					<!-- logo -->
-					<div class="logo">
-						<a href="/" class="logo-expanded">
-							<img src="assets/images/pool.png" width="180" alt="" />
-						</a>
-						
-						<a href="/" class="logo-collapsed">
-							<img src="assets/images/logo-collapsed@2x.png" width="40" alt="" />
-						</a>
-					</div>
-					
-					<!-- This will toggle the mobile menu and will be visible only on mobile devices -->
-					<div class="mobile-menu-toggle visible-xs">
-						<a href="#" data-toggle="user-info-menu">
-							<i class="fa-bell-o"></i>
-							<span class="badge badge-success">7</span>
-						</a>
-						
-						<a href="#" data-toggle="mobile-menu">
-							<i class="fa-bars"></i>
-						</a>
-					</div>
-								
-				</header>
-						
-				
-						
-				 <ul id="main-menu" class="main-menu">
-					<!-- add class "multiple-expanded" to allow multiple submenus to open -->
-					<!-- class "auto-inherit-active-class" will automatically add "active" class for parent elements who are marked already with class "active" -->
-					<!-- <li>
-						<a href="#">
-							<i class="linecons-cog"></i>
-							<span >活动数据</span>
-						</a>
-						<ul>
-							<li>
-								<a href="/activity-lottery">
-									<span class="title">抽奖码明细</span>
-								</a>
-							</li>
-						</ul>
-						<ul>
-							<li>
-								<a href="/activity-lottery">
-									<span class="title">抽奖码明细1</span>
-								</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="#">
-							<i class="linecons-desktop"></i>
-							<span class="title">收益结算</span>
-						</a>
-						<ul>
-							<li>
-								<a href="/settle-pay">
-									<span class="title">支付</span>
-								</a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<a href="#">
-							<i class="linecons-database"></i>
-							<span class="title">收益记录</span>
-						</a>
-						<ul>
-							<li>
-								<a href="/clear-history">
-									<span class="title">历史</span>
-								</a>
-							</li>
-						</ul>
-					</li> -->
-				</ul> 
-						
+<!-- Left side column. contains the sidebar -->
+<aside class="main-sidebar">
+	<!-- sidebar-->
+	<section class="sidebar">
+		<!-- Sidebar user panel -->
+		<div class="user-panel">
+			<div class="image">
+				<img src="assets/images/logo-collapsed@2x.png" class="rounded-circle" alt="User Image" />
 			</div>
-			
+			<div class="info">
+				<p th:inline="text">[[${session.SPRING_SECURITY_CONTEXT.authentication.principal.nickname}]]</p>
+				<a href="#"><i class="fa fa-circle text-success"></i> 在线</a>
+			</div>
 		</div>
-		<script th:inline="javascript">
-			/*<![CDATA[*/
-	           (function ($) {
-				   $.post("/resoures", {}, function (data) {
-					   var html = "";
-					   data.forEach(function (val, index, arr) {
-						   html += "<li><a><i class='" + val.icon + "'></i><span >" + val.name + "</span></a>";
-						   val.childList.forEach(function (v, index, arr) {
-							   html += "<ul><li><a href='" + v.link + "'><span class='title'>" + v.name + "</span></a></li></ul>";
-						   });
-						   html = html + "</li>";
-					   });
-					   $("#main-menu").html(html);
-					   setup_sidebar_menu();
-				   });
-	           })(jQuery);
-			/*]]>*/
-		</script>
-		<!-- JavaScripts initializations and stuff -->
-		<script src="assets/js/xenon-custom.js"></script>
+		<!-- search form -->
+		<!--		<form action="#" method="get" class="sidebar-form">-->
+		<!--			<div class="input-group">-->
+		<!--				<input type="text" name="q" class="form-control border-0 bg-transparent" placeholder="Search...">-->
+		<!--				<span class="input-group-btn">-->
+		<!--                <button type="submit" name="search" id="search-btn" class="btn btn-flat bg-transparent"><i class="fa fa-search"></i>-->
+		<!--                </button>-->
+		<!--              </span>-->
+		<!--			</div>-->
+		<!--		</form>-->
+		<!-- /.search form -->
+
+		<!-- sidebar menu-->
+		<ul class="sidebar-menu" data-widget="tree" id="main-menu">
+			<li class="treeview">
+				<a href="#">
+					<i class="mdi mdi-view-dashboard"></i>
+					<span>Dashboard</span>
+					<span class="pull-right-container"><i class="ti-plus pull-right"></i></span>
+				</a>
+				<ul class="treeview-menu">
+					<li><a href="index.html"><i class="mdi mdi-resize-bottom-right"></i>Dashboard 1</a></li>
+					<li><a href="index2.html"><i class="mdi mdi-resize-bottom-right"></i>Dashboard 2</a></li>
+					<li><a href="index3.html"><i class="mdi mdi-resize-bottom-right"></i>Dashboard 3</a></li>
+				</ul>
+			</li>
+			<li>
+				<a href="mailbox.html">
+					<i class="mdi mdi-email-variant"></i> <span>Mailbox</span>
+				</a>
+			</li>
+			<li class="treeview">
+				<a href="#">
+					<i class="mdi mdi-format-page-break"></i> <span>Sample Pages</span>
+					<span class="pull-right-container">
+              <i class="ti-plus pull-right"></i>
+            </span>
+				</a>
+				<ul class="treeview-menu">
+					<li><a href="blank.html"><i class="mdi mdi-resize-bottom-right"></i>Blank</a></li>
+					<li><a href="coming-soon.html"><i class="mdi mdi-resize-bottom-right"></i>Coming Soon</a></li>
+					<li><a href="faq.html"><i class="mdi mdi-resize-bottom-right"></i>FAQ</a></li>
+					<li><a href="gallery.html"><i class="mdi mdi-resize-bottom-right"></i>Gallery</a></li>
+					<li><a href="invoice.html"><i class="mdi mdi-resize-bottom-right"></i>Invoice</a></li>
+					<li><a href="lightbox.html"><i class="mdi mdi-resize-bottom-right"></i>Lightbox Popup</a></li>
+					<li><a href="pace.html"><i class="mdi mdi-resize-bottom-right"></i>Pace</a></li>
+					<li class="treeview">
+						<a href="#"><i class="mdi mdi-resize-bottom-right"></i>Authentication
+							<span class="pull-right-container">
+              <i class="ti-plus pull-right"></i>
+            </span>
+						</a>
+						<ul class="treeview-menu">
+							<li><a href="login.html"><i class="mdi mdi-resize-bottom-right"></i>Login</a></li>
+							<li><a href="register.html"><i class="mdi mdi-resize-bottom-right"></i>Register</a></li>
+							<li><a href="lockscreen.html"><i class="mdi mdi-resize-bottom-right"></i>Lockscreen</a></li>
+							<li><a href="user-pass.html"><i class="mdi mdi-resize-bottom-right"></i>Recover password</a></li>
+						</ul>
+					</li>
+					<li class="treeview">
+						<a href="#"><i class="mdi mdi-resize-bottom-right"></i>Error Pages
+							<span class="pull-right-container">
+              <i class="ti-plus pull-right"></i>
+            </span>
+						</a>
+						<ul class="treeview-menu">
+							<li><a href="404.html"><i class="mdi mdi-resize-bottom-right"></i>404</a></li>
+							<li><a href="500.html"><i class="mdi mdi-resize-bottom-right"></i>500</a></li>
+							<li><a href="maintenance.html"><i class="mdi mdi-resize-bottom-right"></i>Maintenance</a></li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+		</ul>
+	</section>
+</aside>
+<script th:inline="javascript">
+	/*<![CDATA[*/
+
+	var LI = "\t\t\t<li class=\"treeview\">\n" +
+			"\t\t\t\t<a href=\"#\">\n" +
+			"\t\t\t\t\t<i class=\"mdi mdi-view-dashboard\"></i>\n" +
+			"\t\t\t\t\t<span>AAAA</span>\n" +
+			"\t\t\t\t\t<span class=\"pull-right-container\"><i class=\"ti-plus pull-right\"></i></span>\n" +
+			"\t\t\t\t</a>\n" +
+			"\t\t\t\t<ul class=\"treeview-menu\">\n" +
+			"BBBB" +
+			"\t\t\t\t</ul>\n" +
+			"\t\t\t</li>";
+
+	var LI_SINGLE = "\t\t\t<li>\n" +
+			"\t\t\t\t<a href=\"AAAA\">\n" +
+			"\t\t\t\t\t<i class=\"mdi mdi-email-variant\"></i> <span>BBBB</span>\n" +
+			"\t\t\t\t</a>\n" +
+			"\t\t\t</li>";
+
+	var UL_LI = "\t\t\t\t\t<li><a href=\"CCCC\"><i class=\"mdi mdi-resize-bottom-right\"></i>DDDD</a></li>\n";
+
+
+	(function ($) {
+		$.post("/resoures", {}, function (data) {
+			var html = "";
+			data.forEach(function (val, index, arr) {
+				var ele = "";
+				if (val.hasOwnProperty("childList") && val["childList"].length > 0) {
+					ele = LI;
+					ele = ele.replace("AAAA", val["name"]);
+					var subEle = "";
+					val.childList.forEach(function (v, index, arr) {
+						subEle += UL_LI.replace("CCCC", v.link).replace("DDDD", v.name);
+					});
+					html += ele.replace("BBBB", subEle);
+				} else {
+					ele = LI_SINGLE;
+					html += ele.replace("AAAA", val["link"]).replace("BBBB", val["name"]);
+				}
+			});
+			$("#main-menu").html(html);
+		});
+	})(jQuery);
+	/*]]>*/
+</script>
