@@ -103,9 +103,9 @@ public class PurchaseRankController {
     }
 
     @RequestMapping("/purchase_rank_list_export.html")
-    public void export(HttpServletResponse response) {
+    public void export(HttpServletResponse response, String sTime, String eTime, String sPrice, String ePrice) {
         List<List<String>> dataList = new ArrayList<List<String>>();
-        List<Object[]> list = orderInfoService.stat(null, null);
+        List<Object[]> list = orderInfoService.stat(sTime, eTime);
         for (Object[] l : list) {
             List<String> data = new ArrayList<String>(6);
             data.add(0, String.valueOf(l[1]));
@@ -121,7 +121,23 @@ public class PurchaseRankController {
             }
             data.add(4, String.format("%.2f", l[0]));
             data.add(5, String.valueOf(l[2]));
-            dataList.add(data);
+            //price range filter
+            double amt = Double.valueOf(String.valueOf(l[0]));
+            if (StringUtils.isNotBlank(sPrice) && StringUtils.isNotBlank(ePrice)) {
+                if ((Integer.valueOf(sPrice) <= amt) && (Integer.valueOf(ePrice) >= amt)) {
+                    dataList.add(data);
+                }
+            } else if (StringUtils.isNotBlank(sPrice)) {
+                if ((Integer.valueOf(sPrice) <= amt)) {
+                    dataList.add(data);
+                }
+            } else if (StringUtils.isNotBlank(ePrice)) {
+                if ((Integer.valueOf(ePrice) >= amt)) {
+                    dataList.add(data);
+                }
+            } else {
+                dataList.add(data);
+            }
         }
         try {
             ServletOutputStream outputStream = response.getOutputStream();
