@@ -14,525 +14,529 @@
 	}
 	</style>
 </head>
-<body class="page-body">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">活动管理</h1>
+                </div>
+                <div class="right-title">
+                </div>
+            </div>
+        </div>
 
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and product Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">活动管理</h1>
-					<p class="productDescription"></p>
-				</div>
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form class="form-inline" role="form">
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <input class="form-control" name="name" placeholder="活动名" style="height:35px"
+                                               type="text"/>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <select class="form-control" name="type" placeholder="状态" style="height:35px">
+                                            <option value="">状态</option>
+                                            <option value="0">进行中</option>
+                                            <option value="1">未开始</option>
+                                            <option value="2">已结束</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <select class="form-control" name="status" style="height:35px">
+                                            <option value="">是否上架</option>
+                                            <option value="1">已上架</option>
+                                            <option value="0">未上架</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <select class="form-control" name="channel" placeholder="渠道"
+                                                style="height:35px">
+                                            <option value="">渠道</option>
+                                            <option value="1">H5</option>
+                                            <option value="2">小程序</option>
+                                            <option value="4">APP</option>
+                                            <option value="8">其他活动</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary btn-single searchBtn" style="height:35px">查询
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+						<div class="box-body" style="overflow-x: scroll">
+							<table cellspacing="0" class="table table-striped table-bordered" id="example-1" width="100%">
+							</table>
+						</div>
+						<div class="box-footer">
+							<button class="btn btn-info add">添加</button>
+							<button class="btn btn-info edit">修改</button>
+							<button class="btn btn-info rule">添加活动规则</button>
+							<button class="btn btn-info open">开奖通知</button>
+							<button class="btn btn-info updateStatus">上架</button>
+							<button class="btn btn-info updateStatus">下架</button>
+						</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer th:replace="footer"></footer>
+</div>
+<div th:replace="body-under"></div>
+<div class="modal fade in" data-backdrop="static" id="modal-6">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 800px;">
+            <div class="modal-header">
+                <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
+                <h4 class="modal-title">添加活动</h4>
+            </div>
+            <div class="modal-body">
+                <form id="saveForm" role="form">
+                    <input name="id" type="hidden"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">活动名称</label>
+                                <input class="form-control" name="name" placeholder="活动名称" type="text"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">规格</label>
+                                <input class="form-control" name="productDesc" placeholder="规格" type="text"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">开始时间-截止时间</label>
+                                <input class="form-control daterange" data-format="YYYY-MM-DD HH:mm:ss"
+                                       data-time-picker="true" data-time-picker-increment="5" id="daterange"
+                                       placeholder="开始时间-截止时间" type="text"/>
+                                <input class="form-control" name="beginTime" type="hidden"/>
+                                <input class="form-control" name="endTime" type="hidden"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">活动列表图</label>
+                                <input class="form-control" name="imageFile" placeholder="活动列表图" type="file"/>
+                                <input class="form-control" name="image" type="hidden"/>
+                                <img alt="" name="imageImage" src="" style="display:none;"/>
+                                <button class="btn btn-info modify image" style="display:none;">更换</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">封面图</label>
+                                <input class="form-control" name="coverFile" placeholder="封面图" type="file"/>
+                                <input class="form-control" name="coverImage" type="hidden"/>
+                                <img alt="" name="coverImage" src="" style="display:none;"/>
+                                <button class="btn btn-info modify cover" style="display:none;">更换</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">活动详情GIF</label>
+                                <input class="form-control" name="bannerFile" placeholder="活动详情GIF" type="file"/>
+                                <input class="form-control" name="banner" type="hidden"/>
+                                <img alt="" name="bannerImage" src="" style="display:none;"/>
+                                <button class="btn btn-info modify banner" style="display:none;">更换</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">奖品价值</label>
+                                <input class="form-control" name="price" placeholder="奖品价值" type="text"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">其他活动展示图</label>
+                                <input class="form-control" name="showImageFile" placeholder="其他活动展示图" type="file"/>
+                                <input class="form-control" name="showImage" type="hidden"/>
+                                <img alt="" name="showImageImage" src="" style="display:none;"/>
+                                <button class="btn btn-info modify showImageFile" style="display:none;">更换</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">缩略图</label>
+                                <input class="form-control" name="thumbnailFile" placeholder="缩略图" type="file"/>
+                                <input class="form-control" name="thumbnail" type="hidden"/>
+                                <img alt="" name="thumbnailImage" src="" style="display:none;"/>
+                                <button class="btn btn-info modify thumbnailFile" style="display:none;">更换</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">分享图片</label>
+                                <input class="form-control" name="shareImageFile" placeholder="分享图片" type="file"/>
+                                <input class="form-control" name="shareImage" type="hidden"/>
+                                <img alt="" name="shareImageImage" src="" style="display:none;"/>
+                                <button class="btn btn-info modify shareImage" style="display:none;">更换</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">分享标题</label>
+                                <input class="form-control" name="shareTitle" placeholder="分享标题" type="text"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">分享描述</label>
+                                <input class="form-control" name="shareDesc" placeholder="分享描述" type="text"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">有码图片</label>
+                                <input class="form-control" name="saveImageFile" placeholder="有码图片" type="file"/>
+                                <input class="form-control" name="saveImage" type="hidden"/>
+                                <img alt="" name="saveImageImage" src="" style="display:none;"/>
+                                <button class="btn btn-info modify saveImage" style="display:none;">更换</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">无码图片</label>
+                                <input class="form-control" name="backgroundFile" placeholder="无码图片" type="file"/>
+                                <input class="form-control" name="background" type="hidden"/>
+                                <img alt="" name="backgroundImage" src="" style="display:none;"/>
+                                <button class="btn btn-info modify background" style="display:none;">更换</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">开奖方式</label>
+                                <label><input checked="checked" class="notMe" name="type" type="radio"
+                                              value="0"/>默认</label>
+                                <label><input class="notMe" name="type" type="radio" value="1"/>直播间开奖(小程序专用)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">发布渠道</label>
+                                <input name="channel" type='hidden'/>
+                                <div class="form-block">
+                                    <label>
+                                        <input class="cbr" name="channelCheckBox" type="checkbox" value="1"/>
+                                        H5
+                                    </label>
+                                    <br/>
+                                    <label>
+                                        <input class="cbr" name="channelCheckBox" type="checkbox" value="2"/>
+                                        小程序
+                                    </label>
+                                    <br/>
+                                    <label>
+                                        <input class="cbr" name="channelCheckBox" type="checkbox" value="4"/>
+                                        APP
+                                    </label>
+                                    <br/>
+                                    <label>
+                                        <input class="cbr" name="channelCheckBox" type="checkbox" value="8"/>
+                                        其他活动
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" data-dismiss="modal" type="button">关闭</button>
+                <button class="btn btn-success save" type="button">保存</button>
+                <button class="btn btn-white bg-lg" style="display:none" type="button">数据提交中，请稍等....</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade in" id="modal-rule">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 800px;">
+            <div class="modal-header">
+                <button aria-hidden="true" class="close" data-dismiss="modal" type="button">×</button>
+                <h4 class="modal-title">添加活动规则</h4>
+            </div>
+            <div class="modal-body">
+                <form id="productRuleForm" role="form">
+                    <input name="id" type="hidden"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <textarea class="form-control autogrow" cols="5" id="rule-content"
+                                          placeholder="请在此处添加活动规则..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" data-dismiss="modal" type="button">关闭</button>
+                <button class="btn btn-success saveRule" type="button">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button aria-hidden="true" class="close" data-dismiss="modal" type="button">&times;</button>
+                <h4 class="modal-title">温馨提示</h4>
+            </div>
+            <div class="modal-body">
+                <form id="openForm" role="form">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input name="type" type="hidden"/>
+                            <div class="form-group" id="openVideoDiv">
+                                <label class="control-label">开奖视频</label>
+                                <input class="form-control" name="openVideoFile" onchange="uploadVideo(this)"
+                                       placeholder="开奖视频" type="file"/>
+                                <input name="openVideo" type="hidden"/>
+                            </div>
+                            <div class="form-group" id="openImgDiv" style="display: none;">
+                                <label class="control-label">开奖图片</label>
+                                <input class="form-control" name="openImgFile" onchange="uploadImg(this)"
+                                       placeholder="开奖图片" type="file"/>
+                                <input name="openImg" type="hidden"/>
+                            </div>
+                            <div class="form-group">
+									<textarea class="form-control autogrow" cols="5" id="codes" name="codes"
+                                              placeholder="中奖号码（注意大小写，多个请换行）"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" data-dismiss="modal" type="button">取消</button>
+                <button class="btn btn-success notice" type="button">确定</button>
+                <button class="btn btn-white bg-lg" style="display:none" type="button">处理中，请稍等....</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-				<div class="breadcrumb-env">
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>限时豪礼</a></li>
-						<li class="active"><strong>活动管理</strong></li>
-					</ol>
-				</div>
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="name" class="form-control" style="height:35px" placeholder="活动名"/>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<select name="type" class="form-control" style="height:35px" placeholder="状态">
-									<option value="">状态</option>
-									<option value="0">进行中</option>
-									<option value="1">未开始</option>
-									<option value="2">已结束</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<select name="status" class="form-control" style="height:35px">
-									<option value="">是否上架</option>
-									<option value="1">已上架</option>
-									<option value="0">未上架</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<select name="channel" class="form-control" style="height:35px" placeholder="渠道">
-									<option value="">渠道</option>
-									<option value="1">H5</option>
-									<option value="2">小程序</option>
-									<option value="4">APP</option>
-									<option value="8">其他活动</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-				</div>
-				 <button class="btn btn-info add" >添加</button>
-				<button class="btn btn-info edit">修改</button>
-				<button class="btn btn-info rule">添加活动规则</button>
-				<button class="btn btn-info open">开奖通知</button>
-				<button class="btn btn-info updateStatus">上架</button>
-				<button class="btn btn-info updateStatus">下架</button>
-			</div>
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
-	
-	<div class="modal fade in" id="modal-6" data-backdrop="static">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加活动</h4>
-				</div>
-				<div class="modal-body">
-					<form role="form" id="saveForm">
-					<input type="hidden" name="id"/>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">活动名称</label>
-								<input type="text" class="form-control" name="name" placeholder="活动名称"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">规格</label>
-								<input type="text" class="form-control" name="productDesc" placeholder="规格"/>
-							</div>	
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">开始时间-截止时间</label>
-								<input type="text" id="daterange" class="form-control daterange" placeholder="开始时间-截止时间" data-time-picker="true" data-time-picker-increment="5" data-format="YYYY-MM-DD HH:mm:ss" />
-								<input type="hidden" class="form-control" name="beginTime" />
-								<input type="hidden" class="form-control" name="endTime" />
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">活动列表图</label>
-								<input type="file" class="form-control" name="imageFile" placeholder="活动列表图"/>
-								<input type="hidden" class="form-control" name="image" />
-								<img alt="" src="" name="imageImage" style="display:none;"/>
-								<button class="btn btn-info modify image" style="display:none;">更换</button>
-							</div>
-						</div>
-					</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">封面图</label>
-									<input type="file" class="form-control" name="coverFile" placeholder="封面图"/>
-									<input type="hidden" class="form-control" name="coverImage" />
-									<img alt="" src="" name="coverImage" style="display:none;"/>
-									<button class="btn btn-info modify cover" style="display:none;">更换</button>
-								</div>
-							</div>
-						</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">活动详情GIF</label>
-								<input type="file" class="form-control" name="bannerFile" placeholder="活动详情GIF"/>
-								<input type="hidden" class="form-control" name="banner" />
-								<img alt="" src="" name="bannerImage" style="display:none;"/>
-								<button class="btn btn-info modify banner" style="display:none;">更换</button>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">奖品价值</label>
-								<input type="text" class="form-control" name="price" placeholder="奖品价值"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">其他活动展示图</label>
-								<input type="file" class="form-control" name="showImageFile" placeholder="其他活动展示图"/>
-								<input type="hidden" class="form-control" name="showImage" />
-								<img alt="" src="" name="showImageImage" style="display:none;"/>
-								<button class="btn btn-info modify showImageFile" style="display:none;">更换</button>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">缩略图</label>
-								<input type="file" class="form-control" name="thumbnailFile" placeholder="缩略图"/>
-								<input type="hidden" class="form-control" name="thumbnail" />
-								<img alt="" src="" name="thumbnailImage" style="display:none;"/>
-								<button class="btn btn-info modify thumbnailFile" style="display:none;">更换</button>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">分享图片</label>
-								<input type="file" class="form-control" name="shareImageFile" placeholder="分享图片"/>
-								<input type="hidden" class="form-control" name="shareImage" />
-								<img alt="" src="" name="shareImageImage" style="display:none;"/>
-								<button class="btn btn-info modify shareImage" style="display:none;">更换</button>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">分享标题</label>
-								<input type="text" class="form-control" name="shareTitle" placeholder="分享标题"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">分享描述</label>
-								<input type="text" class="form-control" name="shareDesc" placeholder="分享描述"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">有码图片</label>
-								<input type="file" class="form-control" name="saveImageFile" placeholder="有码图片"/>
-								<input type="hidden" class="form-control" name="saveImage" />
-								<img alt="" src="" name="saveImageImage" style="display:none;"/>
-								<button class="btn btn-info modify saveImage" style="display:none;">更换</button>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">无码图片</label>
-								<input type="file" class="form-control" name="backgroundFile" placeholder="无码图片"/>
-								<input type="hidden" class="form-control" name="background" />
-								<img alt="" src="" name="backgroundImage" style="display:none;"/>
-								<button class="btn btn-info modify background" style="display:none;">更换</button>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">开奖方式</label>
-								<label><input name="type" class="notMe" type="radio" checked="checked" value="0"/>默认</label>
-								<label><input name="type" class="notMe" type="radio" value="1"/>直播间开奖(小程序专用)</label>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">发布渠道</label>
-								<input type='hidden' name="channel"/>
-								 <div class="form-block">
-									<label>
-										<input type="checkbox" name ="channelCheckBox" class="cbr" value="1"/>
-										H5
-									</label>
-									<br />
-									<label>
-										<input type="checkbox" name ="channelCheckBox" class="cbr" value="2"/>
-										小程序
-									</label>
-									<br />
-									<label>
-										<input type="checkbox" name ="channelCheckBox" class="cbr" value="4"/>
-										APP
-									</label>
-									<br />
-									<label>
-										<input type="checkbox" name ="channelCheckBox" class="cbr" value="8"/>
-										其他活动
-									</label>
-								</div>
-							</div>
-						</div>
-					</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info save">保存</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<div class="modal fade in" id="modal-rule">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加活动规则</h4>
-				</div>
-				<div class="modal-body">
-					<form role="form" id="productRuleForm">
-					<input type="hidden" name="id"/>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<textarea class="form-control autogrow" id="rule-content" cols="5" placeholder="请在此处添加活动规则..."></textarea>
-							</div>
-						</div>
-					</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info saveRule">保存</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-		<!-- Modal 1 (Basic)-->
-	<div class="modal fade" id="modal-1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					<h4 class="modal-title">温馨提示</h4>
-				</div>
-				<div class="modal-body">
-					<form role="form" id="openForm">
-						<div class="row">
-							<div class="col-md-12">
-								<input type="hidden" name="type"/>
-								<div class="form-group" id="openVideoDiv">
-									<label class="control-label">开奖视频</label>
-									<input type="file" class="form-control" name="openVideoFile" placeholder="开奖视频" onchange="uploadVideo(this)"/>
-									<input type="hidden" name="openVideo"/>
-								</div>
-								<div class="form-group" id="openImgDiv" style="display: none;">
-									<label class="control-label">开奖图片</label>
-									<input type="file" class="form-control" name="openImgFile" placeholder="开奖图片" onchange="uploadImg(this)"/>
-									<input type="hidden" name="openImg"/>
-								</div>
-								<div class="form-group">
-									<textarea class="form-control autogrow" id="codes" name="codes" cols="5"
-											  placeholder="中奖号码（注意大小写，多个请换行）"></textarea>
-								</div>
-							</div>
-						</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-info notice">确定</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">处理中，请稍等....</button>
-				</div>
-			</div>
-		</div>
-	</div>
+<script src="js/common.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
+<script src="assets/js/daterangepicker/daterangepicker.js"></script>
+<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+<script src="assets/js/select2/select2.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
 
-	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/
+    function uploadVideo(self) {
+        var that = $(self);
+        if (self.files.length > 0) {
+            getQNToken(function (token) {
+                var file = self.files[0];
+                this.upload("", token, file, function () {
+                    //
+                }, function (err) {
+                    console.log("error");
+                    console.log(err);
+                }, function (res) {
+                    var url = qiniuUrl + "/" + res.key;
+                    that.parent().find("[name=openVideo]").val(url);
+                    alert("视频上传成功");
+                }, 100, true);
+            });
+        } else {
+            confirm("未选择任何文件!");
+        }
+    }
 
-	function uploadVideo(self) {
-		var that = $(self);
-		if (self.files.length > 0) {
-			getQNToken(function (token) {
-				var file = self.files[0];
-				this.upload("", token, file, function () {
-					//
-				}, function (err) {
-					console.log("error");
-					console.log(err);
-				}, function (res) {
-					var url = qiniuUrl + "/" + res.key;
-					that.parent().find("[name=openVideo]").val(url);
-					alert("视频上传成功");
-				}, 100, true);
-			});
-		} else {
-			confirm("未选择任何文件!");
-		}
-	}
+    function uploadImg(self) {
+        var that = $(self);
+        if (self.files.length > 0) {
+            getQNToken(function (token) {
+                var file = self.files[0];
+                this.upload("", token, file, function () {
+                    //
+                }, function (err) {
+                    console.log("error");
+                    console.log(err);
+                }, function (res) {
+                    var url = qiniuUrl + "/" + res.key;
+                    that.parent().find("[name=openImg]").val(url);
+                    alert("图片上传成功");
+                }, 5, false);
+            });
+        } else {
+            confirm("未选择任何文件!");
+        }
+    }
 
-	function uploadImg(self) {
-		var that = $(self);
-		if (self.files.length > 0) {
-			getQNToken(function (token) {
-				var file = self.files[0];
-				this.upload("", token, file, function () {
-					//
-				}, function (err) {
-					console.log("error");
-					console.log(err);
-				}, function (res) {
-					var url = qiniuUrl + "/" + res.key;
-					that.parent().find("[name=openImg]").val(url);
-					alert("图片上传成功");
-				}, 5, false);
-			});
-		} else {
-			confirm("未选择任何文件!");
-		}
-	}
+    function getQNToken(cb) {
+        $.get("/qiniu/token", {}, function (token) {
+            cb(token);
+        });
+    }
 
-	function getQNToken(cb) {
-		$.get("/qiniu/token", {}, function (token) {
-			cb(token);
-		});
-	}
-
-	var qiniuUrl = [[${qiniuUrl}]];
-	jQuery(document).ready(function($)
-	{
-		var oTable = $("#example-1").dataTable({
-			language: {
+    var qiniuUrl = [[${qiniuUrl}]];
+    jQuery(document).ready(function ($) {
+        var oTable = $("#example-1").dataTable({
+            language: {
                 url: "../assets/Chinese.txt"
             },
-			bFilter : false,
-			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/products-data",//通过ajax实现分页的url路径。
-            fnServerParams : function(aData){
+            bFilter: false,
+            bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+            sAjaxSource: "/products-data",//通过ajax实现分页的url路径。
+            fnServerParams: function (aData) {
                 var searchArray = $(".form-inline").serializeArray();
                 $.merge(aData, searchArray);
             },
-            order: [[ 7, "desc" ]],
+            order: [[7, "desc"]],
             columnDefs: [
-				{	
-					targets: 0,
-				    data: "id",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="productId" value="'+data+'" />';  
-				    }
-				},
+                {
+                    targets: 0,
+                    data: "id",
+                    width: "5%",
+                    orderable: false,
+                    title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
+                    render: function (data, type, full, meta) {
+                        var uuid = UUID.randomUUID();
+                        return '<div class="checkbox"><input type="checkbox" name="productId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);//'<input type="checkbox" name="productId" value="' + data + '" />';
+                    }
+                },
                 {
                     targets: 1,
                     data: "id",
                     title: "序号"
                 },
                 {
-               		targets: 2,
-	                data: "name",
-	                title: "活动名"
-            	}, 
-            	{
-               		targets: 3,
-	                data: "image",
-	                title: "活动列表图",
+                    targets: 2,
+                    data: "name",
+                    title: "活动名"
+                },
+                {
+                    targets: 3,
+                    data: "image",
+                    title: "活动列表图",
                     render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
+                        return "<img style='height: 48px;width: 48px' src=" + data + "></img>";
                     }
-            	},
-            	{
-               		targets: 4,
-	                data: "price",
-	                title: "奖品价值"
-            	},
-            	{
-               		targets: 5,
-	                data: "channel",
-	                title: "发布渠道",
+                },
+                {
+                    targets: 4,
+                    data: "price",
+                    title: "奖品价值"
+                },
+                {
+                    targets: 5,
+                    data: "channel",
+                    title: "发布渠道",
                     render: function (data, type, row, meta) {
                         var text = "";
-                    	if((data & 1) == 1){
-                    		text+="H5,";
+                        if ((data & 1) == 1) {
+                            text += "H5,";
                         }
-                    	if((data & 2) == 2){
-                    		text+="小程序,";
+                        if ((data & 2) == 2) {
+                            text += "小程序,";
                         }
-                    	if((data & 4) == 4){
-                    		text+="APP,";
+                        if ((data & 4) == 4) {
+                            text += "APP,";
                         }
-                    	if((data & 8) == 8){
-                    		text+="其他活动,";
+                        if ((data & 8) == 8) {
+                            text += "其他活动,";
                         }
-                    	if(text.length>1){
-	                    	return text.substring(0,text.length-1);
-                    	}else{
-                    		return text;
-                    	}
+                        if (text.length > 1) {
+                            return text.substring(0, text.length - 1);
+                        } else {
+                            return text;
+                        }
                     }
-            	},
-            	{
-               		targets: 6,
-	                data: "beginTime",
-	                title: "开始时间",
+                },
+                {
+                    targets: 6,
+                    data: "beginTime",
+                    title: "开始时间",
                     render: function (data, type, row, meta) {
                         return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
                     }
-            	},
-            	{
-               		targets: 7,
-	                data: "endTime",
-	                title: "截止时间",
+                },
+                {
+                    targets: 7,
+                    data: "endTime",
+                    title: "截止时间",
                     render: function (data, type, row, meta) {
                         return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
                     }
-            	},
-            	{
-               		targets: 8,
-	                data: "endTime",
-	                title: "状态",
-	                orderable: false,
+                },
+                {
+                    targets: 8,
+                    data: "endTime",
+                    title: "状态",
+                    orderable: false,
                     render: function (data, type, row, meta) {
-                    	var now = new Date().getTime();
-                        if(row.beginTime <= now && now < data){
-                        	return "<font color='green'>进行中</font>";
-                        }else if(row.beginTime > now){
-                        	return "<font color='blue'>未开始</font>";
-                        }else if(data <= now ){
-                        	return "已结束";
+                        var now = new Date().getTime();
+                        if (row.beginTime <= now && now < data) {
+                            return "<font color='green'>进行中</font>";
+                        } else if (row.beginTime > now) {
+                            return "<font color='blue'>未开始</font>";
+                        } else if (data <= now) {
+                            return "已结束";
                         }
                     }
-            	},
-            	{
-               		targets: 9,
-	                data: "status",
-	                title: "是否上架",
+                },
+                {
+                    targets: 9,
+                    data: "status",
+                    title: "是否上架",
                     render: function (data, type, row, meta) {
-                    	return "1"==data?"已上架":"<font color='blue'>未上架</font>";
+                        return "1" == data ? "已上架" : "<font color='blue'>未上架</font>";
                     }
-            	},
+                },
                 {
                     targets: 10,
                     data: "id",
@@ -586,452 +590,461 @@
                         return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
                     }
                 }
-               ]
-		});
+            ]
+        });
 
-		$(".searchBtn").click(function () {
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
-			return false;
-		});
+        $(".searchBtn").click(function () {
+            $("#checkbox-all").attr("checked", false);
+            oTable.fnDraw(); //or fnReloadAjax()
+            return false;
+        });
 
-		$('#example-1').on('click', "#checkbox-all", function () {
-			var obj = $(this);
-			$("input[name='productId']").each(function (i, e) {
-				this.checked = obj[0].checked;
-			});
-		});
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='productId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
+        });
 
-		function clear() {
-			var form = $("#saveForm");
-			form.find("input:not(input[type='checkbox']):not(.notMe)").val("");
-			form.find("input[type='checkbox']").removeAttr("checked");
-			$(".cbr-replaced.cbr-checked").removeClass("cbr-checked");
-			form.find("img").attr("src", "");
-			form.find("img").hide();
-			form.find("input[type='file']").show();
-			form.find(".btn.btn-info.modify").text("更换");
-			form.find(".btn.btn-info.modify").hide();
-		}
+        function clear() {
+            var form = $("#saveForm");
+            form.find("input:not(input[type='checkbox']):not(.notMe)").val("");
+            form.find("input[type='checkbox']").removeAttr("checked");
+            $(".cbr-replaced.cbr-checked").removeClass("cbr-checked");
+            form.find("img").attr("src", "");
+            form.find("img").hide();
+            form.find("input[type='file']").show();
+            form.find(".btn.btn-info.modify").text("更换");
+            form.find(".btn.btn-info.modify").hide();
+        }
 
-		$(".btn.btn-info.add").click(function () {
-			clear();
-			jQuery('#modal-6').modal('show');
-		});
+        $(".btn.btn-info.add").click(function () {
+            clear();
+            jQuery('#modal-6').modal('show');
+        });
 
-			//保存
-			$(".btn.btn-info.save").click(function(){
-				var footer = $(this).parent(".modal-footer")
-				footer.find("button").hide();
-				footer.find(".bg-lg").show();
-				var form = $("#saveForm");
-				var name = form.find("input[name='name']").val();
-				var productDesc = form.find("input[name='productDesc']").val();
-				var price = form.find("input[name='price']").val();
-				var shareTitle = form.find("input[name='shareTitle']").val();
-				var shareDesc = form.find("input[name='shareDesc']").val();
-				var daterange = $("#daterange").val();
-				//文件
-				var showImageVal = form.find("input[name='showImageFile']").val();
-				var thumbnailVal = form.find("input[name='thumbnailFile']").val();
-				var imageVal = form.find("input[name='imageFile']").val();
-				var bannerVal = form.find("input[name='bannerFile']").val();
-				var coverVal = form.find("input[name='coverFile']").val();
-				var shareImageVal = form.find("input[name='shareImageFile']").val();
-				var saveImageVal = form.find("input[name='saveImageFile']").val();
-				var backgroundVal = form.find("input[name='backgroundFile']").val();
-				
-				//已上传的图片地址
-				var showImageVals = form.find("input[name='showImage']").val();
-				var imageVals = form.find("input[name='image']").val();
-				var bannerVals = form.find("input[name='banner']").val();
-				var coverVals = form.find("input[name='coverImage']").val();
-				var shareImageVals = form.find("input[name='shareImage']").val();
-				var backgroundVals = form.find("input[name='background']").val();
-				var saveImageVals = form.find("input[name='saveImage']").val();
-				var thumbnailVals = form.find("input[name='thumbnail']").val();
-				
-				var channel= 0; //渠道
-			    $('.cbr-replaced.cbr-checked').each(function(){ 
-			    	channel = channel|$(this).find('input[name="channelCheckBox"]').val();
-			    });
-				
-				
-				if(name =='' ||productDesc==''||price==''||shareDesc==''||shareTitle==''||daterange==''||
-					(imageVal=='' && imageVals=='')
-					||(bannerVal=='' &&bannerVals=='' )||(shareImageVal=='' &&shareImageVals=='')
-					||(thumbnailVal=='' &&thumbnailVals=='')
-					|| channel==0 || (coverVals == '' && coverVal == '')){
-					toastr.error("请填写完整数据后提交", "温馨提示");
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					return ;
-				}
-				
-				if((channel&2)==2 && ((saveImageVal=='' &&saveImageVals=='' )||(backgroundVal=='' &&backgroundVals==''))){
-					//如果选中小程序，需要上传保存图片和背景图片
-					toastr.error("需要上传保存图片和背景图片", "温馨提示");
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					return ;
-				}
-				
-				if(daterange.indexOf(' - ')!=19 || daterange.length!=41){
-					toastr.error("请输入正确的起止时间", "温馨提示");
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					return ;
-				}
-				
-				//渠道
-				form.find("input[name='channel']").val(channel);
-				
-				var dates = daterange.split(' - ');
-				form.find("input[name='beginTime']").val(dates[0]);
-				form.find("input[name='endTime']").val(dates[1]);
-				
-				var imageFile = '';
-				var bannerFile ='';
-				var coverFile = '';
-				var showImageFile ='';
-				var shareImageFile ='';
-				var saveImageFile ='';
-				var backgroundFile ='';
-				var thumbnailFile ='';
-				
-				//上传文件获得文件地址
-				if(imageVal!=''){
-					imageFile = form.find("input[name='imageFile']")[0].files[0];
+        //保存
+        $(".btn.btn-success.save").click(function () {
+            var footer = $(this).parent(".modal-footer")
+            footer.find("button").hide();
+            footer.find(".bg-lg").show();
+            var form = $("#saveForm");
+            var name = form.find("input[name='name']").val();
+            var productDesc = form.find("input[name='productDesc']").val();
+            var price = form.find("input[name='price']").val();
+            var shareTitle = form.find("input[name='shareTitle']").val();
+            var shareDesc = form.find("input[name='shareDesc']").val();
+            var daterange = $("#daterange").val();
+            //文件
+            var showImageVal = form.find("input[name='showImageFile']").val();
+            var thumbnailVal = form.find("input[name='thumbnailFile']").val();
+            var imageVal = form.find("input[name='imageFile']").val();
+            var bannerVal = form.find("input[name='bannerFile']").val();
+            var coverVal = form.find("input[name='coverFile']").val();
+            var shareImageVal = form.find("input[name='shareImageFile']").val();
+            var saveImageVal = form.find("input[name='saveImageFile']").val();
+            var backgroundVal = form.find("input[name='backgroundFile']").val();
 
-				}
-				if(bannerVal!=''){
-					bannerFile = form.find("input[name='bannerFile']")[0].files[0];
+            //已上传的图片地址
+            var showImageVals = form.find("input[name='showImage']").val();
+            var imageVals = form.find("input[name='image']").val();
+            var bannerVals = form.find("input[name='banner']").val();
+            var coverVals = form.find("input[name='coverImage']").val();
+            var shareImageVals = form.find("input[name='shareImage']").val();
+            var backgroundVals = form.find("input[name='background']").val();
+            var saveImageVals = form.find("input[name='saveImage']").val();
+            var thumbnailVals = form.find("input[name='thumbnail']").val();
 
-				}
-				if (coverVal!=''){
-					coverFile = form.find("input[name='coverFile']")[0].files[0];
-				}
-				if(showImageVal!=''){
-					showImageFile = form.find("input[name='showImageFile']")[0].files[0];	
-
-				}
-				if(shareImageVal!=''){
-					shareImageFile = form.find("input[name='shareImageFile']")[0].files[0];
-
-				}
-				if(saveImageVal!=''){
-					saveImageFile = form.find("input[name='saveImageFile']")[0].files[0];
-
-				}
-				if(backgroundVal!=''){
-					backgroundFile = form.find("input[name='backgroundFile']")[0].files[0];
-
-				}
-				if(thumbnailVal!=''){
-					thumbnailFile = form.find("input[name='thumbnailFile']")[0].files[0];
-
-				}
-				
-				
-				//获取token
-				$.get("/qiniu/token",{},function(token){
-					if(token !=''){
-						upload("image",token,imageFile,function(res){},function(err){
-							console.log("上传imageFile异常:"+err);
-							footer.find("button").show();
-							footer.find(".bg-lg").hide();
-							toastr.error("操作失败", "温馨提示");
-						},function(res){
-							//上传成功
-							console.log(res);
-							if(res!=''){
-								form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
-							}
-							
-							upload("banner",token,bannerFile,function(res){},function(err){
-								console.log("上传bannerFile异常:"+err);
-								footer.find("button").show();
-								footer.find(".bg-lg").hide();
-								toastr.error("操作失败", "温馨提示");
-							},function(res){
-								//上传成功
-								console.log(res);
-								if(res!=''){
-									form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
-								}
-								
-								upload("thumbnail",token,thumbnailFile,function(res){},function(err){
-									console.log("上传thumbnailFile异常:"+err);
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败", "温馨提示");
-								},function(res){
-									//上传成功
-									console.log(res);
-									if(res!=''){
-										form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
-									}
-									
-									upload("shareImage",token,shareImageFile,function(res){},function(err){
-										console.log("上传shareImageFile异常:"+err);
-										footer.find("button").show();
-										footer.find(".bg-lg").hide();
-										toastr.error("操作失败", "温馨提示");
-									},function(res){
-										//上传成功
-										console.log(res);
-										if(res!=''){
-											form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
-										}
-									
-									upload("showImage",token,showImageFile,function(res){},function(err){
-										console.log("上传showImageFile异常:"+err);
-										footer.find("button").show();
-										footer.find(".bg-lg").hide();
-										toastr.error("操作失败", "温馨提示");
-									},function(res){
-										//上传成功
-										console.log(res);
-										if(res!=''){
-											form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
-										}
-										upload("saveImage",token,saveImageFile,function(res){},function(err){
-											console.log("上传saveImageFile异常:"+err);
-											footer.find("button").show();
-											footer.find(".bg-lg").hide();
-											toastr.error("操作失败", "温馨提示");
-										},function(res){
-											//上传成功
-											console.log(res);
-											if(res!=''){
-												form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
-											}
-											//UpladFile("background",backgroundFile,function(res){
-											upload("background",token,backgroundFile,function(res){},function(err){
-												console.log("上传backgroundFile异常:"+err);
-												footer.find("button").show();
-												footer.find(".bg-lg").hide();
-												toastr.error("操作失败", "温馨提示");
-											},function(res){
-												//上传成功
-												console.log(res);
-												if(res!=''){
-													form.find("input[name='"+res.param+"']").val(qiniuUrl+"/"+res.key);
-												}
-												//UpladFile("background",backgroundFile,function(res){
-												upload("coverImage",token,coverFile,function(res){},function(err){
-													console.log("coverFile:"+err);
-													footer.find("button").show();
-													footer.find(".bg-lg").hide();
-													toastr.error("操作失败", "温馨提示");
-												},function(res){
-													//上传成功
-													console.log(res);
-													//UpladFile("background",backgroundFile,function(res){
-													/* if(res!=''){
-													var res = JSON.parse(res.target.responseText);
-													if(res!=''){
-														form.find("input[name='"+res.param+"']").val(res.key);
-													}
-												} */
-													if(res!=''){
-														form.find("input[name='"+res.param+"']").val("https://qn.offway.cn/"+res.key);
-													}
+            var channel = 0; //渠道
+            $('.cbr-replaced.cbr-checked').each(function () {
+                channel = channel | $(this).find('input[name="channelCheckBox"]').val();
+            });
 
 
-													//提交保存
-													$.post("/products-save",$("#saveForm").serialize(),function(data){
-														if(data){
-															footer.find("button").show();
-															footer.find(".bg-lg").hide();
-															jQuery('#modal-6').modal('hide');
-															toastr.success("操作已成功！", "温馨提示");
-															oTable.fnDraw();
-														}else{
-															footer.find("button").show();
-															footer.find(".bg-lg").hide();
-															toastr.error("操作失败", "温馨提示");
-														}
-													});
-												});
-											});
-										});
-									});
-								});
-							});
-						});
-					});
-						
-					}else{
-						footer.find("button").show();
-						footer.find(".bg-lg").hide();
-						toastr.error("上传文件错误，请联系管理员", "温馨提示");
-					}
-				});
-			});
-			
-			$(".btn.btn-info.edit").click(function(){
-				
-				var productId = $("input[name='productId']:checked");
-				if(productId.length!=1){
-					toastr.error("请选择一条数据操作", "温馨提示");
-					return ;
-				}
-				//清理数据
-				clear();
-				
-				$.post("/products-one",{id:productId.val()},function(data){
-					var form = $("#saveForm");
-					
-					$(".cbr-replaced.cbr-checked").removeClass("cbr-checked");
-					
-					form.find("input[name='id']").val(data.id);
-					form.find("input[name='name']").val(data.name);
-					form.find("input[name='productDesc']").val(data.productDesc);
-					form.find("input[name='price']").val(data.price);
-					form.find("input[name='shareTitle']").val(data.shareTitle);
-					form.find("input[name='shareDesc']").val(data.shareDesc);
-					form.find("input[name='video']").val(data.video);
-					
-					var beginTimeStr = new Date(data.beginTime).Format('yyyy-MM-dd hh:mm:ss');
-					var endTimeStr = new Date(data.endTime).Format('yyyy-MM-dd hh:mm:ss');
-					$("#daterange").val(beginTimeStr+' - '+endTimeStr);
-					form.find("input[name='beginTime']").val(beginTimeStr);
-					form.find("input[name='endTime']").val(endTimeStr);
-					
-					form.find("input[name='showImage']").val(data.showImage);
-					form.find("input[name='image']").val(data.image);coverImage
-					form.find("input[name='banner']").val(data.banner);
-					form.find("input[name='coverImage']").val(data.coverImage);
-					form.find("input[name='shareImage']").val(data.shareImage);
-					form.find("input[name='saveImage']").val(data.saveImage);
-					form.find("input[name='background']").val(data.background);
-					form.find("input[name='thumbnail']").val(data.thumbnail);
-					
-					
-					if(''!=data.showImage){
-						form.find("input[name='showImageFile']").hide();
-						form.find("img[name='showImageImage']").attr("src",data.showImage);
-						form.find("img[name='showImageImage']").show();
-						form.find(".btn.showImageFile").show();
-						
-					}
-					
-					if(''!=data.thumbnail){
-						form.find("input[name='thumbnailFile']").hide();
-						form.find("img[name='thumbnailImage']").attr("src",data.thumbnail);
-						form.find("img[name='thumbnailImage']").show();
-						form.find(".btn.thumbnailFile").show();
-						
-					}
-					
-					if(''!=data.image){
-						form.find("input[name='imageFile']").hide();
-						form.find("img[name='imageImage']").attr("src",data.image);
-						form.find("img[name='imageImage']").show();
-						form.find(".btn.image").show();
-						
-					}
-					if(''!=data.banner){
-						form.find("input[name='bannerFile']").hide();
-						form.find("img[name='bannerImage']").attr("src",data.banner);
-						form.find("img[name='bannerImage']").show();
-						form.find(".btn.banner").show();
+            if (name == '' || productDesc == '' || price == '' || shareDesc == '' || shareTitle == '' || daterange == '' ||
+                (imageVal == '' && imageVals == '')
+                || (bannerVal == '' && bannerVals == '') || (shareImageVal == '' && shareImageVals == '')
+                || (thumbnailVal == '' && thumbnailVals == '')
+                || channel == 0 || (coverVals == '' && coverVal == '')) {
+                toastr.error("请填写完整数据后提交", "温馨提示");
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                return;
+            }
 
-					}
-					if(''!=data.cover){
-						form.find("input[name='coverFile']").hide();
-						form.find("img[name='coverImage']").attr("src",data.coverImage);
-						form.find("img[name='coverImage']").show();
-						form.find(".btn.cover").show();
+            if ((channel & 2) == 2 && ((saveImageVal == '' && saveImageVals == '') || (backgroundVal == '' && backgroundVals == ''))) {
+                //如果选中小程序，需要上传保存图片和背景图片
+                toastr.error("需要上传保存图片和背景图片", "温馨提示");
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                return;
+            }
 
-					}
-					if(''!=data.shareImage){
-						form.find("input[name='shareImageFile']").hide();
-						form.find("img[name='shareImageImage']").attr("src",data.shareImage);
-						form.find("img[name='shareImageImage']").show();
-						form.find(".btn.shareImage").show();
-					}
-					if(''!=data.saveImage){
-						form.find("input[name='saveImageFile']").hide();
-						form.find("img[name='saveImageImage']").attr("src",data.saveImage);
-						form.find("img[name='saveImageImage']").show();
-						form.find(".btn.saveImage").show();
-					}
-					if(''!=data.background){
-						form.find("input[name='backgroundFile']").hide();
-						form.find("img[name='backgroundImage']").attr("src",data.background);
-						form.find("img[name='backgroundImage']").show();
-						form.find(".btn.background").show();
-					}
-					//渠道
-					var channel = data.channel;
-					$('input[name="channelCheckBox"]').each(function(){ 
-				    	var that = $(this);
-				    	var value =that.val();
-				    	if((channel & value) == value){
-				    		that.parents(".cbr-replaced").addClass("cbr-checked");
-				    	}
-				    	
-				    });
-					
-					
-					jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-					
-				});
-				
-				
-			});
-			
-			$(".btn.btn-info.modify").click(function(){
-				var that = $(this);
-				var text = that.text();
-				var formGroup = that.parent(".form-group");
-				formGroup.find("img").hide();
-				formGroup.find("input[type='file']").show();
-				that.hide();
-				return false;
-			});
-			
-			//活动规则
-			$(".btn.btn-info.rule").click(function(){
-				var productId = $("input[name='productId']:checked");
-				if(productId.length!=1){
-					toastr.error("请选择一条数据操作", "温馨提示");
-					return ;
-				}
-				
-				productId = productId[0].value;
-				
-				var form = $("#productRuleForm");
-				form.find("input[name='id']").val(productId);
-				
-				$.post("/products-one",{id:productId},function(data){
-					$("#rule-content").val(data.ruleContent);
-				}); 
-				
-				jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
-			});
-			
-			$(".btn.btn-info.saveRule").click(function(){
-				
-				var form = $("#productRuleForm");
-				var productId = form.find("input[name='id']").val();
-				
-				var content = $("#rule-content").val();
-				if(content==''){
-					toastr.error("请输入活动规则后操作", "温馨提示");
-					return ;
-				}
-				
-				$.post("/products-rule",{id:productId,ruleContent:content},function(data){
-					if(data){
-						jQuery('#modal-rule').modal('hide');
-						toastr.success("操作已成功！", "温馨提示");
-					}
-				})
-				
-			});
+            if (daterange.indexOf(' - ') != 19 || daterange.length != 41) {
+                toastr.error("请输入正确的起止时间", "温馨提示");
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                return;
+            }
+
+            //渠道
+            form.find("input[name='channel']").val(channel);
+
+            var dates = daterange.split(' - ');
+            form.find("input[name='beginTime']").val(dates[0]);
+            form.find("input[name='endTime']").val(dates[1]);
+
+            var imageFile = '';
+            var bannerFile = '';
+            var coverFile = '';
+            var showImageFile = '';
+            var shareImageFile = '';
+            var saveImageFile = '';
+            var backgroundFile = '';
+            var thumbnailFile = '';
+
+            //上传文件获得文件地址
+            if (imageVal != '') {
+                imageFile = form.find("input[name='imageFile']")[0].files[0];
+
+            }
+            if (bannerVal != '') {
+                bannerFile = form.find("input[name='bannerFile']")[0].files[0];
+
+            }
+            if (coverVal != '') {
+                coverFile = form.find("input[name='coverFile']")[0].files[0];
+            }
+            if (showImageVal != '') {
+                showImageFile = form.find("input[name='showImageFile']")[0].files[0];
+
+            }
+            if (shareImageVal != '') {
+                shareImageFile = form.find("input[name='shareImageFile']")[0].files[0];
+
+            }
+            if (saveImageVal != '') {
+                saveImageFile = form.find("input[name='saveImageFile']")[0].files[0];
+
+            }
+            if (backgroundVal != '') {
+                backgroundFile = form.find("input[name='backgroundFile']")[0].files[0];
+
+            }
+            if (thumbnailVal != '') {
+                thumbnailFile = form.find("input[name='thumbnailFile']")[0].files[0];
+
+            }
+
+
+            //获取token
+            $.get("/qiniu/token", {}, function (token) {
+                if (token != '') {
+                    upload("image", token, imageFile, function (res) {
+                    }, function (err) {
+                        console.log("上传imageFile异常:" + err);
+                        footer.find("button").show();
+                        footer.find(".bg-lg").hide();
+                        toastr.error("操作失败", "温馨提示");
+                    }, function (res) {
+                        //上传成功
+                        console.log(res);
+                        if (res != '') {
+                            form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
+                        }
+
+                        upload("banner", token, bannerFile, function (res) {
+                        }, function (err) {
+                            console.log("上传bannerFile异常:" + err);
+                            footer.find("button").show();
+                            footer.find(".bg-lg").hide();
+                            toastr.error("操作失败", "温馨提示");
+                        }, function (res) {
+                            //上传成功
+                            console.log(res);
+                            if (res != '') {
+                                form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
+                            }
+
+                            upload("thumbnail", token, thumbnailFile, function (res) {
+                            }, function (err) {
+                                console.log("上传thumbnailFile异常:" + err);
+                                footer.find("button").show();
+                                footer.find(".bg-lg").hide();
+                                toastr.error("操作失败", "温馨提示");
+                            }, function (res) {
+                                //上传成功
+                                console.log(res);
+                                if (res != '') {
+                                    form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
+                                }
+
+                                upload("shareImage", token, shareImageFile, function (res) {
+                                }, function (err) {
+                                    console.log("上传shareImageFile异常:" + err);
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    toastr.error("操作失败", "温馨提示");
+                                }, function (res) {
+                                    //上传成功
+                                    console.log(res);
+                                    if (res != '') {
+                                        form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
+                                    }
+
+                                    upload("showImage", token, showImageFile, function (res) {
+                                    }, function (err) {
+                                        console.log("上传showImageFile异常:" + err);
+                                        footer.find("button").show();
+                                        footer.find(".bg-lg").hide();
+                                        toastr.error("操作失败", "温馨提示");
+                                    }, function (res) {
+                                        //上传成功
+                                        console.log(res);
+                                        if (res != '') {
+                                            form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
+                                        }
+                                        upload("saveImage", token, saveImageFile, function (res) {
+                                        }, function (err) {
+                                            console.log("上传saveImageFile异常:" + err);
+                                            footer.find("button").show();
+                                            footer.find(".bg-lg").hide();
+                                            toastr.error("操作失败", "温馨提示");
+                                        }, function (res) {
+                                            //上传成功
+                                            console.log(res);
+                                            if (res != '') {
+                                                form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
+                                            }
+                                            //UpladFile("background",backgroundFile,function(res){
+                                            upload("background", token, backgroundFile, function (res) {
+                                            }, function (err) {
+                                                console.log("上传backgroundFile异常:" + err);
+                                                footer.find("button").show();
+                                                footer.find(".bg-lg").hide();
+                                                toastr.error("操作失败", "温馨提示");
+                                            }, function (res) {
+                                                //上传成功
+                                                console.log(res);
+                                                if (res != '') {
+                                                    form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
+                                                }
+                                                //UpladFile("background",backgroundFile,function(res){
+                                                upload("coverImage", token, coverFile, function (res) {
+                                                }, function (err) {
+                                                    console.log("coverFile:" + err);
+                                                    footer.find("button").show();
+                                                    footer.find(".bg-lg").hide();
+                                                    toastr.error("操作失败", "温馨提示");
+                                                }, function (res) {
+                                                    //上传成功
+                                                    console.log(res);
+                                                    //UpladFile("background",backgroundFile,function(res){
+                                                    /* if(res!=''){
+                                                    var res = JSON.parse(res.target.responseText);
+                                                    if(res!=''){
+                                                        form.find("input[name='"+res.param+"']").val(res.key);
+                                                    }
+                                                } */
+                                                    if (res != '') {
+                                                        form.find("input[name='" + res.param + "']").val("https://qn.offway.cn/" + res.key);
+                                                    }
+
+
+                                                    //提交保存
+                                                    $.post("/products-save", $("#saveForm").serialize(), function (data) {
+                                                        if (data) {
+                                                            footer.find("button").show();
+                                                            footer.find(".bg-lg").hide();
+                                                            jQuery('#modal-6').modal('hide');
+                                                            toastr.success("操作已成功！", "温馨提示");
+                                                            oTable.fnDraw();
+                                                        } else {
+                                                            footer.find("button").show();
+                                                            footer.find(".bg-lg").hide();
+                                                            toastr.error("操作失败", "温馨提示");
+                                                        }
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+
+                } else {
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                    toastr.error("上传文件错误，请联系管理员", "温馨提示");
+                }
+            });
+        });
+
+        $(".btn.btn-info.edit").click(function () {
+
+            var productId = $("input[name='productId']:checked");
+            if (productId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
+            //清理数据
+            clear();
+
+            $.post("/products-one", {id: productId.val()}, function (data) {
+                var form = $("#saveForm");
+
+                $(".cbr-replaced.cbr-checked").removeClass("cbr-checked");
+
+                form.find("input[name='id']").val(data.id);
+                form.find("input[name='name']").val(data.name);
+                form.find("input[name='productDesc']").val(data.productDesc);
+                form.find("input[name='price']").val(data.price);
+                form.find("input[name='shareTitle']").val(data.shareTitle);
+                form.find("input[name='shareDesc']").val(data.shareDesc);
+                form.find("input[name='video']").val(data.video);
+
+                var beginTimeStr = new Date(data.beginTime).Format('yyyy-MM-dd hh:mm:ss');
+                var endTimeStr = new Date(data.endTime).Format('yyyy-MM-dd hh:mm:ss');
+                $("#daterange").val(beginTimeStr + ' - ' + endTimeStr);
+                form.find("input[name='beginTime']").val(beginTimeStr);
+                form.find("input[name='endTime']").val(endTimeStr);
+
+                form.find("input[name='showImage']").val(data.showImage);
+                form.find("input[name='image']").val(data.image);
+                coverImage
+                form.find("input[name='banner']").val(data.banner);
+                form.find("input[name='coverImage']").val(data.coverImage);
+                form.find("input[name='shareImage']").val(data.shareImage);
+                form.find("input[name='saveImage']").val(data.saveImage);
+                form.find("input[name='background']").val(data.background);
+                form.find("input[name='thumbnail']").val(data.thumbnail);
+
+
+                if ('' != data.showImage) {
+                    form.find("input[name='showImageFile']").hide();
+                    form.find("img[name='showImageImage']").attr("src", data.showImage);
+                    form.find("img[name='showImageImage']").show();
+                    form.find(".btn.showImageFile").show();
+
+                }
+
+                if ('' != data.thumbnail) {
+                    form.find("input[name='thumbnailFile']").hide();
+                    form.find("img[name='thumbnailImage']").attr("src", data.thumbnail);
+                    form.find("img[name='thumbnailImage']").show();
+                    form.find(".btn.thumbnailFile").show();
+
+                }
+
+                if ('' != data.image) {
+                    form.find("input[name='imageFile']").hide();
+                    form.find("img[name='imageImage']").attr("src", data.image);
+                    form.find("img[name='imageImage']").show();
+                    form.find(".btn.image").show();
+
+                }
+                if ('' != data.banner) {
+                    form.find("input[name='bannerFile']").hide();
+                    form.find("img[name='bannerImage']").attr("src", data.banner);
+                    form.find("img[name='bannerImage']").show();
+                    form.find(".btn.banner").show();
+
+                }
+                if ('' != data.cover) {
+                    form.find("input[name='coverFile']").hide();
+                    form.find("img[name='coverImage']").attr("src", data.coverImage);
+                    form.find("img[name='coverImage']").show();
+                    form.find(".btn.cover").show();
+
+                }
+                if ('' != data.shareImage) {
+                    form.find("input[name='shareImageFile']").hide();
+                    form.find("img[name='shareImageImage']").attr("src", data.shareImage);
+                    form.find("img[name='shareImageImage']").show();
+                    form.find(".btn.shareImage").show();
+                }
+                if ('' != data.saveImage) {
+                    form.find("input[name='saveImageFile']").hide();
+                    form.find("img[name='saveImageImage']").attr("src", data.saveImage);
+                    form.find("img[name='saveImageImage']").show();
+                    form.find(".btn.saveImage").show();
+                }
+                if ('' != data.background) {
+                    form.find("input[name='backgroundFile']").hide();
+                    form.find("img[name='backgroundImage']").attr("src", data.background);
+                    form.find("img[name='backgroundImage']").show();
+                    form.find(".btn.background").show();
+                }
+                //渠道
+                var channel = data.channel;
+                $('input[name="channelCheckBox"]').each(function () {
+                    var that = $(this);
+                    var value = that.val();
+                    if ((channel & value) == value) {
+                        that.parents(".cbr-replaced").addClass("cbr-checked");
+                    }
+
+                });
+
+
+                jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+
+            });
+
+
+        });
+
+        $(".btn.btn-info.modify").click(function () {
+            var that = $(this);
+            var text = that.text();
+            var formGroup = that.parent(".form-group");
+            formGroup.find("img").hide();
+            formGroup.find("input[type='file']").show();
+            that.hide();
+            return false;
+        });
+
+        //活动规则
+        $(".btn.btn-info.rule").click(function () {
+            var productId = $("input[name='productId']:checked");
+            if (productId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
+
+            productId = productId[0].value;
+
+            var form = $("#productRuleForm");
+            form.find("input[name='id']").val(productId);
+
+            $.post("/products-one", {id: productId}, function (data) {
+                $("#rule-content").val(data.ruleContent);
+            });
+
+            jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
+        });
+
+        $(".btn.btn-success.saveRule").click(function () {
+
+            var form = $("#productRuleForm");
+            var productId = form.find("input[name='id']").val();
+
+            var content = $("#rule-content").val();
+            if (content == '') {
+                toastr.error("请输入活动规则后操作", "温馨提示");
+                return;
+            }
+
+            $.post("/products-rule", {id: productId, ruleContent: content}, function (data) {
+                if (data) {
+                    jQuery('#modal-rule').modal('hide');
+                    toastr.success("操作已成功！", "温馨提示");
+                }
+            })
+
+        });
 
         $(".btn.btn-info.open").click(function () {
             var productId = $("input[name='productId']:checked");
@@ -1059,59 +1072,59 @@
             });
         });
 
-		$(".btn.btn-info.notice").click(function () {
-			var footer = $(this).parent(".modal-footer");
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var productId = $(".btn.btn-info.notice").attr("productId");
-			var form = $("#openForm");
-			var codes = $("#codes").val();
-			if (codes == '') {
-				toastr.error("请输入中奖号码", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-				return;
-			}
-			var args = form.serializeArray();
-			// args.push({"name": "theId", "value": theId});//append pid
-			$.post("/products-notice/" + productId, args, function (data) {
-				if (data) {
-					jQuery('#modal-1').modal('hide');
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					toastr.success("操作已成功！", "温馨提示");
-				} else {
-					toastr.error("操作失败，请检查抽奖码", "温馨提示");
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-				}
-			});
-		});
-			
-			$(".btn.btn-info.updateStatus").click(function(){
-				var activityId = $("input[name='productId']:checked");
-				if(activityId.length < 1){
-					toastr.error("请至少选择一条数据操作", "温馨提示");
-					return ;
-				}
-				
-				var ids = new Array();
-				activityId.each(function(i,e){
-					ids.push(e.value);
-				});
-				
-				
-				var value = $(this).text()=='上架'?'1':'0';
-				
-				$.post("/products-update",{ids:ids,status:value},function(data){
-					if(data){
-						toastr.success("操作已成功！", "温馨提示");
-						oTable.fnDraw();
-					}
-				})
-			});
-	});
-	/*]]>*/
-	</script>
+        $(".btn.btn-info.notice").click(function () {
+            var footer = $(this).parent(".modal-footer");
+            footer.find("button").hide();
+            footer.find(".bg-lg").show();
+            var productId = $(".btn.btn-info.notice").attr("productId");
+            var form = $("#openForm");
+            var codes = $("#codes").val();
+            if (codes == '') {
+                toastr.error("请输入中奖号码", "温馨提示");
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                return;
+            }
+            var args = form.serializeArray();
+            // args.push({"name": "theId", "value": theId});//append pid
+            $.post("/products-notice/" + productId, args, function (data) {
+                if (data) {
+                    jQuery('#modal-1').modal('hide');
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                    toastr.success("操作已成功！", "温馨提示");
+                } else {
+                    toastr.error("操作失败，请检查抽奖码", "温馨提示");
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                }
+            });
+        });
+
+        $(".btn.btn-info.updateStatus").click(function () {
+            var activityId = $("input[name='productId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+
+            var ids = new Array();
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
+
+
+            var value = $(this).text() == '上架' ? '1' : '0';
+
+            $.post("/products-update", {ids: ids, status: value}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            })
+        });
+    });
+    /*]]>*/
+</script>
 </body>
 </html>
