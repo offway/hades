@@ -1,320 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<head th:replace="head"></head>
-	<title>中奖用户</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
-	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
-	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
-	</style>
+    <head th:replace="head"></head>
+    <title>中奖用户</title>
+    <link rel="stylesheet" href="assets/js/select2/select2.css"/>
+    <link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+    <link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
+    <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
 </head>
-<body class="page-body">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">中奖用户</h1>
+                </div>
+                <div class="right-title">
+                </div>
+            </div>
+        </div>
 
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">中奖用户</h1>
-					<p class="activityDescription"></p>
-				</div>
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form role="form" class="form-inline">
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <input type="text" name="activityName" class="form-control" style="height:35px"
+                                               placeholder="活动名"/>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <input type="number" name="activityId" class="form-control" style="height:35px"
+                                               placeholder="活动ID"/>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <input type="text" name="nickName" class="form-control" style="height:35px"
+                                               placeholder="用户名称"/>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <input type="text" name="unionid" class="form-control" style="height:35px"
+                                               placeholder="用户ID"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary btn-single searchBtn" style="height:35px">查询</button>
+                                </div>
 
-				<div class="breadcrumb-env">
-
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>每日福利</a></li>
-						<li class="active"><strong>中奖用户</strong></li>
-					</ol>
-
-				</div>
-
+                            </form>
+                        </div>
+                        <div class="box-body">
+                            <table id="example-1" class="table table-striped table-bordered" cellspacing="0"
+                                   width="100%">
+                            </table>
+                        </div>
+                        <div class="box-footer">
+                            <button class="btn btn-info rule">录入快递单号</button>
+                            <button class="btn btn-info add">加入黑名单</button>
+                        </div>
+                    </div>
+                </div>
 			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="activityName" class="form-control" style="height:35px" placeholder="活动名"/>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="number" name="activityId" class="form-control" style="height:35px" placeholder="活动ID"/>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="nickName" class="form-control" style="height:35px" placeholder="用户名称"/>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="unionid" class="form-control" style="height:35px" placeholder="用户ID"/>
-							</div>
-						</div>
-						<div class="form-group">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-						
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-					
-				</div>
-				<button class="btn btn-info rule">录入快递单号</button>
-				<button class="btn btn-info add" >加入黑名单</button>
-			</div>
-			
-					
-			<footer th:replace="footer"></footer>
-		</div>
+		</section>
 	</div>
-	
-	<div th:replace="body-under"></div>
-	
-	<div class="modal fade in" id="modal-rule">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">录入快递单号</h4>
-				</div>
-				
-				<div class="modal-body">
-					<form role="form" id="activityRuleForm">
-					<input type="hidden" name="id"/>
-					<div class="row">
-						<div class="col-md-12">
-							
-							<div class="form-group">
-								
-								<input type="text" class="form-control" id="rule-content"  placeholder="快递单号"/>
-								
-							</div>	
-							
-						</div>
-					</div>
-					</form>
-				</div>
-				
-				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info saveRule">保存</button>
-				</div>
-				
-			</div>
-		</div>
-	</div>
-	
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/	
-	jQuery(document).ready(function($)
-	{
-		var oTable = $("#example-1").dataTable({
-			language: {
-                url: "../assets/Chinese.txt"
-            },
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
-			bFilter : false,
-			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true  
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/activityPrizes-data",//通过ajax实现分页的url路径。
-            fnServerParams : function(aData){
-                var searchArray = $(".form-inline").serializeArray();
-                $.merge(aData, searchArray);
-            },
-            order: [[ 1, "desc" ]],
-            columnDefs: [
-				{	
-					targets: 0,
-				    data: "id",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="activityPrizeId" value="'+data+'" />';  
-				    }
-				},
-                {
-                    targets: 1,
-                    data: "id",
-                    title: "序号"
+	<footer th:replace="footer"></footer>
+</div>
+
+    <div th:replace="body-under"></div>
+
+    <div class="modal fade in" id="modal-rule">
+        <div class="modal-dialog">
+            <div class="modal-content" style="width: 800px;">
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">录入快递单号</h4>
+                </div>
+
+                <div class="modal-body">
+                    <form role="form" id="activityRuleForm">
+                        <input type="hidden" name="id"/>
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <div class="form-group">
+
+                                    <input type="text" class="form-control" id="rule-content" placeholder="快递单号"/>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-success saveRule">保存</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/moment.min.js"></script>
+    <script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
+    <script src="assets/js/daterangepicker/daterangepicker.js"></script>
+    <script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
+    <script src="assets/js/select2/select2.min.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        jQuery(document).ready(function ($) {
+            var oTable = $("#example-1").dataTable({
+                language: {
+                    url: "../assets/Chinese.txt"
                 },
-                {
-               		targets: 2,
-	                data: "activityImage",
-	                title: "封面图片",
-                    render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
+                aLengthactivity: [
+                    [10, 25, 50, 100], [10, 25, 50, 100]
+                ],
+                bFilter: false,
+                bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+                sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+                sAjaxSource: "/activityPrizes-data",//通过ajax实现分页的url路径。
+                fnServerParams: function (aData) {
+                    var searchArray = $(".form-inline").serializeArray();
+                    $.merge(aData, searchArray);
+                },
+                order: [[1, "desc"]],
+                columnDefs: [
+                    {
+                        targets: 0,
+                        data: "id",
+                        width: "5%",
+                        orderable: false,
+                        title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
+                        render: function (data, type, full, meta) {
+                            var uuid = UUID.randomUUID();
+                            return '<div class="checkbox"><input type="checkbox" name="activityPrizeId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
+                        }
+                    },
+                    {
+                        targets: 1,
+                        data: "id",
+                        title: "序号"
+                    },
+                    {
+                        targets: 2,
+                        data: "activityImage",
+                        title: "封面图片",
+                        render: function (data, type, row, meta) {
+                            return "<img style='height: 48px;width: 48px' src=" + data + "></img>";
+                        }
+                    },
+                    {
+                        targets: 3,
+                        data: "activityName",
+                        title: "活动名"
+                    },
+                    {
+                        targets: 4,
+                        data: "headUrl",
+                        title: "用户头像",
+                        render: function (data, type, row, meta) {
+                            return "<img style='height: 48px;width: 48px' src=" + data + "></img>";
+                        }
+                    },
+
+                    {
+                        targets: 5,
+                        data: "nickName",
+                        title: "用户昵称"
+                    },
+
+                    {
+                        targets: 6,
+                        data: "status",
+                        title: "状态",
+                        render: function (data, type, row, meta) {
+                            return "1" == data ? "已发货" : "未发货";
+                        }
+                    },
+                    {
+                        targets: 7,
+                        data: "realName",
+                        title: "收货人"
+                    },
+                    {
+                        targets: 8,
+                        data: "phone",
+                        title: "手机"
+                    },
+                    {
+                        targets: 9,
+                        data: "wxid",
+                        title: "微信号"
+                    },
+                    {
+                        targets: 10,
+                        data: "addr",
+                        title: "地址"
+                    },
+                    {
+                        targets: 11,
+                        data: "remark",
+                        title: "备注"
+                    },
+                    {
+                        targets: 12,
+                        data: "expressNumber",
+                        title: "快递单号"
+                    },
+                    {
+                        targets: 13,
+                        data: "createTime",
+                        title: "创建时间",
+                        render: function (data, type, row, meta) {
+                            return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                        }
                     }
-            	},
-                {
-               		targets: 3,
-	                data: "activityName",
-	                title: "活动名"
-            	}, 
-            	{
-               		targets: 4,
-	                data: "headUrl",
-	                title: "用户头像",
-                    render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
-                    }
-            	}, 
-            	
-            	{
-               		targets: 5,
-	                data: "nickName",
-	                title: "用户昵称"
-            	}, 
-            	
-            	{
-               		targets: 6,
-	                data: "status",
-	                title: "状态",
-                    render: function (data, type, row, meta) {
-                        return "1"==data?"已发货":"未发货";
-                    }
-            	},
-            	{
-               		targets: 7,
-	                data: "realName",
-	                title: "收货人"
-            	},
-            	{
-               		targets: 8,
-	                data: "phone",
-	                title: "手机"
-            	},
-            	{
-               		targets: 9,
-	                data: "wxid",
-	                title: "微信号"
-            	},
-            	{
-               		targets: 10,
-	                data: "addr",
-	                title: "地址"
-            	},
-            	{
-               		targets: 11,
-	                data: "remark",
-	                title: "备注"
-            	},
-            	{
-               		targets: 12,
-	                data: "expressNumber",
-	                title: "快递单号"
-            	},
-                {
-                    targets: 13,
-                    data: "createTime",
-                    title: "创建时间",
-                    render: function (data, type, row, meta) {
-                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-                    }
+                ]
+            });
+
+            $(".searchBtn").click(function () {
+                $("#checkbox-all").attr("checked", false);
+                oTable.fnDraw(); //or fnReloadAjax()
+                return false;
+            });
+
+            $('#example-1').on('click', "#checkbox-all", function () {
+                var obj = $(this);
+                $("input[name='activityPrizeId']").each(function (i, e) {
+                    this.checked = obj[0].checked;
+                });
+            })
+
+
+            //快递单号
+            $(".btn.btn-info.rule").click(function () {
+                var activityPrizeId = $("input[name='activityPrizeId']:checked");
+                if (activityPrizeId.length != 1) {
+                    toastr.error("请选择一条数据操作", "温馨提示");
+                    return;
                 }
-               ]
-		});
-		
-		$(".searchBtn").click(function(){
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
-			return false;
-		});
-		
-		 $('#example-1').on('click',"#checkbox-all",function() {  
-			var obj = $(this);
-			$("input[name='activityPrizeId']").each(function(i,e){
-				 this.checked = obj[0].checked;
-			});
-		})
-			 
-			
-		//快递单号
-		$(".btn.btn-info.rule").click(function(){
-			var activityPrizeId = $("input[name='activityPrizeId']:checked");
-			if(activityPrizeId.length!=1){
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return ;
-			}
-			
-			activityPrizeId = activityPrizeId[0].value;
-			
-			var form = $("#activityRuleForm");
-			form.find("input[name='id']").val(activityPrizeId);
-			
-			$.post("/activityPrizes-one",{id:activityPrizeId},function(data){
-				$("#rule-content").val(data.expressNumber);
-			}); 
-			
-			jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
-		});
-		
-		$(".btn.btn-info.saveRule").click(function(){
-			
-			var form = $("#activityRuleForm");
-			var activityId = form.find("input[name='id']").val();
-			
-			var content = $("#rule-content").val();
-			if(content==''){
-				toastr.error("请输入快递单号后操作", "温馨提示");
-				return ;
-			}
-			
-			$.post("/activityPrizes-update",{id:activityId,expressNumber:content},function(data){
-				if(data){
-					jQuery('#modal-rule').modal('hide');
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			})
-			
-		});
-		
-		$(".btn.btn-info.add").click(function(){
-			
-			var activityPrizeId = $("input[name='activityPrizeId']:checked");
-			if(activityPrizeId.length!=1){
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return ;
-			}
-			
-			$.post("/activityPrizes-black",{id:activityPrizeId.val()},function(data){
-				if(data){
-					jQuery('#modal-rule').modal('hide');
-					toastr.success("操作已成功！", "温馨提示");
-				}
-			})
-			
-		});
-		
-	});
-	/*]]>*/
-	</script>
+
+                activityPrizeId = activityPrizeId[0].value;
+
+                var form = $("#activityRuleForm");
+                form.find("input[name='id']").val(activityPrizeId);
+
+                $.post("/activityPrizes-one", {id: activityPrizeId}, function (data) {
+                    $("#rule-content").val(data.expressNumber);
+                });
+
+                jQuery('#modal-rule').modal('show', {backdrop: 'fade'});
+            });
+
+            $(".btn.btn-success.saveRule").click(function () {
+
+                var form = $("#activityRuleForm");
+                var activityId = form.find("input[name='id']").val();
+
+                var content = $("#rule-content").val();
+                if (content == '') {
+                    toastr.error("请输入快递单号后操作", "温馨提示");
+                    return;
+                }
+
+                $.post("/activityPrizes-update", {id: activityId, expressNumber: content}, function (data) {
+                    if (data) {
+                        jQuery('#modal-rule').modal('hide');
+                        toastr.success("操作已成功！", "温馨提示");
+                        oTable.fnDraw();
+                    }
+                })
+
+            });
+
+            $(".btn.btn-info.add").click(function () {
+
+                var activityPrizeId = $("input[name='activityPrizeId']:checked");
+                if (activityPrizeId.length != 1) {
+                    toastr.error("请选择一条数据操作", "温馨提示");
+                    return;
+                }
+
+                $.post("/activityPrizes-black", {id: activityPrizeId.val()}, function (data) {
+                    if (data) {
+                        jQuery('#modal-rule').modal('hide');
+                        toastr.success("操作已成功！", "温馨提示");
+                    }
+                })
+
+            });
+
+        });
+        /*]]>*/
+    </script>
 </body>
 
 </html>
