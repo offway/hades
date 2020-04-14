@@ -14,73 +14,69 @@
         }
     </style>
 </head>
-<body class="page-body">
-
-<div class="page-container">
-    <!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-
-    <div th:replace="sidebar-menu"></div>
-    <div class="main-content">
-        <!-- User Info, Notifications and activity Bar -->
-        <nav th:replace="navbar"></nav>
-        <div class="page-title">
-
-            <div class="title-env">
-                <h1 class="title">用户推广渠道</h1>
-                <p class="activityDescription"></p>
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">用户推广渠道</h1>
+                </div>
+                <div class="right-title">
+                </div>
             </div>
-
-            <div class="breadcrumb-env">
-
-                <ol class="breadcrumb bc-1">
-                    <li><a href="/"><i class="fa-home"></i>Home</a></li>
-                    <li><a>系统管理</a></li>
-                    <li class="active"><strong>用户推广渠道</strong></li>
-                </ol>
-
-            </div>
-
         </div>
 
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <form class="form-inline" role="form">
-                    <div class="form-group ">
-                        <div class="input-group">
-                            <input class="form-control" name="channelName" placeholder="渠道名称" style="height:35px"
-                                   type="text"/>
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form class="form-inline" role="form">
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <input class="form-control" name="channelName" placeholder="渠道名称"
+                                               style="height:35px"
+                                               type="text"/>
+                                    </div>
+                                    <div class="input-group">
+                                        <input class="form-control" name="channel" placeholder="渠道代码"
+                                               style="height:35px"
+                                               type="text"/>
+                                    </div>
+                                    <div class="input-group">
+                                        <input class="form-control" name="userId" placeholder="绑定ID" style="height:35px"
+                                               type="text"/>
+                                    </div>
+                                    <div class="input-group">
+                                        <input class="form-control" name="userPhone" placeholder="绑定ID电话"
+                                               style="height:35px"
+                                               type="text"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary btn-single searchBtn" style="height:35px">查询</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="input-group">
-                            <input class="form-control" name="channel" placeholder="渠道代码" style="height:35px"
-                                   type="text"/>
+                        <div class="box-body">
+                            <table cellspacing="0" class="table table-striped table-bordered" id="example-1"
+                                   width="100%">
+                            </table>
                         </div>
-                        <div class="input-group">
-                            <input class="form-control" name="userId" placeholder="绑定ID" style="height:35px"
-                                   type="text"/>
-                        </div>
-                        <div class="input-group">
-                            <input class="form-control" name="userPhone" placeholder="绑定ID电话" style="height:35px"
-                                   type="text"/>
+                        <div class="box-footer">
+                            <button class="btn btn-info add">添加</button>
+                            <button class="btn btn-info edit">修改</button>
+                            <button class="btn btn-info del">删除</button>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-                    </div>
-                </form>
+                </div>
             </div>
-            <div class="panel-body">
-                <table cellspacing="0" class="table table-striped table-bordered" id="example-1" width="100%">
-                </table>
-
-            </div>
-            <button class="btn btn-info add">添加</button>
-            <button class="btn btn-info edit">修改</button>
-            <button class="btn btn-info del">删除</button>
-        </div>
-
-
-        <footer th:replace="footer"></footer>
+        </section>
     </div>
+    <footer th:replace="footer"></footer>
 </div>
 
 <div th:replace="body-under"></div>
@@ -130,8 +126,8 @@
             </div>
 
             <div class="modal-footer">
-                <button class="btn btn-white" data-dismiss="modal" type="button">关闭</button>
-                <button class="btn btn-info save" type="button">保存</button>
+                <button class="btn btn-danger" data-dismiss="modal" type="button">关闭</button>
+                <button class="btn btn-success save" type="button">保存</button>
                 <button class="btn btn-white bg-lg" style="display:none" type="button">数据提交中，请稍等....</button>
             </div>
 
@@ -222,7 +218,7 @@
             if (h != null && w != null) {
                 return "<img width='WWWpx' height='HHHpx' src='#' />".replace("#", url).replace("WWW", w).replace("HHH", h);
             } else {
-                return "<img width='375px' height='223px' src='#' />".replace("#", url);
+                return "<img width='48px' height='48px' src='#' />".replace("#", url);
             }
         }
     }
@@ -286,17 +282,17 @@
         return returnList;
     }
 
-    function addremark(channel){
+    function addremark(channel) {
         oTable0 = $("#example-3").dataTable({
             language: {
                 url: "../assets/Chinese.txt"
             },
-            bFilter : false,
-            bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有
-            sAjaxSource : "/channel_user_info?channel="+channel,//通过ajax实现分页的url路径。
-            destroy:true,
-            fnServerParams : function(aData){
+            bFilter: false,
+            bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+            sAjaxSource: "/channel_user_info?channel=" + channel,//通过ajax实现分页的url路径。
+            destroy: true,
+            fnServerParams: function (aData) {
             },
             columnDefs: [
                 {
@@ -364,7 +360,7 @@
     jQuery(document).ready(function ($) {
         var qiniuUrl = [[${qiniuUrl}]];
         var admin = [[${ISADMIN}]];
-        if (!admin){
+        if (!admin) {
             $(".btn.btn-info.add").hide();
             $(".btn.btn-info.edit").hide();
             $(".btn.btn-info.del").hide();
@@ -417,10 +413,10 @@
                         data: "id",
                         width: "5%",
                         orderable: false,
-                        className: 'select-checkbox',
-                        title: '<input type="checkbox" id="checkbox-all"/>',
+                        title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
                         render: function (data, type, full, meta) {
-                            return '<input type="checkbox" name="activityId" value="' + data + '" />';
+                            var uuid = UUID.randomUUID();
+                            return '<div class="checkbox"><input type="checkbox" name="activityId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
                         }
                     },
                     {
@@ -480,8 +476,8 @@
                         targets: 11,
                         data: "channel",
                         title: "渠道注册用户查看",
-                        render:function (data, type, row, meta) {
-                            return '<input type="button" name="remark" id="remark" onclick="addremark(\''+data+'\')" value="查看注册用户"/>';
+                        render: function (data, type, row, meta) {
+                            return '<input type="button" name="remark" id="remark" onclick="addremark(\'' + data + '\')" value="查看注册用户"/>';
                         }
                     }
                 ]
@@ -499,6 +495,13 @@
             return false;
         });
 
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='activityId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
+        });
+
         $(".btn.btn-info.add").click(function () {
             var form = $("#saveForm");
             //form.find("input").val("");
@@ -511,7 +514,7 @@
         });
 
         //保存
-        $(".btn.btn-info.save").click(function () {
+        $(".btn.btn-success.save").click(function () {
             var footer = $(this).parent(".modal-footer");
             footer.find("button").hide();
             footer.find(".bg-lg").show();
@@ -578,7 +581,7 @@
             });
 
             var confirm = window.confirm("是否确定删除");
-            if (confirm == false){
+            if (confirm == false) {
                 return;
             }
             $.post("/channel_user_del", {ids: ids}, function (data) {
