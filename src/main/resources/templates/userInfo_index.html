@@ -1,159 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<head th:replace="head"></head>
-	<title>APP用户</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
-	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
-	<style type="text/css">
-		.form-group img{
-			max-width:400px;
-			max-height:300px;
-		}
-	</style>
+    <head th:replace="head"></head>
+    <title>APP用户</title>
+    <link rel="stylesheet" href="assets/js/select2/select2.css"/>
+    <link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+    <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+    <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
 </head>
-<body class="page-body">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
 
-<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">APP用户</h1>
+                </div>
+                <div class="right-title">
+                </div>
+            </div>
+        </div>
 
-	<div th:replace="sidebar-menu"></div>
-	<div class="main-content">
-		<!-- User Info, Notifications and activity Bar -->
-		<nav th:replace="navbar"></nav>
-		<div class="page-title">
-
-			<div class="title-env">
-				<h1 class="title">APP用户</h1>
-				<p class="activityDescription"></p>
-			</div>
-
-			<div class="breadcrumb-env">
-
-				<ol class="breadcrumb bc-1">
-					<li><a href="/"><i class="fa-home"></i>Home</a></li>
-					<li><a>系统管理</a></li>
-					<li class="active"><strong>APP用户</strong></li>
-				</ol>
-
-			</div>
-
-		</div>
-
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<form role="form" class="form-inline">
-					<div class="form-group ">
-						<div class="input-group">
-							<input type="text" name="phone" class="form-control" style="height:35px" placeholder="手机"/>
-						</div>
-						<div class="input-group">
-							<input type="text" name="nickname" class="form-control" style="height:35px" placeholder="用户昵称"/>
-						</div>
-						<div class="input-group">
-							<input type="text" name="userId" class="form-control" style="height:35px" placeholder="用户ID"/>
-						</div>
-						<div class="input-group">
-							<label class="control-box">性别</label>
-						</div>
-						<div class="input-group">
-							<select name="sex" class="form-control" style="height:35px">
-								<option value="" selected="selected">全部</option>
-								<option value="0">未知</option>
-								<option value="1">男</option>
-								<option value="2">女</option>
-							</select>
-						</div>
-						<div class="input-group">
-							<label class="control-box">年份</label>
-						</div>
-						<div class="input-group">
-							<select name="year" id="year" class="form-control" style="height:35px" placeholder="年份">
-								<option value="" selected="selected">全部</option>
-							</select>
-						</div>
-						<div class="input-group">
-							<label class="control-box">渠道</label>
-						</div>
-						<div class="input-group">
-							<select name="channel" id="channel" class="form-control" style="height:35px">
-							</select>
-						</div>
-						<div class="input-group">
-							<label class="control-box">注册日期</label>
-						</div>
-						<div class="input-group">
-							<input type="text" class="form-control" name="sTimeReg" id="sTime" style="height:35px"
-								   placeholder="开始时间"/>
-						</div>
-						<div class="input-group">
-							<input type="text" class="form-control" name="eTimeReg" id="eTime" style="height:35px"
-								   placeholder="结束时间"/>
-						</div>
-					</div>
-					<div class="form-group">
-						<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-					</div>
-				</form>
-			</div>
-			<div class="panel-body">
-				<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-				</table>
-
-			</div>
-			<!--				<button class="btn btn-info add" >添加</button>-->
-			<!--				<button class="btn btn-info edit">修改</button>-->
-			<!--				<button class="btn btn-info del">删除</button>-->
-		</div>
-
-
-		<footer th:replace="footer"></footer>
-	</div>
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form role="form" class="form-inline">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" name="phone" class="form-control" style="height:35px"
+                                               placeholder="手机"/>
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="text" name="nickname" class="form-control" style="height:35px"
+                                               placeholder="用户昵称"/>
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="text" name="userId" class="form-control" style="height:35px"
+                                               placeholder="用户ID"/>
+                                    </div>
+                                    <div class="input-group">
+                                        <label class="control-box">性别</label>
+                                    </div>
+                                    <div class="input-group">
+                                        <select name="sex" class="form-control" style="height:35px">
+                                            <option value="" selected="selected">全部</option>
+                                            <option value="0">未知</option>
+                                            <option value="1">男</option>
+                                            <option value="2">女</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label class="control-box">年份</label>
+                                    </div>
+                                    <div class="input-group">
+                                        <select name="year" id="year" class="form-control" style="height:35px"
+                                                placeholder="年份">
+                                            <option value="" selected="selected">全部</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label class="control-box">渠道</label>
+                                    </div>
+                                    <div class="input-group">
+                                        <select name="channel" id="channel" class="form-control" style="height:35px">
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label class="control-box">注册日期</label>
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="sTimeReg" id="sTime"
+                                               style="height:35px"
+                                               placeholder="开始时间"/>
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" name="eTimeReg" id="eTime"
+                                               style="height:35px"
+                                               placeholder="结束时间"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary btn-single searchBtn" style="height:35px">查询
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="box-body" style="overflow: scroll">
+                            <table id="example-1" class="table table-striped table-bordered" cellspacing="0"
+                                   width="100%">
+                            </table>
+                        </div>
+                        <div class="box-footer">
+                            <!--				<button class="btn btn-info add" >添加</button>-->
+                            <!--				<button class="btn btn-info edit">修改</button>-->
+                            <!--				<button class="btn btn-info del">删除</button>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer th:replace="footer"></footer>
 </div>
 
 <div th:replace="body-under"></div>
 
 <div class="modal fade in" id="modal-6">
-	<div class="modal-dialog">
-		<div class="modal-content" style="width: 800px;">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				<h4 class="modal-title"></h4>
-			</div>
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 800px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title"></h4>
+            </div>
 
-			<div class="modal-body">
-				<form role="form" id="saveForm">
-					<input type="hidden" name="id"/>
-				</form>
-			</div>
+            <div class="modal-body">
+                <form role="form" id="saveForm">
+                    <input type="hidden" name="id"/>
+                </form>
+            </div>
 
-			<div class="modal-footer">
-				<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-				<button type="button" class="btn btn-info save">保存</button>
-				<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-			</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-success save">保存</button>
+                <button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+            </div>
 
-		</div>
-	</div>
+        </div>
+    </div>
 </div>
 
 <div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
-	<div class="modal-dialog">
-		<div class="modal-content">
+    <div class="modal-dialog">
+        <div class="modal-content">
 
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				<h4 class="modal-title">查看详情</h4>
-			</div>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">查看详情</h4>
+            </div>
 
-			<div class="modal-body" id="preview_body"></div>
+            <div class="modal-body" id="preview_body"></div>
 
-			<div class="modal-footer">
-				<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-			</div>
-		</div>
-	</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="js/common.js"></script>
@@ -162,544 +164,551 @@
 <script src="assets/js/select2/select2.min.js"></script>
 <script src="assets/js/async.min.js"></script>
 <script th:inline="javascript">
-	/*<![CDATA[*/
+    /*<![CDATA[*/
 
-	function addMoreImg(self) {
-		var that = $(self);
-		that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
-	}
+    function addMoreImg(self) {
+        var that = $(self);
+        that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
+    }
 
-	function addMoreText(self) {
-		var that = $(self);
-		that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
-	}
+    function addMoreText(self) {
+        var that = $(self);
+        that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
+    }
 
-	function closeIt(self) {
-		var that = $(self);
-		that.hide();
-	}
+    function closeIt(self) {
+        var that = $(self);
+        that.hide();
+    }
 
-	function formatTime(time) {
-		return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
-	}
+    function formatTime(time) {
+        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+    }
 
-	function buildImg(url) {
-		return "<img width='100px' height='100px' src='#' />".replace("#", url);
-	}
+    function buildImg(url) {
+        return "<img width='48px' height='48px' src='#' />".replace("#", url);
+    }
 
 
-	function appendToPreview(key, value) {
-		return '<div class="row">' +
-				'<div class="col-md-2">' +
-				key +
-				'</div>' +
-				'<div class="col-md-10">' +
-				value +
-				'</div>' +
-				'</div>';
-	}
+    function appendToPreview(key, value) {
+        return '<div class="row">' +
+            '<div class="col-md-2">' +
+            key +
+            '</div>' +
+            '<div class="col-md-10">' +
+            value +
+            '</div>' +
+            '</div>';
+    }
 
-	function checkIt(id) {
-		alert("暂不支持");
-		return;
-		$.post("/goodsType_find", {"id": id}, function (data) {
-			if (data) {
-				var preview = $("#preview_body");
-				var contentStr = "";
-				var mainObj = data["main"];
-				contentStr += appendToPreview("编号:", mainObj["id"]);
-				contentStr += appendToPreview("名称:", mainObj["name"]);
-				contentStr += appendToPreview("图片:", buildImg(mainObj["image"]));
-				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
-				contentStr += appendToPreview("备注:", mainObj["remark"]);
+    function checkIt(id) {
+        alert("暂不支持");
+        return;
+        $.post("/goodsType_find", {"id": id}, function (data) {
+            if (data) {
+                var preview = $("#preview_body");
+                var contentStr = "";
+                var mainObj = data["main"];
+                contentStr += appendToPreview("编号:", mainObj["id"]);
+                contentStr += appendToPreview("名称:", mainObj["name"]);
+                contentStr += appendToPreview("图片:", buildImg(mainObj["image"]));
+                contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
+                contentStr += appendToPreview("备注:", mainObj["remark"]);
 
-				for (var category in data["categoryList"]) {
-					category = data["categoryList"][category];
-					contentStr += appendToPreview("商品类别ID:", category["goodsType"]);
-					contentStr += appendToPreview("商品类别名称:", category["goodsTypeName"]);
-					contentStr += appendToPreview("创建时间:", formatTime(category["createTime"]));
-					contentStr += appendToPreview("图片:", buildImg(category["image"]));
-					contentStr += appendToPreview("名称:", category["name"]);
-					contentStr += appendToPreview("编号:", category["id"]);
-					contentStr += appendToPreview("备注:", category["remark"]);
-					contentStr += appendToPreview("排序:", category["sort"]);
-				}
-				preview.html(contentStr);
-				jQuery('#preview').modal('show', {backdrop: 'fade'});
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+                for (var category in data["categoryList"]) {
+                    category = data["categoryList"][category];
+                    contentStr += appendToPreview("商品类别ID:", category["goodsType"]);
+                    contentStr += appendToPreview("商品类别名称:", category["goodsTypeName"]);
+                    contentStr += appendToPreview("创建时间:", formatTime(category["createTime"]));
+                    contentStr += appendToPreview("图片:", buildImg(category["image"]));
+                    contentStr += appendToPreview("名称:", category["name"]);
+                    contentStr += appendToPreview("编号:", category["id"]);
+                    contentStr += appendToPreview("备注:", category["remark"]);
+                    contentStr += appendToPreview("排序:", category["sort"]);
+                }
+                preview.html(contentStr);
+                jQuery('#preview').modal('show', {backdrop: 'fade'});
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
-	function checkItsList(id) {
-		window.location.href = '/settle_inner.html?id=' + id;
-	}
+    function checkItsList(id) {
+        window.location.href = '/settle_inner.html?id=' + id;
+    }
 
-	var table_global;
+    var table_global;
 
-	function toggleTopIt(id) {
-		$.post("/brand_toggleTop", {"id": id}, function (data) {
-			if (data) {
-				table_global.fnDraw();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function toggleTopIt(id) {
+        $.post("/brand_toggleTop", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
-	function topIt(id) {
-		$.post("/brand_top", {"id": id}, function (data) {
-			if (data) {
-				table_global.fnDraw();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function topIt(id) {
+        $.post("/brand_top", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
-	function unTopIt(id) {
-		$.post("/brand_untop", {"id": id}, function (data) {
-			if (data) {
-				table_global.fnDraw();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function unTopIt(id) {
+        $.post("/brand_untop", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
-	function bindChannelSelector(data) {
-		var brandStr = "";
-		for (var brand in data) {
-			brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand).replace("KEY", data[brand]);
-		}
-		$("#channel").html(brandStr);
-	}
+    function bindChannelSelector(data) {
+        var brandStr = "";
+        for (var brand in data) {
+            brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand).replace("KEY", data[brand]);
+        }
+        $("#channel").html(brandStr);
+    }
 
-	function checkImg(list) {
-		var returnList = {};
-		for (var i in list) {
-			i = list[i];
-			var v = i[0];
-			var name = i[1];
-			var form = $("#saveForm");
-			var footer = $(this).parent(".modal-footer");
-			var imageFile = '';
-			//上传文件获得文件地址
-			if (v != '') {
-				imageFile = form.find("input[name='" + name + "File']")[0].files[0];
-				returnList[name] = imageFile;
-			}
-		}
-		return returnList;
-	}
-	jQuery(document).ready(function($)
-	{
-		var qiniuUrl = [[${qiniuUrl}]];
+    function checkImg(list) {
+        var returnList = {};
+        for (var i in list) {
+            i = list[i];
+            var v = i[0];
+            var name = i[1];
+            var form = $("#saveForm");
+            var footer = $(this).parent(".modal-footer");
+            var imageFile = '';
+            //上传文件获得文件地址
+            if (v != '') {
+                imageFile = form.find("input[name='" + name + "File']")[0].files[0];
+                returnList[name] = imageFile;
+            }
+        }
+        return returnList;
+    }
 
-		jQuery.datetimepicker.setLocale('zh');
-		jQuery('#sTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
-		jQuery('#eTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
+    jQuery(document).ready(function ($) {
+        var qiniuUrl = [[${qiniuUrl}]];
 
-		var oTable;
-		$.getJSON("/channel_list", {}, function (data) {
-			bindChannelSelector(data);
-			oTable = $("#example-1").dataTable({
-				language: {
-					url: "../assets/Chinese.txt"
-				},
-				aLengthactivity: [
-					[10, 25, 50, 100], [10, 25, 50, 100]
-				],
-				bFilter: false,
-				bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
-				sAjaxDataProp: "aData",//是服务器分页的标志，必须有
-				sAjaxSource: "/userInfo_list",//通过ajax实现分页的url路径。
-				fnServerParams: function (aData) {
-					var searchArray = $(".form-inline").serializeArray();
-					$.merge(aData, searchArray);
-				},
-				order: [[6, "desc"]],
-				columnDefs: [
-					{
-						targets: 0,
-						data: "id",
-						width: "5%",
-						orderable: false,
-						className: 'select-checkbox',
-						title: '<input type="checkbox" id="checkbox-all"/>',
-						render: function (data, type, full, meta) {
-							return '<input type="checkbox" name="activityId" value="' + data + '" />';
-						}
-					},
-					{
-						targets: 1,
-						data: "id",
-						title: "序号"
-					},
-					{
-						targets: 2,
-						data: "phone",
-						title: "手机"
-					},
-					{
-						targets: 3,
-						data: "nickname",
-						title: "昵称"
-					},
-					{
-						targets: 4,
-						data: "sex",
-						title: "性别",
-						render: function (data, type, row, meta) {
-							/** 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知 **/
-							var map = ["未知", "男性", "女性"];
-							return data == null ? "未知" : map[parseInt(data)];
-						}
-					},
-					{
-						targets: 5,
-						data: "birthday",
-						title: "生日",
-						render: function (data, type, row, meta) {
-							return data == null ? "" : new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-						}
-					},
-					{
-						targets: 6,
-						data: "height",
-						title: "身高"
-					},
-					{
-						targets: 7,
-						data: "weight",
-						title: "体重"
-					},
+        jQuery.datetimepicker.setLocale('zh');
+        jQuery('#sTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
+        jQuery('#eTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
 
-					{
-						targets: 8,
-						data: "headimgurl",
-						title: "头像",
-						render: function (data, type, row, meta) {
-							return buildImg(data);
-						}
-					},
-					{
-						targets: 9,
-						data: "unionid",
-						title: "微信ID"
-					},
-					{
-						targets: 10,
-						data: "weiboid",
-						title: "微博ID"
-					},
-					{
-						targets: 11,
-						data: "qqid",
-						title: "QQID"
-					},
-					{
-						targets: 12,
-						data: "balance",
-						title: "余额"
-					},
+        var oTable;
+        $.getJSON("/channel_list", {}, function (data) {
+            bindChannelSelector(data);
+            oTable = $("#example-1").dataTable({
+                language: {
+                    url: "../assets/Chinese.txt"
+                },
+                aLengthactivity: [
+                    [10, 25, 50, 100], [10, 25, 50, 100]
+                ],
+                bFilter: false,
+                bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+                sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+                sAjaxSource: "/userInfo_list",//通过ajax实现分页的url路径。
+                fnServerParams: function (aData) {
+                    var searchArray = $(".form-inline").serializeArray();
+                    $.merge(aData, searchArray);
+                },
+                order: [[6, "desc"]],
+                columnDefs: [
+                    {
+                        targets: 0,
+                        data: "id",
+                        width: "5%",
+                        orderable: false,
+                        title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
+                        render: function (data, type, full, meta) {
+                            var uuid = UUID.randomUUID();
+                            return '<div class="checkbox"><input type="checkbox" name="activityId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
+                        }
+                    },
+                    {
+                        targets: 1,
+                        data: "id",
+                        title: "序号"
+                    },
+                    {
+                        targets: 2,
+                        data: "phone",
+                        title: "手机"
+                    },
+                    {
+                        targets: 3,
+                        data: "nickname",
+                        title: "昵称"
+                    },
+                    {
+                        targets: 4,
+                        data: "sex",
+                        title: "性别",
+                        render: function (data, type, row, meta) {
+                            /** 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知 **/
+                            var map = ["未知", "男性", "女性"];
+                            return data == null ? "未知" : map[parseInt(data)];
+                        }
+                    },
+                    {
+                        targets: 5,
+                        data: "birthday",
+                        title: "生日",
+                        render: function (data, type, row, meta) {
+                            return data == null ? "" : new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                        }
+                    },
+                    {
+                        targets: 6,
+                        data: "height",
+                        title: "身高"
+                    },
+                    {
+                        targets: 7,
+                        data: "weight",
+                        title: "体重"
+                    },
 
-					{
-						targets: 13,
-						data: "collectCount",
-						title: "收藏数量"
-					},
-					{
-						targets: 14,
-						data: "voucherCount",
-						title: "优惠券数量"
-					},
-					{
-						targets: 15,
-						data: "isMm",
-						title: "赚钱达人",
-						render: function (data, type, full, meta) {
-							/** 是否赚钱达人[0-否，1-是] **/
-							var map = ["否", "是"];
-							return data == null ? "未知" : map[parseInt(data)];
-						}
-					},
-					{
-						targets: 16,
-						data: "source",
-						title: "用户渠道",
-						render: function (data, type, full, meta) {
-							/** 注册来源[0-电子刊,1-网页,2-很潮小程序,3-很潮app,4-未知] **/
-							if (data == '0'){
-								return "电子刊";
-							}else if (data == '1'){
-								return "网页";
-							}else if (data == '2'){
-								return "很潮小程序";
-							}else if (data == '3'){
-								return "很潮app";
-							}else {
-								return "未知";
-							}
-						}
-					},
-					{
-						targets: 17,
-						data: "remark",
-						title: "备注"
-					},
-					{
-						targets: 18,
-						data: "createTime",
-						title: "注册时间",
-						render: function (data, type, row, meta) {
-							return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-						}
-					},
-					{
-						targets: 19,
-						data: "channel",
-						title: "渠道"
-					},
-					{
-						targets: 20,
-						data: "merchantId",
-						orderable: false,
-						title: "操作",
-						render: function (data, type, full, meta) {
-							return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-						}
-					}
-				]
-			});
-			table_global = oTable;
-		});
+                    {
+                        targets: 8,
+                        data: "headimgurl",
+                        title: "头像",
+                        render: function (data, type, row, meta) {
+                            return buildImg(data);
+                        }
+                    },
+                    {
+                        targets: 9,
+                        data: "unionid",
+                        title: "微信ID"
+                    },
+                    {
+                        targets: 10,
+                        data: "weiboid",
+                        title: "微博ID"
+                    },
+                    {
+                        targets: 11,
+                        data: "qqid",
+                        title: "QQID"
+                    },
+                    {
+                        targets: 12,
+                        data: "balance",
+                        title: "余额"
+                    },
 
-		for (var i = (new Date()).getFullYear(); i > 1980; i--) {
-			$('#year').append($('<option />').val(i).html(i));
-		}
+                    {
+                        targets: 13,
+                        data: "collectCount",
+                        title: "收藏数量"
+                    },
+                    {
+                        targets: 14,
+                        data: "voucherCount",
+                        title: "优惠券数量"
+                    },
+                    {
+                        targets: 15,
+                        data: "isMm",
+                        title: "赚钱达人",
+                        render: function (data, type, full, meta) {
+                            /** 是否赚钱达人[0-否，1-是] **/
+                            var map = ["否", "是"];
+                            return data == null ? "未知" : map[parseInt(data)];
+                        }
+                    },
+                    {
+                        targets: 16,
+                        data: "source",
+                        title: "用户渠道",
+                        render: function (data, type, full, meta) {
+                            /** 注册来源[0-电子刊,1-网页,2-很潮小程序,3-很潮app,4-未知] **/
+                            if (data == '0') {
+                                return "电子刊";
+                            } else if (data == '1') {
+                                return "网页";
+                            } else if (data == '2') {
+                                return "很潮小程序";
+                            } else if (data == '3') {
+                                return "很潮app";
+                            } else {
+                                return "未知";
+                            }
+                        }
+                    },
+                    {
+                        targets: 17,
+                        data: "remark",
+                        title: "备注"
+                    },
+                    {
+                        targets: 18,
+                        data: "createTime",
+                        title: "注册时间",
+                        render: function (data, type, row, meta) {
+                            return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                        }
+                    },
+                    {
+                        targets: 19,
+                        data: "channel",
+                        title: "渠道"
+                    },
+                    {
+                        targets: 20,
+                        data: "merchantId",
+                        orderable: false,
+                        title: "操作",
+                        render: function (data, type, full, meta) {
+                            return '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+                        }
+                    }
+                ]
+            });
+            table_global = oTable;
+        });
 
-		$(".searchBtn").click(function(){
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
-			return false;
-		});
+        for (var i = (new Date()).getFullYear(); i > 1980; i--) {
+            $('#year').append($('<option />').val(i).html(i));
+        }
 
-		$(".btn.btn-info.add").click(function () {
-			var form = $("#saveForm");
-			//form.find("input").val("");
-			form.find("img").attr("src","");
-			form.find("img").hide();
-			form.find("input[type='file']").show();
-			$(".imageShow").remove();
-			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-			//window.location.href = '/merchant_add.html';
-		});
+        $(".searchBtn").click(function () {
+            $("#checkbox-all").attr("checked", false);
+            oTable.fnDraw(); //or fnReloadAjax()
+            return false;
+        });
 
-		//保存
-		$(".btn.btn-info.save").click(function(){
-			var footer = $(this).parent(".modal-footer");
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var form = $("#saveForm");
-			var name = form.find("input[name='name']").val();
-			//文件
-			var image = form.find("input[name='imageFile']").val();
-			//已上传的图片地址
-			var imageImg = form.find("input[name='image']").val();
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='activityId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
+        });
 
-			if (name == '') {
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-				return;
-			}
-			var isOK = [];
-			if (image == '' && imageImg == '') {
-				isOK = checkImg([[image, "image"]]);
-				if (typeof isOK == 'boolean') {
-					return;
-				}
-			}
+        $(".btn.btn-info.add").click(function () {
+            var form = $("#saveForm");
+            //form.find("input").val("");
+            form.find("img").attr("src", "");
+            form.find("img").hide();
+            form.find("input[type='file']").show();
+            $(".imageShow").remove();
+            jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+            //window.location.href = '/merchant_add.html';
+        });
 
-			//获取token
-			$.get("/qiniu/token",{},function(token){
-				if(token !=''){
-					async.series({
-						one: function (callback) {
-							if (typeof isOK == 'object') {
-								callback();
-							} else {
-								callback("ERROR");
-							}
-						},
-						two: function(callback){
-							//上传详情图
-							async.eachSeries(Object.keys(isOK), function (item, cb) {
-								var f = isOK[item];
-								upload(item, token, f, function () {
-									//
-								}, function (err) {
-									console.log("上传imageFile异常:" + err);
-									cb(err);
-								}, function (res) {
-									//上传成功
-									if (res != '') {
-										var url = qiniuUrl + "/" + res.key;
-										form.find("input[name='" + res.param + "']").val(url);
-									}
-									cb();
-								});
-							}, function () {
-								callback();
-							});
-						},
-						three: function(callback){
-							//提交保存
-							$.post("/goodsType_save",$("#saveForm").serialize(),function(data){
-								if(data){
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									jQuery('#modal-6').modal('hide');
-									toastr.success("操作已成功！", "温馨提示");
-									oTable.fnDraw();
-								}else{
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败", "温馨提示");
-								}
-								callback();
-							});
-						}
-					}, function(err, results) {
-						console.log("OK");
-					});
-				}else{
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					toastr.error("上传文件错误，请联系管理员", "温馨提示");
-				}
-			});
-		});
+        //保存
+        $(".btn.btn-success.save").click(function () {
+            var footer = $(this).parent(".modal-footer");
+            footer.find("button").hide();
+            footer.find(".bg-lg").show();
+            var form = $("#saveForm");
+            var name = form.find("input[name='name']").val();
+            //文件
+            var image = form.find("input[name='imageFile']").val();
+            //已上传的图片地址
+            var imageImg = form.find("input[name='image']").val();
 
-		$(".btn.btn-info.edit").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return;
-			}
+            if (name == '') {
+                toastr.error("请填写完整数据后提交", "温馨提示");
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                return;
+            }
+            var isOK = [];
+            if (image == '' && imageImg == '') {
+                isOK = checkImg([[image, "image"]]);
+                if (typeof isOK == 'boolean') {
+                    return;
+                }
+            }
 
-			$.post("/goodsType_get", {id: activityId.val()}, function (data) {
-				var form = $("#saveForm");
-				//商家
-				for (var i in data) {
-					var ele = form.find("input[name='" + i + "']");
-					switch (ele.attr("type")) {
-						case "radio":
-							ele.val([data[i]]);
-							break;
-						default:
-							if (data[i] != undefined && !isNaN(data[i]) && String(data[i]).length == 13) {
-								ele.val(formatTime(data[i]));
-								$("#" + i).val(formatTime(data[i]));
-							} else {
-								ele.val(data[i]);
-							}
-					}
-					form.find("img[name='" + i + "Img']").attr("src", data[i]);
-					form.find("img[name='" + i + "Img']").attr("width", 200);
-					form.find("img[name='" + i + "Img']").attr("length", 200);
-					form.find("img[name='" + i + "Img']").show();
-				}
-				form.find(".btn.image").show();
-				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-			});
-		});
+            //获取token
+            $.get("/qiniu/token", {}, function (token) {
+                if (token != '') {
+                    async.series({
+                        one: function (callback) {
+                            if (typeof isOK == 'object') {
+                                callback();
+                            } else {
+                                callback("ERROR");
+                            }
+                        },
+                        two: function (callback) {
+                            //上传详情图
+                            async.eachSeries(Object.keys(isOK), function (item, cb) {
+                                var f = isOK[item];
+                                upload(item, token, f, function () {
+                                    //
+                                }, function (err) {
+                                    console.log("上传imageFile异常:" + err);
+                                    cb(err);
+                                }, function (res) {
+                                    //上传成功
+                                    if (res != '') {
+                                        var url = qiniuUrl + "/" + res.key;
+                                        form.find("input[name='" + res.param + "']").val(url);
+                                    }
+                                    cb();
+                                });
+                            }, function () {
+                                callback();
+                            });
+                        },
+                        three: function (callback) {
+                            //提交保存
+                            $.post("/goodsType_save", $("#saveForm").serialize(), function (data) {
+                                if (data) {
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    jQuery('#modal-6').modal('hide');
+                                    toastr.success("操作已成功！", "温馨提示");
+                                    oTable.fnDraw();
+                                } else {
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    toastr.error("操作失败", "温馨提示");
+                                }
+                                callback();
+                            });
+                        }
+                    }, function (err, results) {
+                        console.log("OK");
+                    });
+                } else {
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                    toastr.error("上传文件错误，请联系管理员", "温馨提示");
+                }
+            });
+        });
 
-		$(".btn.btn-info.del").click(function(){
-			var activityId = $("input[name='activityId']:checked");
-			if(activityId.length < 1){
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return ;
-			}
+        $(".btn.btn-info.edit").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
 
-			var ids = [];
-			activityId.each(function(i,e){
-				ids.push(e.value);
-			});
+            $.post("/goodsType_get", {id: activityId.val()}, function (data) {
+                var form = $("#saveForm");
+                //商家
+                for (var i in data) {
+                    var ele = form.find("input[name='" + i + "']");
+                    switch (ele.attr("type")) {
+                        case "radio":
+                            ele.val([data[i]]);
+                            break;
+                        default:
+                            if (data[i] != undefined && !isNaN(data[i]) && String(data[i]).length == 13) {
+                                ele.val(formatTime(data[i]));
+                                $("#" + i).val(formatTime(data[i]));
+                            } else {
+                                ele.val(data[i]);
+                            }
+                    }
+                    form.find("img[name='" + i + "Img']").attr("src", data[i]);
+                    form.find("img[name='" + i + "Img']").attr("width", 200);
+                    form.find("img[name='" + i + "Img']").attr("length", 200);
+                    form.find("img[name='" + i + "Img']").show();
+                }
+                form.find(".btn.image").show();
+                jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+            });
+        });
 
-			$.post("/goodsType_del",{ids:ids},function(data){
-				if(data){
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			})
-		});
+        $(".btn.btn-info.del").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
 
-		$(".btn.btn-info.up").click(function(){
-			var activityId = $("input[name='activityId']:checked");
-			if(activityId.length < 1){
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return ;
-			}
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
 
-			var ids = [];
-			activityId.each(function(i,e){
-				ids.push(e.value);
-			});
+            $.post("/goodsType_del", {ids: ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            })
+        });
 
-			$.post("/banner_up",{ids:ids},function(data){
-				if(data){
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			})
-		});
+        $(".btn.btn-info.up").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
 
-		$(".btn.btn-info.down").click(function(){
-			var activityId = $("input[name='activityId']:checked");
-			if(activityId.length < 1){
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return ;
-			}
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
 
-			var ids = [];
-			activityId.each(function(i,e){
-				ids.push(e.value);
-			});
+            $.post("/banner_up", {ids: ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            })
+        });
 
-			$.post("/banner_down",{ids:ids},function(data){
-				if(data){
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			})
-		});
-	});
-	/*]]>*/
+        $(".btn.btn-info.down").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
+
+            $.post("/banner_down", {ids: ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            })
+        });
+    });
+    /*]]>*/
 </script>
 </body>
 
