@@ -891,7 +891,7 @@
 					form.find("input[name='price']").val(data.price);
 					form.find("input[name='shareTitle']").val(data.shareTitle);
 					form.find("input[name='shareDesc']").val(data.shareDesc);
-					form.find("input[name='video']").val(data.video);
+					form.find("input[name='type']").val([data.type]);
 					
 					var beginTimeStr = new Date(data.beginTime).Format('yyyy-MM-dd hh:mm:ss');
 					var endTimeStr = new Date(data.endTime).Format('yyyy-MM-dd hh:mm:ss');
@@ -900,7 +900,7 @@
 					form.find("input[name='endTime']").val(endTimeStr);
 					
 					form.find("input[name='showImage']").val(data.showImage);
-					form.find("input[name='image']").val(data.image);coverImage
+					form.find("input[name='image']").val(data.image);
 					form.find("input[name='banner']").val(data.banner);
 					form.find("input[name='coverImage']").val(data.coverImage);
 					form.find("input[name='shareImage']").val(data.shareImage);
@@ -914,37 +914,30 @@
 						form.find("img[name='showImageImage']").attr("src",data.showImage);
 						form.find("img[name='showImageImage']").show();
 						form.find(".btn.showImageFile").show();
-						
 					}
-					
 					if(''!=data.thumbnail){
 						form.find("input[name='thumbnailFile']").hide();
 						form.find("img[name='thumbnailImage']").attr("src",data.thumbnail);
 						form.find("img[name='thumbnailImage']").show();
 						form.find(".btn.thumbnailFile").show();
-						
 					}
-					
 					if(''!=data.image){
 						form.find("input[name='imageFile']").hide();
 						form.find("img[name='imageImage']").attr("src",data.image);
 						form.find("img[name='imageImage']").show();
 						form.find(".btn.image").show();
-						
 					}
 					if(''!=data.banner){
 						form.find("input[name='bannerFile']").hide();
 						form.find("img[name='bannerImage']").attr("src",data.banner);
 						form.find("img[name='bannerImage']").show();
 						form.find(".btn.banner").show();
-
 					}
 					if(''!=data.cover){
 						form.find("input[name='coverFile']").hide();
 						form.find("img[name='coverImage']").attr("src",data.coverImage);
 						form.find("img[name='coverImage']").show();
 						form.find(".btn.cover").show();
-
 					}
 					if(''!=data.shareImage){
 						form.find("input[name='shareImageFile']").hide();
@@ -972,15 +965,9 @@
 				    	if((channel & value) == value){
 				    		that.parents(".cbr-replaced").addClass("cbr-checked");
 				    	}
-				    	
 				    });
-					
-					
 					jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-					
 				});
-				
-				
 			});
 			
 			$(".btn.btn-info.modify").click(function(){
