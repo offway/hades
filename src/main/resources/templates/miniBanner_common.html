@@ -5,44 +5,40 @@
 	<title>小程序限定发售banner</title>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
+		.form-group img{
+			max-width:400px;
+			max-height:300px;
+		}
 	</style>
 </head>
-<body class="page-body">
-
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">小程序限定发售banner</h1>
-					<p class="activityDescription"></p>
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+	<header th:replace="navbar"></header>
+	<aside th:replace="sidebar-menu"></aside>
+	<!-- Content Wrapper. Contains page content -->
+	<div class="content-wrapper">
+		<!-- Content Header (Page header) -->
+		<div class="content-header d-none d-md-block">
+			<div class="d-flex align-items-center">
+				<div class="mr-auto">
+					<h3 class="page-title br-0">小程序限定发售banner</h3>
 				</div>
-
-				<div class="breadcrumb-env">
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>小程序限定发售banner</strong></li>
-					</ol>
+				<div class="right-title">
 				</div>
 			</div>
+		</div>
+
+		<!-- Main content -->
+		<section class="content">
 			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title"></h3>
-							<div class="panel-options">
-							</div>
+				<div class="col-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<form role="form" class="form-inline">
+							</form>
 						</div>
-						<div class="panel-body">
+						<div class="box-body">
 							<form role="form" id="saveForm" class="form-horizontal">
 								<div class="row">
 									<div class="col-md-12">
@@ -53,30 +49,45 @@
 											<img alt="" src='' name="imgImg" style="display:none;"/>
 										</div>
 									</div>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label class="control-label">活动名</label>
-                                            <input type="text" class="form-control" name="remark" />
-                                        </div>
-                                    </div>
+									<div class="col-md-12">
+										<div class="form-group">
+											<label class="control-label">活动名</label>
+											<input type="text" class="form-control" name="remark" />
+										</div>
+									</div>
 									<div class="col-md-12 redirectType">
 										<div class="form-group">
 											<label class="control-label">跳转方式</label>
-											<label><input name="redirectType" class="notMe" type="radio" value="0"/>跳转URL(带参) </label>
-											<label><input name="redirectType" class="notMe" type="radio" value="0"/>跳转URL(不带参) </label>
-											<label><input name="redirectType" class="notMe" type="radio" value="2"/>单品 </label>
-											<label><input name="redirectType" class="notMe" type="radio" value="1"/>品牌首页</label>
-											<label><input name="redirectType" class="notMe" type="radio" value="4"/>活动首页</label>
-											<label><input name="redirectType" class="notMe" type="radio" value="3"/>明星同款详情页 </label>
-											<label><input name="redirectType" class="notMe" type="radio" value="5"/>单篇资讯 </label>
-											<label><input name="redirectType" class="notMe" type="radio" value="6"/>免费抽 </label>
-											<label><input name="redirectType" class="notMe" type="radio" value="7"/>App内部H5 </label>
-											<label><input name="redirectType" class="notMe" type="radio" value="11"/>中国力量首页 </label>
-											<label><input name="redirectType" class="notMe" type="radio" value="12"/>高街时尚首页 </label>
-											<label><input name="redirectType" class="notMe" type="radio" value="13"/>买手店首页 </label>
-											<label><input name="redirectType" class="notMe" type="radio" value="14"/>买手店详情页 </label>
-											<label><input name="redirectType" class="notMe" type="radio" value="15"/>跳转限量商品 </label>
-											<label><input name="redirectType" class="notMe" type="radio" value="" checked='checked'/>不跳转</label>
+											<input name="redirectType" id="redirectType1" class="notMe" type="radio" value="0"/>
+											<label for="redirectType1">跳转URL(带参)</label>
+											<input name="redirectType" id="redirectType2" class="notMe" type="radio" value="0"/>
+											<label for="redirectType2">跳转URL(不带参)</label>
+											<input name="redirectType" id="redirectType3" class="notMe" type="radio" value="2"/>
+											<label for="redirectType3">单品</label>
+											<input name="redirectType" id="redirectType4" class="notMe" type="radio" value="1"/>
+											<label for="redirectType4">品牌首页</label>
+											<input name="redirectType" id="redirectType5" class="notMe" type="radio" value="4"/>
+											<label for="redirectType5">活动首页</label>
+											<input name="redirectType" id="redirectType6" class="notMe" type="radio" value="3"/>
+											<label for="redirectType6">明星同款详情页</label>
+											<input name="redirectType" id="redirectType7" class="notMe" type="radio" value="5"/>
+											<label for="redirectType7">单篇资讯</label>
+											<input name="redirectType" id="redirectType8" class="notMe" type="radio" value="6"/>
+											<label for="redirectType8">免费抽</label>
+											<input name="redirectType" id="redirectType9" class="notMe" type="radio" value="7"/>
+											<label for="redirectType9">App内部H5</label>
+											<input name="redirectType" id="redirectType10" class="notMe" type="radio" value="11"/>
+											<label for="redirectType10">中国力量首页</label>
+											<input name="redirectType" id="redirectType11" class="notMe" type="radio" value="12"/>
+											<label for="redirectType11">高街时尚首页</label>
+											<input name="redirectType" id="redirectType12" class="notMe" type="radio" value="13"/>
+											<label for="redirectType12">买手店首页</label>
+											<input name="redirectType" id="redirectType13" class="notMe" type="radio" value="14"/>
+											<label for="redirectType13">买手店详情页</label>
+											<input name="redirectType" id="redirectType14" class="notMe" type="radio" value="15"/>
+											<label for="redirectType14">跳转限量商品</label>
+											<input name="redirectType" id="redirectType15" class="notMe" type="radio" value="" checked='checked'/>
+											<label for="redirectType15">不跳转</label>
 										</div>
 									</div>
 									<div class="col-md-12 redirectTarget">
@@ -92,19 +103,24 @@
 								</div>
 							</form>
 						</div>
+						<!-- /.box-body -->
+						<div class="box-footer">
+						</div>
+						<!-- /.box-footer-->
 					</div>
 				</div>
 			</div>
-			<footer th:replace="footer"></footer>
-		</div>
+		</section>
+		<!-- /.content -->
 	</div>
+	<!-- /.content-wrapper -->
+	<footer th:replace="footer"></footer>
+</div>
 
-	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/async.min.js"></script>
-	<script th:inline="javascript">
+<script src="js/common.js"></script>
+<script src="assets/js/async.min.js"></script>
+<script th:inline="javascript">
 	/*<![CDATA[*/
-
 	function uploadFile(self) {
 		var that = $(self);
 		if (self.files.length > 0) {
@@ -144,35 +160,34 @@
 		"b": "位置二(无跳转)",
 		"c": "位置三(无跳转)"
 	};
-    jQuery(document).ready(function($)
-	{
+	jQuery(document).ready(function ($) {
 		$("title").html($("title").html() + map[pos]);
 		$("h1.title").html($("h1.title").html() + map[pos]);
 		// $(".activityDescription").html(value);
 		// $(".active strong").html(value);
 		// $(".panel-title").html(value);
 
-        if (pos != "a") {
-            $("div.redirectType").hide();
-            $("div.redirectTarget").hide();
-        }
-        if (json != null && json != "") {
-            var form = $("#saveForm");
-            var obj = JSON.parse(json);
-            form.find("input[name='img']").val(obj["banner"]);
-            form.find("img[name='imgImg']").attr("src", obj["banner"]);
-            form.find("img[name='imgImg']").show();
-            form.find("input[name='redirectType']").val([obj["type"]]);
-            if (obj["type"] == "0") {
-                form.find("input[name='redirectTarget']").val(obj["url"]);
-            } else if (obj["type"] != "") {
-                form.find("input[name='redirectTarget']").val(obj["redirectId"]);
-            }
-            form.find("input[name='remark']").val([obj["remark"]]);
-        }
+		if (pos != "a") {
+			$("div.redirectType").hide();
+			$("div.redirectTarget").hide();
+		}
+		if (json != null && json != "") {
+			var form = $("#saveForm");
+			var obj = JSON.parse(json);
+			form.find("input[name='img']").val(obj["banner"]);
+			form.find("img[name='imgImg']").attr("src", obj["banner"]);
+			form.find("img[name='imgImg']").show();
+			form.find("input[name='redirectType']").val([obj["type"]]);
+			if (obj["type"] == "0") {
+				form.find("input[name='redirectTarget']").val(obj["url"]);
+			} else if (obj["type"] != "") {
+				form.find("input[name='redirectTarget']").val(obj["redirectId"]);
+			}
+			form.find("input[name='remark']").val([obj["remark"]]);
+		}
 
 		//保存
-		$(".btn.btn-info.save").click(function(){
+		$(".btn.btn-info.save").click(function () {
 			var footer = $(this).parent(".modal-footer");
 			footer.find("button").hide();
 			footer.find(".bg-lg").show();
@@ -211,12 +226,12 @@
 						callback();
 					});
 				}
-			}, function(err, results) {
+			}, function (err, results) {
 				console.log("OK");
 			});
 		});
 	});
 	/*]]>*/
-	</script>
+</script>
 </body>
 </html>
