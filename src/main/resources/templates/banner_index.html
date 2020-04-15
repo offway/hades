@@ -1,485 +1,489 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<head th:replace="head"></head>
-	<title>Banner管理</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
-	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
-	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
-	</style>
+    <head th:replace="head"></head>
+    <title>Banner管理</title>
+    <link rel="stylesheet" href="assets/js/select2/select2.css"/>
+    <link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+    <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+    <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
 </head>
-<body class="page-body">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">Banner管理</h1>
+                </div>
+                <div class="right-title">
+                </div>
+            </div>
+        </div>
 
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">Banner管理</h1>
-					<p class="activityDescription"></p>
-				</div>
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form role="form" class="form-inline">
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <input type="text" name="id" class="form-control" style="height:35px"
+                                                   placeholder="id"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group ">
+                                    <div class="input-group">
+                                        <div class="input-group">
+                                            <input type="text" name="remark" class="form-control" style="height:35px"
+                                                   placeholder="名称"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary btn-single searchBtn" style="height:35px">查询</button>
+                                </div>
 
-				<div class="breadcrumb-env">
-
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>Banner管理</strong></li>
-					</ol>
-
-				</div>
-
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group ">
-							<div class="input-group">
-								<div class="input-group">
-									<input type="text" name="id" class="form-control" style="height:35px" placeholder="id"/>
-								</div>
-							</div>
-						</div>
-						<div class="form-group ">
-							<div class="input-group">
-								<div class="input-group">
-									<input type="text" name="remark" class="form-control" style="height:35px" placeholder="名称"/>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-						
-					</form>
-					<div class="form-group">
-						<button class="btn btn-info ex" id="returnbanner" style="display: none; height:35px">返回</button>
-					</div>
-				</div>
-
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-				</div>
-				<button class="btn btn-info add" id="miniadd">添加</button>
-				<button class="btn btn-info edit" id="miniedit">修改</button>
-				<button class="btn btn-info del" id="minidel">删除</button>
-				<button class="btn btn-info same" id="same" style="display: none;">同步至小程序</button>
-				<button class="btn btn-info showMini" id="showMini">小程序管理</button>
-<!--                <button class="btn btn-info up">上架</button>-->
-<!--                <button class="btn btn-info down">下架</button>-->
-			</div>
+                            </form>
+                            <div class="form-group">
+                                <button class="btn btn-danger ex" id="returnbanner" style="display: none; height:35px">
+                                    返回
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <table id="example-1" class="table table-striped table-bordered" cellspacing="0"
+                                   width="100%">
+                            </table>
+                        </div>
+                        <div class="box-footer">
+                            <button class="btn btn-info add" id="miniadd">添加</button>
+                            <button class="btn btn-info edit" id="miniedit">修改</button>
+                            <button class="btn btn-info del" id="minidel">删除</button>
+                            <button class="btn btn-info same" id="same" style="display: none;">同步至小程序</button>
+                            <button class="btn btn-info showMini" id="showMini">小程序管理</button>
+                            <!--                <button class="btn btn-info up">上架</button>-->
+                            <!--                <button class="btn btn-info down">下架</button>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer th:replace="footer"></footer>
+</div>
 
 
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
+<div th:replace="body-under"></div>
 
-	<div th:replace="body-under"></div>
+<div class="modal fade in" id="modal-6">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 800px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">添加banner</h4>
+            </div>
 
-	<div class="modal fade in" id="modal-6">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加banner</h4>
-				</div>
-				
-				<div class="modal-body">
-					<form role="form" id="saveForm">
-					<input type="hidden" name="id"/>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">活动名称</label>
-								<input type="text" class="form-control" name="remark" placeholder="活动名称"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-6">
-							<div class="form-group">
-								<label class="control-label">开始时间</label>
-								<input type="text" class="form-control" name="beginTime" id="beginTime" placeholder="开始时间" />
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<label class="control-label">截止时间</label>
-								<input type="text" class="form-control" name="endTime" id="endTime" placeholder="截止时间" />
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group">
-								<label class="control-label">封面图片</label>
-								<input type="file" class="form-control" name="imageFile" placeholder="封面图片"/>
-								<input type="hidden" class="form-control" name="banner" />
-								<img alt="" src="" name="imageImage" style="display:none;"/>
-							</div>
-						</div>
-					</div>
+            <div class="modal-body">
+                <form role="form" id="saveForm">
+                    <input type="hidden" name="id"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">活动名称</label>
+                                <input type="text" class="form-control" name="remark" placeholder="活动名称"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">开始时间</label>
+                                <input type="text" class="form-control" name="beginTime" id="beginTime"
+                                       placeholder="开始时间"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">截止时间</label>
+                                <input type="text" class="form-control" name="endTime" id="endTime" placeholder="截止时间"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">封面图片</label>
+                                <input type="file" class="form-control" name="imageFile" placeholder="封面图片"/>
+                                <input type="hidden" class="form-control" name="banner"/>
+                                <img alt="" src="" name="imageImage" style="display:none;"/>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="control-label">排序</label>
-                                <input type="text" readonly="readonly" class="form-control" name="sort" value="0" placeholder="排序"/>
+                                <input type="text" readonly="readonly" class="form-control" name="sort" value="0"
+                                       placeholder="排序"/>
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
-								<label class="control-label">跳转方式</label>
-								<div id="radioGroup">
-								</div>
+                                <label class="control-label">跳转方式</label>
+                                <div id="radioGroup">
+                                </div>
                             </div>
                         </div>
                     </div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group url" style="display: none">
-								<label class="control-label">跳转链接</label>
-								<input type="text" class="form-control" name="url" placeholder="跳转链接"/>
-							</div>	
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-12">
-							<div class="form-group redirectId" style="display: none">
-								<label class="control-label">详情ID</label>
-								<input type="text" class="form-control" name="redirectId" placeholder="详情ID"/>
-							</div>
-						</div>
-					</div>
-					</form>
-				</div>
-				
-				<div class="modal-footer">
-					 <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info save">保存</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-				</div>
-				
-			</div>
-		</div>
-	</div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group url" style="display: none">
+                                <label class="control-label">跳转链接</label>
+                                <input type="text" class="form-control" name="url" placeholder="跳转链接"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group redirectId" style="display: none">
+                                <label class="control-label">详情ID</label>
+                                <input type="text" class="form-control" name="redirectId" placeholder="详情ID"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
 
-	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-success save">保存</button>
+                <button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+            </div>
 
-	var table_global;
+        </div>
+    </div>
+</div>
 
-	function topIt(id) {
-		var num = prompt("输入排序位置,从0开始,0为第一位", "0");
-		if (isNaN(num) || num == null) {
-			alert("请输入数字！");
-		} else {
-			$.post("/banner_top", {"id": id, "sort": num, "position": position}, function (data) {
-				if (data) {
-					table_global.fnDraw();
-					toastr.success("操作已成功！", "温馨提示");
-				} else {
-					toastr.error("操作失败", "温馨提示");
-				}
-			});
-		}
-	}
+<script src="js/common.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+<script src="assets/js/select2/select2.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
 
-	var qiniuUrl = [[${qiniuUrl}]];
-	var position = [[${position}]];
+    var table_global;
 
-	function upIt(id, self) {
-		$.post("/banner_up", {"id": id,"position":position}, function (data) {
-			if (data) {
-				$(self).val("下架");
-				//remove old handler
-				$(self).prop("onclick", null);
-				$(self).removeAttr("onclick");
-				$(self).off("click");
-				//bind new
-				$(self).on("click", function () {
-					downIt(id, self);
-				});
-				toastr.success("操作已成功！", "温馨提示");
-				table_global.fnDraw();
-			} else {
-				toastr.error("非管理员无权操作", "温馨提示");
-			}
-		});
-	}
+    function topIt(id) {
+        var num = prompt("输入排序位置,从0开始,0为第一位", "0");
+        if (isNaN(num) || num == null) {
+            alert("请输入数字！");
+        } else {
+            $.post("/banner_top", {"id": id, "sort": num, "position": position}, function (data) {
+                if (data) {
+                    table_global.fnDraw();
+                    toastr.success("操作已成功！", "温馨提示");
+                } else {
+                    toastr.error("操作失败", "温馨提示");
+                }
+            });
+        }
+    }
 
-	function downIt(id, self) {
-		$.post("/banner_down", {"id": id}, function (data) {
-			if (data) {
-				$(self).val("上架");
-				//remove old handler
-				$(self).prop("onclick", null);
-				$(self).removeAttr("onclick");
-				$(self).off("click");
-				//bind new
-				$(self).on("click", function () {
-					upIt(id, self);
-				});
-				toastr.success("操作已成功！", "温馨提示");
-				table_global.fnDraw();
-			} else {
-				toastr.error("非管理员无权操作", "温馨提示");
-			}
-		});
-	}
-	           
-	jQuery(document).ready(function($)
-	{
-		var titleEle = $("title");
-		var subTitleEle = $("h1.title");
-		var tips = $("h4.modal-title");
-		var radioGroup = $("#radioGroup");
-		switch (parseInt(position)) {
-				//展示位置[0-首页顶部,1-首页腹部,2-广告页,4-小程序首页顶部,5-小程序首页腹部]
-			case 0:
-				titleEle.html(titleEle.html() + "顶部");
-				subTitleEle.html(subTitleEle.html() + "顶部");
-				tips.html("编辑banner顶部");
-				radioGroup.html("" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(带参) </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(不带参) </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"2\"/>单品 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"1\"/>品牌首页</label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"4\"/>活动首页</label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"3\"/>明星同款详情页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"5\"/>单篇资讯 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"6\"/>免费抽 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"7\"/>App内部H5 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"11\"/>中国力量首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"12\"/>高街时尚首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"13\"/>买手店首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"14\"/>买手店详情页 </label>\n"+
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"15\"/>跳转限量商品 </label>\n"+
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"98\" checked='checked'/>不跳转 </label>\n"
-				);
-				$("#same").show();
-				break;
-			case 1:
-				titleEle.html(titleEle.html() + "底部");
-				subTitleEle.html(subTitleEle.html() + "底部");
-				tips.html("编辑banner底部");
-				radioGroup.html("" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(带参) </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(不带参) </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"2\"/>单品 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"1\"/>品牌首页</label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"4\"/>活动首页</label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"3\"/>明星同款详情页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"5\"/>单篇资讯 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"6\"/>免费抽 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"7\"/>App内部H5 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"11\"/>中国力量首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"12\"/>高街时尚首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"13\"/>买手店首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"14\"/>买手店详情页 </label>\n"+
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"15\"/>跳转限量商品 </label>\n"+
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"98\" checked='checked'/>不跳转 </label>\n"
-				);
-				break;
-			case 2:
-				titleEle.html("广告");
-				subTitleEle.html("广告");
-				tips.html("广告");
-				radioGroup.html("" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(带参) </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(不带参) </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"2\"/>单品 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"1\"/>品牌首页</label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"4\"/>活动首页</label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"3\"/>明星同款详情页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"5\"/>单篇资讯 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"6\"/>免费抽 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"7\"/>App内部H5 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"11\"/>中国力量首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"12\"/>高街时尚首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"13\"/>买手店首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"14\"/>买手店详情页 </label>\n"+
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"15\"/>跳转限量商品 </label>\n"+
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"98\" checked='checked'/>不跳转 </label>\n"
-				);
-				break;
-			case 3:
-				titleEle.html("资讯");
-				subTitleEle.html("资讯");
-				tips.html("资讯");
-				radioGroup.html("" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(带参) </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(不带参) </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"2\"/>单品 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"1\"/>品牌首页</label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"4\"/>活动首页</label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"3\"/>明星同款详情页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"5\"/>单篇资讯 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"6\"/>免费抽 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"7\"/>App内部H5 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"11\"/>中国力量首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"12\"/>高街时尚首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"13\"/>买手店首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"14\"/>买手店详情页 </label>\n"+
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"15\"/>跳转限量商品 </label>\n"+
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"98\" checked='checked'/>不跳转 </label>\n"
-				);
-				break;
-			case 4:
-				titleEle.html("小程序顶部");
-				subTitleEle.html("小程序顶部");
-				tips.html("小程序顶部");
-				radioGroup.html("" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(带参) </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/>跳转URL(不带参) </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"2\"/>单品 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"1\"/>品牌首页</label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"4\"/>活动首页</label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"3\"/>明星同款详情页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"5\"/>单篇资讯 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"6\"/>免费抽 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"7\"/>App内部H5 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"11\"/>中国力量首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"12\"/>高街时尚首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"13\"/>买手店首页 </label>\n" +
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"14\"/>买手店详情页 </label>\n"+
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"15\"/>跳转限量商品 </label>\n"+
-						"\t\t\t\t\t\t\t\t<label><input name=\"type\" class=\"notMe\" type=\"radio\" value=\"98\" checked='checked'/>不跳转 </label>\n"
-				);
-				$("#same").hide();
-				break;
-			default:
-				break;
-		}
+    var qiniuUrl = [[${qiniuUrl}]];
+    var position = [[${position}]];
 
-		if (position == "4"){
-			$("#same").hide();
-			$("#showMini").hide();
-			$("#returnbanner").show();
-		}
+    function upIt(id, self) {
+        $.post("/banner_up", {"id": id, "position": position}, function (data) {
+            if (data) {
+                $(self).val("下架");
+                //remove old handler
+                $(self).prop("onclick", null);
+                $(self).removeAttr("onclick");
+                $(self).off("click");
+                //bind new
+                $(self).on("click", function () {
+                    downIt(id, self);
+                });
+                toastr.success("操作已成功！", "温馨提示");
+                table_global.fnDraw();
+            } else {
+                toastr.error("非管理员无权操作", "温馨提示");
+            }
+        });
+    }
 
-		$(".searchBtn").click(function(){
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()
-			return false;
-		});
+    function downIt(id, self) {
+        $.post("/banner_down", {"id": id}, function (data) {
+            if (data) {
+                $(self).val("上架");
+                //remove old handler
+                $(self).prop("onclick", null);
+                $(self).removeAttr("onclick");
+                $(self).off("click");
+                //bind new
+                $(self).on("click", function () {
+                    upIt(id, self);
+                });
+                toastr.success("操作已成功！", "温馨提示");
+                table_global.fnDraw();
+            } else {
+                toastr.error("非管理员无权操作", "温馨提示");
+            }
+        });
+    }
 
-		$('[name="type"]').click(function () {
-			var value = $(this).val();  //获取选中的radio的值
-			toggle(value);
-		});
+    jQuery(document).ready(function ($) {
+        var titleEle = $("title");
+        var subTitleEle = $("h1.title");
+        var tips = $("h4.modal-title");
+        var radioGroup = $("#radioGroup");
+        switch (parseInt(position)) {
+            //展示位置[0-首页顶部,1-首页腹部,2-广告页,4-小程序首页顶部,5-小程序首页腹部]
+            case 0:
+                titleEle.html(titleEle.html() + "顶部");
+                subTitleEle.html(subTitleEle.html() + "顶部");
+                tips.html("编辑banner顶部");
+                radioGroup.html("" +
+                    "<div class=\"demo-radio-button\">"+
+                    "\t\t\t\t\t\t\t\t<input id=\"type0\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/><label for='type0'>跳转URL(带参) </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type1\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/><label for='type1'> 跳转URL(不带参) </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type2\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"2\"/><label for='type2'>单品 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type3\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"1\"/><label for='type3'>品牌首页</label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type4\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"4\"/><label for='type4'>活动首页</label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type5\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"3\"/><label for='type5'>明星同款详情页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type6\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"5\"/><label for='type6'>单篇资讯 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type7\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"6\"/><label for='type7'>免费抽 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type8\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"7\"/><label for='type8'>App内部H5 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type9\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"11\"/><label for='type9'>中国力量首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type10\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"12\"/><label for='type10'>高街时尚首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type11\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"13\"/><label for='type11'>买手店首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type12\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"14\"/><label for='type12'>买手店详情页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type13\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"15\"/><label for='type13'>跳转限量商品 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type14\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"98\" checked='checked'/><label for='type14'>不跳转 </label>\n"+
+                    "</div>"
+                );
+                $("#same").show();
+                break;
+            case 1:
+                titleEle.html(titleEle.html() + "底部");
+                subTitleEle.html(subTitleEle.html() + "底部");
+                tips.html("编辑banner底部");
+                radioGroup.html("" +
+                    "<div class=\"demo-radio-button\">"+
+                    "\t\t\t\t\t\t\t\t<input id=\"type0\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/><label for='type0'>跳转URL(带参) </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type1\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/><label for='type1'> 跳转URL(不带参) </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type2\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"2\"/><label for='type2'>单品 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type3\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"1\"/><label for='type3'>品牌首页</label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type4\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"4\"/><label for='type4'>活动首页</label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type5\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"3\"/><label for='type5'>明星同款详情页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type6\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"5\"/><label for='type6'>单篇资讯 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type7\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"6\"/><label for='type7'>免费抽 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type8\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"7\"/><label for='type8'>App内部H5 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type9\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"11\"/><label for='type9'>中国力量首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type10\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"12\"/><label for='type10'>高街时尚首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type11\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"13\"/><label for='type11'>买手店首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type12\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"14\"/><label for='type12'>买手店详情页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type13\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"15\"/><label for='type13'>跳转限量商品 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type14\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"98\" checked='checked'/><label for='type14'>不跳转 </label>\n"+
+                    "</div>"
+                );
+                break;
+            case 2:
+                titleEle.html("广告");
+                subTitleEle.html("广告");
+                tips.html("广告");
+                radioGroup.html("" +
+                    "<div class=\"demo-radio-button\">"+
+                    "\t\t\t\t\t\t\t\t<input id=\"type0\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/><label for='type0'>跳转URL(带参) </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type1\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/><label for='type1'> 跳转URL(不带参) </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type2\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"2\"/><label for='type2'>单品 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type3\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"1\"/><label for='type3'>品牌首页</label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type4\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"4\"/><label for='type4'>活动首页</label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type5\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"3\"/><label for='type5'>明星同款详情页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type6\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"5\"/><label for='type6'>单篇资讯 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type7\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"6\"/><label for='type7'>免费抽 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type8\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"7\"/><label for='type8'>App内部H5 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type9\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"11\"/><label for='type9'>中国力量首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type10\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"12\"/><label for='type10'>高街时尚首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type11\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"13\"/><label for='type11'>买手店首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type12\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"14\"/><label for='type12'>买手店详情页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type13\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"15\"/><label for='type13'>跳转限量商品 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type14\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"98\" checked='checked'/><label for='type14'>不跳转 </label>\n"+
+                    "</div>"
+                );
+                break;
+            case 3:
+                titleEle.html("资讯");
+                subTitleEle.html("资讯");
+                tips.html("资讯");
+                radioGroup.html("" +
+                    "<div class=\"demo-radio-button\">"+
+                    "\t\t\t\t\t\t\t\t<input id=\"type0\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/><label for='type0'>跳转URL(带参) </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type1\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/><label for='type1'> 跳转URL(不带参) </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type2\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"2\"/><label for='type2'>单品 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type3\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"1\"/><label for='type3'>品牌首页</label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type4\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"4\"/><label for='type4'>活动首页</label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type5\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"3\"/><label for='type5'>明星同款详情页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type6\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"5\"/><label for='type6'>单篇资讯 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type7\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"6\"/><label for='type7'>免费抽 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type8\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"7\"/><label for='type8'>App内部H5 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type9\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"11\"/><label for='type9'>中国力量首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type10\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"12\"/><label for='type10'>高街时尚首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type11\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"13\"/><label for='type11'>买手店首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type12\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"14\"/><label for='type12'>买手店详情页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type13\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"15\"/><label for='type13'>跳转限量商品 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type14\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"98\" checked='checked'/><label for='type14'>不跳转 </label>\n"+
+                    "</div>"
+                );
+                break;
+            case 4:
+                titleEle.html("小程序顶部");
+                subTitleEle.html("小程序顶部");
+                tips.html("小程序顶部");
+                radioGroup.html("" +
+                    "<div class=\"demo-radio-button\">"+
+                    "\t\t\t\t\t\t\t\t<input id=\"type0\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/><label for='type0'>跳转URL(带参) </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type1\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"0\"/><label for='type1'> 跳转URL(不带参) </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type2\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"2\"/><label for='type2'>单品 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type3\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"1\"/><label for='type3'>品牌首页</label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type4\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"4\"/><label for='type4'>活动首页</label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type5\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"3\"/><label for='type5'>明星同款详情页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type6\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"5\"/><label for='type6'>单篇资讯 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type7\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"6\"/><label for='type7'>免费抽 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type8\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"7\"/><label for='type8'>App内部H5 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type9\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"11\"/><label for='type9'>中国力量首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type10\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"12\"/><label for='type10'>高街时尚首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type11\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"13\"/><label for='type11'>买手店首页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type12\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"14\"/><label for='type12'>买手店详情页 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type13\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"15\"/><label for='type13'>跳转限量商品 </label>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"type14\" name=\"type\" class=\"notMe\" type=\"radio\" value=\"98\" checked='checked'/><label for='type14'>不跳转 </label>\n"+
+                    "</div>"
+                );
+                $("#same").hide();
+                break;
+            default:
+                break;
+        }
 
-		var oTable = $("#example-1").dataTable({
-			language: {
+        if (position == "4") {
+            $("#same").hide();
+            $("#showMini").hide();
+            $("#returnbanner").show();
+        }
+
+        $('[name="type"]').click(function () {
+            var value = $(this).val();  //获取选中的radio的值
+            toggle(value);
+        });
+
+        var oTable = $("#example-1").dataTable({
+            language: {
                 url: "../assets/Chinese.txt"
             },
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
-			bFilter : false,
-			bServerSide : true,//服务器处理分页，默认是false，需要服务器处理，必须true
-            sAjaxDataProp : "aData",//是服务器分页的标志，必须有   
-            sAjaxSource : "/banner_list",//通过ajax实现分页的url路径。
-            fnServerParams : function(aData){
+            aLengthactivity: [
+                [10, 25, 50, 100], [10, 25, 50, 100]
+            ],
+            bFilter: false,
+            bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+            sAjaxSource: "/banner_list",//通过ajax实现分页的url路径。
+            fnServerParams: function (aData) {
                 var searchArray = $(".form-inline").serializeArray();
                 $.merge(aData, searchArray);
-				aData.push({"name": "position", "value": position});//append position
-			},
-            order: [[ 6, "desc" ]],
+                aData.push({"name": "position", "value": position});//append position
+            },
+            order: [[6, "desc"]],
             columnDefs: [
-				{	
-					targets: 0,
-				    data: "id",
-				    width:"5%",
-				    orderable: false,
-				    className: 'select-checkbox',
-				    title: '<input type="checkbox" id="checkbox-all"/>',
-				    render: function ( data, type, full, meta ) {
-				    	return '<input type="checkbox" name="activityId" value="'+data+'" />';  
-				    }
-				},
+                {
+                    targets: 0,
+                    data: "id",
+                    width: "5%",
+                    orderable: false,
+                    title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
+                    render: function (data, type, full, meta) {
+						var uuid = UUID.randomUUID();
+						return '<div class="checkbox"><input type="checkbox" name="activityId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
+                    }
+                },
                 {
                     targets: 1,
                     data: "id",
                     title: "序号"
                 },
                 {
-               		targets: 2,
-	                data: "banner",
-	                title: "封面图片",
+                    targets: 2,
+                    data: "banner",
+                    title: "封面图片",
                     render: function (data, type, row, meta) {
-                    	return "<img src="+data+"></img>";
+                        return "<img style='width: 48px; height: 48px' src=" + data + "></img>";
                     }
-            	},
-				{
-					targets: 3,
-					data: "type",
-					title: "类型",
-					render: function (data, type, row, meta) {
-						/** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款] **/
-						var map = ["跳转URL", "品牌", "商品", "明星同款", "OFFWAY优选", "资讯", "抽奖", "纯h5", "待支付", "待收货", "退货", "中国力量首页", "高街时尚首页", "买手店首页", "买手店详情页"];
-						return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "无";
-					}
-				},
-				{
-					targets: 4,
-					data: "redirectId",
-					title: "跳转对应ID"
-				},
-				{
-					targets: 5,
-					data: "url",
-					title: "跳转链接"
-				},
-            	{
-               		targets: 6,
-	                data: "beginTime",
-	                title: "开始时间",
+                },
+                {
+                    targets: 3,
+                    data: "type",
+                    title: "类型",
                     render: function (data, type, row, meta) {
-                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                        /** 类别[0-跳转URL,1-品牌,2-商品,3-明星同款] **/
+                        var map = ["跳转URL", "品牌", "商品", "明星同款", "OFFWAY优选", "资讯", "抽奖", "纯h5", "待支付", "待收货", "退货", "中国力量首页", "高街时尚首页", "买手店首页", "买手店详情页"];
+                        return map.hasOwnProperty(parseInt(data)) ? map[parseInt(data)] : "无";
                     }
-            	},
-            	{
-               		targets: 7,
-	                data: "endTime",
-	                title: "截止时间",
+                },
+                {
+                    targets: 4,
+                    data: "redirectId",
+                    title: "跳转对应ID"
+                },
+                {
+                    targets: 5,
+                    data: "url",
+                    title: "跳转链接"
+                },
+                {
+                    targets: 6,
+                    data: "beginTime",
+                    title: "开始时间",
                     render: function (data, type, row, meta) {
                         return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
                     }
-            	},
-				{
-					targets: 8,
-					data: "status",
-					title: "是否上架",
-					render: function (data, type, row, meta) {
-						return "1" == data && new Date(row["endTime"]).getTime() > new Date().getTime() ?  "已上架": "<font color='blue'>未上架</font>" ;
-					}
-				},
-				{
-					targets: 9,
-					data: "sort",
-					title: "排序",
-					render: function (data, type, row, meta) {
-						return "1" == row["status"] ? data : "";
-					}
-				},
+                },
+                {
+                    targets: 7,
+                    data: "endTime",
+                    title: "截止时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                },
+                {
+                    targets: 8,
+                    data: "status",
+                    title: "是否上架",
+                    render: function (data, type, row, meta) {
+                        return "1" == data && new Date(row["endTime"]).getTime() > new Date().getTime() ? "已上架" : "<font color='blue'>未上架</font>";
+                    }
+                },
+                {
+                    targets: 9,
+                    data: "sort",
+                    title: "排序",
+                    render: function (data, type, row, meta) {
+                        return "1" == row["status"] ? data : "";
+                    }
+                },
                 {
                     targets: 10,
                     data: "createTime",
@@ -488,292 +492,304 @@
                         return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
                     }
                 },
-				{
-					targets: 11,
-					data: "remark",
-					title: "备注"
-				},
-				{
-					targets: 12,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render:function (data, type, full, meta) {
-						var str = "";
-						if (full["status"] == "0") {
-							str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
-						} else {
-							str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
-						}
-						return str;
-					}
-				},
-				{
-					targets: 13,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						if (parseInt(full["status"]) == 1) {
-							return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="排序"/>';
-						} else {
-							// return '<input type="button" name="checkIt" disabled="disabled" value="下架无法排序"/>';
-							return '';
-						}
-					}
-				}
-               ]
+                {
+                    targets: 11,
+                    data: "remark",
+                    title: "备注"
+                },
+                {
+                    targets: 12,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        var str = "";
+                        if (full["status"] == "0") {
+                            str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+                        } else {
+                            str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+                        }
+                        return str;
+                    }
+                },
+                {
+                    targets: 13,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        if (parseInt(full["status"]) == 1) {
+                            return '<input type="button" name="checkIt" onclick="topIt(' + data + ')" value="排序"/>';
+                        } else {
+                            // return '<input type="button" name="checkIt" disabled="disabled" value="下架无法排序"/>';
+                            return '';
+                        }
+                    }
+                }
+            ]
+        });
+
+		$(".searchBtn").click(function () {
+			$("#checkbox-all").attr("checked", false);
+			oTable.fnDraw(); //or fnReloadAjax()
+			return false;
 		});
 
-		table_global = oTable;
+		$('#example-1').on('click', "#checkbox-all", function () {
+			var obj = $(this);
+			$("input[name='activityId']").each(function (i, e) {
+				this.checked = obj[0].checked;
+			});
+		});
 
-		jQuery.datetimepicker.setLocale('zh');
-		jQuery('#beginTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
-		jQuery('#endTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
+        table_global = oTable;
+
+        jQuery.datetimepicker.setLocale('zh');
+        jQuery('#beginTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
+        jQuery('#endTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
 
 
+        function toggle(value) {
+            var url = $(".url");
+            var redirectId = $(".redirectId");
+            switch (parseInt(value)) {
+                case 0:
+                    url.show();
+                    redirectId.hide();
+                    break;
+                default:
+                    url.hide();
+                    redirectId.show();
+                    break;
+            }
+        }
 
-		function toggle(value) {
-			var url = $(".url");
-			var redirectId = $(".redirectId");
-			switch (parseInt(value)) {
-				case 0:
-					url.show();
-					redirectId.hide();
-					break;
-				default:
-					url.hide();
-					redirectId.show();
-					break;
-			}
-		}
-
-		$(".btn.btn-info.add").click(function () {
-			var form = $("#saveForm");
-			form.find("input:not(.notMe)").val("");
-			form.find("img").attr("src", "");
-			form.find("img").hide();
-			form.find("input[type='file']").show();
-			$(".imageShow").remove();
+        $(".btn.btn-info.add").click(function () {
+            var form = $("#saveForm");
+            form.find("input:not(.notMe)").val("");
+            form.find("img").attr("src", "");
+            form.find("img").hide();
+            form.find("input[type='file']").show();
+            $(".imageShow").remove();
             jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
-		});
+        });
 
-		$(".btn.btn-info.save").click(function(){
-			var footer = $(this).parent(".modal-footer");
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var form = $("#saveForm");
-			var url = form.find("input[name='url']").val();
-			var goodsId = form.find("input[name='goodsId']").val();
-			var brandId = form.find("input[name='brandId']").val();
-			var starSameId = form.find("input[name='starSameId']").val();
-			var pickId = form.find("input[name='pickId']").val();
-			var type = form.find("input[name='type']:checked").val();
-			var beginTime = form.find("input[name='beginTime']").val();
-			var endTime = form.find("input[name='endTime']").val();
-			//文件
-			var imageVal = form.find("input[name='imageFile']")[0].value;
-			//已上传的图片地址
-			var imageVals = form.find("input[name='banner']").val();
+        $(".btn.btn-success.save").click(function () {
+            var footer = $(this).parent(".modal-footer");
+            footer.find("button").hide();
+            footer.find(".bg-lg").show();
+            var form = $("#saveForm");
+            var url = form.find("input[name='url']").val();
+            var goodsId = form.find("input[name='goodsId']").val();
+            var brandId = form.find("input[name='brandId']").val();
+            var starSameId = form.find("input[name='starSameId']").val();
+            var pickId = form.find("input[name='pickId']").val();
+            var type = form.find("input[name='type']:checked").val();
+            var beginTime = form.find("input[name='beginTime']").val();
+            var endTime = form.find("input[name='endTime']").val();
+            //文件
+            var imageVal = form.find("input[name='imageFile']")[0].value;
+            //已上传的图片地址
+            var imageVals = form.find("input[name='banner']").val();
 
-			if (beginTime == '' || endTime == '' || (imageVal == '' && imageVals == '') || (url == '' && goodsId == '' && brandId == '' && starSameId == '' && pickId == '')) {
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-				return;
-			}
+            if (beginTime == '' || endTime == '' || (imageVal == '' && imageVals == '') || (url == '' && goodsId == '' && brandId == '' && starSameId == '' && pickId == '')) {
+                toastr.error("请填写完整数据后提交", "温馨提示");
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                return;
+            }
 
-			var imageFile = '';
-			//上传文件获得文件地址
-			if (imageVal != '') {
-				imageFile = form.find("input[name='imageFile']")[0].files[0];
-			}
+            var imageFile = '';
+            //上传文件获得文件地址
+            if (imageVal != '') {
+                imageFile = form.find("input[name='imageFile']")[0].files[0];
+            }
 
-			//获取token
-			$.get("/qiniu/token", {}, function (token) {
-				if (token != '') {
-					upload("banner", token, imageFile, function (res) {
-					}, function (err) {
-						console.log("上传imageFile异常:" + err);
-					}, function (res) {
-						//上传成功
-						if (res != '') {
-							form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
-						}
-						//提交保存
-						var postData = $("#saveForm").serializeArray();
-						// 类别[0-跳转URL,1-品牌,2-商品,3-明星同款,4-OFFWAY优选]
-						if (type == 1) {
-							postData.push({"name": "redirectId", "value": brandId});//append pid
-						} else if (type == 2) {
-							postData.push({"name": "redirectId", "value": goodsId});//append pid
-						} else if (type == 3) {
-							postData.push({"name": "redirectId", "value": starSameId});//append pid
-						} else if (type == 4) {
-							postData.push({"name": "redirectId", "value": pickId});//append pid
-						}
-						postData.push({"name": "position", "value": position});//append position
-						$.post("/banner_save", postData, function (data) {
-							if (data) {
-								footer.find("button").show();
-								footer.find(".bg-lg").hide();
-								jQuery('#modal-6').modal('hide');
-								toastr.success("操作已成功！", "温馨提示");
-								oTable.fnDraw();
-							} else {
-								footer.find("button").show();
-								footer.find(".bg-lg").hide();
-								toastr.error("操作失败", "温馨提示");
-							}
-						});
-					});
-				} else {
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					toastr.error("上传文件错误，请联系管理员", "温馨提示");
-				}
-			});
-		});
+            //获取token
+            $.get("/qiniu/token", {}, function (token) {
+                if (token != '') {
+                    upload("banner", token, imageFile, function (res) {
+                    }, function (err) {
+                        console.log("上传imageFile异常:" + err);
+                    }, function (res) {
+                        //上传成功
+                        if (res != '') {
+                            form.find("input[name='" + res.param + "']").val(qiniuUrl + "/" + res.key);
+                        }
+                        //提交保存
+                        var postData = $("#saveForm").serializeArray();
+                        // 类别[0-跳转URL,1-品牌,2-商品,3-明星同款,4-OFFWAY优选]
+                        if (type == 1) {
+                            postData.push({"name": "redirectId", "value": brandId});//append pid
+                        } else if (type == 2) {
+                            postData.push({"name": "redirectId", "value": goodsId});//append pid
+                        } else if (type == 3) {
+                            postData.push({"name": "redirectId", "value": starSameId});//append pid
+                        } else if (type == 4) {
+                            postData.push({"name": "redirectId", "value": pickId});//append pid
+                        }
+                        postData.push({"name": "position", "value": position});//append position
+                        $.post("/banner_save", postData, function (data) {
+                            if (data) {
+                                footer.find("button").show();
+                                footer.find(".bg-lg").hide();
+                                jQuery('#modal-6').modal('hide');
+                                toastr.success("操作已成功！", "温馨提示");
+                                oTable.fnDraw();
+                            } else {
+                                footer.find("button").show();
+                                footer.find(".bg-lg").hide();
+                                toastr.error("操作失败", "温馨提示");
+                            }
+                        });
+                    });
+                } else {
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                    toastr.error("上传文件错误，请联系管理员", "温馨提示");
+                }
+            });
+        });
 
-		$(".btn.btn-info.edit").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return;
-			}
+        $(".btn.btn-info.edit").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
 
-			$.post("/banner_get", {"id": activityId.val()}, function (data) {
-				var form = $("#saveForm");
-				form.find("input[name='id']").val(data.id);
-				toggle(data.type);
-				form.find("input[name='redirectId']").val(data.redirectId);
-				form.find("input[name='url']").val(data.url);
-				form.find("input[name='status']").val(data.status);
-				form.find("input[name='sort']").val(data.sort);
-				form.find("input[name='remark']").val(data.remark);
-				form.find("input[name='type']").val([data.type]);
+            $.post("/banner_get", {"id": activityId.val()}, function (data) {
+                var form = $("#saveForm");
+                form.find("input[name='id']").val(data.id);
+                toggle(data.type);
+                form.find("input[name='redirectId']").val(data.redirectId);
+                form.find("input[name='url']").val(data.url);
+                form.find("input[name='status']").val(data.status);
+                form.find("input[name='sort']").val(data.sort);
+                form.find("input[name='remark']").val(data.remark);
+                form.find("input[name='type']").val([data.type]);
 
-				var beginTimeStr = new Date(data["beginTime"]).Format('yyyy-MM-dd hh:mm:ss');
-				var endTimeStr = new Date(data["endTime"]).Format('yyyy-MM-dd hh:mm:ss');
-				form.find("input[name='beginTime']").val(beginTimeStr);
-				form.find("input[name='endTime']").val(endTimeStr);
+                var beginTimeStr = new Date(data["beginTime"]).Format('yyyy-MM-dd hh:mm:ss');
+                var endTimeStr = new Date(data["endTime"]).Format('yyyy-MM-dd hh:mm:ss');
+                form.find("input[name='beginTime']").val(beginTimeStr);
+                form.find("input[name='endTime']").val(endTimeStr);
 
-				if ('' != data.image) {
-					form.find("input[name='banner']").val(data.banner);
-					form.find("img[name='imageImage']").attr("src", data.banner);
-					form.find("img[name='imageImage']").show();
-					form.find(".btn.image").show();
-				}
+                if ('' != data.image) {
+                    form.find("input[name='banner']").val(data.banner);
+                    form.find("img[name='imageImage']").attr("src", data.banner);
+                    form.find("img[name='imageImage']").show();
+                    form.find(".btn.image").show();
+                }
                 jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
-			});
-		});
+            });
+        });
 
-		$(".btn.btn-info.del").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
+        $(".btn.btn-info.del").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
 
-			var ids = [];
-			activityId.each(function (i, e) {
-				ids.push(e.value);
-			});
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
 
-			$.post("/banner_del", {"ids": ids}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			});
-		});
+            $.post("/banner_del", {"ids": ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            });
+        });
 
-		$(".btn.btn-info.up").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
+        $(".btn.btn-info.up").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
 
-			var ids = [];
-			activityId.each(function (i, e) {
-				ids.push(e.value);
-			});
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
 
-			$.post("/banner_up", {"ids": ids, "position": position}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			});
-		});
+            $.post("/banner_up", {"ids": ids, "position": position}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            });
+        });
 
-		$(".btn.btn-info.down").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
+        $(".btn.btn-info.down").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
 
-			var ids = [];
-			activityId.each(function (i, e) {
-				ids.push(e.value);
-			});
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
 
-			$.post("/banner_down", {"ids": ids}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			});
-		});
+            $.post("/banner_down", {"ids": ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            });
+        });
 
-		$(".btn.btn-info.same").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			// if (activityId.length < 1) {
-			// 	toastr.error("请至少选择一条数据操作", "温馨提示");
-			// 	return;
-			// }
+        $(".btn.btn-info.same").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            // if (activityId.length < 1) {
+            // 	toastr.error("请至少选择一条数据操作", "温馨提示");
+            // 	return;
+            // }
 
-			var ids = [];
-			activityId.each(function (i, e) {
-				ids.push(e.value);
-			});
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
 
-			$.post("/banner_same", {"ids": ids}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			});
-		});
-		$(".btn.btn-info.showMini").click(function () {
-			window.location.href = '/banner_wx.html';
-		});
-		$(".btn.btn-info.ex").click(function () {
-			window.location.href = '/banner.html';
-		});
-	});
-	/*]]>*/
-	</script>
+            $.post("/banner_same", {"ids": ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            });
+        });
+        $(".btn.btn-info.showMini").click(function () {
+            window.location.href = '/banner_wx.html';
+        });
+        $(".btn.btn-danger.ex").click(function () {
+            window.location.href = '/banner.html';
+        });
+    });
+    /*]]>*/
+</script>
 </body>
 
 </html>

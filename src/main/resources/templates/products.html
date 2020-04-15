@@ -252,9 +252,9 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label class="control-label">开奖方式</label>
-                                <label><input checked="checked" class="notMe" name="type" type="radio"
-                                              value="0"/>默认</label>
-                                <label><input class="notMe" name="type" type="radio" value="1"/>直播间开奖(小程序专用)</label>
+                                <input id="radio0" checked="checked" class="notMe" name="type" type="radio"
+                                              value="0"/><label for="radio0">默认</label>
+                                <input id="radio1" class="notMe" name="type" type="radio" value="1"/><label for="radio1">直播间开奖(小程序专用)</label>
                             </div>
                         </div>
                     </div>
@@ -264,24 +264,24 @@
                                 <label class="control-label">发布渠道</label>
                                 <input name="channel" type='hidden'/>
                                 <div class="form-block">
-                                    <label>
-                                        <input class="cbr" name="channelCheckBox" type="checkbox" value="1"/>
-                                        H5
+                                        <input id="cbr0" class="cbr" name="channelCheckBox" type="checkbox" value="1"/>
+                                    <label for="cbr0">   H5
                                     </label>
                                     <br/>
-                                    <label>
-                                        <input class="cbr" name="channelCheckBox" type="checkbox" value="2"/>
-                                        小程序
+
+                                        <input id="cbr1" class="cbr" name="channelCheckBox" type="checkbox" value="2"/>
+                                    <label for="cbr1">小程序
+
                                     </label>
                                     <br/>
-                                    <label>
-                                        <input class="cbr" name="channelCheckBox" type="checkbox" value="4"/>
-                                        APP
+
+                                        <input id="cbr2" class="cbr" name="channelCheckBox" type="checkbox" value="4"/>
+                                    <label for="cbr2">APP
                                     </label>
                                     <br/>
-                                    <label>
-                                        <input class="cbr" name="channelCheckBox" type="checkbox" value="8"/>
-                                        其他活动
+
+                                        <input id="cbr3" class="cbr" name="channelCheckBox" type="checkbox" value="8"/>
+                                    <label for="cbr3"> 其他活动
                                     </label>
                                 </div>
                             </div>
