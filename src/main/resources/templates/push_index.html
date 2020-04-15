@@ -3,474 +3,279 @@
 <head>
 	<head th:replace="head"></head>
 	<title>推送管理</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
 	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
+		.form-group img{
+			max-width:400px;
+			max-height:300px;
+		}
 	</style>
 </head>
-<body class="page-body">
-
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">推送管理</h1>
-					<p class="activityDescription"></p>
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+	<header th:replace="navbar"></header>
+	<aside th:replace="sidebar-menu"></aside>
+	<!-- Content Wrapper. Contains page content -->
+	<div class="content-wrapper">
+		<!-- Content Header (Page header) -->
+		<div class="content-header d-none d-md-block">
+			<div class="d-flex align-items-center">
+				<div class="mr-auto">
+					<h3 class="page-title br-0">推送管理</h3>
 				</div>
-
-				<div class="breadcrumb-env">
-
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>推送管理</strong></li>
-					</ol>
-
-				</div>
-
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group ">
-							<div class="input-group">
-								<input type="text" name="name" class="form-control" style="height:35px" placeholder="推送标题"/>
-							</div>
-							<div class="input-group">
-								<input type="text" name="content" class="form-control" style="height:35px" placeholder="推送内容"/>
-							</div>
-							<div class="input-group">
-								<select name="type" class="form-control" style="height:35px" placeholder="推送类别">
-									<option value="">全部</option>
-									<option value="0">跳转URL(带参)</option>
-									<option value="0">跳转URL(不带参)</option>
-									<option value="2">单品</option>
-									<option value="1">品牌首页</option>
-									<option value="4">活动首页</option>
-									<option value="3">明星同款详情页</option>
-									<option value="5">单篇资讯</option>
-									<option value="6">免费抽</option>
-									<option value="7">App内部H5</option>
-									<option value="11">中国力量首页</option>
-									<option value="12">高街时尚首页</option>
-									<option value="13">买手店首页</option>
-									<option value="14">买手店详情页</option>
-									<option value="15">跳转限量商品</option>
-									<option value="98">不跳转</option>
-								</select>
-							</div>
-							<div class="input-group">
-								<input id="beginTime" type="text" name="sTime" class="form-control" style="height:35px" placeholder="开始时间"/>
-							</div>
-							<div class="input-group">
-								<input id="endTime" type="text" name="eTime" class="form-control" style="height:35px" placeholder="结束时间"/>
-							</div>
-						</div>
-						<div class="form-group">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-				</div>
-				<button class="btn btn-info add">添加</button>
-				<button class="btn btn-info edit">修改</button>
-				<button class="btn btn-info del">删除</button>
-			</div>
-			
-					
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
-	
-	<div th:replace="body-under"></div>
-	
-	<div class="modal fade in" id="modal-6">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加推送</h4>
-				</div>
-				
-				<div class="modal-body">
-					<form role="form" id="saveForm" enctype="multipart/form-data">
-						<input type="hidden" name="id"/>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">推送标题</label>
-									<input type="text" class="form-control" name="name" placeholder="推送标题"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">推送内容</label>
-									<input type="text" class="form-control" name="content" placeholder="推送内容"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">是否及时推送</label>
-									<label><input name="pushNow" class="notMe" type="radio" checked="checked" value="0"/>否 </label>
-									<label><input name="pushNow" class="notMe" type="radio" value="1"/>是 </label>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">推送时间</label>
-									<input type="text" class="form-control" name="pushTime" id="pushTime" placeholder="推送时间"/>
-								</div>
-							</div>
-						</div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label">推送用户</label>
-                                    <label><input name="pushAll" class="notMe" type="radio" checked="checked" value="0"/>全部用户 </label>
-                                    <label><input name="pushAll" class="notMe" type="radio" value="1"/>指定用户 </label>
-									<label><input name="pushAll" class="notMe" type="radio" value="2"/>来自Excel </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group userIdStr" style="display: none">
-                                    <label class="control-label">用户ID,逗号隔开</label>
-                                    <input type="text" class="form-control" name="userIdStr" placeholder="用户ID,逗号隔开"/>
-                                </div>
-                            </div>
-                        </div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group excelFile" style="display: none">
-									<label class="control-label">excel 文件</label>
-									<input type="file" class="form-control" name="excelFile" placeholder="excel 文件"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label">跳转方式</label>
-                                    <label><input name="type" class="notMe" type="radio" value="0"/>跳转URL(带参)</label>
-                                    <label><input name="type" class="notMe" type="radio" value="0"/>跳转URL(不带参)</label>
-                                    <label><input name="type" class="notMe" type="radio" value="2"/>单品 </label>
-                                    <label><input name="type" class="notMe" type="radio" value="1"/>品牌首页 </label>
-                                    <label><input name="type" class="notMe" type="radio" value="4"/>活动首页 </label>
-                                    <label><input name="type" class="notMe" type="radio" value="3"/>明星同款详情页</label>
-                                    <label><input name="type" class="notMe" type="radio" value="5"/>单篇资讯</label>
-                                    <label><input name="type" class="notMe" type="radio" value="6"/>免费抽</label>
-									<label><input name="type" class="notMe" type="radio" value="15"/>限量商品</label>
-									<label><input name="type" class="notMe" type="radio" value="7"/>App内部H5</label>
-									<label><input name="type" class="notMe" type="radio" value="11"/>中国力量首页</label>
-									<label><input name="type" class="notMe" type="radio" value="12"/>高街时尚首页</label>
-									<label><input name="type" class="notMe" type="radio" value="13"/>买手店首页</label>
-									<label><input name="type" class="notMe" type="radio" value="14"/>买手店详情页</label>
-									<label><input name="type" class="notMe" type="radio" value="98"/>不跳转</label>
-                                </div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group url" style="display: none">
-									<label class="control-label">跳转链接</label>
-									<input type="text" class="form-control" name="url" placeholder="跳转URL"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group theId" style="display: none">
-									<label class="control-label">详情ID</label>
-									<input type="number" class="form-control" name="redirectId" placeholder="详情ID"/>
-								</div>
-							</div>
-						</div>
-					</form>
-				</div>
-				
-				<div class="modal-footer">
-				 	<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info save">保存</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-				</div>
-				
-			</div>
-		</div>
-	</div>
-
-	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
-		<div class="modal-dialog">
-			<div class="modal-content">
-
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">查看详情</h4>
-				</div>
-
-				<div class="modal-body" id="preview_body"></div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				<div class="right-title">
 				</div>
 			</div>
 		</div>
+
+		<!-- Main content -->
+		<section class="content">
+			<div class="row">
+				<div class="col-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<form role="form" class="form-inline">
+								<div class="form-group ">
+									<div class="input-group">
+										<input type="text" name="name" class="form-control" style="height:35px" placeholder="推送标题"/>
+									</div>
+									<div class="input-group">
+										<input type="text" name="content" class="form-control" style="height:35px" placeholder="推送内容"/>
+									</div>
+									<div class="input-group">
+										<select name="type" class="form-control" style="height:35px" placeholder="推送类别">
+											<option value="">全部</option>
+											<option value="0">跳转URL(带参)</option>
+											<option value="0">跳转URL(不带参)</option>
+											<option value="2">单品</option>
+											<option value="1">品牌首页</option>
+											<option value="4">活动首页</option>
+											<option value="3">明星同款详情页</option>
+											<option value="5">单篇资讯</option>
+											<option value="6">免费抽</option>
+											<option value="7">App内部H5</option>
+											<option value="11">中国力量首页</option>
+											<option value="12">高街时尚首页</option>
+											<option value="13">买手店首页</option>
+											<option value="14">买手店详情页</option>
+											<option value="15">跳转限量商品</option>
+											<option value="98">不跳转</option>
+										</select>
+									</div>
+									<div class="input-group">
+										<input id="beginTime" type="text" name="sTime" class="form-control" style="height:35px" placeholder="开始时间"/>
+									</div>
+									<div class="input-group">
+										<input id="endTime" type="text" name="eTime" class="form-control" style="height:35px" placeholder="结束时间"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+								</div>
+							</form>
+						</div>
+						<div class="box-body">
+							<div class="table-responsive">
+								<table id="example-1" class="table table-bordered table-striped" style="width: 100%;">
+								</table>
+							</div>
+						</div>
+						<!-- /.box-body -->
+						<div class="box-footer">
+							<button class="btn btn-info add">添加</button>
+							<button class="btn btn-info edit">修改</button>
+							<button class="btn btn-info del">删除</button>
+						</div>
+						<!-- /.box-footer-->
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- /.content -->
 	</div>
-	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script src="assets/js/async.min.js"></script>
-	<script th:inline="javascript">
+	<!-- /.content-wrapper -->
+	<footer th:replace="footer"></footer>
+</div>
+
+<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">查看详情</h4>
+			</div>
+
+			<div class="modal-body" id="preview_body"></div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;" id="modal-6">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="myLargeModalLabel">添加推送</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			</div>
+			<div class="modal-body">
+				<form role="form" id="saveForm" enctype="multipart/form-data">
+					<input type="hidden" name="id"/>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">推送标题</label>
+								<input type="text" class="form-control" name="name" placeholder="推送标题"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">推送内容</label>
+								<input type="text" class="form-control" name="content" placeholder="推送内容"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">是否及时推送</label>
+								<input name="pushNow" id="pushNow1" class="notMe" type="radio" checked="checked" value="0"/>
+								<label for="pushNow1">否</label>
+								<input name="pushNow" id="pushNow2" class="notMe" type="radio" value="1"/>
+								<label for="pushNow2">是</label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">推送时间</label>
+								<input type="text" class="form-control" name="pushTime" id="pushTime" placeholder="推送时间"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">推送用户</label>
+								<input name="pushAll" id="pushAll1" class="notMe" type="radio" checked="checked" value="0"/>
+								<label for="pushAll1">全部用户</label>
+								<input name="pushAll" id="pushAll2" class="notMe" type="radio" value="1"/>
+								<label for="pushAll2">指定用户</label>
+								<input name="pushAll" id="pushAll3" class="notMe" type="radio" value="2"/>
+								<label for="pushAll3">来自Excel</label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group userIdStr" style="display: none">
+								<label class="control-label">用户ID,逗号隔开</label>
+								<input type="text" class="form-control" name="userIdStr" placeholder="用户ID,逗号隔开"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group excelFile" style="display: none">
+								<label class="control-label">excel 文件</label>
+								<input type="file" class="form-control" name="excelFile" placeholder="excel 文件"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">跳转方式</label>
+								<input name="type" id="type1" class="notMe" type="radio" value="0"/>
+								<label for="type1">跳转URL(带参)</label>
+								<input name="type" id="type2" class="notMe" type="radio" value="0"/>
+								<label for="type2">跳转URL(不带参)</label>
+								<input name="type" id="type3" class="notMe" type="radio" value="2"/>
+								<label for="type3">单品</label>
+								<input name="type" id="type4" class="notMe" type="radio" value="1"/>
+								<label for="type4">品牌首页</label>
+								<input name="type" id="type5" class="notMe" type="radio" value="4"/>
+								<label for="type5">活动首页</label>
+								<input name="type" id="type6" class="notMe" type="radio" value="3"/>
+								<label for="type6">明星同款详情页</label>
+								<input name="type" id="type7" class="notMe" type="radio" value="5"/>
+								<label for="type7">单篇资讯</label>
+								<input name="type" id="type8" class="notMe" type="radio" value="6"/>
+								<label for="type8">免费抽</label>
+								<input name="type" id="type9" class="notMe" type="radio" value="15"/>
+								<label for="type9">限量商品</label>
+								<input name="type" id="type10" class="notMe" type="radio" value="7"/>
+								<label for="type10">App内部H5</label>
+								<input name="type" id="type11" class="notMe" type="radio" value="11"/>
+								<label for="type11">中国力量首页</label>
+								<input name="type" id="type12" class="notMe" type="radio" value="12"/>
+								<label for="type12">高街时尚首页</label>
+								<input name="type" id="type13" class="notMe" type="radio" value="13"/>
+								<label for="type13">买手店首页</label>
+								<input name="type" id="type14" class="notMe" type="radio" value="14"/>
+								<label for="type14">买手店详情页</label>
+								<input name="type" id="type15" class="notMe" type="radio" value="98"/>
+								<label for="type15">不跳转</label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group url" style="display: none">
+								<label class="control-label">跳转链接</label>
+								<input type="text" class="form-control" name="url" placeholder="跳转URL"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group theId" style="display: none">
+								<label class="control-label">详情ID</label>
+								<input type="number" class="form-control" name="redirectId" placeholder="详情ID"/>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-info save">保存</button>
+				<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+
+<script src="js/common.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+<script src="assets/js/async.min.js"></script>
+<script th:inline="javascript">
 	/*<![CDATA[*/
 
-    function addMoreImg(self) {
-        var that = $(self);
-        that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
-    }
-
-    function addMoreText(self) {
-        var that = $(self);
-        that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
-    }
-
-    function closeIt(self) {
-        var that = $(self);
-        that.hide();
-    }
-
-    function formatTime(time) {
-        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
-    }
-
-    function buildImg(url) {
-        return "<img width='100px' height='100px' src='#' />".replace("#", url);
-    }
-
-	function appendToPreview(key, value) {
-		return '<div class="row">' +
-				'<div class="col-md-2">' +
-				key +
-				'</div>' +
-				'<div class="col-md-10">' +
-				value +
-				'</div>' +
-				'</div>';
-	}
-
 	function checkIt(data) {
-    	alert("暂未开放");
-    	return;
-		$.post("/pick_get", {"id": data}, function (data) {
-			if (data) {
-				var preview = $("#preview_body");
-				var contentStr = "";
-				var mainObj = data;
-				contentStr += appendToPreview("编号:", mainObj["id"]);
-				contentStr += appendToPreview("优选名称:", mainObj["name"]);
-				contentStr += appendToPreview("图片URL:", buildImg(mainObj["imageUrl"]));
-				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
-				contentStr += appendToPreview("备注:", mainObj["remark"]);
-				contentStr += "<hr/>";
-				for (var a in data["sub"]) {
-					a = data["sub"][a];
-					contentStr += appendToPreview("商品ID:", a["id"]);
-					contentStr += appendToPreview("商品名称:", a["name"]);
-					contentStr += appendToPreview("商品图片:", buildImg(a["img"]));
-				}
-				preview.html(contentStr);
-				jQuery('#preview').modal('show', {backdrop: 'fade'});
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
+		alert("暂未开放");
 	}
-
-	function goToDetail(id) {
-		window.location.href = '/order_detail.html?id=' + id;
-	}
-
-	function checkSku(id) {
-		window.location.href = '/goods_stock_index.html?id=' + id;
-	}
-
 	var table_global;
-
-	function closeOrder(id) {
-		$.post("/order_closeOrder", {"id": id}, function (data) {
-			if (data) {
-				table_global.fnDraw();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
-
-	function deliverOrder(id) {
-		var form = $("#saveForm");
-		form.find("input").val("");
-		form.find("[name='id']").val(id);
-		jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-	}
-
-    function trackOrder(id) {
-        $.post("/order_trackOrder", {"id": id}, function (data) {
-            console.log(data);
-            if (data != '') {
-                checkIt(JSON.parse(data));
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
-
-    function bindMerchantSelector(data) {
-        var brandStr = "";
-        for (var brand in data) {
-            brand = data[brand];
-            if (parseInt(brand["id"]) == 0) {
-                brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-            } else {
-                brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-            }
-        }
-        $("#merchantId").html(brandStr);
-        $("#merchantIdAlt").html(brandStr);
-    }
-
-	function toggleMerchant(self) {
-		var id = $(self).val();
-		var target = $("#merchantIdAlt");
-		if (id == '0') {
-			target.val("0");
-			target.attr("disabled", "disabled");
-		} else {
-			target.removeAttr("disabled");
-		}
-	}
-
-	function getQNToken(cb) {
-		$.get("/qiniu/token", {}, function (token) {
-			cb(token);
-		});
-	}
-
-	function uploadImg(self) {
-		var that = $(self);
-		if (self.files.length > 0) {
-			var file = self.files[0];
-			getQNToken(function (token) {
-				this.upload("", token, file, function () {
-					//
-				}, function (err) {
-					console.log("error");
-					console.log(err);
-				}, function (res) {
-					var url = qiniuUrl + "/" + res.key;
-					that.parent().find("[name=imageUrl]").val(url);
-					that.parent().find("[name=imageUrlImg]").attr("src", url);
-					that.parent().find("[name=imageUrlImg]").attr("width", "100px");
-					that.parent().find("[name=imageUrlImg]").attr("height", "100px");
-					that.parent().find("[name=imageUrlImg]").show();
-				});
-			});
-		} else {
-			confirm("未选择任何文件!");
-		}
-	}
-
-	function addTheGoods() {
-		var ele = $("#goodsSelect");
-		var id = ele.val();
-		var text = $("#goodsSelect option:selected").text();
-		addMoreGoodsDisplay(id, text);
-	}
-
-	function addMoreGoodsDisplay(id, text) {
-		var uuid = UUID.randomUUID();
-		var that = $("#goodsPool");
-		var str = '<div id="UUID" class="toDel">'.replace("UUID", uuid);
-		str += '<input style="display:inline-block;width: 600px;" type="text" class="form-control" value="VALUE" readonly="readonly" />'.replace("VALUE", text);
-		str += '<input type="hidden" value="VALUE" name="goodsID" />'.replace("VALUE", id);
-		str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
-		str += '</div>';
-		that.append(str);
-	}
-
-	function delNode(id) {
-		var that = $("#" + id);
-		that.remove();
-	}
-
-	function renderGoodsSelect(self, id) {
-		var theId;
-		if (self == null) {
-			theId = id;
-		} else {
-			var that = $(self);
-			theId = that.val();
-		}
-		$.post("/pick_getGoods", {"pid": theId}, function (data) {
-			var str = "";
-			for (var i in data) {
-				var brand = data[i];
-				str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-			}
-			$("#goodsSelect").html(str);
-		});
-	}
-
-	function renderBrandSelect(key) {
-		$("#goodsSelect").html("");
-		$.post("/pick_getBrand", {"prefix": key}, function (data) {
-			var str = "";
-			for (var i in data) {
-				var brand = data[i];
-				if (i == 0) {
-					renderGoodsSelect(null, brand["id"]);
-				}
-				str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-			}
-			$("#brandSelect").html(str);
-		});
-	}
-
 	var qiniuUrl = [[${qiniuUrl}]];
-
-    jQuery(document).ready(function($)
+	jQuery(document).ready(function($)
 	{
-        var oTable;
+		var oTable;
 		oTable = $("#example-1").dataTable({
 			language: {
 				url: "../assets/Chinese.txt"
 			},
-			aLengthactivity: [
-				[10, 25, 50, 100], [10, 25, 50, 100]
-			],
 			bFilter: false,
 			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
 			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
@@ -486,10 +291,10 @@
 					data: "id",
 					width: "5%",
 					orderable: false,
-					className: 'select-checkbox',
-					title: '<input type="checkbox" id="checkbox-all"/>',
+					title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
 					render: function (data, type, full, meta) {
-						return '<input type="checkbox" name="activityId" value="' + data + '" />';
+						var uuid = UUID.randomUUID();
+						return '<div class="checkbox"><input type="checkbox" name="activityId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
 					}
 				},
 				{
@@ -511,10 +316,10 @@
 					targets: 4,
 					data: "type",
 					title: "类别",
-                    render: function (data, type, row, meta) {
-                        var map = ["跳转URL(带参)", "品牌首页", "单品", "活动首页", "明星同款详情页", "单篇资讯", "免费抽", "跳转URL(不带参)"];
-                        if (data == 15){
-                        	return "限量商品"
+					render: function (data, type, row, meta) {
+						var map = ["跳转URL(带参)", "品牌首页", "单品", "活动首页", "明星同款详情页", "单篇资讯", "免费抽", "跳转URL(不带参)"];
+						if (data == 15){
+							return "限量商品"
 						}else if (data == 7 ){
 							return "App内部H5"
 						}else if (data == 11){
@@ -530,7 +335,7 @@
 						}else {
 							return map[parseInt(data)];
 						}
-                    }
+					}
 				},
 				{
 					targets: 5,
@@ -608,30 +413,23 @@
 				}
 		);
 
-		function buildAZBar() {
-			var str = "";
-			var AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-			for (var i in AZ.split("")) {
-				var char = AZ[i];
-				str += "<a href='#' onclick='renderBrandSelect(\"VAL\")'>CHAR</a>&nbsp;".replace("CHAR", char).replace("VAL", char);
-			}
-			$("#azBar").html(str);
-			$("#brandSelect").html("");
-			$("#goodsSelect").html("");
-			$("#goodsPool").html("");
-			$("img[name='imageUrlImg']").hide();
-		}
-		
-		$(".searchBtn").click(function(){
+		$(".searchBtn").click(function () {
 			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
+			oTable.fnDraw(); //or fnReloadAjax()
 			return false;
 		});
 
-        $('[name="type"]').click(function () {
-            var value = $(this).val();  //获取选中的radio的值
-            toggle(value);
-        });
+		$('#example-1').on('click', "#checkbox-all", function () {
+			var obj = $(this);
+			$("input[name='activityId']").each(function (i, e) {
+				this.checked = obj[0].checked;
+			});
+		});
+
+		$('[name="type"]').click(function () {
+			var value = $(this).val();  //获取选中的radio的值
+			toggle(value);
+		});
 
 		$('[name="pushAll"]').click(function () {
 			var value = $(this).val();  //获取选中的radio的值
@@ -670,21 +468,21 @@
 			}
 		});
 
-        function toggle(value) {
-            var url = $(".url");
-            var theId = $(".theId");
-            switch (parseInt(value)) {
-                case 0:
-                case 7:
-                    url.show();
-                    theId.hide();
-                    break;
-                default:
-                    url.hide();
-                    theId.show();
-                    break;
-            }
-        }
+		function toggle(value) {
+			var url = $(".url");
+			var theId = $(".theId");
+			switch (parseInt(value)) {
+				case 0:
+				case 7:
+					url.show();
+					theId.hide();
+					break;
+				default:
+					url.hide();
+					theId.show();
+					break;
+			}
+		}
 
 		$(".btn.btn-info.add").click(function () {
 			var form = $("#saveForm");
@@ -692,11 +490,9 @@
 			jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
 		});
 
-
-		//保存
 		$(".btn.btn-info.save").click(function () {
 			var confirm = window.confirm("是否确定发送");
-			if (confirm == false){
+			if (confirm == false) {
 				return;
 			}
 			var footer = $(this).parent(".modal-footer");
@@ -709,7 +505,7 @@
 			var url = form.find("input[name='url']").val();
 			var pushTime = form.find("input[name='pushTime']").val();
 
-			if (name == '' || content == '' || pushTime == '' ) {
+			if (name == '' || content == '' || pushTime == '') {
 				toastr.error("请填写完整数据后提交", "温馨提示");
 				footer.find("button").show();
 				footer.find(".bg-lg").hide();
@@ -781,25 +577,18 @@
 				var form = $("#saveForm");
 				form.find("input:not(.notMe)").val("");
 				for (var i in data) {
-					if (i == "sub") {
-						for (var j in data[i]) {
-							var obj = data[i][j];
-							addMoreGoodsDisplay(obj["id"], obj["name"]);
-						}
-					} else {
-						var ele = form.find("input[name='" + i + "']");
-						switch (ele.attr("type")) {
-							case "radio":
-								ele.val([data[i]]);
-								break;
-							default:
-								ele.val(data[i]);
-						}
-						var eleSelect = form.find("select[name='" + i + "']");
-						eleSelect.val(data[i]);
-						form.find("img[name='" + i + "Img']").attr("src", data[i]);
-						form.find("img[name='" + i + "Img']").show();
+					var ele = form.find("input[name='" + i + "']");
+					switch (ele.attr("type")) {
+						case "radio":
+							ele.val([data[i]]);
+							break;
+						default:
+							ele.val(data[i]);
 					}
+					var eleSelect = form.find("select[name='" + i + "']");
+					eleSelect.val(data[i]);
+					form.find("img[name='" + i + "Img']").attr("src", data[i]);
+					form.find("img[name='" + i + "Img']").show();
 				}
 				toggle(data["type"]);
 				var pushTimeStr = new Date(data["pushTime"]).Format('yyyy-MM-dd hh:mm:ss');
@@ -828,49 +617,8 @@
 				}
 			})
 		});
-
-        $(".btn.btn-info.up").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
-
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
-
-            $.post("/banner_up",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
-
-        $(".btn.btn-info.down").click(function(){
-            var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
-                toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
-            }
-
-            var ids = [];
-            activityId.each(function(i,e){
-                ids.push(e.value);
-            });
-
-            $.post("/banner_down",{ids:ids},function(data){
-                if(data){
-                    toastr.success("操作已成功！", "温馨提示");
-                    oTable.fnDraw();
-                }
-            })
-        });
 	});
 	/*]]>*/
-	</script>
+</script>
 </body>
-
 </html>
