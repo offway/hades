@@ -1,219 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<head th:replace="head"></head>
-	<title>商品管理</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
-	<link rel="stylesheet" href="assets/css/jquery-editable-select.min.css"/>
-	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
-	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
-	</style>
+    <head th:replace="head"></head>
+    <title>商品管理</title>
+    <link rel="stylesheet" href="assets/js/select2/select2.css"/>
+    <link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+    <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+    <link rel="stylesheet" href="assets/css/jquery-editable-select.min.css"/>
+    <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
 </head>
-<body class="page-body">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">商品管理</h1>
+                </div>
+                <div class="right-title">
+                </div>
+            </div>
+        </div>
 
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">商品管理</h1>
-					<p class="activityDescription"></p>
-				</div>
-
-				<div class="breadcrumb-env">
-
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>商品管理</strong></li>
-					</ol>
-
-				</div>
-
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-                        <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
-							<div class="input-group">
-								<label for="merchantId" class="control-label">商户</label>
-							</div>
-							<div class="input-group">
-								<select id="merchantId" name="merchantId" class="form-control" style="height:35px">
-								</select>
-							</div>
-							<div class="input-group">
-								<label for="merchantBrandId" class="control-label">商户品牌</label>
-							</div>
-							<div class="input-group">
-								<select id="merchantBrandId" name="merchantBrandId" class="form-control" style="height:35px">
-								</select>
-							</div>
-							<div class="input-group">
-								<input type="text" name="name" class="form-control" style="height:35px" placeholder="商品名"/>
-							</div>
-							<div class="input-group">
-								<input type="text" name="id" class="form-control" style="height:35px" placeholder="商品ID"/>
-							</div>
-							<div class="input-group">
-								<input type="text" name="code" class="form-control" style="height:35px" placeholder="货号"/>
-							</div>
-                            <div class="input-group">
-                                <label for="status" class="control-box">状态</label>
-                            </div>
-                            <div class="input-group">
-                                <select id="status" name="status" class="form-control" style="height:35px">
-                                    <option value="" selected="selected">全部</option>
-                                    <option value="1">已上架</option>
-                                    <option value="0">已下架</option>
-                                </select>
-                            </div>
-						</div>
-                        <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
-                            <div class="input-group">
-                                <label for="type" class="control-box">主分类</label>
-                            </div>
-                            <div class="input-group">
-                                <select id="type" name="type" class="form-control" style="height:35px" onchange="renderCategory(this)">
-                                    <option value="" selected="selected">全部</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label id="categoryLabe" for="category" class="control-box">子分类</label>
-                            </div>
-                            <div class="input-group">
-                                <select id="category" name="category" class="form-control" style="height:35px">
-                                    <option value="" selected="selected">全部</option>
-                                </select>
-                            </div>
-							<div id="specialEle">
-								<div class="input-group">
-									<label for="special" class="control-box">是否特殊商品</label>
-								</div>
-								<div class="input-group">
-									<select id="special" name="special" class="form-control" style="height:35px">
-										<option value="" selected="selected">全部</option>
-										<option value="1">是</option>
-										<option value="0">否</option>
-									</select>
-								</div>
-							</div>
-                        </div>
-                        <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-				</div>
-				<button class="btn btn-info add" >添加</button>
-				<button class="btn btn-info edit">修改</button>
-				<button class="btn btn-info del">删除</button>
-				<button class="btn btn-info discount">限时打折</button>
-				<button class="btn btn-info discountList">打折清单</button>
-				<button class="btn btn-info restorePrice">恢复原价</button>
-				<button class="btn btn-info export">导出商品</button>
-                <button class="btn btn-info updateSku">修改库存</button>
-				<button class="btn btn-info updatePrice">修改价格</button>
-				<button class="btn btn-info copyGoods">复制商品</button>
-			</div>
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
-	
-	<div class="modal fade in" id="modal-6">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">限时打折</h4>
-				</div>
-				
-				<div class="modal-body">
-					<form role="form" id="saveForm">
-						<input type="hidden" name="ids"/>
-                        <div class="row">
-                            <div class="col-md-12">
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form role="form" class="form-inline">
                                 <div class="form-group">
-                                    <label class="control-label">是否及时改价</label>
-                                    <label><input name="now" class="notMe" type="radio" value="0"/>否 </label>
-                                    <label><input name="now" class="notMe" type="radio" checked="checked" value="1"/>是</label>
+                                    <div class="input-group">
+                                        <label for="merchantId" class="control-label">商户</label>
+                                    </div>
+                                    <div class="input-group">
+                                        <select id="merchantId" name="merchantId" class="form-control"
+                                                style="height:35px">
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="merchantBrandId" class="control-label">商户品牌</label>
+                                    </div>
+                                    <div class="input-group">
+                                        <select id="merchantBrandId" name="merchantBrandId" class="form-control"
+                                                style="height:35px">
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="text" name="name" class="form-control" style="height:35px"
+                                               placeholder="商品名"/>
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="text" name="id" class="form-control" style="height:35px"
+                                               placeholder="商品ID"/>
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="text" name="code" class="form-control" style="height:35px"
+                                               placeholder="货号"/>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="status" class="control-box">状态</label>
+                                    </div>
+                                    <div class="input-group">
+                                        <select id="status" name="status" class="form-control" style="height:35px">
+                                            <option value="" selected="selected">全部</option>
+                                            <option value="1">已上架</option>
+                                            <option value="0">已下架</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="type" class="control-box">主分类</label>
+                                    </div>
+                                    <div class="input-group">
+                                        <select id="type" name="type" class="form-control" style="height:35px"
+                                                onchange="renderCategory(this)">
+                                            <option value="" selected="selected">全部</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label id="categoryLabe" for="category" class="control-box">子分类</label>
+                                    </div>
+                                    <div class="input-group">
+                                        <select id="category" name="category" class="form-control" style="height:35px">
+                                            <option value="" selected="selected">全部</option>
+                                        </select>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="special" class="control-box">是否特殊商品</label>
+                                    </div>
+                                    <div id="specialEle">
+                                        <div class="input-group">
+                                            <select id="special" name="special" class="form-control"
+                                                    style="height:35px">
+                                                <option value="" selected="selected">全部</option>
+                                                <option value="1">是</option>
+                                                <option value="0">否</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <div class="form-group">
+                                    <button class="btn btn-primary btn-single searchBtn" style="height:35px">查询</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="box-body">
+                            <table id="example-1" class="table table-striped table-bordered" cellspacing="0"
+                                   width="100%">
+                            </table>
+                        </div>
+                        <div class="box-footer">
+                            <button class="btn btn-info add">添加</button>
+                            <button class="btn btn-info edit">修改</button>
+                            <button class="btn btn-info del">删除</button>
+                            <button class="btn btn-info discount">限时打折</button>
+                            <button class="btn btn-info discountList">打折清单</button>
+                            <button class="btn btn-info restorePrice">恢复原价</button>
+                            <button class="btn btn-info export">导出商品</button>
+                            <button class="btn btn-info updateSku">修改库存</button>
+                            <button class="btn btn-info updatePrice">修改价格</button>
+                            <button class="btn btn-info copyGoods">复制商品</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer th:replace="footer"></footer>
+</div>
+
+<div class="modal fade in" id="modal-6">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 800px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">限时打折</h4>
+            </div>
+
+            <div class="modal-body">
+                <form role="form" id="saveForm">
+                    <input type="hidden" name="ids"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">是否及时改价</label>
+                                <label><input name="now" class="notMe" type="radio" value="0"/>否 </label>
+                                <label><input name="now" class="notMe" type="radio" checked="checked"
+                                              value="1"/>是</label>
                             </div>
                         </div>
-						<div class="row" id="period" style="display: none;">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label class="control-label">开始时间</label>
-									<input type="text" class="form-control" name="beginTime" id="beginTime" placeholder="开始时间" />
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label class="control-label">截止时间</label>
-									<input type="text" class="form-control" name="endTime" id="endTime" placeholder="截止时间" />
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">折扣比例，如 0.8,0.5</label>
-									<input type="number" class="form-control" name="discount" placeholder="折扣比例，如 0.8,0.5"/>
-								</div>
-							</div>
-						</div>
-					</form>
-				</div>
-				
-				<div class="modal-footer">
-				 	<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info save">保存</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-				</div>
-				
-			</div>
-		</div>
-	</div>
-	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
-		<div class="modal-dialog">
-			<div class="modal-content">
+                    </div>
+                    <div class="row" id="period" style="display: none;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">开始时间</label>
+                                <input type="text" class="form-control" name="beginTime" id="beginTime"
+                                       placeholder="开始时间"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">截止时间</label>
+                                <input type="text" class="form-control" name="endTime" id="endTime" placeholder="截止时间"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">折扣比例，如 0.8,0.5</label>
+                                <input type="number" class="form-control" name="discount" placeholder="折扣比例，如 0.8,0.5"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-success save">保存</button>
+                <button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 800px;">
 
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">查看详情</h4>
-				</div>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">查看详情</h4>
+            </div>
 
-				<div class="modal-body" id="preview_body"></div>
+            <div class="modal-body" id="preview_body"></div>
 
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<input type="hidden" id="type_and_category_list"/>
-	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script src="assets/js/async.min.js"></script>
-	<script src="assets/js/jquery-editable-select.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="type_and_category_list"/>
+<script src="js/common.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+<script src="assets/js/select2/select2.min.js"></script>
+<script src="assets/js/async.min.js"></script>
+<script src="assets/js/jquery-editable-select.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
 
     function addMoreImg(self) {
         var that = $(self);
@@ -235,7 +238,7 @@
     }
 
     function buildImg(url) {
-        return "<img width='100px' height='100px' src='#' />".replace("#", url);
+        return "<img width='48px' height='48px' src='#' />".replace("#", url);
     }
 
     function appendToPreviewList(one, two, three, four, five, six) {
@@ -261,281 +264,281 @@
             '</div>';
     }
 
-	function updateStockBatch() {
-		var form = $("#stockForm");
-		console.log(form.serializeArray());
-		$.post("/goods_stock_update_mix", form.serializeArray(), function (data) {
-			if (data) {
-				toastr.success("操作已成功！", "温馨提示");
-				jQuery('#preview').modal('hide');
-			}
-		});
-	}
+    function updateStockBatch() {
+        var form = $("#stockForm");
+        console.log(form.serializeArray());
+        $.post("/goods_stock_update_mix", form.serializeArray(), function (data) {
+            if (data) {
+                toastr.success("操作已成功！", "温馨提示");
+                jQuery('#preview').modal('hide');
+            }
+        });
+    }
 
-	function updatePriceBatch() {
-		var form = $("#priceForm");
-		var args = form.serializeArray();
-		console.log(args);
-		var list = [];
-		for (var a in args) {
-			if (args[a]["name"] != 'originalPrice') {
-				list.push(args[a]);
-			}
-		}
-		var originalPriceEle = form.find("input[name='originalPrice']");
-		originalPriceEle.each(function (a, b) {
-			list.push({"name": "originalPrice", "value": b.value == '' ? "NULL" : b.value});
-		});
-		$.post("/goods_stock_update_mix_tree", list, function (data) {
-			if (data) {
-				toastr.success("操作已成功！", "温馨提示");
-				jQuery('#preview').modal('hide');
-			}
-		});
-	}
+    function updatePriceBatch() {
+        var form = $("#priceForm");
+        var args = form.serializeArray();
+        console.log(args);
+        var list = [];
+        for (var a in args) {
+            if (args[a]["name"] != 'originalPrice') {
+                list.push(args[a]);
+            }
+        }
+        var originalPriceEle = form.find("input[name='originalPrice']");
+        originalPriceEle.each(function (a, b) {
+            list.push({"name": "originalPrice", "value": b.value == '' ? "NULL" : b.value});
+        });
+        $.post("/goods_stock_update_mix_tree", list, function (data) {
+            if (data) {
+                toastr.success("操作已成功！", "温馨提示");
+                jQuery('#preview').modal('hide');
+            }
+        });
+    }
 
-	function appendToPreview(key, value) {
-		return '<div class="row">' +
-				'<div class="col-md-2">' +
-				key +
-				'</div>' +
-				'<div class="col-md-10">' +
-				value +
-				'</div>' +
-				'</div>';
-	}
+    function appendToPreview(key, value) {
+        return '<div class="row">' +
+            '<div class="col-md-2">' +
+            key +
+            '</div>' +
+            '<div class="col-md-10">' +
+            value +
+            '</div>' +
+            '</div>';
+    }
 
-	function checkIt(id) {
-		$.post("/goods_find", {"id": id}, function (data) {
-			if (data) {
-				var preview = $("#preview_body");
-				var contentStr = "";
-				var mainObj = data["main"];
-				contentStr += appendToPreview("编号:", mainObj["id"]);
-				contentStr += appendToPreview("名称:", mainObj["name"]);
-				contentStr += appendToPreview("一级分类:", mainObj["type"]);
-				contentStr += appendToPreview("二级分类:", mainObj["category"]);
-				contentStr += appendToPreview("商品编码:", mainObj["code"]);
-				contentStr += appendToPreview("材质:", mainObj["material"]);
-				contentStr += appendToPreview("价格:", mainObj["price"]);
-				contentStr += appendToPreview("原价:", mainObj["originalPrice"]);
-				contentStr += appendToPreview("价格区间:", mainObj["priceRange"]);
-				contentStr += appendToPreview("销售数量:", mainObj["saleCount"]);
-				contentStr += appendToPreview("查看数量:", mainObj["viewCount"]);
-				contentStr += appendToPreview("品牌id:", mainObj["brandId"]);
-				contentStr += appendToPreview("品牌名:", mainObj["brandName"]);
-				contentStr += appendToPreview("品牌logo:", buildImg(mainObj["brandLogo"]));
-				contentStr += appendToPreview("商家id:", mainObj["merchantId"]);
-				contentStr += appendToPreview("商家名:", mainObj["merchantName"]);
-				contentStr += appendToPreview("商家logo:", buildImg(mainObj["merchantLogo"]));
-				contentStr += appendToPreview("图片:", buildImg(mainObj["image"]));
-				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
-				contentStr += appendToPreview("备注:", mainObj["remark"]);
-				contentStr += "<hr/>";
-				for (var a in data["propertyList"]) {
-					a = data["propertyList"][a];
-					contentStr += appendToPreview("商品规格名称:", a["name"]);
-					contentStr += appendToPreview("商品属性值:", a["value"]);
-					contentStr += appendToPreview("备注:", a["remark"]);
-					contentStr += appendToPreview("排序:", a["sort"]);
-				}
-				contentStr += "<hr/>";
-				for (var b in data["imageList"]) {
-					b = data["imageList"][b];
-					contentStr += appendToPreview("商品图片:", buildImg(b["imageUrl"]));
-					contentStr += appendToPreview("图片类型:", b["type"]);
-					contentStr += appendToPreview("备注:", b["remark"]);
-					contentStr += appendToPreview("排序:", b["sort"]);
-				}
-				contentStr += "<hr/>";
-				for (var c in data["stockList"]) {
-					c = data["stockList"][c];
-					contentStr += appendToPreview("图片:", buildImg(c["image"]));
-					contentStr += appendToPreview("价格:", c["price"]);
-					contentStr += appendToPreview("sku:", c["sku"]);
-					contentStr += appendToPreview("stock:", c["stock"]);
-					contentStr += appendToPreview("备注:", c["remark"]);
-				}
-				preview.html(contentStr);
-				jQuery('#preview').modal('show', {backdrop: 'fade'});
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function checkIt(id) {
+        $.post("/goods_find", {"id": id}, function (data) {
+            if (data) {
+                var preview = $("#preview_body");
+                var contentStr = "";
+                var mainObj = data["main"];
+                contentStr += appendToPreview("编号:", mainObj["id"]);
+                contentStr += appendToPreview("名称:", mainObj["name"]);
+                contentStr += appendToPreview("一级分类:", mainObj["type"]);
+                contentStr += appendToPreview("二级分类:", mainObj["category"]);
+                contentStr += appendToPreview("商品编码:", mainObj["code"]);
+                contentStr += appendToPreview("材质:", mainObj["material"]);
+                contentStr += appendToPreview("价格:", mainObj["price"]);
+                contentStr += appendToPreview("原价:", mainObj["originalPrice"]);
+                contentStr += appendToPreview("价格区间:", mainObj["priceRange"]);
+                contentStr += appendToPreview("销售数量:", mainObj["saleCount"]);
+                contentStr += appendToPreview("查看数量:", mainObj["viewCount"]);
+                contentStr += appendToPreview("品牌id:", mainObj["brandId"]);
+                contentStr += appendToPreview("品牌名:", mainObj["brandName"]);
+                contentStr += appendToPreview("品牌logo:", buildImg(mainObj["brandLogo"]));
+                contentStr += appendToPreview("商家id:", mainObj["merchantId"]);
+                contentStr += appendToPreview("商家名:", mainObj["merchantName"]);
+                contentStr += appendToPreview("商家logo:", buildImg(mainObj["merchantLogo"]));
+                contentStr += appendToPreview("图片:", buildImg(mainObj["image"]));
+                contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
+                contentStr += appendToPreview("备注:", mainObj["remark"]);
+                contentStr += "<hr/>";
+                for (var a in data["propertyList"]) {
+                    a = data["propertyList"][a];
+                    contentStr += appendToPreview("商品规格名称:", a["name"]);
+                    contentStr += appendToPreview("商品属性值:", a["value"]);
+                    contentStr += appendToPreview("备注:", a["remark"]);
+                    contentStr += appendToPreview("排序:", a["sort"]);
+                }
+                contentStr += "<hr/>";
+                for (var b in data["imageList"]) {
+                    b = data["imageList"][b];
+                    contentStr += appendToPreview("商品图片:", buildImg(b["imageUrl"]));
+                    contentStr += appendToPreview("图片类型:", b["type"]);
+                    contentStr += appendToPreview("备注:", b["remark"]);
+                    contentStr += appendToPreview("排序:", b["sort"]);
+                }
+                contentStr += "<hr/>";
+                for (var c in data["stockList"]) {
+                    c = data["stockList"][c];
+                    contentStr += appendToPreview("图片:", buildImg(c["image"]));
+                    contentStr += appendToPreview("价格:", c["price"]);
+                    contentStr += appendToPreview("sku:", c["sku"]);
+                    contentStr += appendToPreview("stock:", c["stock"]);
+                    contentStr += appendToPreview("备注:", c["remark"]);
+                }
+                preview.html(contentStr);
+                jQuery('#preview').modal('show', {backdrop: 'fade'});
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
-	function delJob(key, self) {
-		console.log(key);
-		$.post("/goods_discount_del", {"key": key}, function (data) {
-			if (data) {
-				$(self).parent().parent().parent().remove();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function delJob(key, self) {
+        console.log(key);
+        $.post("/goods_discount_del", {"key": key}, function (data) {
+            if (data) {
+                $(self).parent().parent().parent().remove();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
-	function checkJob() {
-		$.post("/goods_discount_list", {"mid": $("#merchantId").parent().find("li.es-visible").val()}, function (data) {
-			if (data) {
-				var preview = $("#preview_body");
-				var contentStr = "";
-				for (var i in data) {
-					i = data[i];
-					contentStr += "<div>";
-					contentStr += appendToPreview("开始时间:", i["sTime"]);
-					contentStr += appendToPreview("结束时间:", i["eTime"]);
-					contentStr += appendToPreview("商品名称:", i["goodsName"]);
-					if (i["type"] == "change") {
-						contentStr += appendToPreview("从:", i["from"]);
-						contentStr += appendToPreview("到:", i["to"]);
-					} else {
-						contentStr += appendToPreview("折扣:", i["discount"]);
-					}
-					var btnEle = '<input type="button" value="删除" onclick="delJob(\'KEY\',this)" />'.replace("KEY", i["key"]);
-					contentStr += appendToPreview("", btnEle);
-					contentStr += "<hr/>";
-					contentStr += "</div>";
-				}
-				preview.html(contentStr);
-				jQuery('#preview').modal('show', {backdrop: 'fade'});
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function checkJob() {
+        $.post("/goods_discount_list", {"mid": $("#merchantId").parent().find("li.es-visible").val()}, function (data) {
+            if (data) {
+                var preview = $("#preview_body");
+                var contentStr = "";
+                for (var i in data) {
+                    i = data[i];
+                    contentStr += "<div>";
+                    contentStr += appendToPreview("开始时间:", i["sTime"]);
+                    contentStr += appendToPreview("结束时间:", i["eTime"]);
+                    contentStr += appendToPreview("商品名称:", i["goodsName"]);
+                    if (i["type"] == "change") {
+                        contentStr += appendToPreview("从:", i["from"]);
+                        contentStr += appendToPreview("到:", i["to"]);
+                    } else {
+                        contentStr += appendToPreview("折扣:", i["discount"]);
+                    }
+                    var btnEle = '<input type="button" value="删除" onclick="delJob(\'KEY\',this)" />'.replace("KEY", i["key"]);
+                    contentStr += appendToPreview("", btnEle);
+                    contentStr += "<hr/>";
+                    contentStr += "</div>";
+                }
+                preview.html(contentStr);
+                jQuery('#preview').modal('show', {backdrop: 'fade'});
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
-	function checkSku(id) {
-		window.open('/goods_stock_index.html?id=' + id, "_blank");
-		// window.location.href = '/goods_stock_index.html?id=' + id;
-	}
+    function checkSku(id) {
+        window.open('/goods_stock_index.html?id=' + id, "_blank");
+        // window.location.href = '/goods_stock_index.html?id=' + id;
+    }
 
-	function bindMerchantSelector(data) {
-		var brandStr = "";
-		for (var brand in data) {
-			brand = data[brand];
-			if (parseInt(brand["id"]) == 0) {
-				brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-			} else {
-				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-			}
-		}
-		var obj = $("#merchantId");
-		obj.html(brandStr);
-		obj.editableSelect()
-				.on('created.editable-select', function (e, li) {
-					console.log("Fired after initialization.");
-				})
-				.on('show.editable-select', function (e, li) {
-					console.log("Fired immediately when the show instance method has been called.");
-					var newObj = $("#merchantId");
-					var selectedId = newObj.parent().find("li.es-visible").val();
-					if (selectedId == 0) {
-						newObj.val("");
-						newObj.editableSelect("filter");
-					}
-				})
-				.on('hide.editable-select', function (e, li) {
-					console.log("Fired immediately when the hide instance method has been called.");
-					var newObj = $("#merchantId");
-					var str = newObj.val();
-					if (str == '') {
-						// newObj.val("全部");
-						newObj.editableSelect("select", $(newObj.parent().find("li")[0]));
-					}
-				})
-				.on('select.editable-select', function (e, li) {
-					console.log("Fired when an option of the list has been selected. The selected $element is available as property of the event.");
-					renderBrand(li.val(), 1);
-				});
-	}
+    function bindMerchantSelector(data) {
+        var brandStr = "";
+        for (var brand in data) {
+            brand = data[brand];
+            if (parseInt(brand["id"]) == 0) {
+                brandStr += '<option value="VALUE" selected=\'selected\'>KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+            } else {
+                brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+            }
+        }
+        var obj = $("#merchantId");
+        obj.html(brandStr);
+        obj.editableSelect()
+            .on('created.editable-select', function (e, li) {
+                console.log("Fired after initialization.");
+            })
+            .on('show.editable-select', function (e, li) {
+                console.log("Fired immediately when the show instance method has been called.");
+                var newObj = $("#merchantId");
+                var selectedId = newObj.parent().find("li.es-visible").val();
+                if (selectedId == 0) {
+                    newObj.val("");
+                    newObj.editableSelect("filter");
+                }
+            })
+            .on('hide.editable-select', function (e, li) {
+                console.log("Fired immediately when the hide instance method has been called.");
+                var newObj = $("#merchantId");
+                var str = newObj.val();
+                if (str == '') {
+                    // newObj.val("全部");
+                    newObj.editableSelect("select", $(newObj.parent().find("li")[0]));
+                }
+            })
+            .on('select.editable-select', function (e, li) {
+                console.log("Fired when an option of the list has been selected. The selected $element is available as property of the event.");
+                renderBrand(li.val(), 1);
+            });
+    }
 
-	function bindTypeSelector(data) {
-		var typeStr = "<option value=\"\" selected=\"selected\">全部</option>";
-		for (var type in data) {
-			type = data[type];
-			typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["name"]).replace("KEY", type["name"]);
-		}
-		$("#type").html(typeStr);
-		bindCategorySelector(data[0]["sub"]);
-	}
+    function bindTypeSelector(data) {
+        var typeStr = "<option value=\"\" selected=\"selected\">全部</option>";
+        for (var type in data) {
+            type = data[type];
+            typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["name"]).replace("KEY", type["name"]);
+        }
+        $("#type").html(typeStr);
+        bindCategorySelector(data[0]["sub"]);
+    }
 
-	function bindCategorySelector(data) {
-		var categoryStr = "<option value=\"\" selected=\"selected\">全部</option>";
-		for (var category in data) {
-			category = data[category];
-			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
-		}
-		$("#category").html(categoryStr);
-		$("#category").show();
-		$("#categoryLabe").show();
-	}
+    function bindCategorySelector(data) {
+        var categoryStr = "<option value=\"\" selected=\"selected\">全部</option>";
+        for (var category in data) {
+            category = data[category];
+            categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
+        }
+        $("#category").html(categoryStr);
+        $("#category").show();
+        $("#categoryLabe").show();
+    }
 
-	function bindBrandSelector(data, needRebuild) {
-		var categoryStr = "<option value=\"0\" selected=\"selected\">全部</option>";
-		for (var category in data) {
-			category = data[category];
-			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["brandId"]).replace("KEY", category["brandName"]);
-		}
-		if (needRebuild == 1) {
-			$("#merchantBrandId").editableSelect("destroy");
-		}
-		$("#merchantBrandId").html(categoryStr);
-		$("#merchantBrandId").editableSelect()
-				.on('created.editable-select', function (e, li) {
-					console.log("Fired after initialization.");
-				})
-				.on('show.editable-select', function (e, li) {
-					console.log("Fired immediately when the show instance method has been called.");
-					var newObj = $("#merchantBrandId");
-					var selectedId = newObj.parent().find("li.es-visible").val();
-					if (selectedId == 0) {
-						newObj.val("");
-						newObj.editableSelect("filter");
-					}
-				})
-				.on('hide.editable-select', function (e, li) {
-					console.log("Fired immediately when the hide instance method has been called.");
-					var newObj = $("#merchantBrandId");
-					var str = newObj.val();
-					if (str == '') {
-						// newObj.val("全部");
-						newObj.editableSelect("select", $(newObj.parent().find("li")[0]));
-					}
-				})
-				.on('select.editable-select', function (e, li) {
-					console.log("Fired when an option of the list has been selected. The selected $element is available as property of the event.");
-				});
-	}
+    function bindBrandSelector(data, needRebuild) {
+        var categoryStr = "<option value=\"0\" selected=\"selected\">全部</option>";
+        for (var category in data) {
+            category = data[category];
+            categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["brandId"]).replace("KEY", category["brandName"]);
+        }
+        if (needRebuild == 1) {
+            $("#merchantBrandId").editableSelect("destroy");
+        }
+        $("#merchantBrandId").html(categoryStr);
+        $("#merchantBrandId").editableSelect()
+            .on('created.editable-select', function (e, li) {
+                console.log("Fired after initialization.");
+            })
+            .on('show.editable-select', function (e, li) {
+                console.log("Fired immediately when the show instance method has been called.");
+                var newObj = $("#merchantBrandId");
+                var selectedId = newObj.parent().find("li.es-visible").val();
+                if (selectedId == 0) {
+                    newObj.val("");
+                    newObj.editableSelect("filter");
+                }
+            })
+            .on('hide.editable-select', function (e, li) {
+                console.log("Fired immediately when the hide instance method has been called.");
+                var newObj = $("#merchantBrandId");
+                var str = newObj.val();
+                if (str == '') {
+                    // newObj.val("全部");
+                    newObj.editableSelect("select", $(newObj.parent().find("li")[0]));
+                }
+            })
+            .on('select.editable-select', function (e, li) {
+                console.log("Fired when an option of the list has been selected. The selected $element is available as property of the event.");
+            });
+    }
 
-	function renderCategory(self) {
-		var jsonStr = $("#type_and_category_list").val();
-		var list = JSON.parse(jsonStr);
-		var selectedId = $(self).val();
-		if(selectedId != "创意生活") {
-			for (var type in list) {
-				if (selectedId == list[type]["name"]) {
-					bindCategorySelector(list[type]["sub"]);
-					break;
-				}
-			}
-		}else {
-			$("#category").hide();
-			$("#categoryLabe").hide();
-		}
-	}
+    function renderCategory(self) {
+        var jsonStr = $("#type_and_category_list").val();
+        var list = JSON.parse(jsonStr);
+        var selectedId = $(self).val();
+        if (selectedId != "创意生活") {
+            for (var type in list) {
+                if (selectedId == list[type]["name"]) {
+                    bindCategorySelector(list[type]["sub"]);
+                    break;
+                }
+            }
+        } else {
+            $("#category").hide();
+            $("#categoryLabe").hide();
+        }
+    }
 
-	function renderBrand(selectedId, needRebuild) {
-		// var selectedId = $("#merchantId").parent().find("li.es-visible").val();//$(self).val();
-		$.getJSON("/merchant_brand_list", {"id": selectedId}, function (data) {
-			bindBrandSelector(data, needRebuild);
-		});
-	}
+    function renderBrand(selectedId, needRebuild) {
+        // var selectedId = $("#merchantId").parent().find("li.es-visible").val();//$(self).val();
+        $.getJSON("/merchant_brand_list", {"id": selectedId}, function (data) {
+            bindBrandSelector(data, needRebuild);
+        });
+    }
 
-	var table_global;
+    var table_global;
 
     function toggleTopIt(id) {
         $.post("/brand_toggleTop", {"id": id}, function (data) {
@@ -548,43 +551,43 @@
         });
     }
 
-	function upIt(id, self) {
-		$.post("/goods_up", {"id": id}, function (data) {
-			if (data) {
-				$(self).val("下架");
-				//remove old handler
-				$(self).prop("onclick", null);
-				$(self).removeAttr("onclick");
-				$(self).off("click");
-				//bind new
-				$(self).on("click", function () {
-					downIt(id, self);
-				});
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function upIt(id, self) {
+        $.post("/goods_up", {"id": id}, function (data) {
+            if (data) {
+                $(self).val("下架");
+                //remove old handler
+                $(self).prop("onclick", null);
+                $(self).removeAttr("onclick");
+                $(self).off("click");
+                //bind new
+                $(self).on("click", function () {
+                    downIt(id, self);
+                });
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
-	function downIt(id, self) {
-		$.post("/goods_down", {"id": id}, function (data) {
-			if (data) {
-				$(self).val("上架");
-				//remove old handler
-				$(self).prop("onclick", null);
-				$(self).removeAttr("onclick");
-				$(self).off("click");
-				//bind new
-				$(self).on("click", function () {
-					upIt(id, self);
-				});
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function downIt(id, self) {
+        $.post("/goods_down", {"id": id}, function (data) {
+            if (data) {
+                $(self).val("上架");
+                //remove old handler
+                $(self).prop("onclick", null);
+                $(self).removeAttr("onclick");
+                $(self).off("click");
+                //bind new
+                $(self).on("click", function () {
+                    upIt(id, self);
+                });
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
     function specialIt(id, self) {
         $.post("/goods_special", {"id": id}, function (data) {
@@ -644,210 +647,210 @@
             $("#stopTimeText").show();
         }
     }
-	var qiniuUrl = [[${qiniuUrl}]];
-	var isAdmin = [[${isAdmin}]];
-	var isLimit = [[${isLimit}]];
-    jQuery(document).ready(function($)
-	{
-		var oTable;
-		$.getJSON("/merchant_list_all", {}, function (data) {
-			bindMerchantSelector(data);
-			renderBrand(0, 0);
-			oTable = $("#example-1").dataTable({
-				language: {
-					url: "../assets/Chinese.txt"
-				},
-				bFilter: false,
-				bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
-				sAjaxDataProp: "aData",//是服务器分页的标志，必须有
-				sAjaxSource: "/goods_list",//通过ajax实现分页的url路径。
-				fnServerParams: function (aData) {
-					var searchArray = $(".form-inline").serializeArray();
-					var merchantId = $("#merchantId").parent().find("li.es-visible").val();
-					var merchantBrandId = $("#merchantBrandId").parent().find("li.es-visible").val();
-					searchArray.push({"name": "merchantId", "value": merchantId});
-					searchArray.push({"name": "merchantBrandId", "value": merchantBrandId});
-					$.merge(aData, searchArray);
-					aData.push({"name": "isLimit", "value": isLimit});//append isLimit
-				},
-				columnDefs: [
-					{
-						targets: 0,
-						data: "id",
-						width: "5%",
-						orderable: false,
-						className: 'select-checkbox',
-						title: '<input type="checkbox" id="checkbox-all"/>',
-						render: function (data, type, full, meta) {
-							return '<input type="checkbox" name="activityId" value="' + data + '" />';
-						}
-					},
-					{
-						targets: 1,
-						data: "id",
-						title: "序号"
-					},
-					{
-						targets: 2,
-						data: "name",
-						title: "名称"
-					},
-					{
-						targets: 3,
-						data: "image",
-						title: "封面图片",
-						render: function (data, type, row, meta) {
-							return buildImg(data);
-						}
-					},
-					{
-						targets: 4,
-						data: "merchantId",
-						title: "商户ID"
-					},
-					{
-						targets: 5,
-						data: "style",
-						title: "风格",
-						/*	render: function (data, type, row, meta) {
+
+    var qiniuUrl = [[${qiniuUrl}]];
+    var isAdmin = [[${isAdmin}]];
+    var isLimit = [[${isLimit}]];
+    jQuery(document).ready(function ($) {
+        var oTable;
+        $.getJSON("/merchant_list_all", {}, function (data) {
+            bindMerchantSelector(data);
+            renderBrand(0, 0);
+            oTable = $("#example-1").dataTable({
+                language: {
+                    url: "../assets/Chinese.txt"
+                },
+                bFilter: false,
+                bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+                sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+                sAjaxSource: "/goods_list",//通过ajax实现分页的url路径。
+                fnServerParams: function (aData) {
+                    var searchArray = $(".form-inline").serializeArray();
+                    var merchantId = $("#merchantId").parent().find("li.es-visible").val();
+                    var merchantBrandId = $("#merchantBrandId").parent().find("li.es-visible").val();
+                    searchArray.push({"name": "merchantId", "value": merchantId});
+                    searchArray.push({"name": "merchantBrandId", "value": merchantBrandId});
+                    $.merge(aData, searchArray);
+                    aData.push({"name": "isLimit", "value": isLimit});//append isLimit
+                },
+                columnDefs: [
+                    {
+                        targets: 0,
+                        data: "id",
+                        width: "5%",
+                        orderable: false,
+                        title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
+                        render: function (data, type, full, meta) {
+                            var uuid = UUID.randomUUID();
+                            return '<div class="checkbox"><input type="checkbox" name="activityId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
+                        }
+                    },
+                    {
+                        targets: 1,
+                        data: "id",
+                        title: "序号"
+                    },
+                    {
+                        targets: 2,
+                        data: "name",
+                        title: "名称"
+                    },
+                    {
+                        targets: 3,
+                        data: "image",
+                        title: "封面图片",
+                        render: function (data, type, row, meta) {
+                            return buildImg(data);
+                        }
+                    },
+                    {
+                        targets: 4,
+                        data: "merchantId",
+                        title: "商户ID"
+                    },
+                    {
+                        targets: 5,
+                        data: "style",
+                        title: "风格",
+                        /*	render: function (data, type, row, meta) {
                                 return buildImg(data);
                             }*/
-					},
-					{
-						targets: 6,
-						data: "merchantName",
-						title: "商户名称"
-					},
-					{
-						targets: 7,
-						data: "brandId",
-						title: "品牌ID"
-					},
-					{
-						targets: 8,
-						data: "brandName",
-						title: "品牌名称"
-					},
-					{
-						targets: 9,
-						data: "brandLogo",
-						title: "品牌LOGO",
-						render: function (data, type, row, meta) {
-							return buildImg(data);
-						}
-					},
-					{
-						targets: 10,
-						data: "type",
-						title: "类别"
-					},
-					{
-						targets: 11,
-						data: "category",
-						title: "类目"
-					},
-					{
-						targets: 12,
-						data: "price",
-						title: "发售价"
-					},
-					{
-						targets: 13,
-						data: "originalPrice",
-						title: "原价"
-					},
-					{
-						targets: 14,
-						data: "priceRange",
-						title: "价格范围"
-					},
-					{
-						targets: 15,
-						data: "status",
-						title: "状态",
-						render: function (data, type, row, meta) {
-							return (data == "0" || data == undefined) ? "<font color='red'>未上架</font>" : "已上架";
-						}
-					},
-					{
-						targets: 16,
-						data: "viewCount",
-						title: "浏览数"
-					},
-					{
-						targets: 17,
-						data: "saleCount",
-						title: "销量"
-					},
-					{
-						targets: 18,
-						data: "createTime",
-						title: "创建时间",
-						render: function (data, type, row, meta) {
-							return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-						}
-					},
-					{
-						targets: 19,
-						data: "isSpecial",
-						title: "特殊商品",
-						render: function (data, type, row, meta) {
-							if (isLimit == "1") {
-								return "不可用";
-							} else {
-								return data == "1" ? "<font color='red'>限量</font>" : "非限量";
-							}
-						}
-					},
-					{
-						targets: 20,
-						data: "id",
-						orderable: false,
-						title: "操作",
-						render: function (data, type, full, meta) {
-							var str = '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
-							str += '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
-							return str;
-						}
-					},
-					{
-						targets: 21,
-						data: "id",
-						orderable: false,
-						title: "操作",
-						render: function (data, type, full, meta) {
-							if (isLimit == "1") {
-								return "";
-							}
-							var str = "";
-							if (full["status"] == "0") {
-								str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
-							} else {
-								str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
-							}
-							if (full["isSpecial"] == "0") {
-								str += '<input type="button" name="checkIt" onclick="specialIt(' + data + ',this)" value="设为限量商品"/>';
-							} else {
-								str += '<input type="button" name="checkIt" onclick="unSpecialIt(' + data + ',this)" value="取消限量商品"/>';
-							}
-							return str;
-						}
-					}
-				]
-			});
-			table_global = oTable;
-		});
+                    },
+                    {
+                        targets: 6,
+                        data: "merchantName",
+                        title: "商户名称"
+                    },
+                    {
+                        targets: 7,
+                        data: "brandId",
+                        title: "品牌ID"
+                    },
+                    {
+                        targets: 8,
+                        data: "brandName",
+                        title: "品牌名称"
+                    },
+                    {
+                        targets: 9,
+                        data: "brandLogo",
+                        title: "品牌LOGO",
+                        render: function (data, type, row, meta) {
+                            return buildImg(data);
+                        }
+                    },
+                    {
+                        targets: 10,
+                        data: "type",
+                        title: "类别"
+                    },
+                    {
+                        targets: 11,
+                        data: "category",
+                        title: "类目"
+                    },
+                    {
+                        targets: 12,
+                        data: "price",
+                        title: "发售价"
+                    },
+                    {
+                        targets: 13,
+                        data: "originalPrice",
+                        title: "原价"
+                    },
+                    {
+                        targets: 14,
+                        data: "priceRange",
+                        title: "价格范围"
+                    },
+                    {
+                        targets: 15,
+                        data: "status",
+                        title: "状态",
+                        render: function (data, type, row, meta) {
+                            return (data == "0" || data == undefined) ? "<font color='red'>未上架</font>" : "已上架";
+                        }
+                    },
+                    {
+                        targets: 16,
+                        data: "viewCount",
+                        title: "浏览数"
+                    },
+                    {
+                        targets: 17,
+                        data: "saleCount",
+                        title: "销量"
+                    },
+                    {
+                        targets: 18,
+                        data: "createTime",
+                        title: "创建时间",
+                        render: function (data, type, row, meta) {
+                            return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                        }
+                    },
+                    {
+                        targets: 19,
+                        data: "isSpecial",
+                        title: "特殊商品",
+                        render: function (data, type, row, meta) {
+                            if (isLimit == "1") {
+                                return "不可用";
+                            } else {
+                                return data == "1" ? "<font color='red'>限量</font>" : "非限量";
+                            }
+                        }
+                    },
+                    {
+                        targets: 20,
+                        data: "id",
+                        orderable: false,
+                        title: "操作",
+                        render: function (data, type, full, meta) {
+                            var str = '<input type="button" name="checkIt" onclick="checkIt(' + data + ')" value="查看详情"/>';
+                            str += '<input type="button" name="checkIt" onclick="checkSku(' + data + ')" value="查看SKU"/>';
+                            return str;
+                        }
+                    },
+                    {
+                        targets: 21,
+                        data: "id",
+                        orderable: false,
+                        title: "操作",
+                        render: function (data, type, full, meta) {
+                            if (isLimit == "1") {
+                                return "";
+                            }
+                            var str = "";
+                            if (full["status"] == "0") {
+                                str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+                            } else {
+                                str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+                            }
+                            if (full["isSpecial"] == "0") {
+                                str += '<input type="button" name="checkIt" onclick="specialIt(' + data + ',this)" value="设为限量商品"/>';
+                            } else {
+                                str += '<input type="button" name="checkIt" onclick="unSpecialIt(' + data + ',this)" value="取消限量商品"/>';
+                            }
+                            return str;
+                        }
+                    }
+                ]
+            });
+            table_global = oTable;
+        });
 
-		$.getJSON("/type_and_category_list", {}, function (data) {
-			$("#type_and_category_list").val(JSON.stringify(data));
-			bindTypeSelector(data);
-		});
+        $.getJSON("/type_and_category_list", {}, function (data) {
+            $("#type_and_category_list").val(JSON.stringify(data));
+            bindTypeSelector(data);
+        });
 
-		$(".searchBtn").click(function(){
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
-			return false;
-		});
+        $(".searchBtn").click(function () {
+            $("#checkbox-all").attr("checked", false);
+            oTable.fnDraw(); //or fnReloadAjax()
+            return false;
+        });
 
         $('#example-1').on('click', "#checkbox-all", function () {
             var obj = $(this);
@@ -856,73 +859,73 @@
             });
         });
 
-		$(".btn.btn-info.add").click(function () {
-			if (isLimit == "1") {
-				window.location.href = '/goods_add_limit.html';
-			} else {
-				window.location.href = '/goods_add.html';
-			}
-		});
+        $(".btn.btn-info.add").click(function () {
+            if (isLimit == "1") {
+                window.location.href = '/goods_add_limit.html';
+            } else {
+                window.location.href = '/goods_add.html';
+            }
+        });
 
-		jQuery.datetimepicker.setLocale('zh');
-		jQuery('#beginTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
-		jQuery('#endTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
+        jQuery.datetimepicker.setLocale('zh');
+        jQuery('#beginTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
+        jQuery('#endTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
 
-		$('[name="now"]').click(function () {
-			var value = $(this).val();  //获取选中的radio的值
-			var beginTime = $("#beginTime");
-			var endTime = $("#endTime");
-			var div = $("#period");
-			switch (parseInt(value)) {
-				case 0:
-					var pushTimeStr = new Date().Format('yyyy-MM-dd hh:mm:ss');
-					beginTime.val(pushTimeStr);
-					endTime.val(pushTimeStr);
-					div.show();
-					break;
-				default:
-					div.hide();
-					beginTime.val("");
-					endTime.val("");
-					break;
-			}
-		});
+        $('[name="now"]').click(function () {
+            var value = $(this).val();  //获取选中的radio的值
+            var beginTime = $("#beginTime");
+            var endTime = $("#endTime");
+            var div = $("#period");
+            switch (parseInt(value)) {
+                case 0:
+                    var pushTimeStr = new Date().Format('yyyy-MM-dd hh:mm:ss');
+                    beginTime.val(pushTimeStr);
+                    endTime.val(pushTimeStr);
+                    div.show();
+                    break;
+                default:
+                    div.hide();
+                    beginTime.val("");
+                    endTime.val("");
+                    break;
+            }
+        });
 
-		if (isLimit == "1") {
-			var titleEle = $("title");
-			var subTitleEle = $("h1.title");
-			titleEle.html("限量" + titleEle.html());
-			subTitleEle.html("限量" + subTitleEle.html());
-			$(".btn.btn-info").hide();
-			$(".btn.btn-info.add").show();
-			$(".btn.btn-info.edit").show();
-			$(".btn.btn-info.del").show();
-			$(".btn.btn-info.updateSku").show();
-			$(".btn.btn-info.updatePrice").show();
-			$(".btn.btn-info.copyGoods").show();
-			$(".btn.btn-info.copyGoods").click(function () {
-				var goodsId = prompt("请输入要复制的商品ID", "0");
-				if (isNaN(goodsId) || goodsId == null) {
-					alert("请输入数字！")
-				} else {
+        if (isLimit == "1") {
+            var titleEle = $("title");
+            var subTitleEle = $("h1.title");
+            titleEle.html("限量" + titleEle.html());
+            subTitleEle.html("限量" + subTitleEle.html());
+            $(".btn.btn-info").hide();
+            $(".btn.btn-info.add").show();
+            $(".btn.btn-info.edit").show();
+            $(".btn.btn-info.del").show();
+            $(".btn.btn-info.updateSku").show();
+            $(".btn.btn-info.updatePrice").show();
+            $(".btn.btn-info.copyGoods").show();
+            $(".btn.btn-info.copyGoods").click(function () {
+                var goodsId = prompt("请输入要复制的商品ID", "0");
+                if (isNaN(goodsId) || goodsId == null) {
+                    alert("请输入数字！")
+                } else {
                     $.post("/goods_copy", {"id": goodsId}, function (data) {
                         if (data > 0) {
                             toastr.success("操作已成功！", "温馨提示");
@@ -930,74 +933,74 @@
                             window.open('/goods_edit.html?id=' + data, "_blank");
                         }
                     });
-				}
-			});
-			$("#specialEle").hide();
-		} else {
-			$(".btn.btn-info.copyGoods").hide();
-			if (isAdmin == "1") {
-				$(".btn.btn-info.discountList").click(function () {
-					checkJob();
-				});
-				$(".btn.btn-info.discount").click(function () {
-					var activityId = $("input[name='activityId']:checked");
-					if (activityId.length < 1) {
-						toastr.error("请至少选择一条数据操作", "温馨提示");
-						return;
-					}
-					var ids = [];
-					activityId.each(function (i, e) {
-						ids.push(e.value);
-					});
-					var form = $("#saveForm");
-					form.find("input:not(.notMe)").val("");
-					form.find("input[name='ids']").val(ids.join(","));
-					form.find("img").attr("src", "");
-					form.find("img").hide();
-					form.find("input[type='file']").show();
-					$(".imageShow").remove();
-					jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-				});
-				$(".btn.btn-info.restorePrice").click(function () {
-					var activityId = $("input[name='activityId']:checked");
-					if (activityId.length < 1) {
-						toastr.error("请至少选择一条数据操作", "温馨提示");
-						return;
-					}
-					var ids = [];
-					activityId.each(function (i, e) {
-						ids.push(e.value);
-					});
-					$.post("/goods_restore_price", {ids: ids}, function (data) {
-						if (data) {
-							toastr.success("操作已成功！", "温馨提示");
-							oTable.fnDraw();
-						} else {
-							toastr.error("您无权操作！", "温馨提示");
-						}
-					});
-				});
-			} else {
-				$(".btn.btn-info.discountList").hide();
-				$(".btn.btn-info.discount").hide();
-				$(".btn.btn-info.restorePrice").hide();
-			}
-		}
+                }
+            });
+            $("#specialEle").hide();
+        } else {
+            $(".btn.btn-info.copyGoods").hide();
+            if (isAdmin == "1") {
+                $(".btn.btn-info.discountList").click(function () {
+                    checkJob();
+                });
+                $(".btn.btn-info.discount").click(function () {
+                    var activityId = $("input[name='activityId']:checked");
+                    if (activityId.length < 1) {
+                        toastr.error("请至少选择一条数据操作", "温馨提示");
+                        return;
+                    }
+                    var ids = [];
+                    activityId.each(function (i, e) {
+                        ids.push(e.value);
+                    });
+                    var form = $("#saveForm");
+                    form.find("input:not(.notMe)").val("");
+                    form.find("input[name='ids']").val(ids.join(","));
+                    form.find("img").attr("src", "");
+                    form.find("img").hide();
+                    form.find("input[type='file']").show();
+                    $(".imageShow").remove();
+                    jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+                });
+                $(".btn.btn-info.restorePrice").click(function () {
+                    var activityId = $("input[name='activityId']:checked");
+                    if (activityId.length < 1) {
+                        toastr.error("请至少选择一条数据操作", "温馨提示");
+                        return;
+                    }
+                    var ids = [];
+                    activityId.each(function (i, e) {
+                        ids.push(e.value);
+                    });
+                    $.post("/goods_restore_price", {ids: ids}, function (data) {
+                        if (data) {
+                            toastr.success("操作已成功！", "温馨提示");
+                            oTable.fnDraw();
+                        } else {
+                            toastr.error("您无权操作！", "温馨提示");
+                        }
+                    });
+                });
+            } else {
+                $(".btn.btn-info.discountList").hide();
+                $(".btn.btn-info.discount").hide();
+                $(".btn.btn-info.restorePrice").hide();
+            }
+        }
 
-		$(".btn.btn-info.export").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
-			var ids = [];
-			activityId.each(function (i, e) {
-				ids.push(e.value);
-			});
-			var queryString = $.param({"ids": ids});
-			window.open('/goods_export.html?' + queryString, "_blank");
-			return false;
-		});
+        $(".btn.btn-info.export").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
+            var queryString = $.param({"ids": ids});
+            window.open('/goods_export.html?' + queryString, "_blank");
+            return false;
+        });
 
         $(".btn.btn-info.updateSku").click(function () {
             var activityId = $("input[name='activityId']:checked");
@@ -1021,11 +1024,11 @@
                         var skuEle = 'SKU编码:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["sku"]);
                         var remarkEle = '备注:<input type="text" value="VV" disabled="disabled" />'.replace("VV", a["remark"]);
                         var stockEle = '库存数:<input type="text" name="stock" value="VV" />'.replace("VV", a["stock"]);
-						contentStr += appendToPreviewList(imgEle, idEle, skuEle, remarkEle, stockEle, "");
+                        contentStr += appendToPreviewList(imgEle, idEle, skuEle, remarkEle, stockEle, "");
                         contentStr += "<hr/>";
                     }
                     var btnEle = '<input type="button" class="btn btn-info" value="保存" onclick="updateStockBatch()" />';
-					contentStr += appendToPreviewList("", "", "", "", "", btnEle);
+                    contentStr += appendToPreviewList("", "", "", "", "", btnEle);
                     preview.html(contentStr + "</form>");
                     jQuery('#preview').modal({backdrop: 'static', keyboard: false});
                     toastr.success("操作已成功！", "温馨提示");
@@ -1036,56 +1039,56 @@
             return false;
         });
 
-		$(".btn.btn-info.updatePrice").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
-			var ids = [];
-			activityId.each(function (i, e) {
-				ids.push(e.value);
-			});
-			$.post("/goods_stock_list_mix_tree", {"ids": ids}, function (data) {
-				if (data) {
-					var preview = $("#preview_body");
-					var contentStr = "<form id='priceForm'>";
-					contentStr += "<hr/>";
-					for (var a in data) {
-						var index = a;
-						a = data[a];
-						var gidEle = '<input type="hidden" name="gid" value="VV" />'.replace("VV", a["id"]);
-						var imgEle = '<img src="VV" width="100px" height="100px" />'.replace("VV", a["image"]);
-						var priceEle = '价格:<input type="number" name="price" value="VV" />'.replace("VV", a["price"]);
-						var originalPriceEle = '原价:<input type="number" name="originalPrice" value="VV" placeholder="无促销可不填" />'.replace("VV", a["originalPrice"] == null ? "" : a["originalPrice"]);
-						var originalPriceHiddenEle = '<input type="hidden" name="originalPriceHidden" value="VV" />'.replace("VV", a["originalPrice"] == null ? "NULL" : a["originalPrice"]);
-						contentStr += appendToPreviewList(imgEle, gidEle, priceEle, originalPriceEle, originalPriceHiddenEle, "");
+        $(".btn.btn-info.updatePrice").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
+            $.post("/goods_stock_list_mix_tree", {"ids": ids}, function (data) {
+                if (data) {
+                    var preview = $("#preview_body");
+                    var contentStr = "<form id='priceForm'>";
+                    contentStr += "<hr/>";
+                    for (var a in data) {
+                        var index = a;
+                        a = data[a];
+                        var gidEle = '<input type="hidden" name="gid" value="VV" />'.replace("VV", a["id"]);
+                        var imgEle = '<img src="VV" width="100px" height="100px" />'.replace("VV", a["image"]);
+                        var priceEle = '价格:<input type="number" name="price" value="VV" />'.replace("VV", a["price"]);
+                        var originalPriceEle = '原价:<input type="number" name="originalPrice" value="VV" placeholder="无促销可不填" />'.replace("VV", a["originalPrice"] == null ? "" : a["originalPrice"]);
+                        var originalPriceHiddenEle = '<input type="hidden" name="originalPriceHidden" value="VV" />'.replace("VV", a["originalPrice"] == null ? "NULL" : a["originalPrice"]);
+                        contentStr += appendToPreviewList(imgEle, gidEle, priceEle, originalPriceEle, originalPriceHiddenEle, "");
                         var delayChange = '<label><input type="radio" name="isInstantChangeBtn" onclick="isInstantChange(false)"/>否 </label>';
                         var instantChange = '<label><input type="radio" name="isInstantChangeBtn" checked="checked" onclick="isInstantChange(true)"/>是</label>';
                         var startTimeText = '<input type="text" id="startTimeText" name="startTimeText" style="display: none;" placeholder="开始时间" />';
                         var stopTimeText = '<input type="text" id="stopTimeText" name="stopTimeText" style="display: none;" placeholder="结束时间" />';
-						if (index == 0) {
-							contentStr += appendToPreviewList("是否及时改价", "", delayChange, "", instantChange, "");
-							contentStr += appendToPreviewList("", "", startTimeText, "", stopTimeText, "");
-						}
-						var batchSetBtn = '<input type="button" value="批量设置价格" onclick="batchSetPrice()" />';
-						if (index == 0) {
-							contentStr += appendToPreviewList("", "", "", "", batchSetBtn, "");
-						}
-						for (var b in a["sub"]) {
-							b = a["sub"][b];
-							var idEle = '<input type="hidden" name="sid" value="VV" />'.replace("VV", b["id"]);
-							var imgEle = '<img src="VV" width="100px" height="100px" />'.replace("VV", b["image"]);
-							var skuEle = 'SKU编码:<input type="text" value="VV" disabled="disabled" />'.replace("VV", b["sku"]);
-							var remarkEle = '备注:<input type="text" value="VV" disabled="disabled" />'.replace("VV", b["remark"]);
-							var priceEle = '价格:<input type="number" name="stockPrice" value="VV" />'.replace("VV", b["price"]);
-							contentStr += appendToPreviewList(idEle, imgEle, skuEle, remarkEle, priceEle, "");
-						}
-						contentStr += "<hr/>";
-					}
-					var btnEle = '<input type="button" class="btn btn-info" value="保存" onclick="updatePriceBatch()" />';
-					contentStr += appendToPreviewList("", "", "", "", "", btnEle);
-					preview.html(contentStr + "</form>");
+                        if (index == 0) {
+                            contentStr += appendToPreviewList("是否及时改价", "", delayChange, "", instantChange, "");
+                            contentStr += appendToPreviewList("", "", startTimeText, "", stopTimeText, "");
+                        }
+                        var batchSetBtn = '<input type="button" value="批量设置价格" onclick="batchSetPrice()" />';
+                        if (index == 0) {
+                            contentStr += appendToPreviewList("", "", "", "", batchSetBtn, "");
+                        }
+                        for (var b in a["sub"]) {
+                            b = a["sub"][b];
+                            var idEle = '<input type="hidden" name="sid" value="VV" />'.replace("VV", b["id"]);
+                            var imgEle = '<img src="VV" width="100px" height="100px" />'.replace("VV", b["image"]);
+                            var skuEle = 'SKU编码:<input type="text" value="VV" disabled="disabled" />'.replace("VV", b["sku"]);
+                            var remarkEle = '备注:<input type="text" value="VV" disabled="disabled" />'.replace("VV", b["remark"]);
+                            var priceEle = '价格:<input type="number" name="stockPrice" value="VV" />'.replace("VV", b["price"]);
+                            contentStr += appendToPreviewList(idEle, imgEle, skuEle, remarkEle, priceEle, "");
+                        }
+                        contentStr += "<hr/>";
+                    }
+                    var btnEle = '<input type="button" class="btn btn-info" value="保存" onclick="updatePriceBatch()" />';
+                    contentStr += appendToPreviewList("", "", "", "", "", btnEle);
+                    preview.html(contentStr + "</form>");
                     jQuery('#startTimeText').datetimepicker(
                         {
                             "lang": "zh",
@@ -1106,24 +1109,24 @@
                             "defaultTime": "00:00:00"
                         }
                     );
-					jQuery('#preview').modal({backdrop: 'static', keyboard: false});
-					toastr.success("操作已成功！", "温馨提示");
-				} else {
-					toastr.error("操作失败", "温馨提示");
-				}
-			});
-			return false;
-		});
+                    jQuery('#preview').modal({backdrop: 'static', keyboard: false});
+                    toastr.success("操作已成功！", "温馨提示");
+                } else {
+                    toastr.error("操作失败", "温馨提示");
+                }
+            });
+            return false;
+        });
 
-		//保存
-		$(".btn.btn-info.save").click(function(){
-			var footer = $(this).parent(".modal-footer");
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var form = $("#saveForm");
-			var beginTime = form.find("input[name='beginTime']").val();
-			var endTime = form.find("input[name='endTime']").val();
-			var discount = form.find("input[name='discount']").val();
+        //保存
+        $(".btn.btn-success.save").click(function () {
+            var footer = $(this).parent(".modal-footer");
+            footer.find("button").hide();
+            footer.find(".bg-lg").show();
+            var form = $("#saveForm");
+            var beginTime = form.find("input[name='beginTime']").val();
+            var endTime = form.find("input[name='endTime']").val();
+            var discount = form.find("input[name='discount']").val();
 
             if ((beginTime != '' && endTime == '') || (beginTime == '' && endTime != '') || discount == '') {
                 toastr.error("请填写完整数据后提交", "温馨提示");
@@ -1132,89 +1135,89 @@
                 return;
             }
 
-			//获取token
-			$.get("/qiniu/token",{},function(token){
-				if(token !=''){
-					async.series({
-						one: function(callback) {
-							callback();
-						},
-						two: function(callback){
-							callback();
-						},
-						three: function(callback){
-							//提交保存
-							$.post("/goods_discount_add",$("#saveForm").serialize(),function(data){
-								if(data){
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									jQuery('#modal-6').modal('hide');
-									toastr.success("操作已成功！", "温馨提示");
-									oTable.fnDraw();
-								}else{
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败", "温馨提示");
-								}
-								callback();
-							});
-						}
-					}, function(err, results) {
-						console.log("OK");
-					});
-				}else{
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					toastr.error("错误，请联系管理员", "温馨提示");
-				}
-			});
-		});
+            //获取token
+            $.get("/qiniu/token", {}, function (token) {
+                if (token != '') {
+                    async.series({
+                        one: function (callback) {
+                            callback();
+                        },
+                        two: function (callback) {
+                            callback();
+                        },
+                        three: function (callback) {
+                            //提交保存
+                            $.post("/goods_discount_add", $("#saveForm").serialize(), function (data) {
+                                if (data) {
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    jQuery('#modal-6').modal('hide');
+                                    toastr.success("操作已成功！", "温馨提示");
+                                    oTable.fnDraw();
+                                } else {
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    toastr.error("操作失败", "温馨提示");
+                                }
+                                callback();
+                            });
+                        }
+                    }, function (err, results) {
+                        console.log("OK");
+                    });
+                } else {
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                    toastr.error("错误，请联系管理员", "温馨提示");
+                }
+            });
+        });
 
-		$(".btn.btn-info.edit").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return;
-			}
-			$.post("/goods_findOne", {"id": activityId[0].value}, function (data) {
-				if (data) {
+        $(".btn.btn-info.edit").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
+            $.post("/goods_findOne", {"id": activityId[0].value}, function (data) {
+                if (data) {
                     if (data["status"] == "1") {
                         toastr.error("操作失败,已上架商品不允许编辑", "温馨提示");
                     } else {
                         window.open('/goods_edit.html?id=' + activityId[0].value, "_blank");
                         // window.location.href = '/goods_edit.html?id=' + activityId[0].value;
                     }
-				}
-			});
-		});
+                }
+            });
+        });
 
-		$(".btn.btn-info.del").click(function(){
-			var activityId = $("input[name='activityId']:checked");
-			if(activityId.length < 1){
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return ;
-			}
-			var confirm = window.confirm("你确定要这么做？");
-			if (confirm == false) {
-				return;
-			}
-			var ids = [];
-			activityId.each(function(i,e){
-				ids.push(e.value);
-			});
+        $(".btn.btn-info.del").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+            var confirm = window.confirm("你确定要这么做？");
+            if (confirm == false) {
+                return;
+            }
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
 
-			$.post("/goods_del", {ids: ids}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				} else {
-					toastr.error("您无权操作！", "温馨提示");
-				}
-			});
-		});
-	});
-	/*]]>*/
-	</script>
+            $.post("/goods_del", {ids: ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                } else {
+                    toastr.error("您无权操作！", "温馨提示");
+                }
+            });
+        });
+    });
+    /*]]>*/
+</script>
 </body>
 
 </html>
