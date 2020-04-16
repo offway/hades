@@ -2,98 +2,93 @@
 <html lang="en">
 <head>
 	<head th:replace="head"></head>
-	<title>财务报表</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+	<title>渠道财务报表</title>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
+		.form-group img{
+			max-width:400px;
+			max-height:300px;
+		}
 	</style>
 </head>
-<body class="page-body">
-
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">渠道财务报表</h1>
-					<p class="activityDescription"></p>
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+	<header th:replace="navbar"></header>
+	<aside th:replace="sidebar-menu"></aside>
+	<!-- Content Wrapper. Contains page content -->
+	<div class="content-wrapper">
+		<!-- Content Header (Page header) -->
+		<div class="content-header d-none d-md-block">
+			<div class="d-flex align-items-center">
+				<div class="mr-auto">
+					<h3 class="page-title br-0">渠道财务报表</h3>
 				</div>
-
-				<div class="breadcrumb-env">
-
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>渠道财务报表</strong></li>
-					</ol>
-
-				</div>
-
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group ">
-							<div class="input-group">
-								<label for="channel" class="control-label">渠道</label>
-							</div>
-							<div class="input-group">
-								<select id="channel" name="channel" class="form-control" style="height:35px">
-									<option th:each="channel : ${channels}" th:text="${channel.channelName}" th:value="${channel.channel}"></option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
+				<div class="right-title">
 				</div>
 			</div>
-			<footer th:replace="footer"></footer>
 		</div>
-	</div>
 
-	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script src="assets/js/async.min.js"></script>
-	<script th:inline="javascript">
+		<!-- Main content -->
+		<section class="content">
+			<div class="row">
+				<div class="col-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<form role="form" class="form-inline">
+								<div class="form-group ">
+									<div class="input-group">
+										<label for="channel" class="control-label">渠道</label>
+									</div>
+									<div class="input-group">
+										<select id="channel" name="channel" class="form-control" style="height:35px">
+											<option th:each="channel : ${channels}" th:text="${channel.channelName}" th:value="${channel.channel}"></option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+								</div>
+							</form>
+						</div>
+						<div class="box-body">
+							<div class="table-responsive">
+								<table id="example-1" class="table table-bordered table-striped" style="width: 100%;">
+								</table>
+							</div>
+						</div>
+						<!-- /.box-body -->
+						<div class="box-footer">
+						</div>
+						<!-- /.box-footer-->
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- /.content -->
+	</div>
+	<!-- /.content-wrapper -->
+	<footer th:replace="footer"></footer>
+</div>
+
+<script th:inline="javascript">
 	/*<![CDATA[*/
 
-    function closeIt(self) {
-        var that = $(self);
-        that.hide();
-    }
+	function formatTime(time) {
+		return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
+	}
 
-    function formatTime(time) {
-        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
-    }
+	function buildImg(url) {
+		return "<img width='100px' height='100px' src='#' />".replace("#", url);
+	}
 
-    function buildImg(url) {
-        return "<img width='100px' height='100px' src='#' />".replace("#", url);
-    }
-
-    function checkItsList(id) {
-        window.location.href = '/order.html?channel=' + id;
-    }
+	function checkItsList(id) {
+		window.location.href = '/order.html?channel=' + id;
+	}
 
 	var table_global;
 	var qiniuUrl = [[${qiniuUrl}]];
-    jQuery(document).ready(function($)
+	jQuery(document).ready(function($)
 	{
 		var oTable = $("#example-1").dataTable({
 			language: {
@@ -113,10 +108,10 @@
 					data: "id",
 					width: "5%",
 					orderable: false,
-					className: 'select-checkbox',
-					title: '<input type="checkbox" id="checkbox-all"/>',
+					title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
 					render: function (data, type, full, meta) {
-						return '<input type="checkbox" name="activityId" value="' + data + '" />';
+						var uuid = UUID.randomUUID();
+						return '<div class="checkbox"><input type="checkbox" name="activityId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
 					}
 				},
 				{
@@ -173,15 +168,15 @@
 					data: "backAmount",
 					title: "应结金额"
 				},
-                {
-                    targets: 11,
-                    data: "channel",
-                    orderable: false,
-                    title: "操作",
-                    render: function (data, type, full, meta) {
-                        return '<input type="button" name="checkIt" onclick="checkItsList(\'AAAA\')" value="查看详细对账"/>'.replace("AAAA", data);
-                    }
-                }
+				{
+					targets: 11,
+					data: "channel",
+					orderable: false,
+					title: "操作",
+					render: function (data, type, full, meta) {
+						return '<input type="button" name="checkIt" onclick="checkItsList(\'AAAA\')" value="查看详细对账"/>'.replace("AAAA", data);
+					}
+				}
 			]
 		});
 
@@ -189,11 +184,18 @@
 
 		$(".searchBtn").click(function () {
 			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
+			oTable.fnDraw(); //or fnReloadAjax()
 			return false;
+		});
+
+		$('#example-1').on('click', "#checkbox-all", function () {
+			var obj = $(this);
+			$("input[name='activityId']").each(function (i, e) {
+				this.checked = obj[0].checked;
+			});
 		});
 	});
 	/*]]>*/
-	</script>
+</script>
 </body>
 </html>
