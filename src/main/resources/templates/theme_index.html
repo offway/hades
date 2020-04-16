@@ -10,245 +10,250 @@
 	<link rel="stylesheet" href="assets/css/dd.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
-	.form-group img{
-		max-width:40px;
-		max-height:30px;
-	}
+		.form-group img{
+			max-width:40px;
+			max-height:30px;
+		}
 	</style>
 </head>
-<body class="page-body">
-
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">主题推荐管理</h1>
-					<p class="activityDescription"></p>
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+	<header th:replace="navbar"></header>
+	<aside th:replace="sidebar-menu"></aside>
+	<!-- Content Wrapper. Contains page content -->
+	<div class="content-wrapper">
+		<!-- Content Header (Page header) -->
+		<div class="content-header d-none d-md-block">
+			<div class="d-flex align-items-center">
+				<div class="mr-auto">
+					<h3 class="page-title br-0">主题推荐管理</h3>
 				</div>
-
-				<div class="breadcrumb-env">
-
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>主题推荐管理</strong></li>
-					</ol>
-
-				</div>
-
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group ">
-							<div class="input-group">
-								<input id="id" type="text" name="id" class="form-control" style="height:35px" placeholder="主题ID"/>
-							</div>
-							<div class="input-group">
-								<input id="name" type="text" name="name" class="form-control" style="height:35px" placeholder="主题名称"/>
-							</div>
-							<div class="input-group">
-								<input id="beginTime" type="text" name="sTime" class="form-control" style="height:35px" placeholder="开始时间"/>
-							</div>
-							<div class="input-group">
-								<input id="endTime" type="text" name="eTime" class="form-control" style="height:35px" placeholder="结束时间"/>
-							</div>
-						</div>
-						<div class="form-group">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-				</div>
-				<button class="btn btn-info add">添加</button>
-				<button class="btn btn-info edit">修改</button>
-				<button class="btn btn-info del">删除</button>
-				<button class="btn btn-info addToMini">推荐至小程序</button>
-				<button class="btn btn-info listMini">小程序首页推荐列表</button>
-			</div>
-			
-					
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
-	
-	<div class="modal fade in" id="modal-6" style="z-index: 1000">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加主题</h4>
-				</div>
-				
-				<div class="modal-body">
-					<form role="form" id="saveForm">
-						<input type="hidden" name="id"/>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">主题名称</label>
-									<input type="text" class="form-control" name="name" placeholder="主题名称"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">主题内容</label>
-									<textarea class="form-control" name="content" placeholder="主题内容"></textarea>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">主题图片</label>
-									<input type="file" name="imageUrlFile" onchange="uploadImg(this,false)" />
-									<img src="" name="imageUrlImg" />
-									<input type="hidden" name="imageUrl" />
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">首页推荐图片</label>
-									<input type="file" name="remarkFile" onchange="uploadImg(this,true)" />
-									<img src="" name="remarkImg" />
-									<input type="hidden" name="remark" />
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">主题商品</label>
-									<div id="goodsPool"></div>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label class="control-label">查询商品</label>
-									<select class="form-control" id="goodsSelect"></select>
-								</div>
-							</div>
-							<div class="col-md-2">
-								<div class="form-group">
-									<label class="control-label"></label>
-									<input type="button" class="notMe form-control" value="添加商品" onclick="addTheGoods(false)" />
-								</div>
-							</div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label class="control-label"></label>
-                                    <input type="button" class="notMe form-control" value="添加全部" onclick="addTheGoods(true)" />
-                                </div>
-                            </div>
-							<div class="col-md-2">
-								<div class="form-group">
-									<label class="control-label"></label>
-									<input type="button" class="notMe form-control" value="打乱" onclick="shuffle()" />
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">选择方式</label>
-									<label><input name="method" class="notMe" type="radio" checked="checked" value="0"/>品牌首字母索引</label>
-									<label><input name="method" class="notMe" type="radio" value="1"/>按分类索引</label>
-									<label><input name="method" class="notMe" type="radio" value="2"/>按关键字索引</label>
-								</div>
-							</div>
-						</div>
-						<div class="row" id="azBarDiv">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">品牌首字母索引</label>
-									<select class="form-control" id="brandSelect" onchange="renderGoodsSelect(this)"></select>
-									<div id="azBar"></div>
-								</div>
-							</div>
-						</div>
-						<div class="row" id="typeAndCategoryDiv" style="display: none">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label class="control-label">一级分类</label>
-									<select class="form-control" id="typeSelect" onchange="renderCategory(this)"></select>
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label class="control-label">二级分类</label>
-									<select class="form-control" id="categorySelect" onchange="renderGoods(this)"></select>
-								</div>
-							</div>
-						</div>
-						<div class="row" id="searchDiv" style="display: none">
-							<div class="col-md-8">
-								<div class="form-group">
-									<input type="text" class="form-control" name="keyword" placeholder="商品名关键字"/>
-								</div>
-							</div>
-							<div class="col-md-4">
-								<div class="form-group">
-									<input type="button" onclick="renderKeywordGoodsSelect()" class="notMe form-control" value="查询" />
-								</div>
-							</div>
-						</div>
-					</form>
-				</div>
-				
-				<div class="modal-footer">
-				 	<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info save">保存</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-				</div>
-				
-			</div>
-		</div>
-	</div>
-
-	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;z-index: 1000">
-		<div class="modal-dialog">
-			<div class="modal-content">
-
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">查看详情</h4>
-				</div>
-
-				<div class="modal-body" id="preview_body"></div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white save" id="savePin" data-dismiss="modal" style="display: none;">保存</button>
-					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+				<div class="right-title">
 				</div>
 			</div>
 		</div>
+
+		<!-- Main content -->
+		<section class="content">
+			<div class="row">
+				<div class="col-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<form role="form" class="form-inline">
+								<div class="form-group ">
+									<div class="input-group">
+										<input id="id" type="text" name="id" class="form-control" style="height:35px" placeholder="主题ID"/>
+									</div>
+									<div class="input-group">
+										<input id="name" type="text" name="name" class="form-control" style="height:35px" placeholder="主题名称"/>
+									</div>
+									<div class="input-group">
+										<input id="beginTime" type="text" name="sTime" class="form-control" style="height:35px" placeholder="开始时间"/>
+									</div>
+									<div class="input-group">
+										<input id="endTime" type="text" name="eTime" class="form-control" style="height:35px" placeholder="结束时间"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+								</div>
+							</form>
+						</div>
+						<div class="box-body">
+							<div class="table-responsive">
+								<table id="example-1" class="table table-bordered table-striped" style="width: 100%;">
+								</table>
+							</div>
+						</div>
+						<!-- /.box-body -->
+						<div class="box-footer">
+							<button class="btn btn-info add">添加</button>
+							<button class="btn btn-info edit">修改</button>
+							<button class="btn btn-info del">删除</button>
+							<button class="btn btn-info addToMini">推荐至小程序</button>
+							<button class="btn btn-info listMini">小程序首页推荐列表</button>
+						</div>
+						<!-- /.box-footer-->
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- /.content -->
 	</div>
-	<input type="hidden" id="IMGHOLDER"/>
-	<input type="hidden" id="type_and_category_list"/>
-	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
-	<script src="assets/js/jquery-ui/jquery-ui.js"></script>
-	<script src="assets/js/async.min.js"></script>
-	<script src="assets/js/jquery.dd.js"></script>
-	<script th:inline="javascript">
+	<!-- /.content-wrapper -->
+	<footer th:replace="footer"></footer>
+</div>
+
+<div id="preview" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel2" style="display: none;z-index: 1000" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="myLargeModalLabel2">查看详情</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			</div>
+			<div class="modal-body" id="preview_body">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary float-right" id="savePin" data-dismiss="modal" style="display: none;">保存</button>
+				<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;z-index: 1000" id="modal-6">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="myLargeModalLabel">添加主题</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			</div>
+			<div class="modal-body">
+				<form role="form" id="saveForm">
+					<input type="hidden" name="id"/>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">主题名称</label>
+								<input type="text" class="form-control" name="name" placeholder="主题名称"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">主题内容</label>
+								<textarea class="form-control" name="content" placeholder="主题内容"></textarea>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">主题图片</label>
+								<input type="file" name="imageUrlFile" onchange="uploadImg(this,false)" />
+								<img src="" name="imageUrlImg" />
+								<input type="hidden" name="imageUrl" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">首页推荐图片</label>
+								<input type="file" name="remarkFile" onchange="uploadImg(this,true)" />
+								<img src="" name="remarkImg" />
+								<input type="hidden" name="remark" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">主题商品</label>
+								<div id="goodsPool"></div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="control-label">查询商品</label>
+								<select class="form-control" id="goodsSelect"></select>
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label class="control-label"></label>
+								<input type="button" class="notMe form-control" value="添加商品" onclick="addTheGoods(false)" />
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label class="control-label"></label>
+								<input type="button" class="notMe form-control" value="添加全部" onclick="addTheGoods(true)" />
+							</div>
+						</div>
+						<div class="col-md-2">
+							<div class="form-group">
+								<label class="control-label"></label>
+								<input type="button" class="notMe form-control" value="打乱" onclick="shuffle()" />
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">选择方式</label>
+                                <input name="method" id="method1" class="notMe" type="radio" checked="checked" value="0"/>
+								<label for="method1">品牌首字母索引</label>
+                                <input name="method" id="method2" class="notMe" type="radio" value="1"/>
+								<label for="method2">按分类索引</label>
+                                <input name="method" id="method3" class="notMe" type="radio" value="2"/>
+								<label for="method3">按关键字索引</label>
+							</div>
+						</div>
+					</div>
+					<div class="row" id="azBarDiv">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label class="control-label">品牌首字母索引</label>
+								<select class="form-control" id="brandSelect" onchange="renderGoodsSelect(this)"></select>
+								<div id="azBar"></div>
+							</div>
+						</div>
+					</div>
+					<div class="row" id="typeAndCategoryDiv" style="display: none">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="control-label">一级分类</label>
+								<select class="form-control" id="typeSelect" onchange="renderCategory(this)"></select>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label class="control-label">二级分类</label>
+								<select class="form-control" id="categorySelect" onchange="renderGoods(this)"></select>
+							</div>
+						</div>
+					</div>
+					<div class="row" id="searchDiv" style="display: none">
+						<div class="col-md-8">
+							<div class="form-group">
+								<input type="text" class="form-control" name="keyword" placeholder="商品名关键字"/>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<input type="button" onclick="renderKeywordGoodsSelect()" class="notMe form-control" value="查询" />
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-info save">保存</button>
+				<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+
+<input type="hidden" id="IMGHOLDER"/>
+<input type="hidden" id="type_and_category_list"/>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+<script src="assets/js/jquery-ui/jquery-ui.js"></script>
+<script src="assets/js/async.min.js"></script>
+<script src="assets/js/jquery.dd.js"></script>
+<script th:inline="javascript">
 	/*<![CDATA[*/
-
     function formatTime(time) {
         return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
     }
@@ -257,16 +262,16 @@
         return "<img width='100px' height='100px' src='#' />".replace("#", url);
     }
 
-	function appendToPreview(key, value) {
-		return '<div class="row">' +
-				'<div class="col-md-2">' +
-				key +
-				'</div>' +
-				'<div class="col-md-10">' +
-				value +
-				'</div>' +
-				'</div>';
-	}
+    function appendToPreview(key, value) {
+        return '<div class="row">' +
+            '<div class="col-md-2">' +
+            key +
+            '</div>' +
+            '<div class="col-md-10">' +
+            value +
+            '</div>' +
+            '</div>';
+    }
 
     function checkIt(data) {
         var submit = $("#savePin");
@@ -299,67 +304,67 @@
         });
     }
 
-	function getQNToken(cb) {
-		$.get("/qiniu/token", {}, function (token) {
-			cb(token);
-		});
-	}
+    function getQNToken(cb) {
+        $.get("/qiniu/token", {}, function (token) {
+            cb(token);
+        });
+    }
 
-	function uploadImg(self, isShare) {
-		var that = $(self);
-		if (self.files.length > 0) {
-			var file = self.files[0];
-			getQNToken(function (token) {
-				this.upload("", token, file, function () {
-					//
-				}, function (err) {
-					console.log("error");
-					console.log(err);
-				}, function (res) {
-					var url = qiniuUrl + "/" + res.key;
-					if (isShare) {
-						that.parent().find("[name=remark]").val(url);
-						that.parent().find("[name=remarkImg]").attr("src", url);
-						that.parent().find("[name=remarkImg]").attr("width", "100px");
-						that.parent().find("[name=remarkImg]").attr("height", "100px");
-						that.parent().find("[name=remarkImg]").show();
-					} else {
-						that.parent().find("[name=imageUrl]").val(url);
-						that.parent().find("[name=imageUrlImg]").attr("src", url);
-						that.parent().find("[name=imageUrlImg]").attr("width", "100px");
-						that.parent().find("[name=imageUrlImg]").attr("height", "100px");
-						that.parent().find("[name=imageUrlImg]").show();
-					}
-				});
-			});
-		} else {
-			confirm("未选择任何文件!");
-		}
-	}
+    function uploadImg(self, isShare) {
+        var that = $(self);
+        if (self.files.length > 0) {
+            var file = self.files[0];
+            getQNToken(function (token) {
+                this.upload("", token, file, function () {
+                    //
+                }, function (err) {
+                    console.log("error");
+                    console.log(err);
+                }, function (res) {
+                    var url = qiniuUrl + "/" + res.key;
+                    if (isShare) {
+                        that.parent().find("[name=remark]").val(url);
+                        that.parent().find("[name=remarkImg]").attr("src", url);
+                        that.parent().find("[name=remarkImg]").attr("width", "100px");
+                        that.parent().find("[name=remarkImg]").attr("height", "100px");
+                        that.parent().find("[name=remarkImg]").show();
+                    } else {
+                        that.parent().find("[name=imageUrl]").val(url);
+                        that.parent().find("[name=imageUrlImg]").attr("src", url);
+                        that.parent().find("[name=imageUrlImg]").attr("width", "100px");
+                        that.parent().find("[name=imageUrlImg]").attr("height", "100px");
+                        that.parent().find("[name=imageUrlImg]").show();
+                    }
+                });
+            });
+        } else {
+            confirm("未选择任何文件!");
+        }
+    }
 
-	function shuffle() {
-		$('#goodsPool div').shuffle();
-	}
+    function shuffle() {
+        $('#goodsPool div').shuffle();
+    }
 
-	//https://j11y.io/javascript/shuffling-the-dom/
-	(function ($) {
-		$.fn.shuffle = function () {
-			var allElems = this.get(),
-					getRandom = function (max) {
-						return Math.floor(Math.random() * max);
-					},
-					shuffled = $.map(allElems, function () {
-						var random = getRandom(allElems.length),
-								randEl = $(allElems[random]).clone(true)[0];
-						allElems.splice(random, 1);
-						return randEl;
-					});
-			this.each(function (i) {
-				$(this).replaceWith($(shuffled[i]));
-			});
-			return $(shuffled);
-		};
-	})(jQuery);
+    //https://j11y.io/javascript/shuffling-the-dom/
+    (function ($) {
+        $.fn.shuffle = function () {
+            var allElems = this.get(),
+                getRandom = function (max) {
+                    return Math.floor(Math.random() * max);
+                },
+                shuffled = $.map(allElems, function () {
+                    var random = getRandom(allElems.length),
+                        randEl = $(allElems[random]).clone(true)[0];
+                    allElems.splice(random, 1);
+                    return randEl;
+                });
+            this.each(function (i) {
+                $(this).replaceWith($(shuffled[i]));
+            });
+            return $(shuffled);
+        };
+    })(jQuery);
 
     function addTheGoods(all) {
         var ele = $("#goodsSelect");
@@ -396,10 +401,10 @@
         that.append(str);
     }
 
-	function delNode(id) {
-		var that = $("#" + id);
-		that.remove();
-	}
+    function delNode(id) {
+        var that = $("#" + id);
+        that.remove();
+    }
 
     function delTheNode(self) {
         var that = $(self);
@@ -409,106 +414,106 @@
         div.remove();
     }
 
-	function renderGoodsSelect(self, id) {
-		var theId;
-		if (self == null) {
-			theId = id;
-		} else {
-			var that = $(self);
-			theId = that.val();
-		}
-		$.post("/pick_getGoods", {"value": theId, "type": 0}, function (data) {
-			bindGoods(data);
-		});
-	}
+    function renderGoodsSelect(self, id) {
+        var theId;
+        if (self == null) {
+            theId = id;
+        } else {
+            var that = $(self);
+            theId = that.val();
+        }
+        $.post("/pick_getGoods", {"value": theId, "type": 0}, function (data) {
+            bindGoods(data);
+        });
+    }
 
-	function renderKeywordGoodsSelect() {
-		var that = $("input[name='keyword']");
-		var value = that.val();
-		$.post("/pick_getGoods", {"value": value, "type": 3}, function (data) {
-			bindGoods(data);
-		});
-	}
+    function renderKeywordGoodsSelect() {
+        var that = $("input[name='keyword']");
+        var value = that.val();
+        $.post("/pick_getGoods", {"value": value, "type": 3}, function (data) {
+            bindGoods(data);
+        });
+    }
 
-	var msDropDownEle = null;
+    var msDropDownEle = null;
 
-	function bindGoods(data) {
-		var str = "";
-		var imgList = {};
-		for (var i in data) {
-			var brand = data[i];
-			str += '<option value="VALUE" data-image="ICON" data-goodsNo="CODE" data-goodsPrice="￥PRICE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["id"] + " " + brand["name"] + " ￥" + brand["price"]).replace("ICON", brand["image"]).replace("CODE", brand["code"]).replace("PRICE", brand["price"]);
-			imgList[brand["id"]] = brand["image"];
-		}
-		var ele = $("#goodsSelect");
-		ele.html(str);
-		$("#IMGHOLDER").val(JSON.stringify(imgList));
-		if(msDropDownEle){
-			msDropDownEle.data("dd").destroy();
-		}
-		msDropDownEle = ele.msDropDown();
-		// selectbox(ele, {
-		// 	optionHtml: '<dd class="ui-selectbox-option {{className}}" data-option="{{index}}" tabindex="-1"><label>{{goodsno}}-</label><img src="{{icon}}" alt="icon" style="width:30px;height:30px;vertical-align:middle" /> {{textContent}}</dd>'
-		// });
-	}
+    function bindGoods(data) {
+        var str = "";
+        var imgList = {};
+        for (var i in data) {
+            var brand = data[i];
+            str += '<option value="VALUE" data-image="ICON" data-goodsNo="CODE" data-goodsPrice="￥PRICE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["id"] + " " + brand["name"] + " ￥" + brand["price"]).replace("ICON", brand["image"]).replace("CODE", brand["code"]).replace("PRICE", brand["price"]);
+            imgList[brand["id"]] = brand["image"];
+        }
+        var ele = $("#goodsSelect");
+        ele.html(str);
+        $("#IMGHOLDER").val(JSON.stringify(imgList));
+        if(msDropDownEle){
+            msDropDownEle.data("dd").destroy();
+        }
+        msDropDownEle = ele.msDropDown();
+        // selectbox(ele, {
+        // 	optionHtml: '<dd class="ui-selectbox-option {{className}}" data-option="{{index}}" tabindex="-1"><label>{{goodsno}}-</label><img src="{{icon}}" alt="icon" style="width:30px;height:30px;vertical-align:middle" /> {{textContent}}</dd>'
+        // });
+    }
 
-	function renderBrandSelect(key) {
-		$("#goodsSelect").html("");
-		$.post("/pick_getBrand", {"prefix": key}, function (data) {
-			var str = "";
-			for (var i in data) {
-				var brand = data[i];
-				if (i == 0) {
-					renderGoodsSelect(null, brand["id"]);
-				}
-				str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-			}
-			$("#brandSelect").html(str);
-		});
-	}
+    function renderBrandSelect(key) {
+        $("#goodsSelect").html("");
+        $.post("/pick_getBrand", {"prefix": key}, function (data) {
+            var str = "";
+            for (var i in data) {
+                var brand = data[i];
+                if (i == 0) {
+                    renderGoodsSelect(null, brand["id"]);
+                }
+                str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+            }
+            $("#brandSelect").html(str);
+        });
+    }
 
-	function bindTypeSelector(data) {
-		var typeStr = "<option value=\"\" selected=\"selected\">请选择</option>";
-		for (var type in data) {
-			type = data[type];
-			typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["name"]).replace("KEY", type["name"]);
-		}
-		$("#typeSelect").html(typeStr);
-		// bindCategorySelector(data[0]["sub"]);
-	}
+    function bindTypeSelector(data) {
+        var typeStr = "<option value=\"\" selected=\"selected\">请选择</option>";
+        for (var type in data) {
+            type = data[type];
+            typeStr += '<option value="VALUE">KEY</option>'.replace("VALUE", type["name"]).replace("KEY", type["name"]);
+        }
+        $("#typeSelect").html(typeStr);
+        // bindCategorySelector(data[0]["sub"]);
+    }
 
-	function bindCategorySelector(data) {
-		var categoryStr = "<option value=\"\" selected=\"selected\">请选择</option>";
-		for (var category in data) {
-			category = data[category];
-			categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
-		}
-		$("#categorySelect").html(categoryStr);
-	}
+    function bindCategorySelector(data) {
+        var categoryStr = "<option value=\"\" selected=\"selected\">请选择</option>";
+        for (var category in data) {
+            category = data[category];
+            categoryStr += '<option value="VALUE">KEY</option>'.replace("VALUE", category["name"]).replace("KEY", category["name"]);
+        }
+        $("#categorySelect").html(categoryStr);
+    }
 
-	function renderCategory(self) {
-		var jsonStr = $("#type_and_category_list").val();
-		var list = JSON.parse(jsonStr);
-		var selectedId = $(self).val();
-		for (var type in list) {
-			if (selectedId == list[type]["name"]) {
-				bindCategorySelector(list[type]["sub"]);
-				break;
-			}
-		}
-		//update goods list
-		$.post("/pick_getGoods", {"value": selectedId, "type": 1}, function (data) {
-			bindGoods(data);
-		});
-	}
+    function renderCategory(self) {
+        var jsonStr = $("#type_and_category_list").val();
+        var list = JSON.parse(jsonStr);
+        var selectedId = $(self).val();
+        for (var type in list) {
+            if (selectedId == list[type]["name"]) {
+                bindCategorySelector(list[type]["sub"]);
+                break;
+            }
+        }
+        //update goods list
+        $.post("/pick_getGoods", {"value": selectedId, "type": 1}, function (data) {
+            bindGoods(data);
+        });
+    }
 
-	function renderGoods(self) {
-		//update goods list
-		var selectedId = $(self).val();
-		$.post("/pick_getGoods", {"value": selectedId, "type": 2}, function (data) {
-			bindGoods(data);
-		});
-	}
+    function renderGoods(self) {
+        //update goods list
+        var selectedId = $(self).val();
+        $.post("/pick_getGoods", {"value": selectedId, "type": 2}, function (data) {
+            bindGoods(data);
+        });
+    }
 
     function appendToPreviewList(one, two, three, four, five, six) {
         return '<div class="row">' +
@@ -596,9 +601,9 @@
     }
 
     var table_global;
-	var qiniuUrl = [[${qiniuUrl}]];
+    var qiniuUrl = [[${qiniuUrl}]];
     jQuery(document).ready(function($)
-	{
+    {
         var oTable;
         oTable = $("#example-1").dataTable({
             language: {
@@ -618,10 +623,10 @@
                     data: "id",
                     width: "5%",
                     orderable: false,
-                    className: 'select-checkbox',
-                    title: '<input type="checkbox" id="checkbox-all"/>',
+                    title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
                     render: function (data, type, full, meta) {
-                        return '<input type="checkbox" name="activityId" value="' + data + '" />';
+                        var uuid = UUID.randomUUID();
+                        return '<div class="checkbox"><input type="checkbox" name="activityId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
                     }
                 },
                 {
@@ -684,35 +689,35 @@
         });
         table_global = oTable;
 
-		$.getJSON("/type_and_category_list", {}, function (data) {
-			$("#type_and_category_list").val(JSON.stringify(data));
-			bindTypeSelector(data);
-		});
+        $.getJSON("/type_and_category_list", {}, function (data) {
+            $("#type_and_category_list").val(JSON.stringify(data));
+            bindTypeSelector(data);
+        });
 
         jQuery.datetimepicker.setLocale('zh');
-		jQuery('#beginTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
-		jQuery('#endTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
+        jQuery('#beginTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
+        jQuery('#endTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
 
-		$("#goodsPool").sortable();
-		$("#goodsPool").disableSelection();
+        $("#goodsPool").sortable();
+        $("#goodsPool").disableSelection();
 
         function buildAZBar() {
             var str = "";
@@ -733,6 +738,13 @@
             $("#checkbox-all").attr("checked", false);
             oTable.fnDraw(); //or fnReloadAjax()
             return false;
+        });
+
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='activityId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
         });
 
         $('[name="method"]').click(function () {
@@ -763,6 +775,7 @@
             PICKED_LIST = [];
             var form = $("#saveForm");
             form.find("input:not(.notMe)").val("");
+            form.find("textarea").val("");
             buildAZBar();
             jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
             $(".modal-backdrop").css("z-index", 999);
@@ -850,28 +863,28 @@
             $.post("/theme_get", {id: activityId.val()}, function (data) {
                 var form = $("#saveForm");
                 form.find("input:not(.notMe)").val("");
-				for (var i in data) {
-					if (i == "sub") {
-						for (var j in data[i]) {
-							var obj = data[i][j];
-							addMoreGoodsDisplay(obj["id"], obj["name"] + "__￥" + obj["price"], obj["img"]);
-						}
-					} else {
-						var ele = form.find("input[name='" + i + "']");
-						switch (ele.attr("type")) {
-							case "radio":
-								ele.val([data[i]]);
-								break;
-							default:
-								ele.val(data[i]);
-						}
-						var eleSelect = form.find("select[name='" + i + "']");
-						eleSelect.val(data[i]);
-						form.find("img[name='" + i + "Img']").attr("src", data[i]);
-						form.find("img[name='" + i + "Img']").show();
-						form.find("textarea[name='" + i + "']").val(data[i]);
-					}
-				}
+                for (var i in data) {
+                    if (i == "sub") {
+                        for (var j in data[i]) {
+                            var obj = data[i][j];
+                            addMoreGoodsDisplay(obj["id"], obj["name"] + "__￥" + obj["price"], obj["img"]);
+                        }
+                    } else {
+                        var ele = form.find("input[name='" + i + "']");
+                        switch (ele.attr("type")) {
+                            case "radio":
+                                ele.val([data[i]]);
+                                break;
+                            default:
+                                ele.val(data[i]);
+                        }
+                        var eleSelect = form.find("select[name='" + i + "']");
+                        eleSelect.val(data[i]);
+                        form.find("img[name='" + i + "Img']").attr("src", data[i]);
+                        form.find("img[name='" + i + "Img']").show();
+                        form.find("textarea[name='" + i + "']").val(data[i]);
+                    }
+                }
                 form.find(".btn.image").show();
                 jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
                 $(".modal-backdrop").css("z-index", 999);
@@ -926,8 +939,8 @@
                 }
             });
         });
-	});
+    });
 	/*]]>*/
-	</script>
+</script>
 </body>
 </html>
