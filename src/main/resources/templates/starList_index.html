@@ -304,14 +304,15 @@
             ]
         });
         table_global = oTable;
-        $(".btn.btn-info.add").click(function () {
-            var form = $("#saveForm");
-            form.find("input:not(.notMe)").val("");
-            form.find("img").attr("src", "");
-            form.find("img").hide();
-            form.find("input[type='file']").show();
-            jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-        });
+		$(".btn.btn-info.add").click(function () {
+			var form = $("#saveForm");
+			form.find("input:not(.notMe)").val("");
+			form.find("input[name='fansSum']").val("0");
+			form.find("img").attr("src", "");
+			form.find("img").hide();
+			form.find("input[type='file']").show();
+			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+		});
         $(".btn.btn-info.save").click(function () {
             var footer = $(this).parent(".modal-footer");
             footer.find("button").hide();
