@@ -1,253 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<head th:replace="head"></head>
-	<title>添加商家</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
-	<link rel="stylesheet" href="assets/css/selectize.bootstrap3.css"/>
-	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
-	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
-	</style>
+    <head th:replace="head"></head>
+    <title>添加商家</title>
+    <link rel="stylesheet" href="assets/js/select2/select2.css"/>
+    <link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+    <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+    <link rel="stylesheet" href="assets/css/selectize.bootstrap3.css"/>
+    <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
 </head>
-<body class="page-body">
-
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">添加商家</h1>
-					<p class="activityDescription"></p>
-				</div>
-
-				<div class="breadcrumb-env">
-
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>添加商家</strong></li>
-					</ol>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title">添加商家</h3>
-							<div class="panel-options">
-							</div>
-						</div>
-						<div class="panel-body">
-							<form role="form" id="saveForm" class="form-horizontal">
-								<input type="hidden" name="id"/>
-								<input type="hidden" value="0" name="isFreeFare"/>
-								<div class="row">
-									<div class="col-md-4">
-										<div class="form-group">
-											<label class="control-label">商户名称</label>
-											<input type="text" class="form-control" name="name" placeholder="商户名称"/>
-										</div>
-									</div>
-									<div class="col-md-4">
-										<div class="form-group">
-											<label class="control-label">商户LOGO</label>
-											<input type="file" class="form-control" name="logoFile" placeholder="商户LOGO"/>
-											<input type="hidden" class="form-control" name="logo" />
-											<img alt="" src="" name="logoImg" style="display:none;"/>
-										</div>
-									</div>
-									<div class="col-md-4">
-										<div class="form-group">
-											<label class="control-label">商户地址</label>
-											<input type="text" class="form-control" name="address" placeholder="商户地址"/>
-										</div>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-4">
-										<div class="form-group">
-											<label class="control-label">公司名称</label>
-											<input type="text" class="form-control" name="company" placeholder="公司名称"/>
-										</div>
-									</div>
-									<div class="col-md-4">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">添加商家</h1>
+                </div>
+                <div class="right-title">
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form role="form" id="saveForm" class="form-horizontal">
+                                <input type="hidden" name="id"/>
+                                <input type="hidden" value="0" name="isFreeFare"/>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">商户名称</label>
+                                            <input type="text" class="form-control" name="name" placeholder="商户名称"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">商户LOGO</label>
+                                            <input type="file" class="form-control" name="logoFile"
+                                                   placeholder="商户LOGO"/>
+                                            <input type="hidden" class="form-control" name="logo"/>
+                                            <img alt="" src="" name="logoImg" style="display:none;"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">商户地址</label>
+                                            <input type="text" class="form-control" name="address" placeholder="商户地址"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">公司名称</label>
+                                            <input type="text" class="form-control" name="company" placeholder="公司名称"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="control-label">商户类型</label>
-                                            <select class="form-control" name="type" placeholder="商户类型" onchange="showCityOrNot(this)">
+                                            <select class="form-control" name="type" placeholder="商户类型"
+                                                    onchange="showCityOrNot(this)">
                                                 <option value="0">品牌商</option>
                                                 <option value="1">买手店</option>
                                             </select>
                                         </div>
-									</div>
+                                    </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                         </div>
                                     </div>
-								</div>
+                                </div>
                                 <div class="row" id="div" style="display: none;">
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="control-label">商户banner</label>
-                                            <input type="file" class="form-control" name="bannerFile" placeholder="商户banner"/>
-                                            <input type="hidden" class="form-control" id="banner" disabled="disabled" name="banner" />
+                                            <input type="file" class="form-control" name="bannerFile"
+                                                   placeholder="商户banner"/>
+                                            <input type="hidden" class="form-control" id="banner" disabled="disabled"
+                                                   name="banner"/>
                                             <img alt="" src="" name="bannerImg" style="display:none;"/>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="control-label">商户背景图</label>
-                                            <input type="file" class="form-control" name="backgroundFile" placeholder="商户背景图"/>
-                                            <input type="hidden" class="form-control" id="background" disabled="disabled" name="background" />
+                                            <input type="file" class="form-control" name="backgroundFile"
+                                                   placeholder="商户背景图"/>
+                                            <input type="hidden" class="form-control" id="background"
+                                                   disabled="disabled" name="background"/>
                                             <img alt="" src="" name="backgroundImg" style="display:none;"/>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="control-label">商户所在城市</label>
-                                            <input type="text" class="form-control" name="city" id="city" disabled="disabled" placeholder="商户所在城市"/>
+                                            <input type="text" class="form-control" name="city" id="city"
+                                                   disabled="disabled" placeholder="商户所在城市"/>
                                         </div>
                                     </div>
                                 </div>
-								<div class="row">
-									<div class="col-md-6">
-										<div class="form-group" onclick="checkIt(false)">
-											<label class="control-label">发货地址</label>
-											<input type="text" class="form-control" readonly="readonly" name="address_send" placeholder="发货地址"/>
-											<input type="hidden" class="form-control" name="address_send_jsonStr"/>
-											<input type="hidden" class="form-control" name="addrId"/>
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group" onclick="checkIt(true)">
-											<label class="control-label">退货地址</label>
-											<input type="text" class="form-control" readonly="readonly" name="address_back" placeholder="退货地址"/>
-											<input type="hidden" class="form-control" name="address_back_jsonStr"/>
-											<input type="hidden" class="form-control" name="returnAddrId"/>
-										</div>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-4">
-										<div class="form-group">
-											<label class="control-label">联系电话</label>
-											<input type="text" class="form-control" name="phone" placeholder="联系电话"/>
-										</div>
-									</div>
-									<div class="col-md-4">
-										<div class="form-group">
-											<label class="control-label">商户邮箱</label>
-											<input type="text" class="form-control" name="email" placeholder="商户邮箱"/>
-										</div>
-									</div>
-									<div class="col-md-4">
-										<div class="form-group">
-											<label class="control-label">合同编号</label>
-											<input type="text" class="form-control" name="contractNo" placeholder="合同编号"/>
-										</div>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-4">
-										<div class="form-group">
-											<label class="control-label">备注</label>
-											<input type="text" class="form-control" name="remark" placeholder="备注"/>
-										</div>
-									</div>
-									<div class="col-md-4">
-										<div class="form-group">
-											<label class="control-label">后台登录账号</label>
-											<input type="text" class="form-control" name="admin_name" placeholder="后台登录账号"/>
-											<input type="hidden" class="form-control" name="adminId"/>
-										</div>
-									</div>
-									<div class="col-md-4">
-										<div class="form-group">
-											<label class="control-label">抽成率</label>
-											<input type="number" class="form-control" name="ratio" placeholder="抽成率"/>
-										</div>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="control-label">签约日期</label>
-											<input type="text" class="form-control" name="signDate" id="signDate"
-												   placeholder="签约日期"/>
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="control-label">到期日期</label>
-											<input type="text" class="form-control" name="expireDate" id="expireDate"
-												   placeholder="到期日期"/>
-										</div>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-12">
-										<div class="form-group">
-											<label class="control-label">选择品牌</label>
-											<!--
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group" onclick="checkIt(false)">
+                                            <label class="control-label">发货地址</label>
+                                            <input type="text" class="form-control" readonly="readonly"
+                                                   name="address_send" placeholder="发货地址"/>
+                                            <input type="hidden" class="form-control" name="address_send_jsonStr"/>
+                                            <input type="hidden" class="form-control" name="addrId"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group" onclick="checkIt(true)">
+                                            <label class="control-label">退货地址</label>
+                                            <input type="text" class="form-control" readonly="readonly"
+                                                   name="address_back" placeholder="退货地址"/>
+                                            <input type="hidden" class="form-control" name="address_back_jsonStr"/>
+                                            <input type="hidden" class="form-control" name="returnAddrId"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">联系电话</label>
+                                            <input type="text" class="form-control" name="phone" placeholder="联系电话"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">商户邮箱</label>
+                                            <input type="text" class="form-control" name="email" placeholder="商户邮箱"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">合同编号</label>
+                                            <input type="text" class="form-control" name="contractNo"
+                                                   placeholder="合同编号"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">备注</label>
+                                            <input type="text" class="form-control" name="remark" placeholder="备注"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">后台登录账号</label>
+                                            <input type="text" class="form-control" name="admin_name"
+                                                   placeholder="后台登录账号"/>
+                                            <input type="hidden" class="form-control" name="adminId"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">抽成率</label>
+                                            <input type="number" class="form-control" name="ratio" placeholder="抽成率"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">签约日期</label>
+                                            <input type="text" class="form-control" name="signDate" id="signDate"
+                                                   placeholder="签约日期"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">到期日期</label>
+                                            <input type="text" class="form-control" name="expireDate" id="expireDate"
+                                                   placeholder="到期日期"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">选择品牌</label>
+                                            <!--
                                             <input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>
                                             <input type="button" value="添加" id="addBrandID" onclick="addMoreText(this)"/>
                                             -->
-											<select class="form-control" name="brandID" id="brandID"
-													multiple="multiple"></select>
-											<input type="hidden" class="form-control" name="brandIDStr" value=""/>
-										</div>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-12">
-										<div class="form-group">
-											<label class="control-label">上传营业执照/品牌授权书等</label>
-											<!--
+                                            <select class="form-control" name="brandID" id="brandID"
+                                                    multiple="multiple"></select>
+                                            <input type="hidden" class="form-control" name="brandIDStr" value=""/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">上传营业执照/品牌授权书等</label>
+                                            <!--
                                             <input type="file" class="form-control" name="detailImageFile" placeholder="上传营业执照/品牌授权书等"/>
                                             -->
-											<input type="button" value="添加" id="addFile" onclick="addMoreImg(this)"/>
-											<input type="hidden" class="form-control" name="imagesJSONStr" value="" />
-										</div>
-									</div>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-info save">保存</button>
-									<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
-	
-	<div th:replace="body-under"></div>
-
-    <div id="preview" style="display: none;
-    position: fixed;top: 190px;left: 650px;background: white;overflow: hidden;border: solid;width: 700px;height: 200px;z-index: 999;">
+                                            <input type="button" value="添加" id="addFile" onclick="addMoreImg(this)"/>
+                                            <input type="hidden" class="form-control" name="imagesJSONStr" value=""/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-info save">保存</button>
+                                    <button type="button" class="btn btn-white bg-lg" style="display:none">
+                                        数据提交中，请稍等....
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="box-body">
+                        </div>
+                        <div class="box-footer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
+    <footer th:replace="footer"></footer>
+</div>
 
-	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script src="assets/js/async.min.js"></script>
-	<script src="assets/js/distpicker.js"></script>
-	<script src="assets/js/selectize.min.js"></script>
-	<script src="assets/js/jquery.base64.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/
+<div th:replace="body-under"></div>
+
+<div id="preview" style="display: none;
+    position: fixed;top: 190px;left: 650px;background: white;overflow: hidden;border: solid;width: 700px;height: 200px;z-index: 999;">
+</div>
+
+<script src="js/common.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+<script src="assets/js/select2/select2.min.js"></script>
+<script src="assets/js/async.min.js"></script>
+<script src="assets/js/distpicker.js"></script>
+<script src="assets/js/selectize.min.js"></script>
+<script src="assets/js/jquery.base64.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
 
     function addMoreImg(self, v) {
         var that = $(self);
@@ -259,80 +263,80 @@
         }
     }
 
-	function bindBrandSelector(data, v) {
-		var uuid = UUID.randomUUID();
-		var brandStr = "<div id='UUID'><select class=\"form-control\" style='display: inline-block;width: 200px;' name=\"brandID\" >";
-		for (var brand in data) {
-			brand = data[brand];
-			if (brand["id"] == v) {
-				brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-			} else {
-				brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-			}
-		}
-		brandStr += "</select>";
-		brandStr += "<input type='button' value='删除' onclick='delNode(\"UUID\")'/>";
-		brandStr += "</div>";
-		return brandStr.replace(/UUID/g, uuid);
-	}
+    function bindBrandSelector(data, v) {
+        var uuid = UUID.randomUUID();
+        var brandStr = "<div id='UUID'><select class=\"form-control\" style='display: inline-block;width: 200px;' name=\"brandID\" >";
+        for (var brand in data) {
+            brand = data[brand];
+            if (brand["id"] == v) {
+                brandStr += '<option value="VALUE" selected="selected">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+            } else {
+                brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+            }
+        }
+        brandStr += "</select>";
+        brandStr += "<input type='button' value='删除' onclick='delNode(\"UUID\")'/>";
+        brandStr += "</div>";
+        return brandStr.replace(/UUID/g, uuid);
+    }
 
-	function bindBrandSelectorNew(data) {
-		var brandStr = "";
-		for (var brand in data) {
-			brand = data[brand];
-			brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-		}
-		return brandStr;
-	}
+    function bindBrandSelectorNew(data) {
+        var brandStr = "";
+        for (var brand in data) {
+            brand = data[brand];
+            brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+        }
+        return brandStr;
+    }
 
-	function addMoreText(self, v) {
-		$.getJSON("/brand_list_all_merchant", {}, function (data) {
-			var contentStr = bindBrandSelector(data, v);
-			var that = $(self);
-			that.before(contentStr);
-			// if (v == undefined) {
-			// 	that.before('<input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>')
-			// } else {
-			// 	that.before('<input type="number" class="form-control" name="brandID" value="' + v + '" placeholder="填写品牌ID"/>')
-			// }
-		});
-	}
+    function addMoreText(self, v) {
+        $.getJSON("/brand_list_all_merchant", {}, function (data) {
+            var contentStr = bindBrandSelector(data, v);
+            var that = $(self);
+            that.before(contentStr);
+            // if (v == undefined) {
+            // 	that.before('<input type="number" class="form-control" name="brandID" placeholder="填写品牌ID"/>')
+            // } else {
+            // 	that.before('<input type="number" class="form-control" name="brandID" value="' + v + '" placeholder="填写品牌ID"/>')
+            // }
+        });
+    }
 
-	function closeIt() {
-		var that = $("#preview");
-		that.hide();
-	}
+    function closeIt() {
+        var that = $("#preview");
+        that.hide();
+    }
 
-	function delNode(id) {
-		var that = $("#" + id);
-		that.remove();
-	}
+    function delNode(id) {
+        var that = $("#" + id);
+        that.remove();
+    }
 
-	function closeAndSaveIt(isBack) {
-		var that = $("#preview");
-		var p = that.find("select[name='p']").val();
-		var c = that.find("select[name='c']").val();
-		var d = that.find("select[name='d']").val();
-		var location = that.find("input[name='location']").val();
-		var telephone = that.find("select[name='telephone']").val().join(",");
-		var real_name = that.find("input[name='real_name']").val();
-		var json = {
-			"realName": real_name,
-			"phone": telephone,
-			"province": p,
-			"city": c,
-			"county": d,
-			"content": location
-		};
-		if (isBack) {
-			$("input[name='address_back_jsonStr']").val(JSON.stringify(json));
-			$("input[name='address_back']").val(p + "" + c + "" + d + "" + location);
-		} else {
-			$("input[name='address_send_jsonStr']").val(JSON.stringify(json));
-			$("input[name='address_send']").val(p + "" + c + "" + d + "" + location);
-		}
-		that.hide();
-	}
+    function closeAndSaveIt(isBack) {
+        var that = $("#preview");
+        var p = that.find("select[name='p']").val();
+        var c = that.find("select[name='c']").val();
+        var d = that.find("select[name='d']").val();
+        var location = that.find("input[name='location']").val();
+        var telephone = that.find("select[name='telephone']").val().join(",");
+        var real_name = that.find("input[name='real_name']").val();
+        var json = {
+            "realName": real_name,
+            "phone": telephone,
+            "province": p,
+            "city": c,
+            "county": d,
+            "content": location
+        };
+        if (isBack) {
+            $("input[name='address_back_jsonStr']").val(JSON.stringify(json));
+            $("input[name='address_back']").val(p + "" + c + "" + d + "" + location);
+        } else {
+            $("input[name='address_send_jsonStr']").val(JSON.stringify(json));
+            $("input[name='address_send']").val(p + "" + c + "" + d + "" + location);
+        }
+        that.hide();
+    }
 
     function formatTime(time) {
         return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
@@ -342,72 +346,72 @@
         return "<img width='100px' height='100px' src='#' />".replace("#", url);
     }
 
-	function checkIt(isBack) {
-		var preview = $("#preview");
-		var contentStr = "\t<div id=\"distpicker\">\n" +
-				"\t\t<select name='p' ></select>\n" +
-				"\t\t<select name='c' ></select>\n" +
-				"\t\t<select name='d' ></select>\n" +
-				"\t\t<input type=\"text\" name='location' placeholder='详细地址'/><br/>\n" +
-				// "\t\t<input type=\"text\" name='telephone' placeholder='手机号'/>\n" +
-				"\t\t<select style='height: 35px;width: 300px' name=\"telephone\" id=\"telephone\"\n" +
-				"\t\tmultiple=\"multiple\"></select>" +
-				"\t\t<input type=\"text\" name='real_name' placeholder='XXX'/>\n".replace("XXX", isBack ? "收件人" : "发件人") +
-				"\t</div>";
-		if (isBack) {
-			contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt(true)" />';
-		} else {
-			contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt(false)" />';
-		}
-		contentStr += '<input type="button" value="关闭" onclick="closeIt()" />';
-		preview.html(contentStr);
-		//render
-		var jsonStr = "";
-		if (isBack) {
-			jsonStr = $("input[name='address_back_jsonStr']").val();
-		} else {
-			jsonStr = $("input[name='address_send_jsonStr']").val();
-		}
-		var phoneEle = preview.find("select[name='telephone']");
-		var phoneStr = "";
-		var phoneArr = [];
-		if (jsonStr != '') {
-			var jsonObj = JSON.parse(jsonStr);
-			preview.find("input[name='location']").val(jsonObj["content"]);
-			preview.find("input[name='real_name']").val(jsonObj["realName"]);
-			phoneArr = jsonObj["phone"].split(",");
-			for (var i in phoneArr) {
-				i = phoneArr[i];
-				phoneStr += '<option value="VV">KK</option>'.replace("VV", i).replace("KK", i);
-			}
-			phoneEle.html(phoneStr);
-			$("#distpicker").distpicker({
-				province: jsonObj["province"],
-				city: jsonObj["city"],
-				district: jsonObj["county"]
-			});
-		} else {
-			$("#distpicker").distpicker({
-				province: '---- 所在省 ----',
-				city: '---- 所在市 ----',
-				district: '---- 所在区 ----'
-			});
-		}
-		phoneEle.selectize({
-			// "plugins": ['drag_drop', 'remove_button'],
-			"items": phoneArr,
-			"addPrecedence": true,
-			"persist": false,
-			"create": true,
-			"maxItems": null,
-			"delimiter": ",",
-			"hideSelected": true,
-			"sortField": "text",
-			"searchField": ['text'],
-			"placeholder": "手机号"
-		});
-		preview.show();
-	}
+    function checkIt(isBack) {
+        var preview = $("#preview");
+        var contentStr = "\t<div id=\"distpicker\">\n" +
+            "\t\t<select name='p' ></select>\n" +
+            "\t\t<select name='c' ></select>\n" +
+            "\t\t<select name='d' ></select>\n" +
+            "\t\t<input type=\"text\" name='location' placeholder='详细地址'/><br/>\n" +
+            // "\t\t<input type=\"text\" name='telephone' placeholder='手机号'/>\n" +
+            "\t\t<select style='height: 35px;width: 300px' name=\"telephone\" id=\"telephone\"\n" +
+            "\t\tmultiple=\"multiple\"></select>" +
+            "\t\t<input type=\"text\" name='real_name' placeholder='XXX'/>\n".replace("XXX", isBack ? "收件人" : "发件人") +
+            "\t</div>";
+        if (isBack) {
+            contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt(true)" />';
+        } else {
+            contentStr += '<input type="button" value="保存" onclick="closeAndSaveIt(false)" />';
+        }
+        contentStr += '<input type="button" value="关闭" onclick="closeIt()" />';
+        preview.html(contentStr);
+        //render
+        var jsonStr = "";
+        if (isBack) {
+            jsonStr = $("input[name='address_back_jsonStr']").val();
+        } else {
+            jsonStr = $("input[name='address_send_jsonStr']").val();
+        }
+        var phoneEle = preview.find("select[name='telephone']");
+        var phoneStr = "";
+        var phoneArr = [];
+        if (jsonStr != '') {
+            var jsonObj = JSON.parse(jsonStr);
+            preview.find("input[name='location']").val(jsonObj["content"]);
+            preview.find("input[name='real_name']").val(jsonObj["realName"]);
+            phoneArr = jsonObj["phone"].split(",");
+            for (var i in phoneArr) {
+                i = phoneArr[i];
+                phoneStr += '<option value="VV">KK</option>'.replace("VV", i).replace("KK", i);
+            }
+            phoneEle.html(phoneStr);
+            $("#distpicker").distpicker({
+                province: jsonObj["province"],
+                city: jsonObj["city"],
+                district: jsonObj["county"]
+            });
+        } else {
+            $("#distpicker").distpicker({
+                province: '---- 所在省 ----',
+                city: '---- 所在市 ----',
+                district: '---- 所在区 ----'
+            });
+        }
+        phoneEle.selectize({
+            // "plugins": ['drag_drop', 'remove_button'],
+            "items": phoneArr,
+            "addPrecedence": true,
+            "persist": false,
+            "create": true,
+            "maxItems": null,
+            "delimiter": ",",
+            "hideSelected": true,
+            "sortField": "text",
+            "searchField": ['text'],
+            "placeholder": "手机号"
+        });
+        preview.show();
+    }
 
     function showCityOrNot(self) {
         var that = $(self);
@@ -430,278 +434,278 @@
             div.show();
         }
     }
-	function checkImg(list) {
-		var returnList = {};
-		for (var i in list) {
-			i = list[i];
-			var v = i[0];
-			var name = i[1];
-			var form = $("#saveForm");
-			var footer = $(this).parent(".modal-footer");
-			var imageFile = '';
-			//上传文件获得文件地址
-			if (v != '') {
-				imageFile = form.find("input[name='" + name + "File']")[0].files[0];
-				returnList[name] = imageFile;
-			}
-		}
-		return returnList;
-	}
 
-	var qiniuUrl = [[${qiniuUrl}]];
-	var theId = [[${theId}]];
-	jQuery(document).ready(function($)
-	{
-		jQuery.datetimepicker.setLocale('zh');
-		jQuery('#signDate').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
-		jQuery('#expireDate').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
+    function checkImg(list) {
+        var returnList = {};
+        for (var i in list) {
+            i = list[i];
+            var v = i[0];
+            var name = i[1];
+            var form = $("#saveForm");
+            var footer = $(this).parent(".modal-footer");
+            var imageFile = '';
+            //上传文件获得文件地址
+            if (v != '') {
+                imageFile = form.find("input[name='" + name + "File']")[0].files[0];
+                returnList[name] = imageFile;
+            }
+        }
+        return returnList;
+    }
 
-		//保存
-		$(".btn.btn-info.save").click(function(){
-			var footer = $(this).parent(".modal-footer");
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var form = $("#saveForm");
-			// var code = form.find("input[name='code']").val();
-			var name = form.find("input[name='name']").val();
-			var address = form.find("input[name='address']").val();
-			var company = form.find("input[name='company']").val();
-			var admin_name = form.find("input[name='admin_name']").val();
-			var address_send_jsonStr = form.find("input[name='address_send_jsonStr']").val();
-			var address_back_jsonStr = form.find("input[name='address_back_jsonStr']").val();
-			var phone = form.find("input[name='phone']").val();
-			var contractNo = form.find("input[name='contractNo']").val();
-			var signDate = form.find("input[name='signDate']").val();
-			var expireDate = form.find("input[name='expireDate']").val();
-			//文件
-			var logoFile = form.find("input[name='logoFile']").val();
+    var qiniuUrl = [[${qiniuUrl}]];
+    var theId = [[${theId}]];
+    jQuery(document).ready(function ($) {
+        jQuery.datetimepicker.setLocale('zh');
+        jQuery('#signDate').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
+        jQuery('#expireDate').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
+
+        //保存
+        $(".btn.btn-info.save").click(function () {
+            var footer = $(this).parent(".modal-footer");
+            footer.find("button").hide();
+            footer.find(".bg-lg").show();
+            var form = $("#saveForm");
+            // var code = form.find("input[name='code']").val();
+            var name = form.find("input[name='name']").val();
+            var address = form.find("input[name='address']").val();
+            var company = form.find("input[name='company']").val();
+            var admin_name = form.find("input[name='admin_name']").val();
+            var address_send_jsonStr = form.find("input[name='address_send_jsonStr']").val();
+            var address_back_jsonStr = form.find("input[name='address_back_jsonStr']").val();
+            var phone = form.find("input[name='phone']").val();
+            var contractNo = form.find("input[name='contractNo']").val();
+            var signDate = form.find("input[name='signDate']").val();
+            var expireDate = form.find("input[name='expireDate']").val();
+            //文件
+            var logoFile = form.find("input[name='logoFile']").val();
             var bannerFile = form.find("input[name='bannerFile']").val();
             var backgroundFile = form.find("input[name='backgroundFile']").val();
-			//已上传的图片地址
-			var logo = form.find("input[name='logo']").val();
+            //已上传的图片地址
+            var logo = form.find("input[name='logo']").val();
             var banner = form.find("input[name='banner']").val();
             var background = form.find("input[name='background']").val();
 
-			if (name == '' || address == '' || phone == '' || contractNo == '' || signDate == '' || expireDate == '' || company == '' || admin_name == '' || address_send_jsonStr == '' || address_back_jsonStr == '' ||
-					(logo == '' && logoFile == '')
-			) {
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-				return;
-			}
-			//收集品牌ID列表
-			form.find("input[name='brandIDStr']").val($("#brandID").val().join(","));
+            if (name == '' || address == '' || phone == '' || contractNo == '' || signDate == '' || expireDate == '' || company == '' || admin_name == '' || address_send_jsonStr == '' || address_back_jsonStr == '' ||
+                (logo == '' && logoFile == '')
+            ) {
+                toastr.error("请填写完整数据后提交", "温馨提示");
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                return;
+            }
+            //收集品牌ID列表
+            form.find("input[name='brandIDStr']").val($("#brandID").val().join(","));
 
             var isOK = checkImg([[logoFile, "logo"], [bannerFile, "banner"], [backgroundFile, "background"]]);
-			if (typeof isOK == 'boolean') {
-				return;
-			}
+            if (typeof isOK == 'boolean') {
+                return;
+            }
 
-			//获取token
-			$.get("/qiniu/token",{},function(token){
-				if(token !=''){
-					async.series({
-						one: function(callback) {
-							//上传详情图
-							var imageFileList = form.find("input[name='detailImageFile']");
-							var i = 0;
-							async.eachSeries(imageFileList, function (item, cb) {
-								var f = item.files[0];
-								if (f == undefined) {
-									i++;
-									cb();
-								} else {
-									upload("imagesJSONStr", token, f, function () {
-										//
-									}, function (err) {
-										console.log("上传imageFile异常:" + err);
-										cb(err);
-									}, function (res) {
-										//上传成功
-										if (res != '') {
-											var url = qiniuUrl + "/" + res.key;
-											var oldValue = form.find("input[name='" + res.param + "']").val();
-											if (oldValue == '') {
-												var list = [];
-												list.push({"url": url, "sort": i, "remark": ""});
-											} else {
-												var list = JSON.parse(window.atob(oldValue));
-												list[i] = {"url": url, "sort": i, "remark": ""};
-											}
-											var newValue = JSON.stringify(list);
-											form.find("input[name='" + res.param + "']").val(window.btoa(newValue));
-											i++;
-										}
-										cb();
-									});
-								}
-							}, function () {
-								callback();
-							});
-						},
-						two: function(callback){
-							//上传详情图
-							async.eachSeries(Object.keys(isOK), function (item, cb) {
-								var f = isOK[item];
-								upload(item, token, f, function () {
-									//
-								}, function (err) {
-									console.log("上传imageFile异常:" + err);
-									cb(err);
-								}, function (res) {
-									//上传成功
-									if (res != '') {
-										var url = qiniuUrl + "/" + res.key;
-										form.find("input[name='" + res.param + "']").val(url);
-									}
-									cb();
-								});
-							}, function () {
-								callback();
-							});
-						},
-						three: function (callback) {
-							//提交保存
-							var data = $("#saveForm").serializeArray();
-							$.post("/merchant_save", data, function (data) {
-								if (data) {
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									jQuery('#modal-6').modal('hide');
-									toastr.success("操作已成功！", "温馨提示");
-								} else {
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败", "温馨提示");
-								}
-								callback();
-							});
-						}
-					}, function(err, results) {
-						console.log("OK");
-						window.location.href = '/merchant.html';
-					});
-				}else{
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					toastr.error("上传文件错误，请联系管理员", "温馨提示");
-				}
-			});
-		});
+            //获取token
+            $.get("/qiniu/token", {}, function (token) {
+                if (token != '') {
+                    async.series({
+                        one: function (callback) {
+                            //上传详情图
+                            var imageFileList = form.find("input[name='detailImageFile']");
+                            var i = 0;
+                            async.eachSeries(imageFileList, function (item, cb) {
+                                var f = item.files[0];
+                                if (f == undefined) {
+                                    i++;
+                                    cb();
+                                } else {
+                                    upload("imagesJSONStr", token, f, function () {
+                                        //
+                                    }, function (err) {
+                                        console.log("上传imageFile异常:" + err);
+                                        cb(err);
+                                    }, function (res) {
+                                        //上传成功
+                                        if (res != '') {
+                                            var url = qiniuUrl + "/" + res.key;
+                                            var oldValue = form.find("input[name='" + res.param + "']").val();
+                                            if (oldValue == '') {
+                                                var list = [];
+                                                list.push({"url": url, "sort": i, "remark": ""});
+                                            } else {
+                                                var list = JSON.parse(window.atob(oldValue));
+                                                list[i] = {"url": url, "sort": i, "remark": ""};
+                                            }
+                                            var newValue = JSON.stringify(list);
+                                            form.find("input[name='" + res.param + "']").val(window.btoa(newValue));
+                                            i++;
+                                        }
+                                        cb();
+                                    });
+                                }
+                            }, function () {
+                                callback();
+                            });
+                        },
+                        two: function (callback) {
+                            //上传详情图
+                            async.eachSeries(Object.keys(isOK), function (item, cb) {
+                                var f = isOK[item];
+                                upload(item, token, f, function () {
+                                    //
+                                }, function (err) {
+                                    console.log("上传imageFile异常:" + err);
+                                    cb(err);
+                                }, function (res) {
+                                    //上传成功
+                                    if (res != '') {
+                                        var url = qiniuUrl + "/" + res.key;
+                                        form.find("input[name='" + res.param + "']").val(url);
+                                    }
+                                    cb();
+                                });
+                            }, function () {
+                                callback();
+                            });
+                        },
+                        three: function (callback) {
+                            //提交保存
+                            var data = $("#saveForm").serializeArray();
+                            $.post("/merchant_save", data, function (data) {
+                                if (data) {
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    jQuery('#modal-6').modal('hide');
+                                    toastr.success("操作已成功！", "温馨提示");
+                                } else {
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    toastr.error("操作失败", "温馨提示");
+                                }
+                                callback();
+                            });
+                        }
+                    }, function (err, results) {
+                        console.log("OK");
+                        window.location.href = '/merchant.html';
+                    });
+                } else {
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                    toastr.error("上传文件错误，请联系管理员", "温馨提示");
+                }
+            });
+        });
 
-		if (theId != null) {
-			$.post("/merchant_find", {id: theId}, function (data) {
-				var form = $("#saveForm");
-				var main = data["main"];
-				var brandList = data["brandList"];
-				var fileList = data["fileList"];
-				var address = data["address"];
-				var addressBack = data["addressBack"];
-				var admin = data["admin"];
-				//后台用户
-				form.find("input[name='admin_name']").val(admin["username"]);
-				//商家
-				for (var i in main) {
-					var ele = form.find("input[name='" + i + "']");
-					switch (ele.attr("type")) {
-						case "radio":
-							ele.val([main[i]]);
-							break;
-						default:
-							if (main[i] != undefined && !isNaN(main[i]) && String(main[i]).length == 13) {
-								ele.val(formatTime(main[i]));
-								$("#" + i).val(formatTime(main[i]));
-							} else {
-								ele.val(main[i]);
-							}
-					}
-					form.find("img[name='" + i + "Img']").attr("src", main[i]);
-					form.find("img[name='" + i + "Img']").attr("width", 200);
-					form.find("img[name='" + i + "Img']").attr("length", 200);
-					form.find("img[name='" + i + "Img']").show();
-					//try select
-					form.find("select[name='" + i + "']").val(main[i]);
-					showCityOrNot("select[name='" + i + "']");
-				}
-				//品牌
-				$.getJSON("/brand_list_all_merchant", {}, function (data) {
-					var arr = [];
-					for (var i in brandList) {
-						arr.push(brandList[i]["brandId"]);
-					}
-					var contentStr = bindBrandSelectorNew(data);
-					var that = $("#brandID");
-					that.html(contentStr);
-					that.selectize({
-						// "plugins": ['drag_drop', 'remove_button'],
-						"items": arr,
-						"persist": false,
-						"create": false,
-						"maxItems": null,
-						"delimiter": ",",
-						"hideSelected": true,
-						"sortField": "text",
-						"searchField": ['text'],
-						"placeholder": "选择品牌"
-					});
-				});
-				//资料
-				var list = [];
-				for (var i in fileList) {
-					addMoreImg("#addFile", fileList[i]["fileUrl"]);
-					list.push({"url": fileList[i]["fileUrl"]});
-				}
-				var newValue = JSON.stringify(list);
-				form.find("input[name='imagesJSONStr']").val(window.btoa(newValue));
-				//发货地址
-				form.find("input[name='address_send']").val(address["province"] + "" + address["city"] + "" + address["county"] + "" + address["content"]);
-				form.find("input[name='address_send_jsonStr']").val(address["remark"]);
-				//退货地址
-				form.find("input[name='address_back']").val(addressBack["province"] + "" + addressBack["city"] + "" + addressBack["county"] + "" + addressBack["content"]);
-				form.find("input[name='address_back_jsonStr']").val(addressBack["remark"]);
-				form.find(".btn.image").show();
-				jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-			});
-		} else {
-			$.getJSON("/brand_list_all_merchant", {}, function (data) {
-				var contentStr = bindBrandSelectorNew(data);
-				var that = $("#brandID");
-				that.html(contentStr);
-				that.selectize({
-					// "plugins": ['drag_drop', 'remove_button'],
-					"persist": false,
-					"create": false,
-					"maxItems": null,
-					"delimiter": ",",
-					"hideSelected": true,
-					"sortField": "text",
-					"searchField": ['text'],
-					"placeholder": "选择品牌"
-				});
-			});
-		}
-	});
-	/*]]>*/
-	</script>
+        if (theId != null) {
+            $.post("/merchant_find", {id: theId}, function (data) {
+                var form = $("#saveForm");
+                var main = data["main"];
+                var brandList = data["brandList"];
+                var fileList = data["fileList"];
+                var address = data["address"];
+                var addressBack = data["addressBack"];
+                var admin = data["admin"];
+                //后台用户
+                form.find("input[name='admin_name']").val(admin["username"]);
+                //商家
+                for (var i in main) {
+                    var ele = form.find("input[name='" + i + "']");
+                    switch (ele.attr("type")) {
+                        case "radio":
+                            ele.val([main[i]]);
+                            break;
+                        default:
+                            if (main[i] != undefined && !isNaN(main[i]) && String(main[i]).length == 13) {
+                                ele.val(formatTime(main[i]));
+                                $("#" + i).val(formatTime(main[i]));
+                            } else {
+                                ele.val(main[i]);
+                            }
+                    }
+                    form.find("img[name='" + i + "Img']").attr("src", main[i]);
+                    form.find("img[name='" + i + "Img']").attr("width", 200);
+                    form.find("img[name='" + i + "Img']").attr("length", 200);
+                    form.find("img[name='" + i + "Img']").show();
+                    //try select
+                    form.find("select[name='" + i + "']").val(main[i]);
+                    showCityOrNot("select[name='" + i + "']");
+                }
+                //品牌
+                $.getJSON("/brand_list_all_merchant", {}, function (data) {
+                    var arr = [];
+                    for (var i in brandList) {
+                        arr.push(brandList[i]["brandId"]);
+                    }
+                    var contentStr = bindBrandSelectorNew(data);
+                    var that = $("#brandID");
+                    that.html(contentStr);
+                    that.selectize({
+                        // "plugins": ['drag_drop', 'remove_button'],
+                        "items": arr,
+                        "persist": false,
+                        "create": false,
+                        "maxItems": null,
+                        "delimiter": ",",
+                        "hideSelected": true,
+                        "sortField": "text",
+                        "searchField": ['text'],
+                        "placeholder": "选择品牌"
+                    });
+                });
+                //资料
+                var list = [];
+                for (var i in fileList) {
+                    addMoreImg("#addFile", fileList[i]["fileUrl"]);
+                    list.push({"url": fileList[i]["fileUrl"]});
+                }
+                var newValue = JSON.stringify(list);
+                form.find("input[name='imagesJSONStr']").val(window.btoa(newValue));
+                //发货地址
+                form.find("input[name='address_send']").val(address["province"] + "" + address["city"] + "" + address["county"] + "" + address["content"]);
+                form.find("input[name='address_send_jsonStr']").val(address["remark"]);
+                //退货地址
+                form.find("input[name='address_back']").val(addressBack["province"] + "" + addressBack["city"] + "" + addressBack["county"] + "" + addressBack["content"]);
+                form.find("input[name='address_back_jsonStr']").val(addressBack["remark"]);
+                form.find(".btn.image").show();
+                jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+            });
+        } else {
+            $.getJSON("/brand_list_all_merchant", {}, function (data) {
+                var contentStr = bindBrandSelectorNew(data);
+                var that = $("#brandID");
+                that.html(contentStr);
+                that.selectize({
+                    // "plugins": ['drag_drop', 'remove_button'],
+                    "persist": false,
+                    "create": false,
+                    "maxItems": null,
+                    "delimiter": ",",
+                    "hideSelected": true,
+                    "sortField": "text",
+                    "searchField": ['text'],
+                    "placeholder": "选择品牌"
+                });
+            });
+        }
+    });
+    /*]]>*/
+</script>
 </body>
 
 </html>
