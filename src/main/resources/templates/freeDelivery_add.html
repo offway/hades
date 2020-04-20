@@ -1,521 +1,521 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<head th:replace="head"></head>
-	<meta name="referrer" content="no-referrer"/>
-	<title>添加免费送方案</title>
-	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
-	<link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
-	<link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
-	<link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
-	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
-	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
-	</style>
+    <head th:replace="head"></head>
+    <meta name="referrer" content="no-referrer"/>
+    <title>添加免费送方案</title>
+    <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+    <link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
+    <link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
+    <link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
+    <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
 </head>
-<body class="page-body">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">添加免费送方案</h1>
+                </div>
+                <div class="right-title">
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form role="form" id="saveForm" class="form-horizontal">
+                                <input type="hidden" name="id"/>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">活动名称</label>
+                                            <input type="text" class="form-control" name="name" placeholder="活动名称"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">开始时间</label>
+                                            <input type="text" class="form-control" name="beginTime" id="beginTime"
+                                                   placeholder="开始时间"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">截止时间</label>
+                                            <input type="text" class="form-control" name="endTime" id="endTime"
+                                                   placeholder="截止时间"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">顶部活动图片</label>
+                                            <input type="file" class="form-control" name="imageFile"
+                                                   placeholder="顶部活动图片" onchange="uploadFile(this)"/>
+                                            <input type="hidden" class="form-control" name="image"/>
+                                            <img alt="" src="" name="imageImg" style="display:none;"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="elementPool">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">添加商品</label>
+                                            <input type="button" id="addMoreTextEle" class="notMe" value="添加"
+                                                   onclick="addMoreElement(null);"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-info save">保存</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="box-body">
+                        </div>
+                        <div class="box-footer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer th:replace="footer"></footer>
+</div>
+<script src="js/common.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/async.min.js"></script>
+<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+<script src="assets/js/jquery-ui.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
 
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				<div class="title-env">
-					<h1 class="title">添加免费送方案</h1>
-					<p class="activityDescription"></p>
-				</div>
-				<div class="breadcrumb-env">
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>添加免费送方案</strong></li>
-					</ol>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title">添加免费送方案</h3>
-						</div>
-						<div class="panel-body">
-							<form role="form" id="saveForm" class="form-horizontal">
-								<input type="hidden" name="id"/>
-								<div class="row">
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="control-label">活动名称</label>
-											<input type="text" class="form-control" name="name" placeholder="活动名称"/>
-										</div>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="control-label">开始时间</label>
-											<input type="text" class="form-control" name="beginTime" id="beginTime" placeholder="开始时间" />
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="control-label">截止时间</label>
-											<input type="text" class="form-control" name="endTime" id="endTime" placeholder="截止时间" />
-										</div>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="control-label">顶部活动图片</label>
-											<input type="file" class="form-control" name="imageFile" placeholder="顶部活动图片" onchange="uploadFile(this)"/>
-											<input type="hidden" class="form-control" name="image"/>
-											<img alt="" src="" name="imageImg" style="display:none;"/>
-										</div>
-									</div>
-								</div>
-								<div id="elementPool">
-								</div>
-								<div class="row">
-									<div class="col-md-6">
-										<div class="form-group">
-											<label class="control-label">添加商品</label>
-											<input type="button" id="addMoreTextEle" class="notMe" value="添加" onclick="addMoreElement(null);"/>
-										</div>
-									</div>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-info save">保存</button>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
-	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/async.min.js"></script>
-	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
-	<script src="assets/js/jquery-ui.min.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/
+    function addMoreElement(v) {
+        var uuid = UUID.randomUUID();
+        var str = '<div id="UUID" class="toDel" style="\n'.replace(/UUID/g, uuid) +
+            '    border: solid 1px;\n' +
+            '    padding-left: 30px;\n' +
+            '    padding-bottom: 0px;\n">';
+        if (v != null) {
+            var remark = v["remark"].charAt(v["remark"].length - 1);
+            str += "\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品DD</label>\n".replace("DD", $("div.toDel").length + 1) +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type='hidden' name='gid' value='VV' />\n".replace("VV", v["id"]) +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type='button' value='删除' onclick='delNode(\"UUID\")' />\n".replace("UUID", uuid) +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label goodsIndex\">商品图片</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"goodsImageFile\" placeholder=\"商品图片\" onchange=\"uploadFile(this,'goodsImage')\"/>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"goodsImage\" value='VV'/>\n".replace("VV", v["image"]) +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<img alt=\"\" src=\"SRC\" name=\"goodsImageImg\" style=\"display:block;\"/>\n".replace("SRC", v["image"]) +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品名称</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"goodsName\" placeholder=\"商品名称\" value='VV' />\n".replace("VV", v["name"]) +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品价格</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"goodsPrice\" placeholder=\"商品价格\" value='VV' />\n".replace("VV", v["price"]) +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品尺码</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"goodsSize\" placeholder=\"商品尺码\" value='VV' />\n".replace("VV", v["goodsSize"]) +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品数量</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"goodsCount\" placeholder=\"商品数量\" value='VV' />\n".replace("VV", v["goodsCount"]) +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品ID</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"goodsId\" placeholder=\"商品ID\" value='VV' />\n".replace("VV", v["goodsId"]) +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品单位</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"remark\" value=\"VV\" placeholder=\"商品单位\" />\n".replace("VV", remark) +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">品牌ID</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"brandId\" placeholder=\"品牌ID\" value='VV' />\n".replace("VV", v["brandId"]) +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">助力人数</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"boostCount\" placeholder=\"助力人数\" value='VV' />\n".replace("VV", v["boostCount"]) +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-3\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">用户类型</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label><input type=\"radio\" name=\"UUID\" value=\"0\" CHECK onclick='updateUserType(this)' />新用户</label>\n".replace("UUID", uuid).replace("CHECK", v["userType"] == "0" ? "checked" : "") +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label><input type=\"radio\" name=\"UUID\" value=\"1\" CHECK onclick='updateUserType(this)' />新老用户</label>\n".replace("UUID", uuid).replace("CHECK", v["userType"] == "1" ? "checked" : "") +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" name=\"userType\" value='VV' />\n".replace("VV", v["userType"]) +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t</div>\n";
+        } else {
+            str += "\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label goodsIndex\">商品DD</label>\n".replace("DD", $("div.toDel").length + 1) +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type='hidden' name='gid' value='' />\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type='button' value='删除' onclick='delNode(\"UUID\")' />\n".replace("UUID", uuid) +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品图片</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"goodsImageFile\" placeholder=\"商品图片\" onchange=\"uploadFile(this,'goodsImage')\"/>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"goodsImage\"/>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<img alt=\"\" src=\"\" name=\"goodsImageImg\" style=\"display:none;\"/>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品名称</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"goodsName\" placeholder=\"商品名称\" />\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品价格</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"goodsPrice\" placeholder=\"商品价格\" />\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品尺码</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"goodsSize\" placeholder=\"商品尺码\" />\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品数量</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"goodsCount\" placeholder=\"商品数量\" />\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品ID</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"goodsId\" placeholder=\"商品ID\" />\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品单位</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"remark\" value=\"件\" placeholder=\"商品单位\" />\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">品牌ID</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"brandId\" placeholder=\"品牌ID\" />\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">助力人数</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"boostCount\" value=\"0\" placeholder=\"助力人数\" />\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-3\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">用户类型</label>\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label><input type=\"radio\" name=\"UUID\" value=\"0\" onclick='updateUserType(this)' />新用户</label>\n".replace("UUID", uuid) +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<label><input type=\"radio\" name=\"UUID\" value=\"1\" onclick='updateUserType(this)' />新老用户</label>\n".replace("UUID", uuid) +
+                "\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" name=\"userType\" />\n" +
+                "\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t\t</div>\n" +
+                "\t\t\t\t\t\t\t\t\t</div>\n";
+        }
+        // str += '<input style="display:inline-block;" type="button" value="" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
+        str += '</div>';
+        $("#elementPool").append(str);
+        $("#elementPool").sortable({
+            update: function (event, ui) {
+                var labels = $("label.goodsIndex");
+                $.each(labels, function (a, b) {
+                    $(b).html("商品#".replace("#", a + 1));
+                });
+            }
+        });
+        $("#elementPool").disableSelection();
+    }
 
-	function addMoreElement(v) {
-		var uuid = UUID.randomUUID();
-		var str = '<div id="UUID" class="toDel" style="\n'.replace(/UUID/g, uuid) +
-				'    border: solid 1px;\n' +
-				'    padding-left: 30px;\n' +
-				'    padding-bottom: 0px;\n">';
-		if (v != null) {
-			var remark = v["remark"].charAt(v["remark"].length-1);
-			str += "\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品DD</label>\n".replace("DD", $("div.toDel").length + 1) +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type='hidden' name='gid' value='VV' />\n".replace("VV", v["id"]) +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type='button' value='删除' onclick='delNode(\"UUID\")' />\n".replace("UUID", uuid) +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label goodsIndex\">商品图片</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"goodsImageFile\" placeholder=\"商品图片\" onchange=\"uploadFile(this,'goodsImage')\"/>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"goodsImage\" value='VV'/>\n".replace("VV", v["image"]) +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<img alt=\"\" src=\"SRC\" name=\"goodsImageImg\" style=\"display:block;\"/>\n".replace("SRC", v["image"]) +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品名称</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"goodsName\" placeholder=\"商品名称\" value='VV' />\n".replace("VV", v["name"]) +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品价格</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"goodsPrice\" placeholder=\"商品价格\" value='VV' />\n".replace("VV", v["price"]) +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品尺码</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"goodsSize\" placeholder=\"商品尺码\" value='VV' />\n".replace("VV", v["goodsSize"]) +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品数量</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"goodsCount\" placeholder=\"商品数量\" value='VV' />\n".replace("VV", v["goodsCount"]) +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品ID</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"goodsId\" placeholder=\"商品ID\" value='VV' />\n".replace("VV", v["goodsId"]) +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品单位</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"remark\" value=\"VV\" placeholder=\"商品单位\" />\n".replace("VV", remark) +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">品牌ID</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"brandId\" placeholder=\"品牌ID\" value='VV' />\n".replace("VV", v["brandId"]) +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">助力人数</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"boostCount\" placeholder=\"助力人数\" value='VV' />\n".replace("VV", v["boostCount"]) +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-3\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">用户类型</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label><input type=\"radio\" name=\"UUID\" value=\"0\" CHECK onclick='updateUserType(this)' />新用户</label>\n".replace("UUID", uuid).replace("CHECK", v["userType"] == "0" ? "checked" : "") +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label><input type=\"radio\" name=\"UUID\" value=\"1\" CHECK onclick='updateUserType(this)' />新老用户</label>\n".replace("UUID", uuid).replace("CHECK", v["userType"] == "1" ? "checked" : "") +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" name=\"userType\" value='VV' />\n".replace("VV", v["userType"]) +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t</div>\n";
-		} else {
-			str += "\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label goodsIndex\">商品DD</label>\n".replace("DD", $("div.toDel").length + 1) +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type='hidden' name='gid' value='' />\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-1\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type='button' value='删除' onclick='delNode(\"UUID\")' />\n".replace("UUID", uuid) +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品图片</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"file\" class=\"form-control\" name=\"goodsImageFile\" placeholder=\"商品图片\" onchange=\"uploadFile(this,'goodsImage')\"/>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" class=\"form-control\" name=\"goodsImage\"/>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<img alt=\"\" src=\"\" name=\"goodsImageImg\" style=\"display:none;\"/>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品名称</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"goodsName\" placeholder=\"商品名称\" />\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品价格</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"goodsPrice\" placeholder=\"商品价格\" />\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品尺码</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"goodsSize\" placeholder=\"商品尺码\" />\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品数量</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"goodsCount\" placeholder=\"商品数量\" />\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品ID</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"goodsId\" placeholder=\"商品ID\" />\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">商品单位</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"text\" class=\"form-control\" name=\"remark\" value=\"件\" placeholder=\"商品单位\" />\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">品牌ID</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"brandId\" placeholder=\"品牌ID\" />\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-2\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">助力人数</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"number\" class=\"form-control\" name=\"boostCount\" value=\"0\" placeholder=\"助力人数\" />\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t<div class=\"row\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t<div class=\"col-md-3\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t<div class=\"form-group\">\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label class=\"control-label\">用户类型</label>\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label><input type=\"radio\" name=\"UUID\" value=\"0\" onclick='updateUserType(this)' />新用户</label>\n".replace("UUID", uuid) +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<label><input type=\"radio\" name=\"UUID\" value=\"1\" onclick='updateUserType(this)' />新老用户</label>\n".replace("UUID", uuid) +
-					"\t\t\t\t\t\t\t\t\t\t\t\t<input type=\"hidden\" name=\"userType\" />\n" +
-					"\t\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t\t</div>\n" +
-					"\t\t\t\t\t\t\t\t\t</div>\n";
-		}
-		// str += '<input style="display:inline-block;" type="button" value="" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
-		str += '</div>';
-		$("#elementPool").append(str);
-		$("#elementPool").sortable({
-			update: function (event, ui) {
-				var labels = $("label.goodsIndex");
-				$.each(labels, function (a, b) {
-					$(b).html("商品#".replace("#", a + 1));
-				});
-			}
-		});
-		$("#elementPool").disableSelection();
-	}
+    function delNode(uuid) {
+        var that = $("#" + uuid);
+        that.remove();
+    }
 
-	function delNode(uuid) {
-		var that = $("#"+uuid);
-		that.remove();
-	}
+    function uploadFile(self, imgName) {
+        var that = $(self);
+        if (self.files.length > 0) {
+            var file = self.files[0];
+            getQNToken(function (token) {
+                this.upload("", token, file, function () {
+                    //
+                }, function (err) {
+                    console.log("error");
+                    console.log(err);
+                }, function (res) {
+                    var url = qiniuUrl + "/" + res.key;
+                    var key1 = "[name=image]";
+                    var key2 = "[name=imageImg]";
+                    if (imgName != null) {
+                        key1 = "[name=XXX]".replace("XXX", imgName);
+                        key2 = "[name=XXXImg]".replace("XXX", imgName);
+                    }
+                    that.parent().find(key1).val(url);
+                    that.parent().find(key2).attr("src", url);
+                    that.parent().find(key2).attr("width", "100px");
+                    that.parent().find(key2).attr("height", "100px");
+                    that.parent().find(key2).show();
+                });
+            });
+        } else {
+            confirm("未选择任何文件!");
+        }
+    }
 
-	function uploadFile(self, imgName) {
-		var that = $(self);
-		if (self.files.length > 0) {
-			var file = self.files[0];
-			getQNToken(function (token) {
-				this.upload("", token, file, function () {
-					//
-				}, function (err) {
-					console.log("error");
-					console.log(err);
-				}, function (res) {
-					var url = qiniuUrl + "/" + res.key;
-					var key1 = "[name=image]";
-					var key2 = "[name=imageImg]";
-					if (imgName != null) {
-						key1 = "[name=XXX]".replace("XXX", imgName);
-						key2 = "[name=XXXImg]".replace("XXX", imgName);
-					}
-					that.parent().find(key1).val(url);
-					that.parent().find(key2).attr("src", url);
-					that.parent().find(key2).attr("width", "100px");
-					that.parent().find(key2).attr("height", "100px");
-					that.parent().find(key2).show();
-				});
-			});
-		} else {
-			confirm("未选择任何文件!");
-		}
-	}
+    function updateUserType(self) {
+        var that = $(self);
+        that.parent().parent().find("input[name='userType']").val(that.val());
+    }
 
-	function updateUserType(self) {
-		var that = $(self);
-		that.parent().parent().find("input[name='userType']").val(that.val());
-	}
+    function getQNToken(cb) {
+        var param = {};
+        $.get("/qiniu/token", param, function (token) {
+            cb(token);
+        });
+    }
 
-	function getQNToken(cb) {
-		var param = {};
-		$.get("/qiniu/token", param, function (token) {
-			cb(token);
-		});
-	}
-
-	var qiniuUrl = [[${qiniuUrl}]];
-	var theId = [[${theId}]];
-	jQuery(document).ready(function ($) {
-		jQuery.datetimepicker.setLocale('zh');
-		jQuery('#beginTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
-		jQuery('#endTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
-		$(document).on("wheel", "input[type=number]", function (e) {
-			$(this).blur();
-		});
-		if (theId != null) {
-			$.post("/freeDelivery_editFind", {"id": theId}, function (data) {
-				var form = $("#saveForm");
-				var freeProduct = data["freeProduct"];
-				var freeDelivery = data["freeDelivery"];
-				form.find("input[name='name']").val(freeProduct["name"]);
-				form.find("input[name='id']").val(freeProduct["id"]);
-				form.find("input[name='beginTime']").val(new Date(freeProduct["beginTime"]).Format("yyyy-MM-dd hh:mm:ss"));
-				form.find("input[name='endTime']").val(new Date(freeProduct["endTime"]).Format("yyyy-MM-dd hh:mm:ss"));
-				form.find("img[name='image']").val(freeProduct["image"]);
-				form.find("img[name='imageImg']").attr("src", freeProduct["image"]);
-				form.find("img[name='imageImg']").attr("width", 200);
-				form.find("img[name='imageImg']").attr("length", 200);
-				form.find("img[name='imageImg']").show();
-				for (let i of freeDelivery) {
-					addMoreElement(i);
-				}
-			})
-		}
-		//保存
-		$(".btn.btn-info.save").click(function () {
-			var footer = $(this).parent(".modal-footer");
-			var form = $("#saveForm");
-			var name = form.find("input[name='name']").val();
-			var beginTime = form.find("input[name='beginTime']").val();
-			var endTime = form.find("input[name='endTime']").val();
-			var image = form.find("input[name='image']").val();
-			var freeId = form.find("input[name='id']").val();
-			var gids = form.find("input[name='gid']");
-			var gidsList = [];
-			for (var k in gids) {
-				if (isNaN(k)) {
-					continue;
-				}
-				var gid = gids[k].value;
-				if (gid == '') {
-					//skip
-				} else {
-					gidsList.push(gid);
-				}
-			}
-			var prices = form.find("input[name='goodsPrice']");
-			var priceList = [];
-			for (var k in prices) {
-				if (isNaN(k)) {
-					continue;
-				}
-				var price = prices[k].value;
-				if (price == '') {
-					//skip
-				} else {
-					priceList.push(price);
-				}
-			}
-			var goodsSizes = form.find("input[name='goodsSize']");
-			var goodsSizeList = [];
-			for (var k in goodsSizes) {
-				if (isNaN(k)) {
-					continue;
-				}
-				var goods = goodsSizes[k].value;
-				if (goods == '') {
-					//skip
-				} else {
-					goodsSizeList.push(goods);
-				}
-			}
-			var goodsCounts = form.find("input[name='goodsCount']");
-			var goodsCountList = [];
-			for (var k in goodsCounts) {
-				if (isNaN(k)) {
-					continue;
-				}
-				var goods = goodsCounts[k].value;
-				if (goods == '') {
-					//skip
-				} else {
-					goodsCountList.push(goods);
-				}
-			}
-			var goodsIds = form.find("input[name='goodsId']");
-			var goodsIdList = [];
-			for (var k in goodsIds) {
-				if (isNaN(k)) {
-					continue;
-				}
-				var goods = goodsIds[k].value;
-				if (goods == '') {
-					//skip
-				} else {
-					goodsIdList.push(goods);
-				}
-			}
-			var brandIds = form.find("input[name='brandId']");
-			var brandIdList = [];
-			for (var k in brandIds) {
-				if (isNaN(k)) {
-					continue;
-				}
-				var goods = brandIds[k].value;
-				if (goods == '') {
-					//skip
-				} else {
-					brandIdList.push(goods);
-				}
-			}
-			var boostCounts = form.find("input[name='boostCount']");
-			var boostCountList = [];
-			for (var k in boostCounts) {
-				if (isNaN(k)) {
-					continue;
-				}
-				var goods = boostCounts[k].value;
-				if (goods == '') {
-					//skip
-				} else {
-					boostCountList.push(goods);
-				}
-			}
-			var goodsNames = form.find("input[name='goodsName']");
-			var goodsNameList = [];
-			for (var k in goodsNames) {
-				if (isNaN(k)) {
-					continue;
-				}
-				var goods = goodsNames[k].value;
-				if (goods == '') {
-					//skip
-				} else {
-					goodsNameList.push(goods);
-				}
-			}
-			var goodsImges = form.find("input[name='goodsImage']");
-			var goodsImgeList = [];
-			for (var k in goodsImges) {
-				if (isNaN(k)) {
-					continue;
-				}
-				var goods = goodsImges[k].value;
-				if (goods == '') {
-					//skip
-				} else {
-					goodsImgeList.push(goods);
-				}
-			}
+    var qiniuUrl = [[${qiniuUrl}]];
+    var theId = [[${theId}]];
+    jQuery(document).ready(function ($) {
+        jQuery.datetimepicker.setLocale('zh');
+        jQuery('#beginTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
+        jQuery('#endTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
+        $(document).on("wheel", "input[type=number]", function (e) {
+            $(this).blur();
+        });
+        if (theId != null) {
+            $.post("/freeDelivery_editFind", {"id": theId}, function (data) {
+                var form = $("#saveForm");
+                var freeProduct = data["freeProduct"];
+                var freeDelivery = data["freeDelivery"];
+                form.find("input[name='name']").val(freeProduct["name"]);
+                form.find("input[name='id']").val(freeProduct["id"]);
+                form.find("input[name='beginTime']").val(new Date(freeProduct["beginTime"]).Format("yyyy-MM-dd hh:mm:ss"));
+                form.find("input[name='endTime']").val(new Date(freeProduct["endTime"]).Format("yyyy-MM-dd hh:mm:ss"));
+                form.find("img[name='image']").val(freeProduct["image"]);
+                form.find("img[name='imageImg']").attr("src", freeProduct["image"]);
+                form.find("img[name='imageImg']").attr("width", 200);
+                form.find("img[name='imageImg']").attr("length", 200);
+                form.find("img[name='imageImg']").show();
+                for (let i of freeDelivery) {
+                    addMoreElement(i);
+                }
+            })
+        }
+        //保存
+        $(".btn.btn-info.save").click(function () {
+            var footer = $(this).parent(".modal-footer");
+            var form = $("#saveForm");
+            var name = form.find("input[name='name']").val();
+            var beginTime = form.find("input[name='beginTime']").val();
+            var endTime = form.find("input[name='endTime']").val();
+            var image = form.find("input[name='image']").val();
+            var freeId = form.find("input[name='id']").val();
+            var gids = form.find("input[name='gid']");
+            var gidsList = [];
+            for (var k in gids) {
+                if (isNaN(k)) {
+                    continue;
+                }
+                var gid = gids[k].value;
+                if (gid == '') {
+                    //skip
+                } else {
+                    gidsList.push(gid);
+                }
+            }
+            var prices = form.find("input[name='goodsPrice']");
+            var priceList = [];
+            for (var k in prices) {
+                if (isNaN(k)) {
+                    continue;
+                }
+                var price = prices[k].value;
+                if (price == '') {
+                    //skip
+                } else {
+                    priceList.push(price);
+                }
+            }
+            var goodsSizes = form.find("input[name='goodsSize']");
+            var goodsSizeList = [];
+            for (var k in goodsSizes) {
+                if (isNaN(k)) {
+                    continue;
+                }
+                var goods = goodsSizes[k].value;
+                if (goods == '') {
+                    //skip
+                } else {
+                    goodsSizeList.push(goods);
+                }
+            }
+            var goodsCounts = form.find("input[name='goodsCount']");
+            var goodsCountList = [];
+            for (var k in goodsCounts) {
+                if (isNaN(k)) {
+                    continue;
+                }
+                var goods = goodsCounts[k].value;
+                if (goods == '') {
+                    //skip
+                } else {
+                    goodsCountList.push(goods);
+                }
+            }
+            var goodsIds = form.find("input[name='goodsId']");
+            var goodsIdList = [];
+            for (var k in goodsIds) {
+                if (isNaN(k)) {
+                    continue;
+                }
+                var goods = goodsIds[k].value;
+                if (goods == '') {
+                    //skip
+                } else {
+                    goodsIdList.push(goods);
+                }
+            }
+            var brandIds = form.find("input[name='brandId']");
+            var brandIdList = [];
+            for (var k in brandIds) {
+                if (isNaN(k)) {
+                    continue;
+                }
+                var goods = brandIds[k].value;
+                if (goods == '') {
+                    //skip
+                } else {
+                    brandIdList.push(goods);
+                }
+            }
+            var boostCounts = form.find("input[name='boostCount']");
+            var boostCountList = [];
+            for (var k in boostCounts) {
+                if (isNaN(k)) {
+                    continue;
+                }
+                var goods = boostCounts[k].value;
+                if (goods == '') {
+                    //skip
+                } else {
+                    boostCountList.push(goods);
+                }
+            }
+            var goodsNames = form.find("input[name='goodsName']");
+            var goodsNameList = [];
+            for (var k in goodsNames) {
+                if (isNaN(k)) {
+                    continue;
+                }
+                var goods = goodsNames[k].value;
+                if (goods == '') {
+                    //skip
+                } else {
+                    goodsNameList.push(goods);
+                }
+            }
+            var goodsImges = form.find("input[name='goodsImage']");
+            var goodsImgeList = [];
+            for (var k in goodsImges) {
+                if (isNaN(k)) {
+                    continue;
+                }
+                var goods = goodsImges[k].value;
+                if (goods == '') {
+                    //skip
+                } else {
+                    goodsImgeList.push(goods);
+                }
+            }
             var remarks = form.find("input[name='remark']");
             var remarkList = [];
             for (var k in remarks) {
@@ -529,72 +529,72 @@
                     remarkList.push(goods);
                 }
             }
-			var userTypes = form.find("input[name='userType']");
-			var userTypesList = [];
-			for (var k in userTypes) {
-				if (isNaN(k)) {
-					continue;
-				}
-				var goods = userTypes[k].value;
-				if (goods == '') {
-					//skip
-				} else {
-					userTypesList.push(goods);
-				}
-			}
-			var json = {
-				"id": freeId,
-				"name": name,
-				"beginTime": beginTime,
-				"endTime": endTime,
-				"image": image,
-				"gidsList": gidsList,
-				"priceList": priceList,
-				"goodsSizeList": goodsSizeList,
-				"goodsCountList": goodsCountList,
-				"goodsIdList": goodsIdList,
-				"brandIdList": brandIdList,
-				"boostCountList": boostCountList,
-				"goodsNameList": goodsNameList,
-				"goodsImgeList": goodsImgeList,
-				"userTypesList": userTypesList,
-				"remarkList":remarkList
-			};
-			$(".btn.btn-info.save").attr("disabled", "disabled");
-			async.series({
-				one: function (callback) {
-					callback();
-				},
-				two: function (callback) {
-					callback();
-				},
-				three: function (callback) {
-					//提交保存
-					$.post("/freeDelivery_save", {"json": JSON.stringify(json)}, function (data) {
-						if (data) {
-							footer.find("button").show();
-							footer.find(".bg-lg").hide();
-							toastr.success("操作已成功！", "温馨提示");
-							callback();
-						} else {
-							footer.find("button").show();
-							footer.find(".bg-lg").hide();
-							toastr.error("操作失败", "温馨提示");
-							callback("ERROR");
-						}
-					});
-				}
-			}, function (err, results) {
-				if (err) {
-					$(".btn.btn-info.save").removeAttr("disabled");
-				} else {
-					window.location.href = '/freeDelivery.html';
-				}
-			});
-		});
-	});
-	/*]]>*/
-	</script>
+            var userTypes = form.find("input[name='userType']");
+            var userTypesList = [];
+            for (var k in userTypes) {
+                if (isNaN(k)) {
+                    continue;
+                }
+                var goods = userTypes[k].value;
+                if (goods == '') {
+                    //skip
+                } else {
+                    userTypesList.push(goods);
+                }
+            }
+            var json = {
+                "id": freeId,
+                "name": name,
+                "beginTime": beginTime,
+                "endTime": endTime,
+                "image": image,
+                "gidsList": gidsList,
+                "priceList": priceList,
+                "goodsSizeList": goodsSizeList,
+                "goodsCountList": goodsCountList,
+                "goodsIdList": goodsIdList,
+                "brandIdList": brandIdList,
+                "boostCountList": boostCountList,
+                "goodsNameList": goodsNameList,
+                "goodsImgeList": goodsImgeList,
+                "userTypesList": userTypesList,
+                "remarkList": remarkList
+            };
+            $(".btn.btn-info.save").attr("disabled", "disabled");
+            async.series({
+                one: function (callback) {
+                    callback();
+                },
+                two: function (callback) {
+                    callback();
+                },
+                three: function (callback) {
+                    //提交保存
+                    $.post("/freeDelivery_save", {"json": JSON.stringify(json)}, function (data) {
+                        if (data) {
+                            footer.find("button").show();
+                            footer.find(".bg-lg").hide();
+                            toastr.success("操作已成功！", "温馨提示");
+                            callback();
+                        } else {
+                            footer.find("button").show();
+                            footer.find(".bg-lg").hide();
+                            toastr.error("操作失败", "温馨提示");
+                            callback("ERROR");
+                        }
+                    });
+                }
+            }, function (err, results) {
+                if (err) {
+                    $(".btn.btn-info.save").removeAttr("disabled");
+                } else {
+                    window.location.href = '/freeDelivery.html';
+                }
+            });
+        });
+    });
+    /*]]>*/
+</script>
 </body>
 
 </html>
