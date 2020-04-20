@@ -171,10 +171,10 @@
 					data: "id",
 					width: "5%",
 					orderable: false,
-					className: 'select-checkbox',
-					title: '<input type="checkbox" id="checkbox-all"/>',
+					title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
 					render: function (data, type, full, meta) {
-						return '<input type="checkbox" name="activityId" value="' + data + '" />';
+						var uuid = UUID.randomUUID();
+						return '<div class="checkbox"><input type="checkbox" name="activityId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
 					}
 				},
 				{
@@ -282,6 +282,12 @@
 			$("#checkbox-all").attr("checked", false);
 			oTable.fnDraw(); //or fnReloadAjax()
 			return false;
+		});
+		$('#example-1').on('click', "#checkbox-all", function () {
+			var obj = $(this);
+			$("input[name='activityId']").each(function (i, e) {
+				this.checked = obj[0].checked;
+			});
 		});
 	});
 	/*]]>*/
