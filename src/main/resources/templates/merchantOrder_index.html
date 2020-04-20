@@ -6,89 +6,91 @@
 	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
+		.form-group img{
+			max-width:400px;
+			max-height:300px;
+		}
 	</style>
 </head>
-<body class="page-body">
-
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">商户订单排行</h1>
-					<p class="activityDescription"></p>
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+	<header th:replace="navbar"></header>
+	<aside th:replace="sidebar-menu"></aside>
+	<!-- Content Wrapper. Contains page content -->
+	<div class="content-wrapper">
+		<!-- Content Header (Page header) -->
+		<div class="content-header d-none d-md-block">
+			<div class="d-flex align-items-center">
+				<div class="mr-auto">
+					<h3 class="page-title br-0">商户订单排行</h3>
 				</div>
-
-				<div class="breadcrumb-env">
-
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>商户订单排行</strong></li>
-					</ol>
-
-				</div>
-
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group ">
-							<div class="input-group">
-								<label for="sTime" class="control-label">开始时间</label>
-								<input type="text" class="form-control" name="sTime" id="sTime" style="height:35px"
-									   placeholder="开始时间"/>
-							</div>
-							<div class="input-group">
-								<label for="eTime" class="control-label">结束时间</label>
-								<input type="text" class="form-control" name="eTime" id="eTime" style="height:35px"
-									   placeholder="结束时间"/>
-							</div>
-							<div class="input-group">
-								<label class="control-label">商户名称</label>
-								<input type="text" class="form-control" name="mName" style="height:35px"
-									   placeholder="商户名称"/>
-							</div>
-						</div>
-						<div class="form-group">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-						
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
+				<div class="right-title">
 				</div>
 			</div>
-
-					
-			<footer th:replace="footer"></footer>
 		</div>
-	</div>
 
-	<script src="js/common.js"></script>
-	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
-	<script src="assets/js/dataTables.rowReorder.min.js"></script>
-	<script th:inline="javascript">
+		<!-- Main content -->
+		<section class="content">
+			<div class="row">
+				<div class="col-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<form role="form" class="form-inline">
+								<div class="form-group ">
+									<div class="input-group">
+										<label for="sTime" class="control-label">开始时间</label>
+										<input type="text" class="form-control" name="sTime" id="sTime" style="height:35px"
+											   placeholder="开始时间"/>
+									</div>
+									<div class="input-group">
+										<label for="eTime" class="control-label">结束时间</label>
+										<input type="text" class="form-control" name="eTime" id="eTime" style="height:35px"
+											   placeholder="结束时间"/>
+									</div>
+									<div class="input-group">
+										<label class="control-label">商户名称</label>
+										<input type="text" class="form-control" name="mName" style="height:35px"
+											   placeholder="商户名称"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
+								</div>
+							</form>
+						</div>
+						<div class="box-body">
+							<div class="table-responsive">
+								<table id="example-1" class="table table-bordered table-striped" style="width: 100%;">
+								</table>
+							</div>
+						</div>
+						<!-- /.box-body -->
+						<div class="box-footer">
+						</div>
+						<!-- /.box-footer-->
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- /.content -->
+	</div>
+	<!-- /.content-wrapper -->
+	<footer th:replace="footer"></footer>
+</div>
+
+<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+<script src="assets/js/dataTables.rowReorder.min.js"></script>
+<script th:inline="javascript">
 	/*<![CDATA[*/
 
 	function buildImg(url) {
 		return "<img width='100px' height='100px' src='#' />".replace("#", url);
 	}
 
-    function goToDetail(id) {
-        window.open('/order.html?mid=' + id, "_blank");
-    }
+	function goToDetail(id) {
+		window.open('/order.html?mid=' + id, "_blank");
+	}
 
 	var table_global;
 	jQuery(document).ready(function($)
@@ -171,14 +173,14 @@
 						return data.toFixed(2);
 					}
 				},
-                {
-                    targets: 7,
-                    data: "merchantId",
-                    title: "操作",
-                    render: function (data, type, row, meta) {
-                        return `<input type="button" value="查看" onclick="goToDetail(ID)" />`.replace("ID", data);
-                    }
-                }
+				{
+					targets: 7,
+					data: "merchantId",
+					title: "操作",
+					render: function (data, type, row, meta) {
+						return `<input type="button" value="查看" onclick="goToDetail(ID)" />`.replace("ID", data);
+					}
+				}
 			]
 		});
 		table_global = oTable;
@@ -193,6 +195,6 @@
 		});
 	});
 	/*]]>*/
-	</script>
+</script>
 </body>
 </html>
