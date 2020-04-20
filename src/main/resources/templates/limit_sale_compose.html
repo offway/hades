@@ -1,236 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<head th:replace="head"></head>
-	<meta name="referrer" content="no-referrer"/>
-	<title>限时商品管理</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
-	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
-	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
-	</style>
+    <head th:replace="head"></head>
+    <meta name="referrer" content="no-referrer"/>
+    <title>限时商品管理</title>
+    <link rel="stylesheet" href="assets/js/select2/select2.css"/>
+    <link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+    <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+    <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
 </head>
-<body class="page-body">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">限时商品管理</h1>
+                </div>
+                <div class="right-title">
+                </div>
+            </div>
+        </div>
 
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">限时商品管理</h1>
-					<p class="activityDescription"></p>
-				</div>
-
-				<div class="breadcrumb-env">
-
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>限时商品管理</strong></li>
-					</ol>
-
-				</div>
-
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="modal-title">限时商品</h4>
-				</div>
-				<div class="panel-body">
-					<form role="form" id="saveForm">
-						<input type="hidden" name="id"/>
-<!--						<input type="hidden" name="goodsId"/>-->
-						<input type="hidden" name="action"/>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">名称</label>
-									<input type="text" class="form-control" name="name" placeholder="名称"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">封面图片</label>
-									<input type="file" class="form-control" name="imageFile" placeholder="封面图片" onchange="uploadFile(this)"/>
-									<input type="hidden" class="form-control" name="image" />
-									<img src="" name="imageImg" />
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">是否上架</label>
-									<label><input name="status" class="notMe" type="radio" value="0"/>否 </label>
-									<label><input name="status" class="notMe" type="radio" checked="checked" value="1"/>是</label>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">用户类型</label>
-									<label><input name="userType" class="notMe" type="radio" value="0"/>新用户 </label>
-									<label><input name="userType" class="notMe" type="radio" checked="checked" value="1"/>新老用户</label>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label class="control-label">开始时间</label>
-									<input type="text" class="form-control" name="beginTime" id="beginTime" placeholder="开始时间" />
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label class="control-label">截止时间</label>
-									<input type="text" class="form-control" name="endTime" id="endTime" placeholder="截止时间" />
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">市场价</label>
-									<input type="number" class="form-control" name="originalPrice" placeholder="市场价"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">限定价</label>
-									<input type="text" class="form-control" name="price" placeholder="限定价"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">数量</label>
-									<input type="text" class="form-control" name="saleCount" placeholder="数量"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">目标助力次数</label>
-									<input type="text" class="form-control" name="boostCount" placeholder="目标助力次数"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">发售详情</label>
-									<textarea id="editor_id" name="info" style="width:700px;height:300px;" placeholder="发售详情">
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form role="form" id="saveForm">
+                                <input type="hidden" name="id"/>
+                                <!--						<input type="hidden" name="goodsId"/>-->
+                                <input type="hidden" name="action"/>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">名称</label>
+                                            <input type="text" class="form-control" name="name" placeholder="名称"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">封面图片</label>
+                                            <input type="file" class="form-control" name="imageFile" placeholder="封面图片"
+                                                   onchange="uploadFile(this)"/>
+                                            <input type="hidden" class="form-control" name="image"/>
+                                            <img src="" name="imageImg"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">是否上架</label>
+                                            <input name="status" id="status0" class="notMe" type="radio" value="0"/><label for="status0">否 </label>
+                                            <input name="status" id="status1" class="notMe" type="radio" checked="checked"
+                                                          value="1"/><label for="status1">是</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">用户类型</label>
+                                            <input name="userType" id="userType0" class="notMe" type="radio" value="0"/><label for="userType0">新用户
+                                            </label>
+                                            <input name="userType" id="userType1" class="notMe" type="radio" checked="checked"
+                                                          value="1"/><label for="userType1">新老用户</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">开始时间</label>
+                                            <input type="text" class="form-control" name="beginTime" id="beginTime"
+                                                   placeholder="开始时间"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">截止时间</label>
+                                            <input type="text" class="form-control" name="endTime" id="endTime"
+                                                   placeholder="截止时间"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">市场价</label>
+                                            <input type="number" class="form-control" name="originalPrice"
+                                                   placeholder="市场价"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">限定价</label>
+                                            <input type="text" class="form-control" name="price" placeholder="限定价"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">数量</label>
+                                            <input type="text" class="form-control" name="saleCount" placeholder="数量"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">目标助力次数</label>
+                                            <input type="text" class="form-control" name="boostCount"
+                                                   placeholder="目标助力次数"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">发售详情</label>
+                                            <textarea id="editor_id" name="info" style="width:700px;height:300px;"
+                                                      placeholder="发售详情">
 									</textarea>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">关联商品ID</label>
-									<input type="number" class="form-control" name="goodsId" placeholder="关联商品ID"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">单用户可购买数量上限</label>
-									<input type="number" class="form-control" name="buyLimit" placeholder="单用户可购买数量上限"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label"><font color="red">*</font>渠道</label>
-									<label><input name="tags" class="notMe" type="checkbox" value="0"/>H5</label>
-									<label><input name="tags" class="notMe" type="checkbox" value="1" />小程序</label>
-									<label><input name="tags" class="notMe" type="checkbox" value="2"/>APP</label>
-								</div>
-							</div>
-						</div>
-					</form>
-				</div>
-				<button type="button" class="btn btn-info save">保存</button>
-			</div>
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
-	
-	<div th:replace="body-under"></div>
-	<input type="hidden" id="type_and_category_list"/>
-	<a id="url" href="#" target="_blank" rel="noopener noreferrer"></a>
-	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script src="assets/js/async.min.js"></script>
-	<script src="assets/kindeditor-4.1.12/kindeditor-all-min.js"></script>
-	<script src="assets/kindeditor-4.1.12/lang/zh-CN.js"></script>
-    <script src="assets/js/jquery.base64.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">关联商品ID</label>
+                                            <input type="number" class="form-control" name="goodsId"
+                                                   placeholder="关联商品ID"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">单用户可购买数量上限</label>
+                                            <input type="number" class="form-control" name="buyLimit"
+                                                   placeholder="单用户可购买数量上限"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label"><font color="red">*</font>渠道</label>
+                                            <input name="tags" id="tags0" class="notMe" type="checkbox"
+                                                          value="0"/><label for="tags0">H5</label>
+                                            <input name="tags" id="tags1" class="notMe" type="checkbox"
+                                                          value="1"/><label for="tags1">小程序</label>
+                                            <input name="tags" id="tags2" class="notMe" type="checkbox"
+                                                          value="2"/><label for="tags2">APP</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="box-body">
+                        </div>
+                        <div class="box-footer">
+                            <button type="button" class="btn btn-success save">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer th:replace="footer"></footer>
+</div>
 
-	KindEditor.ready(function (K) {
-		window.editor = K.create('#editor_id', {
-			uploadJson: '/file/upload_qn',
-			allowFileManager: false,
-			afterUpload: function (url, data, name) {
-				console.log(url);
-				console.log(data);
-				console.log(name);
-			}
-		});
-	});
+<div th:replace="body-under"></div>
+<input type="hidden" id="type_and_category_list"/>
+<a id="url" href="#" target="_blank" rel="noopener noreferrer"></a>
+<script src="js/common.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+<script src="assets/js/select2/select2.min.js"></script>
+<script src="assets/js/async.min.js"></script>
+<script src="assets/kindeditor-4.1.12/kindeditor-all-min.js"></script>
+<script src="assets/kindeditor-4.1.12/lang/zh-CN.js"></script>
+<script src="assets/js/jquery.base64.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
 
-	function uploadFile(self) {
-		var that = $(self);
-		if (self.files.length > 0) {
-			var file = self.files[0];
-			getQNToken(function (token) {
-				this.upload("", token, file, function () {
-					//
-				}, function (err) {
-					console.log("error");
-					console.log(err);
-				}, function (res) {
-					var url = qiniuUrl + "/" + res.key;
-					that.parent().find("[name=image]").val(url);
-					that.parent().find("[name=imageImg]").attr("src", url);
-					that.parent().find("[name=imageImg]").attr("width", "100px");
-					that.parent().find("[name=imageImg]").attr("height", "100px");
-					that.parent().find("[name=imageImg]").show();
-				});
-			});
-		} else {
-			confirm("未选择任何文件!");
-		}
-	}
+    KindEditor.ready(function (K) {
+        window.editor = K.create('#editor_id', {
+            uploadJson: '/file/upload_qn',
+            allowFileManager: false,
+            afterUpload: function (url, data, name) {
+                console.log(url);
+                console.log(data);
+                console.log(name);
+            }
+        });
+    });
 
-	function getQNToken(cb) {
-		$.get("/qiniu/token", {}, function (token) {
-			cb(token);
-		});
-	}
+    function uploadFile(self) {
+        var that = $(self);
+        if (self.files.length > 0) {
+            var file = self.files[0];
+            getQNToken(function (token) {
+                this.upload("", token, file, function () {
+                    //
+                }, function (err) {
+                    console.log("error");
+                    console.log(err);
+                }, function (res) {
+                    var url = qiniuUrl + "/" + res.key;
+                    that.parent().find("[name=image]").val(url);
+                    that.parent().find("[name=imageImg]").attr("src", url);
+                    that.parent().find("[name=imageImg]").attr("width", "100px");
+                    that.parent().find("[name=imageImg]").attr("height", "100px");
+                    that.parent().find("[name=imageImg]").show();
+                });
+            });
+        } else {
+            confirm("未选择任何文件!");
+        }
+    }
+
+    function getQNToken(cb) {
+        $.get("/qiniu/token", {}, function (token) {
+            cb(token);
+        });
+    }
 
     function addMoreImg(self) {
         var that = $(self);
@@ -255,89 +264,88 @@
         return "<img width='100px' height='100px' src='#' />".replace("#", url);
     }
 
-	function forEdit(id) {
-		$.post("/limit_sale_get", {"id": id}, function (data) {
-			if (data) {
-				if (data["status"] == "1") {
-					toastr.error("操作失败,已上架商品不允许编辑", "温馨提示");
-				} else {
-					var form = $("#saveForm");
-					//商家
-					for (var i in data) {
-						var ele = form.find("input[name='" + i + "']");
-						switch (ele.attr("type")) {
-							case "radio":
-								ele.val([data[i]]);
-								break;
-							default:
-								if (data[i] != undefined && !isNaN(data[i]) && String(data[i]).length == 13) {
-									ele.val(formatTime(data[i]));
-									$("#" + i).val(formatTime(data[i]));
-								} else {
-									ele.val(data[i]);
-								}
-						}
-						form.find("img[name='" + i + "Img']").attr("src", data[i]);
-						form.find("img[name='" + i + "Img']").attr("width", 200);
-						form.find("img[name='" + i + "Img']").attr("length", 200);
-						form.find("img[name='" + i + "Img']").show();
-					}
-					editor.html(data["info"]);
-					//渠道标签
-					if (data.hasOwnProperty("channel") && data["channel"] != null) {
-						var tag = parseInt(data["channel"]);
-						var tagEle = form.find("input[name='tags']");
-						for (var i = 0; i < 3; i++) {
-							if ((tag & 1 << i) != 0) {
-								$(tagEle[i]).prop("checked", "checked");
-							}
-						}
-					}
-					form.find(".btn.image").show();
-					form.find("input[name='action']").val("edit");
-				}
-			}
-		});
-	}
+    function forEdit(id) {
+        $.post("/limit_sale_get", {"id": id}, function (data) {
+            if (data) {
+                if (data["status"] == "1") {
+                    toastr.error("操作失败,已上架商品不允许编辑", "温馨提示");
+                } else {
+                    var form = $("#saveForm");
+                    //商家
+                    for (var i in data) {
+                        var ele = form.find("input[name='" + i + "']");
+                        switch (ele.attr("type")) {
+                            case "radio":
+                                ele.val([data[i]]);
+                                break;
+                            default:
+                                if (data[i] != undefined && !isNaN(data[i]) && String(data[i]).length == 13) {
+                                    ele.val(formatTime(data[i]));
+                                    $("#" + i).val(formatTime(data[i]));
+                                } else {
+                                    ele.val(data[i]);
+                                }
+                        }
+                        form.find("img[name='" + i + "Img']").attr("src", data[i]);
+                        form.find("img[name='" + i + "Img']").attr("width", 200);
+                        form.find("img[name='" + i + "Img']").attr("length", 200);
+                        form.find("img[name='" + i + "Img']").show();
+                    }
+                    editor.html(data["info"]);
+                    //渠道标签
+                    if (data.hasOwnProperty("channel") && data["channel"] != null) {
+                        var tag = parseInt(data["channel"]);
+                        var tagEle = form.find("input[name='tags']");
+                        for (var i = 0; i < 3; i++) {
+                            if ((tag & 1 << i) != 0) {
+                                $(tagEle[i]).prop("checked", "checked");
+                            }
+                        }
+                    }
+                    form.find(".btn.image").show();
+                    form.find("input[name='action']").val("edit");
+                }
+            }
+        });
+    }
 
-	function forAdd() {
-		editor.html("");
-		var form = $("#saveForm");
-		form.find("input:not(.notMe)").val("");
-		form.find("img").attr("src", "");
-		form.find("img").hide();
-		form.find("input[type='file']").show();
-		form.find("input[name='action']").val("add");
-	}
+    function forAdd() {
+        editor.html("");
+        var form = $("#saveForm");
+        form.find("input:not(.notMe)").val("");
+        form.find("img").attr("src", "");
+        form.find("img").hide();
+        form.find("input[type='file']").show();
+        form.find("input[name='action']").val("add");
+    }
 
-	var qiniuUrl = [[${qiniuUrl}]];
-	var theId = [[${theId}]];
-    jQuery(document).ready(function($)
-	{
+    var qiniuUrl = [[${qiniuUrl}]];
+    var theId = [[${theId}]];
+    jQuery(document).ready(function ($) {
         $.base64.utf8encode = true;
         $.base64.utf8decode = true;
 
-		jQuery.datetimepicker.setLocale('zh');
-		jQuery('#beginTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
-		jQuery('#endTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
+        jQuery.datetimepicker.setLocale('zh');
+        jQuery('#beginTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
+        jQuery('#endTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
 
         $('[name="now"]').click(function () {
             var value = $(this).val();  //获取选中的radio的值
@@ -359,46 +367,46 @@
             }
         });
 
-		if (isNaN(theId)) {
-			setTimeout(function () {
-				forAdd();
-			}, 500);
-		} else {
-			setTimeout(function () {
-				forEdit(theId);
-			}, 500);
-		}
+        if (isNaN(theId)) {
+            setTimeout(function () {
+                forAdd();
+            }, 500);
+        } else {
+            setTimeout(function () {
+                forEdit(theId);
+            }, 500);
+        }
 
-		//保存
-		$(".btn.btn-info.save").click(function () {
-			var footer = $(this).parent(".modal-footer");
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var form = $("#saveForm");
-			var goodsId = form.find("input[name='goodsId']").val();
-			var action = form.find("input[name='action']").val();
-			var beginTime = form.find("input[name='beginTime']").val();
-			var endTime = form.find("input[name='endTime']").val();
-			var name = form.find("input[name='name']").val();
-			var image = form.find("input[name='image']").val();
-			var status = form.find("input[name='status']:checked").val();
-			var boostCount = form.find("input[name='boostCount']:checked").val();
-			var userType = form.find("input[name='userType']:checked").val();
-			var buyLimit = form.find("input[name='buyLimit']").val();
-			var tags = form.find("input[name='tags']:checked");
-			var info = editor.html();
+        //保存
+        $(".btn.btn-success.save").click(function () {
+            var footer = $(this).parent(".modal-footer");
+            footer.find("button").hide();
+            footer.find(".bg-lg").show();
+            var form = $("#saveForm");
+            var goodsId = form.find("input[name='goodsId']").val();
+            var action = form.find("input[name='action']").val();
+            var beginTime = form.find("input[name='beginTime']").val();
+            var endTime = form.find("input[name='endTime']").val();
+            var name = form.find("input[name='name']").val();
+            var image = form.find("input[name='image']").val();
+            var status = form.find("input[name='status']:checked").val();
+            var boostCount = form.find("input[name='boostCount']:checked").val();
+            var userType = form.find("input[name='userType']:checked").val();
+            var buyLimit = form.find("input[name='buyLimit']").val();
+            var tags = form.find("input[name='tags']:checked");
+            var info = editor.html();
 
-			if (beginTime == '' || endTime == '' || name == '' || image == '' || status == '' || info == '' || boostCount == '' || goodsId == '' || userType == '' || buyLimit == '') {
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-				return;
-			}
+            if (beginTime == '' || endTime == '' || name == '' || image == '' || status == '' || info == '' || boostCount == '' || goodsId == '' || userType == '' || buyLimit == '') {
+                toastr.error("请填写完整数据后提交", "温馨提示");
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                return;
+            }
 
-			var tag = 0;
-			tags.each(function (a, b) {
-				tag = tag | 1 << parseInt(b.value);
-			});
+            var tag = 0;
+            tags.each(function (a, b) {
+                tag = tag | 1 << parseInt(b.value);
+            });
 
             //获取token
             $.get("/qiniu/token", {}, function (token) {
@@ -412,31 +420,31 @@
                             callback();
                         },
                         three: function (callback) {
-							// var map = $("#saveForm").serializeArray();
-							// var newMap = {};
-							// for (var i in map) {
-							// 	if (map[i]["name"] == 'info') {
-							// 		newMap["info"] = $.base64.btoa(info);
-							// 	} else {
-							// 		newMap[map[i]["name"]] = map[i]["value"];
-							// 	}
-							// }
-							// args = $.base64.btoa(JSON.stringify(newMap));
-							// args = args.replace(/\+/g, "_");
-							callback();
+                            // var map = $("#saveForm").serializeArray();
+                            // var newMap = {};
+                            // for (var i in map) {
+                            // 	if (map[i]["name"] == 'info') {
+                            // 		newMap["info"] = $.base64.btoa(info);
+                            // 	} else {
+                            // 		newMap[map[i]["name"]] = map[i]["value"];
+                            // 	}
+                            // }
+                            // args = $.base64.btoa(JSON.stringify(newMap));
+                            // args = args.replace(/\+/g, "_");
+                            callback();
                         }
                     }, function (err, results) {
-						//提交保存
-						var map = $("#saveForm").serializeArray();
-						var newMap = {};
-						for (var i in map) {
-							if (map[i]["name"] == 'info') {
-								newMap["info"] = info;
-							} else {
-								newMap[map[i]["name"]] = map[i]["value"];
-							}
-						}
-						newMap["channel"] = tag;
+                        //提交保存
+                        var map = $("#saveForm").serializeArray();
+                        var newMap = {};
+                        for (var i in map) {
+                            if (map[i]["name"] == 'info') {
+                                newMap["info"] = info;
+                            } else {
+                                newMap[map[i]["name"]] = map[i]["value"];
+                            }
+                        }
+                        newMap["channel"] = tag;
                         $.post("/limit_sale_add", newMap, function (data) {
                             if (data) {
                                 footer.find("button").show();
@@ -451,14 +459,14 @@
                                 toastr.error("操作失败", "温馨提示");
                             }
                         });
-						// var url = $("#url");
-						// if (action == 'edit') {
-						// 	url.attr("href", '/limit_sale_edit.html?args=' + args);
-						// 	url[0].click();
-						// } else {
-						// 	url.attr("href", '/limit_sale_add.html?args=' + args);
-						// 	url[0].click();
-						// }
+                        // var url = $("#url");
+                        // if (action == 'edit') {
+                        // 	url.attr("href", '/limit_sale_edit.html?args=' + args);
+                        // 	url[0].click();
+                        // } else {
+                        // 	url.attr("href", '/limit_sale_add.html?args=' + args);
+                        // 	url[0].click();
+                        // }
                     });
                 } else {
                     footer.find("button").show();
@@ -466,10 +474,10 @@
                     toastr.error("错误，请联系管理员", "温馨提示");
                 }
             });
-		});
-	});
-	/*]]>*/
-	</script>
+        });
+    });
+    /*]]>*/
+</script>
 </body>
 
 </html>
