@@ -3,229 +3,188 @@
 <head>
 	<head th:replace="head"></head>
 	<title>订单详情</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/js/daterangepicker/daterangepicker-bs3.css"/>
 	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
 	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
+		.form-group img{
+			max-width:400px;
+			max-height:300px;
+		}
 	</style>
 </head>
-<body class="page-body">
-
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				<div class="title-env">
-					<h1 class="title">订单详情</h1>
-					<p class="activityDescription"></p>
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+	<header th:replace="navbar"></header>
+	<aside th:replace="sidebar-menu"></aside>
+	<!-- Content Wrapper. Contains page content -->
+	<div class="content-wrapper">
+		<!-- Content Header (Page header) -->
+		<div class="content-header d-none d-md-block">
+			<div class="d-flex align-items-center">
+				<div class="mr-auto">
+					<h3 class="page-title br-0">订单详情</h3>
 				</div>
-				<div class="breadcrumb-env">
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>订单详情</strong></li>
-					</ol>
+				<div class="right-title">
 				</div>
 			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px"
-									onclick="return gotoList()">返回订单列表
-							</button>
-						</div>
-						<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: none;"
-							 id="deliverOrderBtn">
-							<input class="btn btn-secondary btn-single searchBtn" style="height:35px" type="button"
-								   value="订单发货"/>
-						</div>
-						<div class="form-group" style="margin-left: 0;display: none;" id="editDeliveredOrderBtn">
-							<input class="btn btn-secondary btn-single searchBtn" style="height:35px" type="button"
-								   value="修改物流单号"/>
-						</div>
-					</form>
-				</div>
-				<div class="panel-body panel-border">
-					<div class="row">
-						<div class="col-sm-12">
-							<!-- Table Model 2 -->
-							<strong>基本信息</strong>
-							<table id="basicInfo" class="table table-bordered table-striped table-condensed table-hover">
-							</table>
-						</div>
-					</div>
-				</div>
-				<div class="panel-body panel-border">
-					<div class="row">
-						<div class="col-sm-12">
-							<!-- Table Model 2 -->
-							<strong>备注</strong>
-							<table id="remarkInfo" class="table table-bordered table-striped table-condensed table-hover">
-							</table>
-						</div>
-					</div>
-				</div>
-				<div class="panel-body panel-border">
-					<div class="row">
-						<div class="col-sm-12">
-							<!-- Table Model 2 -->
-							<strong>收货人信息</strong>
-							<table id="receiverInfo" class="table table-bordered table-striped table-condensed table-hover">
-							</table>
-						</div>
-					</div>
-				</div>
-				<div class="panel-body panel-border">
-					<div class="row">
-						<div class="col-sm-12">
-							<!-- Table Model 2 -->
-							<strong>商品信息</strong>
-							<table id="goodsInfo" class="table table-bordered table-striped table-condensed table-hover">
-							</table>
-						</div>
-					</div>
-				</div>
-				<div class="panel-body panel-border">
-					<div class="row">
-						<div class="col-sm-12">
-							<!-- Table Model 2 -->
-							<strong>退换货款信息</strong>
-							<table id="refundInfo" class="table table-bordered table-striped table-condensed table-hover">
-							</table>
-						</div>
-					</div>
-				</div>
-				<div class="panel-body panel-border">
-					<div class="row">
-						<div class="col-sm-12">
-							<!-- Table Model 2 -->
-							<strong>费用信息</strong>
-							<table id="feeInfo" class="table table-bordered table-striped table-condensed table-hover">
-							</table>
-						</div>
-					</div>
-				</div>
-			</div>
-			<footer th:replace="footer"></footer>
 		</div>
-	</div>
-	
-	<div th:replace="body-under"></div>
-	<div class="modal fade in" id="modal-6">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">发货</h4>
-				</div>
 
-				<div class="modal-body">
-					<form role="form" id="saveForm">
-						<input type="hidden" name="id"/>
-						<input type="hidden" name="action"/>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="expressCode" class="control-label">配送方式</label>
-									<select id="expressCode" class="form-control" name="expressCode">
-										<option value="yuantong">圆通速递</option>
-										<option value="zhongtong">中通快递</option>
-										<option value="shentong">申通快递</option>
-										<option value="yunda">韵达快递</option>
-										<option value="shunfeng">顺丰速运</option>
-										<option value="youzhengguonei">邮政快递包裹</option>
-										<option value="jd">京东物流</option>
-										<option value="huitongkuaidi">百世快递</option>
-										<option value="ems">EMS</option>
-										<option value="tiantian">天天快递</option>
-										<option value="debangwuliu">德邦</option>
-										<option value="baishiwuliu">百世快运</option>
-										<option value="youshuwuliu">优速物流</option>
-										<option value="pjbest">品骏快递</option>
-										<option value="zhaijisong">宅急送</option>
-									</select>
+		<!-- Main content -->
+		<section class="content">
+			<div class="row">
+				<div class="col-12">
+					<div class="box">
+						<div class="box-header with-border">
+							<form role="form" class="form-inline">
+								<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+									<button class="btn btn-secondary btn-single searchBtn" style="height:35px"
+											onclick="return gotoList()">返回订单列表
+									</button>
 								</div>
+								<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: none;"
+									 id="deliverOrderBtn">
+									<input class="btn btn-secondary btn-single searchBtn" style="height:35px" type="button"
+										   value="订单发货"/>
+								</div>
+								<div class="form-group" style="margin-left: 0;display: none;" id="editDeliveredOrderBtn">
+									<input class="btn btn-secondary btn-single searchBtn" style="height:35px" type="button"
+										   value="修改物流单号"/>
+								</div>
+							</form>
+						</div>
+						<div class="box-body">
+							<div class="table-responsive">
+								<strong>基本信息</strong>
+								<table id="basicInfo"
+									   class="table table-bordered table-striped table-condensed table-hover"
+									   style="width: 100%;">
+								</table>
+							</div>
+							<div class="table-responsive">
+								<strong>备注</strong>
+								<table id="remarkInfo"
+									   class="table table-bordered table-striped table-condensed table-hover"
+									   style="width: 100%;">
+								</table>
+							</div>
+							<div class="table-responsive">
+								<strong>收货人信息</strong>
+								<table id="receiverInfo"
+									   class="table table-bordered table-striped table-condensed table-hover"
+									   style="width: 100%;">
+								</table>
+							</div>
+							<div class="table-responsive">
+								<strong>商品信息</strong>
+								<table id="goodsInfo"
+									   class="table table-bordered table-striped table-condensed table-hover"
+									   style="width: 100%;">
+								</table>
+							</div>
+							<div class="table-responsive">
+								<strong>退换货款信息</strong>
+								<table id="refundInfo"
+									   class="table table-bordered table-striped table-condensed table-hover"
+									   style="width: 100%;">
+								</table>
+							</div>
+							<div class="table-responsive">
+								<strong>费用信息</strong>
+								<table id="feeInfo"
+									   class="table table-bordered table-striped table-condensed table-hover"
+									   style="width: 100%;">
+								</table>
 							</div>
 						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label for="mailNo" class="control-label">快递单号</label>
-									<input id="mailNo" type="text" class="form-control" name="mailNo" placeholder="快递单号"/>
-								</div>
+						<!-- /.box-body -->
+						<div class="box-footer">
+						</div>
+						<!-- /.box-footer-->
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- /.content -->
+	</div>
+	<!-- /.content-wrapper -->
+	<footer th:replace="footer"></footer>
+</div>
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;" id="modal-6">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="myLargeModalLabel">发货</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			</div>
+			<div class="modal-body">
+				<form role="form" id="saveForm">
+					<input type="hidden" name="id"/>
+					<input type="hidden" name="action"/>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="expressCode" class="control-label">配送方式</label>
+								<select id="expressCode" class="form-control" name="expressCode">
+									<option value="yuantong">圆通速递</option>
+									<option value="zhongtong">中通快递</option>
+									<option value="shentong">申通快递</option>
+									<option value="yunda">韵达快递</option>
+									<option value="shunfeng">顺丰速运</option>
+									<option value="youzhengguonei">邮政快递包裹</option>
+									<option value="jd">京东物流</option>
+									<option value="huitongkuaidi">百世快递</option>
+									<option value="ems">EMS</option>
+									<option value="tiantian">天天快递</option>
+									<option value="debangwuliu">德邦</option>
+									<option value="baishiwuliu">百世快运</option>
+									<option value="youshuwuliu">优速物流</option>
+									<option value="pjbest">品骏快递</option>
+									<option value="zhaijisong">宅急送</option>
+								</select>
 							</div>
 						</div>
-					</form>
-				</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info save">保存</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-				</div>
-
+					</div>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="form-group">
+								<label for="mailNo" class="control-label">快递单号</label>
+								<input id="mailNo" type="text" class="form-control" name="mailNo" placeholder="快递单号"/>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-info save">保存</button>
+				<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
 			</div>
 		</div>
+		<!-- /.modal-content -->
 	</div>
-	<!--
-	<div class="modal fade in" id="modal-6">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加商品</h4>
-				</div>
-				
-				<div class="modal-body">
-					<form role="form" id="saveForm">
-					</form>
-				</div>
-				
-				<div class="modal-footer">
-				 	<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info save">保存</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-				</div>
-				
+	<!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabe2" aria-hidden="true" style="display: none;" id="preview">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="myLargeModalLabe2">查看详情</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			</div>
+			<div class="modal-body" id="preview_body">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
 			</div>
 		</div>
+		<!-- /.modal-content -->
 	</div>
-	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
-		<div class="modal-dialog">
-			<div class="modal-content">
+	<!-- /.modal-dialog -->
+</div>
 
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">查看详情</h4>
-				</div>
-
-				<div class="modal-body" id="preview_body"></div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	-->
-	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/datepicker/bootstrap-datepicker.js"></script>
-	<script src="assets/js/daterangepicker/daterangepicker.js"></script>
-	<script src="assets/js/timepicker/bootstrap-timepicker.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script src="assets/js/async.min.js"></script>
-	<script th:inline="javascript">
+<script th:inline="javascript">
 	/*<![CDATA[*/
 	function toDec(self) {
 		var btn = $(self);
@@ -259,151 +218,17 @@
 		});
 	}
 
-
-	function addMoreImg(self) {
-        var that = $(self);
-        that.before('<input type="file" class="form-control" name="detailImageFile" placeholder="详情图片"/>')
-    }
-
-    function addMoreText(self) {
-        var that = $(self);
-        that.before('<input type="number" class="form-control" name="goodsID" placeholder="填写商品ID"/>')
-    }
-
-    function closeIt(self) {
-        var that = $(self);
-        that.hide();
-    }
-
-    function formatTime(time) {
-        return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
-    }
-
-    function buildImg(url) {
-        return "<img width='100px' height='100px' src='#' />".replace("#", url);
-    }
-
-	function appendToPreview(key, value) {
-		return '<div class="row">' +
-				'<div class="col-md-2">' +
-				key +
-				'</div>' +
-				'<div class="col-md-10">' +
-				value +
-				'</div>' +
-				'</div>';
+	function formatTime(time) {
+		return new Date(time).Format("yyyy-MM-dd hh:mm:ss");
 	}
 
-	function checkIt(id) {
-		$.post("/goods_find", {"id": id}, function (data) {
-			if (data) {
-				var preview = $("#preview_body");
-				var contentStr = "";
-				var mainObj = data["main"];
-				contentStr += appendToPreview("编号:", mainObj["id"]);
-				contentStr += appendToPreview("名称:", mainObj["name"]);
-				contentStr += appendToPreview("一级分类:", mainObj["type"]);
-				contentStr += appendToPreview("二级分类:", mainObj["category"]);
-				contentStr += appendToPreview("商品编码:", mainObj["code"]);
-				contentStr += appendToPreview("材质:", mainObj["material"]);
-				contentStr += appendToPreview("价格:", mainObj["price"]);
-				contentStr += appendToPreview("价格区间:", mainObj["priceRange"]);
-				contentStr += appendToPreview("销售数量:", mainObj["saleCount"]);
-				contentStr += appendToPreview("查看数量:", mainObj["viewCount"]);
-				contentStr += appendToPreview("品牌id:", mainObj["brandId"]);
-				contentStr += appendToPreview("品牌名:", mainObj["brandName"]);
-				contentStr += appendToPreview("品牌logo:", buildImg(mainObj["brandLogo"]));
-				contentStr += appendToPreview("商家id:", mainObj["merchantId"]);
-				contentStr += appendToPreview("商家名:", mainObj["merchantName"]);
-				contentStr += appendToPreview("商家logo:", buildImg(mainObj["merchantLogo"]));
-				contentStr += appendToPreview("图片:", buildImg(mainObj["image"]));
-				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
-				contentStr += appendToPreview("备注:", mainObj["remark"]);
-				contentStr += "<hr/>";
-				for (var a in data["propertyList"]) {
-					a = data["propertyList"][a];
-					contentStr += appendToPreview("商品规格名称:", a["name"]);
-					contentStr += appendToPreview("商品属性值:", a["value"]);
-					contentStr += appendToPreview("备注:", a["remark"]);
-					contentStr += appendToPreview("排序:", a["sort"]);
-				}
-				contentStr += "<hr/>";
-				for (var b in data["imageList"]) {
-					b = data["imageList"][b];
-					contentStr += appendToPreview("商品图片:", buildImg(b["imageUrl"]));
-					contentStr += appendToPreview("图片类型:", b["type"]);
-					contentStr += appendToPreview("备注:", b["remark"]);
-					contentStr += appendToPreview("排序:", b["sort"]);
-				}
-				contentStr += "<hr/>";
-				for (var c in data["stockList"]) {
-					c = data["stockList"][c];
-					contentStr += appendToPreview("图片:", buildImg(c["image"]));
-					contentStr += appendToPreview("价格:", c["price"]);
-					contentStr += appendToPreview("sku:", c["sku"]);
-					contentStr += appendToPreview("stock:", c["stock"]);
-					contentStr += appendToPreview("备注:", c["remark"]);
-				}
-				preview.html(contentStr);
-				jQuery('#preview').modal('show', {backdrop: 'fade'});
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
-
-	function checkSku(id) {
-		window.location.href = '/goods_stock_index.html?id=' + id;
+	function buildImg(url) {
+		return "<img width='100px' height='100px' src='#' />".replace("#", url);
 	}
 
 	function gotoList() {
 		window.location.href = '/order.html';
 		return false;
-	}
-
-	var table_global;
-
-    function toggleTopIt(id) {
-        $.post("/brand_toggleTop", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
-
-    function topIt(id) {
-        $.post("/brand_top", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
-
-    function unTopIt(id) {
-        $.post("/brand_untop", {"id": id}, function (data) {
-            if (data) {
-                table_global.fnDraw();
-                toastr.success("操作已成功！", "温馨提示");
-            } else {
-                toastr.error("操作失败", "温馨提示");
-            }
-        });
-    }
-
-	function bindMerchantSelector(data) {
-		var brandStr = "";
-		for (var brand in data) {
-			brand = data[brand];
-			brandStr += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-		}
-		$("#merchantId").html(brandStr);
 	}
 
 	function deliverOrder(id) {
@@ -429,9 +254,10 @@
 		});
 	}
 
-    jQuery(document).ready(function($)
+	var table_global;
+	var jsonStr = [[${jsonStr}]];
+	jQuery(document).ready(function($)
 	{
-		var jsonStr = [[${jsonStr}]];
 		console.log(jsonStr);
 		var jsonObj = JSON.parse(jsonStr);
 		console.log(jsonObj);
@@ -807,7 +633,6 @@
 							return data;
 						}
 					}
-
 				},
 				{
 					targets: 6,
@@ -849,32 +674,18 @@
 			//获取token
 			$.get("/qiniu/token", {}, function (token) {
 				if (token != '') {
-					async.series({
-						one: function (callback) {
-							callback();
-						},
-						two: function (callback) {
-							callback();
-						},
-						three: function (callback) {
-							//提交保存
-							$.post("/order_deliverOrder", $("#saveForm").serialize(), function (data) {
-								if (data) {
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									jQuery('#modal-6').modal('hide');
-									toastr.success("操作已成功！", "温馨提示");
-									window.location.reload();
-								} else {
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败", "温馨提示");
-								}
-								callback();
-							});
+					$.post("/order_deliverOrder", $("#saveForm").serialize(), function (data) {
+						if (data) {
+							footer.find("button").show();
+							footer.find(".bg-lg").hide();
+							jQuery('#modal-6').modal('hide');
+							toastr.success("操作已成功！", "温馨提示");
+							window.location.reload();
+						} else {
+							footer.find("button").show();
+							footer.find(".bg-lg").hide();
+							toastr.error("操作失败", "温馨提示");
 						}
-					}, function (err, results) {
-						console.log("OK");
 					});
 				} else {
 					footer.find("button").show();
@@ -883,11 +694,8 @@
 				}
 			});
 		});
-
-
 	});
 	/*]]>*/
-	</script>
+</script>
 </body>
-
 </html>
