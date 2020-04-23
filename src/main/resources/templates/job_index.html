@@ -1,206 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<head th:replace="head"></head>
-	<title>定时任务管理</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
-	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
-	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
-	</style>
+    <head th:replace="head"></head>
+    <title>定时任务管理</title>
+    <link rel="stylesheet" href="assets/js/select2/select2.css"/>
+    <link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+    <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+    <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
 </head>
-<body class="page-body">
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">定时任务管理</h1>
+                </div>
+                <div class="right-title">
+                </div>
+            </div>
+        </div>
 
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				
-				<div class="title-env">
-					<h1 class="title">定时任务管理</h1>
-					<p class="activityDescription"></p>
-				</div>
 
-				<div class="breadcrumb-env">
-
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>定时任务管理</strong></li>
-					</ol>
-
-				</div>
-
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
-							<div class="input-group">
-								<label class="control-label">品牌</label>
-								<input id="brandId" type="text" name="brandId" class="form-control" style="height:35px" placeholder="输入品牌ID"/>
-							</div>
-						</div>
-						<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-				</div>
-<!--				<button class="btn btn-info add">添加</button>-->
-<!--				<button class="btn btn-info edit">修改</button>-->
-<!--				<button class="btn btn-info del">删除</button>-->
-			</div>
-			
-					
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
-	
-	<div th:replace="body-under"></div>
-	
-	<div class="modal fade in" id="modal-6">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加推送</h4>
-				</div>
-				
-				<div class="modal-body">
-					<form role="form" id="saveForm">
-						<input type="hidden" name="id"/>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">推送标题</label>
-									<input type="text" class="form-control" name="name" placeholder="推送标题"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">推送内容</label>
-									<input type="text" class="form-control" name="content" placeholder="推送内容"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">是否及时推送</label>
-									<label><input name="pushNow" class="notMe" type="radio" checked="checked" value="0"/>否 </label>
-									<label><input name="pushNow" class="notMe" type="radio" value="1"/>是 </label>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">推送时间</label>
-									<input type="text" class="form-control" name="pushTime" id="pushTime" placeholder="推送时间"/>
-								</div>
-							</div>
-						</div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label">推送用户</label>
-                                    <label><input name="pushAll" class="notMe" type="radio" checked="checked" value="0"/>全部用户 </label>
-                                    <label><input name="pushAll" class="notMe" type="radio" value="1"/>指定用户 </label>
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form role="form" class="form-inline">
+                                <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+                                    <div class="input-group">
+                                        <label class="control-label">品牌</label>
+                                        <input id="brandId" type="text" name="brandId" class="form-control"
+                                               style="height:35px" placeholder="输入品牌ID"/>
+                                    </div>
                                 </div>
+                                <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+                                    <button class="btn btn-primary btn-single searchBtn" style="height:35px">查询</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="box-body">
+                            <table id="example-1" class="table table-striped table-bordered" cellspacing="0"
+                                   width="100%">
+                            </table>
+                        </div>
+                        <div class="box-footer">
+                        </div>
+                        <!--				<button class="btn btn-info add">添加</button>-->
+                        <!--				<button class="btn btn-info edit">修改</button>-->
+                        <!--				<button class="btn btn-info del">删除</button>-->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer th:replace="footer"></footer>
+</div>
+
+
+<div th:replace="body-under"></div>
+
+<div class="modal fade in" id="modal-6">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 800px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">添加推送</h4>
+            </div>
+
+            <div class="modal-body">
+                <form role="form" id="saveForm">
+                    <input type="hidden" name="id"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">推送标题</label>
+                                <input type="text" class="form-control" name="name" placeholder="推送标题"/>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group userIdStr" style="display: none">
-                                    <label class="control-label">用户ID,逗号隔开</label>
-                                    <input type="text" class="form-control" name="userIdStr" placeholder="用户ID,逗号隔开"/>
-                                </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">推送内容</label>
+                                <input type="text" class="form-control" name="content" placeholder="推送内容"/>
                             </div>
                         </div>
-						<div class="row">
-							<div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="control-label">跳转方式</label>
-                                    <label><input name="type" class="notMe" type="radio" value="0"/>跳转URL(带参)</label>
-                                    <label><input name="type" class="notMe" type="radio" value="7"/>跳转URL(不带参)</label>
-                                    <label><input name="type" class="notMe" type="radio" value="1"/>单品 </label>
-                                    <label><input name="type" class="notMe" type="radio" value="2"/>品牌首页 </label>
-                                    <label><input name="type" class="notMe" type="radio" value="3"/>活动首页 </label>
-                                    <label><input name="type" class="notMe" type="radio" value="4"/>明星同款详情页</label>
-                                    <label><input name="type" class="notMe" type="radio" value="5"/>单篇资讯</label>
-                                    <label><input name="type" class="notMe" type="radio" value="6"/>免费抽</label>
-                                </div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group url" style="display: none">
-									<label class="control-label">跳转链接</label>
-									<input type="text" class="form-control" name="url" placeholder="跳转URL"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group theId" style="display: none">
-									<label class="control-label">详情ID</label>
-									<input type="number" class="form-control" name="redirectId" placeholder="详情ID"/>
-								</div>
-							</div>
-						</div>
-					</form>
-				</div>
-				
-				<div class="modal-footer">
-				 	<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info save">保存</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-				</div>
-				
-			</div>
-		</div>
-	</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">是否及时推送</label>
+                                <label><input name="pushNow" class="notMe" type="radio" checked="checked" value="0"/>否
+                                </label>
+                                <label><input name="pushNow" class="notMe" type="radio" value="1"/>是 </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">推送时间</label>
+                                <input type="text" class="form-control" name="pushTime" id="pushTime"
+                                       placeholder="推送时间"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">推送用户</label>
+                                <label><input name="pushAll" class="notMe" type="radio" checked="checked" value="0"/>全部用户
+                                </label>
+                                <label><input name="pushAll" class="notMe" type="radio" value="1"/>指定用户 </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group userIdStr" style="display: none">
+                                <label class="control-label">用户ID,逗号隔开</label>
+                                <input type="text" class="form-control" name="userIdStr" placeholder="用户ID,逗号隔开"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">跳转方式</label>
+                                <label><input name="type" class="notMe" type="radio" value="0"/>跳转URL(带参)</label>
+                                <label><input name="type" class="notMe" type="radio" value="7"/>跳转URL(不带参)</label>
+                                <label><input name="type" class="notMe" type="radio" value="1"/>单品 </label>
+                                <label><input name="type" class="notMe" type="radio" value="2"/>品牌首页 </label>
+                                <label><input name="type" class="notMe" type="radio" value="3"/>活动首页 </label>
+                                <label><input name="type" class="notMe" type="radio" value="4"/>明星同款详情页</label>
+                                <label><input name="type" class="notMe" type="radio" value="5"/>单篇资讯</label>
+                                <label><input name="type" class="notMe" type="radio" value="6"/>免费抽</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group url" style="display: none">
+                                <label class="control-label">跳转链接</label>
+                                <input type="text" class="form-control" name="url" placeholder="跳转URL"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group theId" style="display: none">
+                                <label class="control-label">详情ID</label>
+                                <input type="number" class="form-control" name="redirectId" placeholder="详情ID"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
 
-	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
-		<div class="modal-dialog">
-			<div class="modal-content">
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-info save">保存</button>
+                <button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+            </div>
 
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">查看详情</h4>
-				</div>
+        </div>
+    </div>
+</div>
 
-				<div class="modal-body" id="preview_body"></div>
+<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
 
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-				</div>
-			</div>
-		</div>
-	</div>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">查看详情</h4>
+            </div>
 
-	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-	<script src="assets/js/async.min.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/
+            <div class="modal-body" id="preview_body"></div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+<script src="assets/js/select2/select2.min.js"></script>
+<script src="assets/js/async.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
 
     function addMoreImg(self) {
         var that = $(self);
@@ -226,84 +227,84 @@
     }
 
 
-	function appendToPreview(key, value) {
-		return '<div class="row">' +
-				'<div class="col-md-2">' +
-				key +
-				'</div>' +
-				'<div class="col-md-10">' +
-				value +
-				'</div>' +
-				'</div>';
-	}
+    function appendToPreview(key, value) {
+        return '<div class="row">' +
+            '<div class="col-md-2">' +
+            key +
+            '</div>' +
+            '<div class="col-md-10">' +
+            value +
+            '</div>' +
+            '</div>';
+    }
 
-	function checkIt(data) {
-    	alert("暂未开放");
-    	return;
-		$.post("/pick_get", {"id": data}, function (data) {
-			if (data) {
-				var preview = $("#preview_body");
-				var contentStr = "";
-				var mainObj = data;
-				contentStr += appendToPreview("编号:", mainObj["id"]);
-				contentStr += appendToPreview("优选名称:", mainObj["name"]);
-				contentStr += appendToPreview("图片URL:", buildImg(mainObj["imageUrl"]));
-				contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
-				contentStr += appendToPreview("备注:", mainObj["remark"]);
-				contentStr += "<hr/>";
-				for (var a in data["sub"]) {
-					a = data["sub"][a];
-					contentStr += appendToPreview("商品ID:", a["id"]);
-					contentStr += appendToPreview("商品名称:", a["name"]);
-					contentStr += appendToPreview("商品图片:", buildImg(a["img"]));
-				}
-				preview.html(contentStr);
-				jQuery('#preview').modal('show', {backdrop: 'fade'});
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function checkIt(data) {
+        alert("暂未开放");
+        return;
+        $.post("/pick_get", {"id": data}, function (data) {
+            if (data) {
+                var preview = $("#preview_body");
+                var contentStr = "";
+                var mainObj = data;
+                contentStr += appendToPreview("编号:", mainObj["id"]);
+                contentStr += appendToPreview("优选名称:", mainObj["name"]);
+                contentStr += appendToPreview("图片URL:", buildImg(mainObj["imageUrl"]));
+                contentStr += appendToPreview("创建时间:", formatTime(mainObj["createTime"]));
+                contentStr += appendToPreview("备注:", mainObj["remark"]);
+                contentStr += "<hr/>";
+                for (var a in data["sub"]) {
+                    a = data["sub"][a];
+                    contentStr += appendToPreview("商品ID:", a["id"]);
+                    contentStr += appendToPreview("商品名称:", a["name"]);
+                    contentStr += appendToPreview("商品图片:", buildImg(a["img"]));
+                }
+                preview.html(contentStr);
+                jQuery('#preview').modal('show', {backdrop: 'fade'});
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
-	function cancelJob(key) {
-		$.post("/goods_discount_del", {"key": key}, function (data) {
-			if (data) {
-				table_global.fnDraw();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function cancelJob(key) {
+        $.post("/goods_discount_del", {"key": key}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
-	function goToDetail(id) {
-		window.location.href = '/order_detail.html?id=' + id;
-	}
+    function goToDetail(id) {
+        window.location.href = '/order_detail.html?id=' + id;
+    }
 
-	function checkSku(id) {
-		window.location.href = '/goods_stock_index.html?id=' + id;
-	}
+    function checkSku(id) {
+        window.location.href = '/goods_stock_index.html?id=' + id;
+    }
 
-	var table_global;
+    var table_global;
 
-	function closeOrder(id) {
-		$.post("/order_closeOrder", {"id": id}, function (data) {
-			if (data) {
-				table_global.fnDraw();
-				toastr.success("操作已成功！", "温馨提示");
-			} else {
-				toastr.error("操作失败", "温馨提示");
-			}
-		});
-	}
+    function closeOrder(id) {
+        $.post("/order_closeOrder", {"id": id}, function (data) {
+            if (data) {
+                table_global.fnDraw();
+                toastr.success("操作已成功！", "温馨提示");
+            } else {
+                toastr.error("操作失败", "温馨提示");
+            }
+        });
+    }
 
-	function deliverOrder(id) {
-		var form = $("#saveForm");
-		form.find("input").val("");
-		form.find("[name='id']").val(id);
-		jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-	}
+    function deliverOrder(id) {
+        var form = $("#saveForm");
+        form.find("input").val("");
+        form.find("[name='id']").val(id);
+        jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+    }
 
     function trackOrder(id) {
         $.post("/order_trackOrder", {"id": id}, function (data) {
@@ -331,112 +332,111 @@
         $("#merchantIdAlt").html(brandStr);
     }
 
-	function toggleMerchant(self) {
-		var id = $(self).val();
-		var target = $("#merchantIdAlt");
-		if (id == '0') {
-			target.val("0");
-			target.attr("disabled", "disabled");
-		} else {
-			target.removeAttr("disabled");
-		}
-	}
+    function toggleMerchant(self) {
+        var id = $(self).val();
+        var target = $("#merchantIdAlt");
+        if (id == '0') {
+            target.val("0");
+            target.attr("disabled", "disabled");
+        } else {
+            target.removeAttr("disabled");
+        }
+    }
 
-	function getQNToken(cb) {
-		$.get("/qiniu/token", {}, function (token) {
-			cb(token);
-		});
-	}
+    function getQNToken(cb) {
+        $.get("/qiniu/token", {}, function (token) {
+            cb(token);
+        });
+    }
 
-	function uploadImg(self) {
-		var that = $(self);
-		if (self.files.length > 0) {
-			var file = self.files[0];
-			getQNToken(function (token) {
-				this.upload("", token, file, function () {
-					//
-				}, function (err) {
-					console.log("error");
-					console.log(err);
-				}, function (res) {
-					var url = qiniuUrl + "/" + res.key;
-					that.parent().find("[name=imageUrl]").val(url);
-					that.parent().find("[name=imageUrlImg]").attr("src", url);
-					that.parent().find("[name=imageUrlImg]").attr("width", "100px");
-					that.parent().find("[name=imageUrlImg]").attr("height", "100px");
-					that.parent().find("[name=imageUrlImg]").show();
-				});
-			});
-		} else {
-			confirm("未选择任何文件!");
-		}
-	}
+    function uploadImg(self) {
+        var that = $(self);
+        if (self.files.length > 0) {
+            var file = self.files[0];
+            getQNToken(function (token) {
+                this.upload("", token, file, function () {
+                    //
+                }, function (err) {
+                    console.log("error");
+                    console.log(err);
+                }, function (res) {
+                    var url = qiniuUrl + "/" + res.key;
+                    that.parent().find("[name=imageUrl]").val(url);
+                    that.parent().find("[name=imageUrlImg]").attr("src", url);
+                    that.parent().find("[name=imageUrlImg]").attr("width", "100px");
+                    that.parent().find("[name=imageUrlImg]").attr("height", "100px");
+                    that.parent().find("[name=imageUrlImg]").show();
+                });
+            });
+        } else {
+            confirm("未选择任何文件!");
+        }
+    }
 
-	function addTheGoods() {
-		var ele = $("#goodsSelect");
-		var id = ele.val();
-		var text = $("#goodsSelect option:selected").text();
-		addMoreGoodsDisplay(id, text);
-	}
+    function addTheGoods() {
+        var ele = $("#goodsSelect");
+        var id = ele.val();
+        var text = $("#goodsSelect option:selected").text();
+        addMoreGoodsDisplay(id, text);
+    }
 
-	function addMoreGoodsDisplay(id, text) {
-		var uuid = UUID.randomUUID();
-		var that = $("#goodsPool");
-		var str = '<div id="UUID" class="toDel">'.replace("UUID", uuid);
-		str += '<input style="display:inline-block;width: 600px;" type="text" class="form-control" value="VALUE" readonly="readonly" />'.replace("VALUE", text);
-		str += '<input type="hidden" value="VALUE" name="goodsID" />'.replace("VALUE", id);
-		str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
-		str += '</div>';
-		that.append(str);
-	}
+    function addMoreGoodsDisplay(id, text) {
+        var uuid = UUID.randomUUID();
+        var that = $("#goodsPool");
+        var str = '<div id="UUID" class="toDel">'.replace("UUID", uuid);
+        str += '<input style="display:inline-block;width: 600px;" type="text" class="form-control" value="VALUE" readonly="readonly" />'.replace("VALUE", text);
+        str += '<input type="hidden" value="VALUE" name="goodsID" />'.replace("VALUE", id);
+        str += '<input style="display:inline-block;" type="button" value="删除" onclick="delNode(\'UUID\')" />'.replace("UUID", uuid);
+        str += '</div>';
+        that.append(str);
+    }
 
-	function delNode(id) {
-		var that = $("#" + id);
-		that.remove();
-	}
+    function delNode(id) {
+        var that = $("#" + id);
+        that.remove();
+    }
 
-	function renderGoodsSelect(self, id) {
-		var theId;
-		if (self == null) {
-			theId = id;
-		} else {
-			var that = $(self);
-			theId = that.val();
-		}
-		$.post("/pick_getGoods", {"pid": theId}, function (data) {
-			var str = "";
-			for (var i in data) {
-				var brand = data[i];
-				str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-			}
-			$("#goodsSelect").html(str);
-		});
-	}
+    function renderGoodsSelect(self, id) {
+        var theId;
+        if (self == null) {
+            theId = id;
+        } else {
+            var that = $(self);
+            theId = that.val();
+        }
+        $.post("/pick_getGoods", {"pid": theId}, function (data) {
+            var str = "";
+            for (var i in data) {
+                var brand = data[i];
+                str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+            }
+            $("#goodsSelect").html(str);
+        });
+    }
 
-	function renderBrandSelect(key) {
-		$("#goodsSelect").html("");
-		$.post("/pick_getBrand", {"prefix": key}, function (data) {
-			var str = "";
-			for (var i in data) {
-				var brand = data[i];
-				if (i == 0) {
-					renderGoodsSelect(null, brand["id"]);
-				}
-				str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-			}
-			$("#brandSelect").html(str);
-		});
-	}
+    function renderBrandSelect(key) {
+        $("#goodsSelect").html("");
+        $.post("/pick_getBrand", {"prefix": key}, function (data) {
+            var str = "";
+            for (var i in data) {
+                var brand = data[i];
+                if (i == 0) {
+                    renderGoodsSelect(null, brand["id"]);
+                }
+                str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+            }
+            $("#brandSelect").html(str);
+        });
+    }
 
-	var qiniuUrl = [[${qiniuUrl}]];
+    var qiniuUrl = [[${qiniuUrl}]];
 
-    jQuery(document).ready(function($)
-	{
+    jQuery(document).ready(function ($) {
         var oTable;
-		oTable = $("#example-1").dataTable({
-			language: {
-				url: "../assets/Chinese.txt"
-			},
+        oTable = $("#example-1").dataTable({
+            language: {
+                url: "../assets/Chinese.txt"
+            },
             searching: false,
             lengthChange: false,
             paging: false,
@@ -444,110 +444,117 @@
             bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
             sAjaxDataProp: "aData",//是服务器分页的标志，必须有
             sAjaxSource: "/goods_discount_list_detail",//通过ajax实现分页的url路径。
-			fnServerParams: function (aData) {
-				var searchArray = $(".form-inline").serializeArray();
-				$.merge(aData, searchArray);
-			},
-			columnDefs: [
-				{
-					targets: 0,
-					data: "id",
-					width: "5%",
-					orderable: false,
-					className: 'select-checkbox',
-					title: '<input type="checkbox" id="checkbox-all"/>',
-					render: function (data, type, full, meta) {
-						return '<input type="checkbox" name="activityId" value="' + data + '" />';
-					}
-				},
-				{
-					targets: 1,
-					data: "sTime",
-					title: "开始时间"
-				},
-				{
-					targets: 2,
-					data: "eTime",
-					title: "结束时间"
-				},
-				{
-					targets: 3,
-					data: "subList",
-					title: "包含商品",
-					render: function (data, type, row, meta) {
-						var str = "";
-						for (var i in data) {
-							var it = data[i];
-							str += "<p>" + it["name"] + "&nbsp;" + buildImg(it["image"]) + "&nbsp;" + "</p>";
-						}
-						return str;
-					}
-				},
-				{
-					targets: 4,
-					data: "type",
-					title: "类型",
-					render: function (data, type, full, meta) {
-						if (data == "discount") {
-							return "打折";
-						} else if (data == "change") {
-							return "改价";
-						}
-					}
-				},
-				{
-					targets: 5,
-					data: "discount",
-					title: "折扣",
-					render: function (data, type, full, meta) {
-						return data ? data : "";
-					}
-				},
-				{
-					targets: 6,
-					data: "createTime",
-					title: "创建时间"
-				},
-				{
-					targets: 7,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="checkIt(\'KEY\')" value="查看详情"/>'.replace("KEY", data);
-					}
-				},
-				{
-					targets: 8,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						return '<input type="button" name="checkIt" onclick="cancelJob(\'KEY\')" value="删除任务"/>'.replace("KEY", data);
-					}
-				}
-			]
-		});
-		table_global = oTable;
+            fnServerParams: function (aData) {
+                var searchArray = $(".form-inline").serializeArray();
+                $.merge(aData, searchArray);
+            },
+            columnDefs: [
+                {
+                    targets: 0,
+                    data: "id",
+                    width: "5%",
+                    orderable: false,
+                    title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
+                    render: function (data, type, full, meta) {
+						var uuid = UUID.randomUUID();
+						return '<div class="checkbox"><input type="checkbox" name="activityId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
+                    }
+                },
+                {
+                    targets: 1,
+                    data: "sTime",
+                    title: "开始时间"
+                },
+                {
+                    targets: 2,
+                    data: "eTime",
+                    title: "结束时间"
+                },
+                {
+                    targets: 3,
+                    data: "subList",
+                    title: "包含商品",
+                    render: function (data, type, row, meta) {
+                        var str = "";
+                        for (var i in data) {
+                            var it = data[i];
+                            str += "<p>" + it["name"] + "&nbsp;" + buildImg(it["image"]) + "&nbsp;" + "</p>";
+                        }
+                        return str;
+                    }
+                },
+                {
+                    targets: 4,
+                    data: "type",
+                    title: "类型",
+                    render: function (data, type, full, meta) {
+                        if (data == "discount") {
+                            return "打折";
+                        } else if (data == "change") {
+                            return "改价";
+                        }
+                    }
+                },
+                {
+                    targets: 5,
+                    data: "discount",
+                    title: "折扣",
+                    render: function (data, type, full, meta) {
+                        return data ? data : "";
+                    }
+                },
+                {
+                    targets: 6,
+                    data: "createTime",
+                    title: "创建时间"
+                },
+                {
+                    targets: 7,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        return '<input type="button" name="checkIt" onclick="checkIt(\'KEY\')" value="查看详情"/>'.replace("KEY", data);
+                    }
+                },
+                {
+                    targets: 8,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        return '<input type="button" name="checkIt" onclick="cancelJob(\'KEY\')" value="删除任务"/>'.replace("KEY", data);
+                    }
+                }
+            ]
+        });
+        table_global = oTable;
 
-		function buildAZBar() {
-			var str = "";
-			var AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-			for (var i in AZ.split("")) {
-				var char = AZ[i];
-				str += "<a href='#' onclick='renderBrandSelect(\"VAL\")'>CHAR</a>&nbsp;".replace("CHAR", char).replace("VAL", char);
-			}
-			$("#azBar").html(str);
-			$("#brandSelect").html("");
-			$("#goodsSelect").html("");
-			$("#goodsPool").html("");
-			$("img[name='imageUrlImg']").hide();
-		}
-		
-		$(".searchBtn").click(function(){
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
-			return false;
+        function buildAZBar() {
+            var str = "";
+            var AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            for (var i in AZ.split("")) {
+                var char = AZ[i];
+                str += "<a href='#' onclick='renderBrandSelect(\"VAL\")'>CHAR</a>&nbsp;".replace("CHAR", char).replace("VAL", char);
+            }
+            $("#azBar").html(str);
+            $("#brandSelect").html("");
+            $("#goodsSelect").html("");
+            $("#goodsPool").html("");
+            $("img[name='imageUrlImg']").hide();
+        }
+
+        $(".searchBtn").click(function () {
+            $("#checkbox-all").attr("checked", false);
+            oTable.fnDraw(); //or fnReloadAjax()
+            return false;
+        });
+
+		$('#example-1').on('click', "#checkbox-all", function () {
+			var obj = $(this);
+			$("input[name='activityId']").each(function (i, e) {
+				this.checked = obj[0].checked;
+			});
 		});
 
         $('[name="type"]').click(function () {
@@ -555,33 +562,33 @@
             toggle(value);
         });
 
-		$('[name="pushAll"]').click(function () {
-			var value = $(this).val();  //获取选中的radio的值
-			var theId = $(".userIdStr");
-			switch (parseInt(value)) {
-				case 0:
-					theId.hide();
-					break;
-				default:
-					theId.show();
-					break;
-			}
-		});
+        $('[name="pushAll"]').click(function () {
+            var value = $(this).val();  //获取选中的radio的值
+            var theId = $(".userIdStr");
+            switch (parseInt(value)) {
+                case 0:
+                    theId.hide();
+                    break;
+                default:
+                    theId.show();
+                    break;
+            }
+        });
 
-		$('[name="pushNow"]').click(function () {
-			var value = $(this).val();  //获取选中的radio的值
-			var pushTime = $("#pushTime");
-			switch (parseInt(value)) {
-				case 0:
-					pushTime.removeAttr("disabled");
-					break;
-				default:
-					pushTime.attr("disabled", "disabled");
-					var pushTimeStr = new Date().Format('yyyy-MM-dd hh:mm:ss');
-					pushTime.val(pushTimeStr);
-					break;
-			}
-		});
+        $('[name="pushNow"]').click(function () {
+            var value = $(this).val();  //获取选中的radio的值
+            var pushTime = $("#pushTime");
+            switch (parseInt(value)) {
+                case 0:
+                    pushTime.removeAttr("disabled");
+                    break;
+                default:
+                    pushTime.attr("disabled", "disabled");
+                    var pushTimeStr = new Date().Format('yyyy-MM-dd hh:mm:ss');
+                    pushTime.val(pushTimeStr);
+                    break;
+            }
+        });
 
         function toggle(value) {
             var url = $(".url");
@@ -599,171 +606,170 @@
             }
         }
 
-		$(".btn.btn-info.add").click(function () {
-			var form = $("#saveForm");
-			form.find("input:not(.notMe)").val("");
-			jQuery('#modal-6').modal('show', {backdrop: 'fade'});
-		});
+        $(".btn.btn-info.add").click(function () {
+            var form = $("#saveForm");
+            form.find("input:not(.notMe)").val("");
+            jQuery('#modal-6').modal('show', {backdrop: 'fade'});
+        });
 
 
+        //保存
+        $(".btn.btn-info.save").click(function () {
+            var footer = $(this).parent(".modal-footer");
+            footer.find("button").hide();
+            footer.find(".bg-lg").show();
+            var form = $("#saveForm");
+            var name = form.find("input[name='name']").val();
+            var content = form.find("input[name='content']").val();
+            var redirectId = form.find("input[name='redirectId']").val();
+            var url = form.find("input[name='url']").val();
+            var pushTime = form.find("input[name='pushTime']").val();
 
-		//保存
-		$(".btn.btn-info.save").click(function () {
-			var footer = $(this).parent(".modal-footer");
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var form = $("#saveForm");
-			var name = form.find("input[name='name']").val();
-			var content = form.find("input[name='content']").val();
-			var redirectId = form.find("input[name='redirectId']").val();
-			var url = form.find("input[name='url']").val();
-			var pushTime = form.find("input[name='pushTime']").val();
+            if (name == '' || content == '' || pushTime == '' || (redirectId == '' && url == '')) {
+                toastr.error("请填写完整数据后提交", "温馨提示");
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                return;
+            }
 
-			if (name == '' || content == '' || pushTime == '' || (redirectId == '' && url == '')) {
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-				return;
-			}
+            //获取token
+            $.get("/qiniu/token", {}, function (token) {
+                if (token != '') {
+                    async.series({
+                        one: function (callback) {
+                            callback();
+                        },
+                        two: function (callback) {
+                            callback();
+                        },
+                        three: function (callback) {
+                            //提交保存
+                            $.post("/push_save", $("#saveForm").serialize(), function (data) {
+                                if (data) {
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    jQuery('#modal-6').modal('hide');
+                                    toastr.success("操作已成功！", "温馨提示");
+                                    oTable.fnDraw();
+                                } else {
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    toastr.error("操作失败", "温馨提示");
+                                }
+                                callback();
+                            });
+                        }
+                    }, function (err, results) {
+                        console.log("OK");
+                    });
+                } else {
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                    toastr.error("错误，请联系管理员", "温馨提示");
+                }
+            });
+        });
 
-			//获取token
-			$.get("/qiniu/token", {}, function (token) {
-				if (token != '') {
-					async.series({
-						one: function (callback) {
-							callback();
-						},
-						two: function (callback) {
-							callback();
-						},
-						three: function (callback) {
-							//提交保存
-							$.post("/push_save", $("#saveForm").serialize(), function (data) {
-								if (data) {
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									jQuery('#modal-6').modal('hide');
-									toastr.success("操作已成功！", "温馨提示");
-									oTable.fnDraw();
-								} else {
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败", "温馨提示");
-								}
-								callback();
-							});
-						}
-					}, function (err, results) {
-						console.log("OK");
-					});
-				} else {
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					toastr.error("错误，请联系管理员", "温馨提示");
-				}
-			});
-		});
-
-		$(".btn.btn-info.edit").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return;
-			}
-			$.post("/push_get", {id: activityId.val()}, function (data) {
-				var form = $("#saveForm");
-				form.find("input:not(.notMe)").val("");
-				for (var i in data) {
-					if (i == "sub") {
-						for (var j in data[i]) {
-							var obj = data[i][j];
-							addMoreGoodsDisplay(obj["id"], obj["name"]);
-						}
-					} else {
-						var ele = form.find("input[name='" + i + "']");
-						switch (ele.attr("type")) {
-							case "radio":
-								ele.val([data[i]]);
-								break;
-							default:
-								ele.val(data[i]);
-						}
-						var eleSelect = form.find("select[name='" + i + "']");
-						eleSelect.val(data[i]);
-						form.find("img[name='" + i + "Img']").attr("src", data[i]);
-						form.find("img[name='" + i + "Img']").show();
-					}
-				}
-				toggle(data["type"]);
-				var pushTimeStr = new Date(data["pushTime"]).Format('yyyy-MM-dd hh:mm:ss');
-				form.find("input[name='pushTime']").val(pushTimeStr);
-				form.find(".btn.image").show();
-				jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
-			});
-		});
-
-		$(".btn.btn-info.del").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
-
-			var ids = [];
-			activityId.each(function (i, e) {
-				ids.push(e.value);
-			});
-
-			$.post("/push_del", {ids: ids}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			})
-		});
-
-        $(".btn.btn-info.up").click(function(){
+        $(".btn.btn-info.edit").click(function () {
             var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
+            if (activityId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
+            $.post("/push_get", {id: activityId.val()}, function (data) {
+                var form = $("#saveForm");
+                form.find("input:not(.notMe)").val("");
+                for (var i in data) {
+                    if (i == "sub") {
+                        for (var j in data[i]) {
+                            var obj = data[i][j];
+                            addMoreGoodsDisplay(obj["id"], obj["name"]);
+                        }
+                    } else {
+                        var ele = form.find("input[name='" + i + "']");
+                        switch (ele.attr("type")) {
+                            case "radio":
+                                ele.val([data[i]]);
+                                break;
+                            default:
+                                ele.val(data[i]);
+                        }
+                        var eleSelect = form.find("select[name='" + i + "']");
+                        eleSelect.val(data[i]);
+                        form.find("img[name='" + i + "Img']").attr("src", data[i]);
+                        form.find("img[name='" + i + "Img']").show();
+                    }
+                }
+                toggle(data["type"]);
+                var pushTimeStr = new Date(data["pushTime"]).Format('yyyy-MM-dd hh:mm:ss');
+                form.find("input[name='pushTime']").val(pushTimeStr);
+                form.find(".btn.image").show();
+                jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+            });
+        });
+
+        $(".btn.btn-info.del").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
                 toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
+                return;
             }
 
             var ids = [];
-            activityId.each(function(i,e){
+            activityId.each(function (i, e) {
                 ids.push(e.value);
             });
 
-            $.post("/banner_up",{ids:ids},function(data){
-                if(data){
+            $.post("/push_del", {ids: ids}, function (data) {
+                if (data) {
                     toastr.success("操作已成功！", "温馨提示");
                     oTable.fnDraw();
                 }
             })
         });
 
-        $(".btn.btn-info.down").click(function(){
+        $(".btn.btn-info.up").click(function () {
             var activityId = $("input[name='activityId']:checked");
-            if(activityId.length < 1){
+            if (activityId.length < 1) {
                 toastr.error("请至少选择一条数据操作", "温馨提示");
-                return ;
+                return;
             }
 
             var ids = [];
-            activityId.each(function(i,e){
+            activityId.each(function (i, e) {
                 ids.push(e.value);
             });
 
-            $.post("/banner_down",{ids:ids},function(data){
-                if(data){
+            $.post("/banner_up", {ids: ids}, function (data) {
+                if (data) {
                     toastr.success("操作已成功！", "温馨提示");
                     oTable.fnDraw();
                 }
             })
         });
-	});
-	/*]]>*/
-	</script>
+
+        $(".btn.btn-info.down").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
+
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
+
+            $.post("/banner_down", {ids: ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            })
+        });
+    });
+    /*]]>*/
+</script>
 </body>
 
 </html>
