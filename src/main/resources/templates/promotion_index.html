@@ -1,362 +1,369 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<head th:replace="head"></head>
-	<title>促销管理</title>
-	<link rel="stylesheet" href="assets/js/select2/select2.css"/>
-	<link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
-	<link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
-	<link rel="stylesheet" href="assets/css/jquery-editable-select.min.css"/>
+    <head th:replace="head"></head>
+    <title>促销管理</title>
+    <link rel="stylesheet" href="assets/js/select2/select2.css"/>
+    <link rel="stylesheet" href="assets/js/select2/select2-bootstrap.css"/>
+    <link rel="stylesheet" href="assets/css/jquery.datetimepicker.min.css"/>
+    <link rel="stylesheet" href="assets/css/jquery-editable-select.min.css"/>
     <link rel="stylesheet" href="assets/css/jquery-ui.min.css"/>
     <link rel="stylesheet" href="assets/css/jquery-ui.structure.min.css"/>
     <link rel="stylesheet" href="assets/css/jquery-ui.theme.min.css"/>
     <link rel="stylesheet" href="assets/css/ui-selectbox.css"/>
-	<script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
-	<style type="text/css">
-	.form-group img{
-		max-width:400px;
-		max-height:300px;
-	}
-	</style>
+    <script src="https://unpkg.com/qiniu-js@2.5.3/dist/qiniu.min.js"></script>
+    <style type="text/css">
+        .form-group img {
+            max-width: 400px;
+            max-height: 300px;
+        }
+    </style>
 </head>
-<body class="page-body">
-
-	<div class="page-container"><!-- add class "sidebar-collapsed" to close sidebar by default, "chat-visible" to make chat appear always -->
-			
-		<div th:replace="sidebar-menu"></div>
-		<div class="main-content">
-			<!-- User Info, Notifications and activity Bar -->
-			<nav th:replace="navbar"></nav>
-			<div class="page-title">
-				<div class="title-env">
-					<h1 class="title">促销管理</h1>
-					<p class="activityDescription"></p>
-				</div>
-				<div class="breadcrumb-env">
-					<ol class="breadcrumb bc-1">
-						<li><a href="/"><i class="fa-home"></i>Home</a></li>
-						<li><a>系统管理</a></li>
-						<li class="active"><strong>促销管理</strong></li>
-					</ol>
-				</div>
-			</div>
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<form role="form" class="form-inline">
-						<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
-							<div class="input-group">
-								<label for="type" class="control-box">促销类型</label>
-							</div>
-							<div class="input-group">
-								<select id="type" name="type" class="form-control" style="height:35px">
-									<option value="" selected="selected">全部</option>
-									<option value="0">平台促销</option>
-									<option value="1">商户促销</option>
-								</select>
-							</div>
-							<div class="input-group">
-								<label for="type" class="control-box">减价类型</label>
-							</div>
-							<div class="input-group">
-								<select id="mode" name="mode" class="form-control" style="height:35px">
-									<option value="" selected="selected">全部</option>
-									<option value="0">折扣</option>
-									<option value="1">满减</option>
-									<option value="2">赠品</option>
-								</select>
-							</div>
-							<div class="input-group">
-								<label for="status" class="control-box">状态</label>
-							</div>
-							<div class="input-group">
-								<select id="status" name="status" class="form-control" style="height:35px">
-									<option value="" selected="selected">全部</option>
-									<option value="1">已上架</option>
-									<option value="0">未上架</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
-							<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-						</div>
-					</form>
-				</div>
-				<div class="panel-body">
-					<table id="example-1" class="table table-striped table-bordered" cellspacing="0" width="100%">
-					</table>
-				</div>
-				<button class="btn btn-info add">添加</button>
-				<button class="btn btn-info edit">修改</button>
-				<button class="btn btn-info del">删除</button>
-			</div>
-			<footer th:replace="footer"></footer>
-		</div>
-	</div>
-	
-	<div th:replace="body-under"></div>
-
-    <div class="modal fade in" id="modal-6" style="z-index: 1000;overflow: auto !important;">
-    <div class="modal-dialog">
-			<div class="modal-content" style="width: 800px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加促销</h4>
-				</div>
-				<div class="modal-body">
-					<form role="form" id="saveForm">
-						<input type="hidden" name="id"/>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">名称</label>
-									<input type="text" class="form-control" name="name" placeholder="名称"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">促销类型</label>
-									<label><input name="type" class="notMe" type="radio" value="0"/>平台促销 </label>
-									<label><input name="type" class="notMe" type="radio" value="1" checked="checked"/>商户促销</label>
-								</div>
-							</div>
-						</div>
-						<div id="merchantId" class="row" style="display: none">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">商户ID</label>
-									<input type="hidden" class="form-control" name="merchantId" placeholder="商户ID"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">开始时间</label>
-									<input type="text" id="beginTimeAlt" name="beginTime" class="form-control" placeholder="开始时间"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">截止时间</label>
-									<input type="text" id="endTimeAlt" name="endTime" class="form-control" placeholder="截止时间"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">减价类型</label>
-									<label><input id="modezk" name="mode" class="notMe" type="radio" value="0"/>折扣</label>
-									<label id="modemj" ><input name="mode" class="notMe" type="radio" value="1"/>满减</label>
-									<label id="modezp" ><input name="mode" class="notMe" type="radio" value="2" checked="checked"/>赠品</label>
-								</div>
-							</div>
-						</div>
-						<div class="row" id="cfgDetail" style="display: none;">
-							<input type="button" class="notMe" value="添加规则" id="addCfgBtn" onclick="addCfg(this)"/>
-						</div>
-						<div id="gift" class="row" style="display: block">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label class="control-label">满</label>
-									<input type="text" class="form-control" name="giftLimit" placeholder="满足金额"/>
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label class="control-label">赠</label>
-									<input type="text" class="form-control" name="gift" placeholder="赠品"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">减价商品</label>
-									<label id="fullInput"><input name="method" class="notMe" type="radio" value="0"/>全场</label>
-									<label id="goodsInput"><input name="method" class="notMe" type="radio" value="1"/>优选商品</label>
-									<label id="merchantInput"><input name="method" class="notMe" type="radio" value="2"/>商户</label>
-									<label id="brandInput"><input name="method" class="notMe" type="radio" value="3"/>品牌</label>
-									<label id="chooseInput"><input name="method" class="notMe" type="radio" value="4"/>选择商品</label>
-								</div>
-							</div>
-						</div>
-						<div id="goodscount" class="row" style="display: none">
-							<div class="col-md-12">
-								<div class="form-group">
-									<label class="control-label">商品数量</label>
-									<input id="goodscountinput" type="text" class="form-control" readonly="value" value=""/>
-								</div>
-							</div>
-						</div>
-						<div class="row" id="goodsPool" style="display: block;">
-						</div>
-					</form>
-				</div>
-				<div class="modal-footer">
-				 	<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-					<button type="button" class="btn btn-info save">保存</button>
-					<button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
-				</div>
-			</div>
-		</div>
-	</div>
-    <div class="modal fade in" id="modal-7" style="z-index: 1001">
-        <div class="modal-dialog">
-            <div class="modal-content" style="width: 500px;/*! background-color: skyblue; */border: solid;border-width: 1px;margin-top: 50px;margin-left: 122px;">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h4 class="modal-title">添加商品</h4>
+<body class="hold-transition skin-black light-sidebar sidebar-mini">
+<div class="wrapper">
+    <header th:replace="navbar"></header>
+    <aside th:replace="sidebar-menu"></aside>
+    <div class="content-wrapper">
+        <div class="content-header d-none d-md-block">
+            <div class="d-flex align-items-center">
+                <div class="mr-auto">
+                    <h1 class="title">促销管理</h1>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="control-label">查询商品</label>
-                                <select class="form-control" id="goodsSelect"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label class="control-label"></label>
-                                <input type="button" class="notMe form-control" value="添加商品" onclick="addTheGoods(false)" />
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label class="control-label"></label>
-                                <input type="button" class="notMe form-control" value="添加全部" onclick="addTheGoods(true)" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="control-label">选择方式</label>
-                                <label><input name="way" class="notMe" type="radio" checked="checked" value="0"/>品牌首字母索引</label>
-                                <label><input name="way" class="notMe" type="radio" value="1"/>按分类索引</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" id="azBarDiv">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label class="control-label">品牌首字母索引</label>
-                                <select class="form-control" id="brandSelect" onchange="renderGoodsSelect(this)"></select>
-                                <div id="azBar"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" id="typeAndCategoryDiv" style="display: none">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="control-label">一级分类</label>
-                                <select class="form-control" id="typeSelect" onchange="renderCategory(this)"></select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="control-label">二级分类</label>
-                                <select class="form-control" id="categorySelect" onchange="renderGoods(this)"></select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                <div class="right-title">
                 </div>
             </div>
         </div>
+
+        <section class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <form role="form" class="form-inline">
+                                    <div class="form-group">
+                                        <label for="type" class="control-box">促销类型</label>
+										<select id="type" name="type" class="form-control" style="height:35px">
+											<option value="" selected="selected">全部</option>
+											<option value="0">平台促销</option>
+											<option value="1">商户促销</option>
+										</select>
+                                    </div>
+                                    <div class="form-group">
+										<label for="type" class="control-box">减价类型</label>
+										<select id="mode" name="mode" class="form-control" style="height:35px">
+											<option value="" selected="selected">全部</option>
+											<option value="0">折扣</option>
+											<option value="1">满减</option>
+											<option value="2">赠品</option>
+										</select>
+                                    </div>
+                                    <div class="form-group">
+										<label for="status" class="control-box">状态</label>
+										<select id="status" name="status" class="form-control" style="height:35px">
+											<option value="" selected="selected">全部</option>
+											<option value="1">已上架</option>
+											<option value="0">未上架</option>
+										</select>
+                                    </div>
+                                <div class="form-group" style="margin-left: 0;margin-bottom: 15px;display: block;">
+                                    <button class="btn btn-primary btn-single searchBtn" style="height:35px">查询</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="box-body">
+                            <table id="example-1" class="table table-striped table-bordered" cellspacing="0"
+                                   width="100%">
+                            </table>
+                        </div>
+                        <div class="box-footer">
+                            <button class="btn btn-info add">添加</button>
+                            <button class="btn btn-info edit">修改</button>
+                            <button class="btn btn-info del">删除</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-	<div class="modal fade in" id="modal-8" style="z-index: 1001">
-		<div class="modal-dialog">
-			<div class="modal-content" style="width: 500px;/*! background-color: skyblue; */border: solid;border-width: 1px;margin-top: 50px;margin-left: 122px;">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">添加商品</h4>
-				</div>
-				<div class="modal-body">
-					<div class="row">
-						<div class="col-md-6">
-							<div class="form-group">
-								<label class="control-label">选择商户</label>
-								<select class="form-control" id="merchantSelectAlt" onchange="queryBrandList(this)"></select>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-6">
-							<div class="form-group">
-								<label class="control-label">选择品牌</label>
-								<select class="form-control" id="brandSelectAlt" onchange="queryGoodsList(this)"></select>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-md-6">
-							<div class="form-group">
-								<label class="control-label">选择商品</label>
-								<select class="form-control" id="goodsSelectAlt"></select>
-							</div>
-						</div>
-						<div class="col-md-3">
-							<div class="form-group">
-								<label class="control-label"></label>
-								<input type="button" class="notMe form-control" value="添加商品" onclick="addTheGoodsAlt(false)" />
-							</div>
-						</div>
-						<div class="col-md-3">
-							<div class="form-group">
-								<label class="control-label"></label>
-								<input type="button" class="notMe form-control" value="添加全部" onclick="addTheGoodsAlt(true)" />
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
-		<div class="modal-dialog">
-			<div class="modal-content">
+    <footer th:replace="footer"></footer>
+</div>
 
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-					<h4 class="modal-title">查看详情</h4>
-				</div>
+<div th:replace="body-under"></div>
 
-				<div class="modal-body" id="preview_body"></div>
+<div class="modal fade in" id="modal-6" style="z-index: 1000;overflow: auto !important;">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 800px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">添加促销</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" id="saveForm">
+                    <input type="hidden" name="id"/>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">名称</label>
+                                <input type="text" class="form-control" name="name" placeholder="名称"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">促销类型</label>
+                                <input name="type" id="type0" class="notMe" type="radio" value="0"/><label for="type0">平台促销</label>
+                                <input name="type" id="type1" class="notMe" type="radio" value="1"
+                                              checked="checked"/><label for="type1">商户促销</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="merchantId" class="row" style="display: none">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">商户ID</label>
+                                <input type="hidden" class="form-control" name="merchantId" placeholder="商户ID"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">开始时间</label>
+                                <input type="text" id="beginTimeAlt" name="beginTime" class="form-control"
+                                       placeholder="开始时间"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">截止时间</label>
+                                <input type="text" id="endTimeAlt" name="endTime" class="form-control"
+                                       placeholder="截止时间"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">减价类型</label>
+                                <input id="modezk" name="mode" class="notMe" type="radio" value="0"/><label for="modezk">折扣</label>
+                                <input id="modemj0" name="mode" class="notMe" type="radio" value="1"/><label for="modemj0" id="modemj">满减</label>
+                                <input id="modezp0" name="mode" class="notMe" type="radio" value="2"
+                                                          checked="checked"/><label for="modezp0" id="modezp">赠品</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="cfgDetail" style="display: none;">
+                        <input type="button" class="notMe" value="添加规则" id="addCfgBtn" onclick="addCfg(this)"/>
+                    </div>
+                    <div id="gift" class="row" style="display: block">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">满</label>
+                                <input type="text" class="form-control" name="giftLimit" placeholder="满足金额"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">赠</label>
+                                <input type="text" class="form-control" name="gift" placeholder="赠品"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">减价商品</label>
+                                <input name="method" id="method0" class="notMe" type="radio"
+                                                             value="0"/><label for="method0" id="fullInput">全场</label>
+                                <input name="method" id="method1" class="notMe" type="radio"
+                                                              value="1"/><label for="method1" id="goodsInput">优选商品</label>
+                                <input name="method" id="method2" class="notMe" type="radio" value="2"/><label for="method2" id="merchantInput">商户</label>
+                                <input name="method" id="method3" class="notMe" type="radio"
+                                                              value="3"/><label for="method3" id="brandInput">品牌</label>
+                                <input name="method" id="method4" class="notMe" type="radio" value="4"/><label for="method4" id="chooseInput">选择商品</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="goodscount" class="row" style="display: none">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">商品数量</label>
+                                <input id="goodscountinput" type="text" class="form-control" readonly="value" value=""/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="goodsPool" style="display: block;">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-success save">保存</button>
+                <button type="button" class="btn btn-white bg-lg" style="display:none">数据提交中，请稍等....</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade in" id="modal-7" style="z-index: 1001">
+    <div class="modal-dialog">
+        <div class="modal-content"
+             style="width: 500px;/*! background-color: skyblue; */border: solid;border-width: 1px;margin-top: 50px;margin-left: 122px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">添加商品</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">查询商品</label>
+                            <select class="form-control" id="goodsSelect"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label"></label>
+                            <input type="button" class="notMe form-control" value="添加商品" onclick="addTheGoods(false)"/>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label"></label>
+                            <input type="button" class="notMe form-control" value="添加全部" onclick="addTheGoods(true)"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label">选择方式</label>
+                            <input name="way" id="way0" class="notMe" type="radio" checked="checked"
+                                          value="0"/><label for="way0">品牌首字母索引</label>
+                            <input name="way" id="way1" class="notMe" type="radio" value="1"/><label for="way1">按分类索引</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="azBarDiv">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="control-label">品牌首字母索引</label>
+                            <select class="form-control" id="brandSelect" onchange="renderGoodsSelect(this)"></select>
+                            <div id="azBar"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="typeAndCategoryDiv" style="display: none">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">一级分类</label>
+                            <select class="form-control" id="typeSelect" onchange="renderCategory(this)"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">二级分类</label>
+                            <select class="form-control" id="categorySelect" onchange="renderGoods(this)"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade in" id="modal-8" style="z-index: 1001">
+    <div class="modal-dialog">
+        <div class="modal-content"
+             style="width: 500px;/*! background-color: skyblue; */border: solid;border-width: 1px;margin-top: 50px;margin-left: 122px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">添加商品</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">选择商户</label>
+                            <select class="form-control" id="merchantSelectAlt"
+                                    onchange="queryBrandList(this)"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">选择品牌</label>
+                            <select class="form-control" id="brandSelectAlt" onchange="queryGoodsList(this)"></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">选择商品</label>
+                            <select class="form-control" id="goodsSelectAlt"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label"></label>
+                            <input type="button" class="notMe form-control" value="添加商品"
+                                   onclick="addTheGoodsAlt(false)"/>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label"></label>
+                            <input type="button" class="notMe form-control" value="添加全部"
+                                   onclick="addTheGoodsAlt(true)"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade in" id="preview" aria-hidden="false" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
 
-				<div class="modal-footer">
-					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
-				</div>
-			</div>
-		</div>
-	</div>
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">查看详情</h4>
+            </div>
+
+            <div class="modal-body" id="preview_body"></div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
-	<input type="hidden" id="discount" value="" />
-	<input type="hidden" id="reduce" value="" />
-    <input type="hidden" id="IMGHOLDER"/>
-    <input type="hidden" id="type_and_category_list"/>
-	<script src="js/common.js"></script>
-	<script src="assets/js/moment.min.js"></script>
-	<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
-	<script src="assets/js/select2/select2.min.js"></script>
-    <script src="assets/js/jquery-ui.min.js"></script>
-	<script src="assets/js/jquery-editable-select.min.js"></script>
-    <script src="assets/js/selectbox-min.js"></script>
-    <script src="assets/js/async.min.js"></script>
-	<script th:inline="javascript">
-	/*<![CDATA[*/
+<input type="hidden" id="discount" value=""/>
+<input type="hidden" id="reduce" value=""/>
+<input type="hidden" id="IMGHOLDER"/>
+<input type="hidden" id="type_and_category_list"/>
+<script src="js/common.js"></script>
+<script src="assets/js/moment.min.js"></script>
+<script src="assets/js/jquery.datetimepicker.full.min.js"></script>
+<script src="assets/js/select2/select2.min.js"></script>
+<script src="assets/js/jquery-ui.min.js"></script>
+<script src="assets/js/jquery-editable-select.min.js"></script>
+<script src="assets/js/selectbox-min.js"></script>
+<script src="assets/js/async.min.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
 
     function addMoreImg(self) {
         var that = $(self);
@@ -382,16 +389,16 @@
     }
 
 
-	function appendToPreview(key, value) {
-		return '<div class="row">' +
-				'<div class="col-md-2">' +
-				key +
-				'</div>' +
-				'<div class="col-md-10">' +
-				value +
-				'</div>' +
-				'</div>';
-	}
+    function appendToPreview(key, value) {
+        return '<div class="row">' +
+            '<div class="col-md-2">' +
+            key +
+            '</div>' +
+            '<div class="col-md-10">' +
+            value +
+            '</div>' +
+            '</div>';
+    }
 
     function bindMerchantSelector(data) {
         var brandStr = "";
@@ -406,393 +413,393 @@
         $("#merchantId").html(brandStr);
     }
 
-	function toggleMerchant(value) {
-		if (parseInt(value) == 0) {
-			$('#modemj').hide();
-			$('#modezp').hide();
-			$('#gift').hide();
-			$('#merchantId').hide();
-			$('#goodsInput').show();
-			$('#fullInput').show();
-			$('#brandInput').show();
-			$('#chooseInput').show();
-		} else {
-			$('#modemj').show();
-			$('#modezp').show();
-			$('#merchantId').hide();
-			$('#goodsInput').hide();
-			$('#fullInput').hide();
-			$('#brandInput').hide();
-			$('#chooseInput').hide();
-		}
-	}
+    function toggleMerchant(value) {
+        if (parseInt(value) == 0) {
+            $('#modemj').hide();
+            $('#modezp').hide();
+            $('#gift').hide();
+            $('#merchantId').hide();
+            $('#goodsInput').show();
+            $('#fullInput').show();
+            $('#brandInput').show();
+            $('#chooseInput').show();
+        } else {
+            $('#modemj').show();
+            $('#modezp').show();
+            $('#merchantId').hide();
+            $('#goodsInput').hide();
+            $('#fullInput').hide();
+            $('#brandInput').hide();
+            $('#chooseInput').hide();
+        }
+    }
 
-	function saveCfg(isDiscount) {
-		var cfgDetail = $("#cfgDetail");
-		if (isDiscount) {
-			var discount_num = cfgDetail.find("input[name='discount_num']");
-			var discount_rate = cfgDetail.find("input[name='discount_rate']");
-			var list = [];
-			for (var i in discount_num) {
-				if (isNaN(i)) {
-					continue;
-				}
-				list.push({"discount_num": discount_num[i].value, "discount_rate": discount_rate[i].value});
-			}
-			$("#discount").val(JSON.stringify(list));
-		} else {
-			var reduce_limit = cfgDetail.find("input[name='reduce_limit']");
-			var reduce_amount = cfgDetail.find("input[name='reduce_amount']");
-			var list = [];
-			for (var i in reduce_limit) {
-				if (isNaN(i)) {
-					continue;
-				}
-				list.push({"reduce_limit": reduce_limit[i].value, "reduce_amount": reduce_amount[i].value});
-			}
-			$("#reduce").val(JSON.stringify(list));
-		}
-	}
+    function saveCfg(isDiscount) {
+        var cfgDetail = $("#cfgDetail");
+        if (isDiscount) {
+            var discount_num = cfgDetail.find("input[name='discount_num']");
+            var discount_rate = cfgDetail.find("input[name='discount_rate']");
+            var list = [];
+            for (var i in discount_num) {
+                if (isNaN(i)) {
+                    continue;
+                }
+                list.push({"discount_num": discount_num[i].value, "discount_rate": discount_rate[i].value});
+            }
+            $("#discount").val(JSON.stringify(list));
+        } else {
+            var reduce_limit = cfgDetail.find("input[name='reduce_limit']");
+            var reduce_amount = cfgDetail.find("input[name='reduce_amount']");
+            var list = [];
+            for (var i in reduce_limit) {
+                if (isNaN(i)) {
+                    continue;
+                }
+                list.push({"reduce_limit": reduce_limit[i].value, "reduce_amount": reduce_amount[i].value});
+            }
+            $("#reduce").val(JSON.stringify(list));
+        }
+    }
 
-	function restoreCfg(isDiscount) {
-		var jsonObj = [];
-		if (isDiscount) {
-			jsonObj = JSON.parse($("#discount").val());
-			for (var i in jsonObj) {
-				i = jsonObj[i];
-				addCfg("#addCfgBtn", i["discount_num"], i["discount_rate"])
-			}
-		} else {
-			jsonObj = JSON.parse($("#reduce").val());
-			for (var i in jsonObj) {
-				i = jsonObj[i];
-				addCfg("#addCfgBtn", i["reduce_limit"], i["reduce_amount"])
-			}
-		}
-	}
+    function restoreCfg(isDiscount) {
+        var jsonObj = [];
+        if (isDiscount) {
+            jsonObj = JSON.parse($("#discount").val());
+            for (var i in jsonObj) {
+                i = jsonObj[i];
+                addCfg("#addCfgBtn", i["discount_num"], i["discount_rate"])
+            }
+        } else {
+            jsonObj = JSON.parse($("#reduce").val());
+            for (var i in jsonObj) {
+                i = jsonObj[i];
+                addCfg("#addCfgBtn", i["reduce_limit"], i["reduce_amount"])
+            }
+        }
+    }
 
-	function toggleMode(value) {
-		switch (parseInt(value)) {
-			case 0:
-				$('#gift').hide();
-				$('#cfgDetail').find("div.row").remove();
-				$('#cfgDetail').show();
-				saveCfg(false);
-				restoreCfg(true);
-				break;
-			case 1:
-				$('#gift').hide();
-				$('#cfgDetail').find("div.row").remove();
-				$('#cfgDetail').show();
-				saveCfg(true);
-				restoreCfg(false);
-				break;
-			case 2:
-				$('#gift').show();
-				$('#cfgDetail').hide();
-				break;
-		}
-	}
+    function toggleMode(value) {
+        switch (parseInt(value)) {
+            case 0:
+                $('#gift').hide();
+                $('#cfgDetail').find("div.row").remove();
+                $('#cfgDetail').show();
+                saveCfg(false);
+                restoreCfg(true);
+                break;
+            case 1:
+                $('#gift').hide();
+                $('#cfgDetail').find("div.row").remove();
+                $('#cfgDetail').show();
+                saveCfg(true);
+                restoreCfg(false);
+                break;
+            case 2:
+                $('#gift').show();
+                $('#cfgDetail').hide();
+                break;
+        }
+    }
 
-	function toggleMethod(value) {
-    	$("#goodscountinput").val("");
-		$('#goodsPool').find("div.row").remove();
-		switch (parseInt(value)) {
-			case 0://全场商品
-				$('#goodscount').find("div.row").remove();
-				getGoodsListAll();
-				$("#goodsPool").hide();
-				break;
-			case 1://优选商品
-				$('#goodscount').find("div.row").remove();
-				if (value == 1) {
-					var goodsId = prompt("输入优选ID", "");
-					if (goodsId != null && !isNaN(goodsId)) {
-						getGoodsListByPickId(goodsId);
-					}
-				}
-				$("#goodsPool").hide();
-				break;
-			case 2://商户
-				$('#goodscount').hide();
-				$('#goodsPool').find("div.row").remove();
-				$("#merchantSelectAlt").removeAttr("disabled");
-				var mid = "";
-				if ($("input[name='type']:checked").val() == "0") {
+    function toggleMethod(value) {
+        $("#goodscountinput").val("");
+        $('#goodsPool').find("div.row").remove();
+        switch (parseInt(value)) {
+            case 0://全场商品
+                $('#goodscount').find("div.row").remove();
+                getGoodsListAll();
+                $("#goodsPool").hide();
+                break;
+            case 1://优选商品
+                $('#goodscount').find("div.row").remove();
+                if (value == 1) {
+                    var goodsId = prompt("输入优选ID", "");
+                    if (goodsId != null && !isNaN(goodsId)) {
+                        getGoodsListByPickId(goodsId);
+                    }
+                }
+                $("#goodsPool").hide();
+                break;
+            case 2://商户
+                $('#goodscount').hide();
+                $('#goodsPool').find("div.row").remove();
+                $("#merchantSelectAlt").removeAttr("disabled");
+                var mid = "";
+                if ($("input[name='type']:checked").val() == "0") {
 
-				} else {
-					mid = $("input[name='merchantId']").val();
-				}
-				queryMerchantList(mid);
-				jQuery('#modal-8').modal({backdrop: 'static', keyboard: false});
-				$(".modal-backdrop").css("z-index", 999);
-				$("#goodsPool").show();
-				break;
-			case 3://品牌
-				$('#goodscount').hide();
-				$('#goodsPool').find("div.row").remove();
-				$("#merchantSelectAlt").attr("disabled", "disabled");
-				$("#merchantSelectAlt").html("");
-				var mid = "";
-				if ($("input[name='type']:checked").val() == "0") {
+                } else {
+                    mid = $("input[name='merchantId']").val();
+                }
+                queryMerchantList(mid);
+                jQuery('#modal-8').modal({backdrop: 'static', keyboard: false});
+                $(".modal-backdrop").css("z-index", 999);
+                $("#goodsPool").show();
+                break;
+            case 3://品牌
+                $('#goodscount').hide();
+                $('#goodsPool').find("div.row").remove();
+                $("#merchantSelectAlt").attr("disabled", "disabled");
+                $("#merchantSelectAlt").html("");
+                var mid = "";
+                if ($("input[name='type']:checked").val() == "0") {
 
-				} else {
-					mid = $("input[name='merchantId']").val();
-				}
-				queryBrandList(mid);
-				jQuery('#modal-8').modal({backdrop: 'static', keyboard: false});
-				$(".modal-backdrop").css("z-index", 999);
-				$("#goodsPool").show();
-				break;
-			case 4:
-				$('#goodscount').hide();
-				$('#goodsPool').find("div.row").remove();
-				buildAZBar();
-				jQuery('#modal-7').modal({backdrop: 'static', keyboard: false});
-				$(".modal-backdrop").css("z-index", 999);
-				$("#goodsPool").show();
-				break;
-		}
-	}
+                } else {
+                    mid = $("input[name='merchantId']").val();
+                }
+                queryBrandList(mid);
+                jQuery('#modal-8').modal({backdrop: 'static', keyboard: false});
+                $(".modal-backdrop").css("z-index", 999);
+                $("#goodsPool").show();
+                break;
+            case 4:
+                $('#goodscount').hide();
+                $('#goodsPool').find("div.row").remove();
+                buildAZBar();
+                jQuery('#modal-7').modal({backdrop: 'static', keyboard: false});
+                $(".modal-backdrop").css("z-index", 999);
+                $("#goodsPool").show();
+                break;
+        }
+    }
 
-	function queryMerchantList(id) {
-		$.post("/promotion_getMerchantList", {"id": id}, function (data) {
-			if (data) {
-				var str = "";
-				for (var i in data) {
-					var brand = data[i];
-					if (i == 0) {
-						queryBrandList(brand["id"]);
-					}
-					str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-				}
-				$("#merchantSelectAlt").html(str);
-				$('#merchantSelectAlt').editableSelect();
-			}
-		});
-	}
+    function queryMerchantList(id) {
+        $.post("/promotion_getMerchantList", {"id": id}, function (data) {
+            if (data) {
+                var str = "";
+                for (var i in data) {
+                    var brand = data[i];
+                    if (i == 0) {
+                        queryBrandList(brand["id"]);
+                    }
+                    str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+                }
+                $("#merchantSelectAlt").html(str);
+                $('#merchantSelectAlt').editableSelect();
+            }
+        });
+    }
 
-	function queryBrandList(id) {
-		if (typeof id == "object") {
-			//id = $(id).val();
-			setTimeout(function () {
-				id = $(id).parent().find("li.es-visible").val();
-				$.post("/promotion_getBrandList", {"id": id}, function (data) {
-					if (data) {
-						var str = "";
-						for (var i in data) {
-							var brand = data[i];
-							if (i == 0) {
-								queryGoodsList(brand["brandId"]);
-							}
-							str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
-						}
-						$("#brandSelectAlt").html(str);
-					} else {
-						$("#brandSelectAlt").html("");
-					}
-				});
-			});
-		} else {
-			$.post("/promotion_getBrandList", {"id": id}, function (data) {
-				if (data) {
-					var str = "";
-					for (var i in data) {
-						var brand = data[i];
-						if (i == 0) {
-							queryGoodsList(brand["brandId"]);
-						}
-						str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
-					}
-					$("#brandSelectAlt").html(str);
-				} else {
-					$("#brandSelectAlt").html("");
-				}
-			});
-		}
-	}
+    function queryBrandList(id) {
+        if (typeof id == "object") {
+            //id = $(id).val();
+            setTimeout(function () {
+                id = $(id).parent().find("li.es-visible").val();
+                $.post("/promotion_getBrandList", {"id": id}, function (data) {
+                    if (data) {
+                        var str = "";
+                        for (var i in data) {
+                            var brand = data[i];
+                            if (i == 0) {
+                                queryGoodsList(brand["brandId"]);
+                            }
+                            str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
+                        }
+                        $("#brandSelectAlt").html(str);
+                    } else {
+                        $("#brandSelectAlt").html("");
+                    }
+                });
+            });
+        } else {
+            $.post("/promotion_getBrandList", {"id": id}, function (data) {
+                if (data) {
+                    var str = "";
+                    for (var i in data) {
+                        var brand = data[i];
+                        if (i == 0) {
+                            queryGoodsList(brand["brandId"]);
+                        }
+                        str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["brandId"]).replace("KEY", brand["brandName"]);
+                    }
+                    $("#brandSelectAlt").html(str);
+                } else {
+                    $("#brandSelectAlt").html("");
+                }
+            });
+        }
+    }
 
-	function queryGoodsList(id) {
-		if (isNaN(id)) {
-			id = $(id).val();
-		}
-		var mid = $("#merchantSelectAlt").parent().find("li.es-visible").val();
-		console.log(id);
-		console.log(mid);
-		var param = {"bid": id};
-		if (mid) {
-			param["mid"] = mid;
-		}
-		$.post("/promotion_getGoodsList", param, function (data) {
-			if (data) {
-				var str = "";
-				for (var i in data) {
-					var brand = data[i];
-					str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
-				}
-				$("#goodsSelectAlt").html(str);
-			} else {
-				$("#goodsSelectAlt").html("");
-			}
-		});
-	}
+    function queryGoodsList(id) {
+        if (isNaN(id)) {
+            id = $(id).val();
+        }
+        var mid = $("#merchantSelectAlt").parent().find("li.es-visible").val();
+        console.log(id);
+        console.log(mid);
+        var param = {"bid": id};
+        if (mid) {
+            param["mid"] = mid;
+        }
+        $.post("/promotion_getGoodsList", param, function (data) {
+            if (data) {
+                var str = "";
+                for (var i in data) {
+                    var brand = data[i];
+                    str += '<option value="VALUE">KEY</option>'.replace("VALUE", brand["id"]).replace("KEY", brand["name"]);
+                }
+                $("#goodsSelectAlt").html(str);
+            } else {
+                $("#goodsSelectAlt").html("");
+            }
+        });
+    }
 
-	function upIt(id, self) {
-		$.post("/promotion_up", {"id": id}, function (data) {
-			if (data) {
-				$(self).val("下架");
-				//remove old handler
-				$(self).prop("onclick", null);
-				$(self).removeAttr("onclick");
-				$(self).off("click");
-				//bind new
-				$(self).on("click", function () {
-					downIt(id, self);
-				});
-				toastr.success("操作已成功！", "温馨提示");
-				table_global.fnDraw();
-			} else {
-				toastr.error("非管理员无权操作", "温馨提示");
-			}
-		});
-	}
+    function upIt(id, self) {
+        $.post("/promotion_up", {"id": id}, function (data) {
+            if (data) {
+                $(self).val("下架");
+                //remove old handler
+                $(self).prop("onclick", null);
+                $(self).removeAttr("onclick");
+                $(self).off("click");
+                //bind new
+                $(self).on("click", function () {
+                    downIt(id, self);
+                });
+                toastr.success("操作已成功！", "温馨提示");
+                table_global.fnDraw();
+            } else {
+                toastr.error("非管理员无权操作", "温馨提示");
+            }
+        });
+    }
 
-	function downIt(id, self) {
-		$.post("/promotion_down", {"id": id}, function (data) {
-			if (data) {
-				$(self).val("上架");
-				//remove old handler
-				$(self).prop("onclick", null);
-				$(self).removeAttr("onclick");
-				$(self).off("click");
-				//bind new
-				$(self).on("click", function () {
-					upIt(id, self);
-				});
-				toastr.success("操作已成功！", "温馨提示");
-				table_global.fnDraw();
-			} else {
-				toastr.error("非管理员无权操作", "温馨提示");
-			}
-		});
-	}
+    function downIt(id, self) {
+        $.post("/promotion_down", {"id": id}, function (data) {
+            if (data) {
+                $(self).val("上架");
+                //remove old handler
+                $(self).prop("onclick", null);
+                $(self).removeAttr("onclick");
+                $(self).off("click");
+                //bind new
+                $(self).on("click", function () {
+                    upIt(id, self);
+                });
+                toastr.success("操作已成功！", "温馨提示");
+                table_global.fnDraw();
+            } else {
+                toastr.error("非管理员无权操作", "温馨提示");
+            }
+        });
+    }
 
-	function delNode(id) {
-		$("#" + id).remove();
-	}
+    function delNode(id) {
+        $("#" + id).remove();
+    }
 
-	function getGoodsListByPickId(id) {
-		$.post("/promotion_getGoodsListByPickId", {"pickId": id}, function (data) {
-			if (data) {
-				$('#goodscountinput').val(data.length);
-				$('#goodscount').show();
-				for (var i in data) {
-					addGoodsId(data[i]);
-				}
-			}
-		});
-	}
+    function getGoodsListByPickId(id) {
+        $.post("/promotion_getGoodsListByPickId", {"pickId": id}, function (data) {
+            if (data) {
+                $('#goodscountinput').val(data.length);
+                $('#goodscount').show();
+                for (var i in data) {
+                    addGoodsId(data[i]);
+                }
+            }
+        });
+    }
 
-	function getGoodsListAll() {
-		$.post("/promotion_getGoodsListAll", {}, function (data) {
-			if (data) {
-				$('#goodscountinput').val(data.length);
-				$('#goodscount').show();
-				for (var i in data) {
-					addGoodsId(data[i]);
-				}
-			}
-		});
-	}
+    function getGoodsListAll() {
+        $.post("/promotion_getGoodsListAll", {}, function (data) {
+            if (data) {
+                $('#goodscountinput').val(data.length);
+                $('#goodscount').show();
+                for (var i in data) {
+                    addGoodsId(data[i]);
+                }
+            }
+        });
+    }
 
-	function addGoodsId(id) {
-		var str = "";
-		var uuid = UUID.randomUUID();
-		var img = "";
-		$.post("/promotion_getGoodsImageByid",{"id":id},function (data) {
-			img = data["image"];
-			str = '\t\t\t\t\t\t<div id="UUID" class="row" style="display: block">\n' +
-					'\t\t\t\t\t\t\t<div class="col-md-2">\n' +
-					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
-					'\t\t\t\t\t\t\t\t\t<label class="control-label">商品图片</label>\n' +
-					'\t\t\t\t\t\t\t\t\t<img style="display:inline-block;width: 60px; height: 60px" class="form-control" src="SRC" />\n' +
-					'\t\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t<div class="col-md-6">\n' +
-					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
-					'\t\t\t\t\t\t\t\t\t<label class="control-label">商品名称</label>\n' +
-					'\t\t\t\t\t\t\t\t\t<input type="text" class="form-control" name="goodsName" value="NAME" placeholder="id"/>\n' +
-					'\t\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t<div class="col-md-2">\n' +
-					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
-					'\t\t\t\t\t\t\t\t\t<label class="control-label">商品ID</label>\n' +
-					'\t\t\t\t\t\t\t\t\t<input type="text" class="form-control" name="goodsId" value="DDD" placeholder="id"/>\n' +
-					'\t\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t<div class="col-md-2">\n' +
-					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
-					'\t\t\t\t\t\t\t\t\t<label class="control-label">操作</label>\n' +
-					'\t\t\t\t\t\t\t\t\t<input type="button" class="form-control" value="删除" onclick="delNode(\'UUID\')"/>\n' +
-					'\t\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t</div>';
-			str = str.replace(/DDD/g, id);
-			str = str.replace("NAME", data["name"]);
-			str = str.replace(/UUID/g, uuid);
-			str = str.replace("SRC", img);
-			$('#goodsPool').append(str);
-		});
-	}
+    function addGoodsId(id) {
+        var str = "";
+        var uuid = UUID.randomUUID();
+        var img = "";
+        $.post("/promotion_getGoodsImageByid", {"id": id}, function (data) {
+            img = data["image"];
+            str = '\t\t\t\t\t\t<div id="UUID" class="row" style="display: block">\n' +
+                '\t\t\t\t\t\t\t<div class="col-md-2">\n' +
+                '\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+                '\t\t\t\t\t\t\t\t\t<label class="control-label">商品图片</label>\n' +
+                '\t\t\t\t\t\t\t\t\t<img style="display:inline-block;width: 60px; height: 60px" class="form-control" src="SRC" />\n' +
+                '\t\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t<div class="col-md-6">\n' +
+                '\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+                '\t\t\t\t\t\t\t\t\t<label class="control-label">商品名称</label>\n' +
+                '\t\t\t\t\t\t\t\t\t<input type="text" class="form-control" name="goodsName" value="NAME" placeholder="id"/>\n' +
+                '\t\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t<div class="col-md-2">\n' +
+                '\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+                '\t\t\t\t\t\t\t\t\t<label class="control-label">商品ID</label>\n' +
+                '\t\t\t\t\t\t\t\t\t<input type="text" class="form-control" name="goodsId" value="DDD" placeholder="id"/>\n' +
+                '\t\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t<div class="col-md-2">\n' +
+                '\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+                '\t\t\t\t\t\t\t\t\t<label class="control-label">操作</label>\n' +
+                '\t\t\t\t\t\t\t\t\t<input type="button" class="form-control" value="删除" onclick="delNode(\'UUID\')"/>\n' +
+                '\t\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t</div>';
+            str = str.replace(/DDD/g, id);
+            str = str.replace("NAME", data["name"]);
+            str = str.replace(/UUID/g, uuid);
+            str = str.replace("SRC", img);
+            $('#goodsPool').append(str);
+        });
+    }
 
-	function addCfg(self, value1, value2) {
-		var mode = $("input[name='mode']:checked").val();
-		var str = "";
-		if (mode == 0) {
-			var uuid = UUID.randomUUID();
-			str = '\t\t\t\t\t\t<div id="UUID" class="row" style="display: block">\n' +
-					'\t\t\t\t\t\t\t<div class="col-md-5">\n' +
-					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
-					'\t\t\t\t\t\t\t\t\t<input type="number" class="form-control" name="discount_num" value="ONE"  placeholder="折扣件数(统一折扣仅添加一条即可)"/>\n'.replace("ONE", value1 ? value1 : "") +
-					'\t\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t<div class="col-md-5">\n' +
-					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
-					'\t\t\t\t\t\t\t\t\t<input type="number" class="form-control" name="discount_rate" value="TWO" placeholder="折扣率(如8折输入0.8即可)"/>\n'.replace("TWO", value2 ? value2 : "") +
-					'\t\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t<div class="col-md-2">\n' +
-					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
-					'\t\t\t\t\t\t\t\t\t<input type="button" class="form-control" value="删除" onclick="delNode(\'UUID\')"/>\n' +
-					'\t\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t</div>';
-			$(self).parent().append(str.replace(/UUID/g, uuid));
-		} else {
-			var uuid = UUID.randomUUID();
-			str = '\t\t\t\t\t\t<div id="UUID" class="row" style="display: block">\n' +
-					'\t\t\t\t\t\t\t<div class="col-md-5">\n' +
-					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
-					'\t\t\t\t\t\t\t\t\t<label class="control-label">满</label>\n' +
-					'\t\t\t\t\t\t\t\t\t<input type="number" class="form-control" name="reduce_limit" value="ONE"  placeholder="满足金额"/>\n'.replace("ONE", value1 ? value1 : "") +
-					'\t\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t<div class="col-md-5">\n' +
-					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
-					'\t\t\t\t\t\t\t\t\t<label>减</label>\n' +
-					'\t\t\t\t\t\t\t\t\t<input type="number" class="form-control" name="reduce_amount" value="TWO" placeholder="减少金额"/>\n'.replace("TWO", value2 ? value2 : "") +
-					'\t\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t<div class="col-md-2">\n' +
-					'\t\t\t\t\t\t\t\t<div class="form-group">\n' +
-					'\t\t\t\t\t\t\t\t\t<label>操作</label>\n' +
-					'\t\t\t\t\t\t\t\t\t<input type="button" class="form-control" value="删除" onclick="delNode(\'UUID\')"/>\n' +
-					'\t\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t\t</div>\n' +
-					'\t\t\t\t\t\t</div>';
-			$(self).parent().append(str.replace(/UUID/g, uuid));
-		}
-	}
+    function addCfg(self, value1, value2) {
+        var mode = $("input[name='mode']:checked").val();
+        var str = "";
+        if (mode == 0) {
+            var uuid = UUID.randomUUID();
+            str = '\t\t\t\t\t\t<div id="UUID" class="row" style="display: block">\n' +
+                '\t\t\t\t\t\t\t<div class="col-md-5">\n' +
+                '\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+                '\t\t\t\t\t\t\t\t\t<input type="number" class="form-control" name="discount_num" value="ONE"  placeholder="折扣件数(统一折扣仅添加一条即可)"/>\n'.replace("ONE", value1 ? value1 : "") +
+                '\t\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t<div class="col-md-5">\n' +
+                '\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+                '\t\t\t\t\t\t\t\t\t<input type="number" class="form-control" name="discount_rate" value="TWO" placeholder="折扣率(如8折输入0.8即可)"/>\n'.replace("TWO", value2 ? value2 : "") +
+                '\t\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t<div class="col-md-2">\n' +
+                '\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+                '\t\t\t\t\t\t\t\t\t<input type="button" class="form-control" value="删除" onclick="delNode(\'UUID\')"/>\n' +
+                '\t\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t</div>';
+            $(self).parent().append(str.replace(/UUID/g, uuid));
+        } else {
+            var uuid = UUID.randomUUID();
+            str = '\t\t\t\t\t\t<div id="UUID" class="row" style="display: block">\n' +
+                '\t\t\t\t\t\t\t<div class="col-md-5">\n' +
+                '\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+                '\t\t\t\t\t\t\t\t\t<label class="control-label">满</label>\n' +
+                '\t\t\t\t\t\t\t\t\t<input type="number" class="form-control" name="reduce_limit" value="ONE"  placeholder="满足金额"/>\n'.replace("ONE", value1 ? value1 : "") +
+                '\t\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t<div class="col-md-5">\n' +
+                '\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+                '\t\t\t\t\t\t\t\t\t<label>减</label>\n' +
+                '\t\t\t\t\t\t\t\t\t<input type="number" class="form-control" name="reduce_amount" value="TWO" placeholder="减少金额"/>\n'.replace("TWO", value2 ? value2 : "") +
+                '\t\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t<div class="col-md-2">\n' +
+                '\t\t\t\t\t\t\t\t<div class="form-group">\n' +
+                '\t\t\t\t\t\t\t\t\t<label>操作</label>\n' +
+                '\t\t\t\t\t\t\t\t\t<input type="button" class="form-control" value="删除" onclick="delNode(\'UUID\')"/>\n' +
+                '\t\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t\t</div>\n' +
+                '\t\t\t\t\t\t</div>';
+            $(self).parent().append(str.replace(/UUID/g, uuid));
+        }
+    }
 
     function buildAZBar() {
         var str = "";
@@ -908,212 +915,211 @@
         }
     }
 
-	function addTheGoodsAlt(all) {
-		var ele = $("#goodsSelectAlt");
-		if($("input[name='type']:checked").val() == "0"){
+    function addTheGoodsAlt(all) {
+        var ele = $("#goodsSelectAlt");
+        if ($("input[name='type']:checked").val() == "0") {
 
-		}else {
-			$("input[name = 'merchantId']").val($("#merchantSelectAlt").parent().find("li.es-visible").val());
-		}
-		if (all) {
-			ele.children().each(function () {
-				var id = $(this).val();
-				var text = $(this).text();
-				addGoodsId(id);
-			});
-		} else {
-			var id = ele.val();
-			var text = $("#goodsSelectAlt option:selected").text();
-			addGoodsId(id);
-		}
-	}
+        } else {
+            $("input[name = 'merchantId']").val($("#merchantSelectAlt").parent().find("li.es-visible").val());
+        }
+        if (all) {
+            ele.children().each(function () {
+                var id = $(this).val();
+                var text = $(this).text();
+                addGoodsId(id);
+            });
+        } else {
+            var id = ele.val();
+            var text = $("#goodsSelectAlt option:selected").text();
+            addGoodsId(id);
+        }
+    }
 
-	var table_global;
-	var qiniuUrl = [[${qiniuUrl}]];
-    jQuery(document).ready(function($)
-	{
+    var table_global;
+    var qiniuUrl = [[${qiniuUrl}]];
+    jQuery(document).ready(function ($) {
         var oTable;
-		oTable = $("#example-1").dataTable({
-			language: {
-				url: "../assets/Chinese.txt"
-			},
-			bFilter: false,
-			bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
-			sAjaxDataProp: "aData",//是服务器分页的标志，必须有
-			sAjaxSource: "/promotion_list",//通过ajax实现分页的url路径。
-			fnServerParams: function (aData) {
-				var searchArray = $(".form-inline").serializeArray();
-				$.merge(aData, searchArray);
-			},
-			order: [[6, "desc"]],
-			columnDefs: [
-				{
-					targets: 0,
-					data: "id",
-					width: "5%",
-					orderable: false,
-					className: 'select-checkbox',
-					title: '<input type="checkbox" id="checkbox-all"/>',
-					render: function (data, type, full, meta) {
-						return '<input type="checkbox" name="activityId" value="' + data + '" />';
-					}
-				},
-				{
-					targets: 1,
-					data: "id",
-					title: "序号"
-				},
-				{
-					targets: 2,
-					data: "type",
-					title: "类型",
-					render: function (data, type, row, meta) {
-						var map = ["平台促销", "商户促销"];
-						return map[parseInt(data)];
-					}
-				},
-				{
-					targets: 3,
-					data: "name",
-					title: "活动名称"
-				},
-				{
-					targets: 4,
-					data: "mode",
-					title: "减价类型",
-					render: function (data, type, row, meta) {
-						var map = ["折扣", "满减", "赠品"];
-						return map[parseInt(data)];
-					}
-				},
-				{
-					targets: 5,
-					data: "name",
-					title: "促销详情"
-				},
-				{
-					targets: 6,
-					data: "beginTime",
-					title: "开始时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				},
-				{
-					targets: 7,
-					data: "endTime",
-					title: "截止时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				},
-				{
-					targets: 8,
-					data: "createTime",
-					title: "创建时间",
-					render: function (data, type, row, meta) {
-						return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
-					}
-				},
-				{
-					targets: 9,
-					data: "merchantId",
-					title: "商户ID"
-				},
-				{
-					targets: 10,
-					data: "merchantName",
-					title: "商户名"
-				},
-				{
-					targets: 11,
-					data: "status",
-					title: "状态",
-					render: function (data, type, row, meta) {
-						// var map = ["未上架", "已上架"];
-						// return map[parseInt(data)];
-						return (data == "0" || data == undefined) ? "<font color='red'>未上架</font>" : "已上架";
-					}
-				},
-				{
-					targets: 12,
-					data: "remark",
-					title: "操作人"
-				},
-				{
-					targets: 13,
-					data: "id",
-					orderable: false,
-					title: "操作",
-					render: function (data, type, full, meta) {
-						var str = "";
-						if (full["status"] == "0") {
-							str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
-						} else {
-							str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
-						}
-						return str;
-					}
-				}
-			]
-		});
-		table_global = oTable;
-		jQuery.datetimepicker.setLocale('zh');
-		jQuery('#beginTimeAlt').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
-		jQuery('#endTimeAlt').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
-		jQuery('#beginTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
-		jQuery('#endTime').datetimepicker(
-				{
-					"lang": "zh",
-					"format": "Y-m-d H:i:s",
-					"timepicker": true,
-					"datepicker": true,
-					"defaultDate": new Date(),
-					"defaultTime": "00:00:00"
-				}
-		);
+        oTable = $("#example-1").dataTable({
+            language: {
+                url: "../assets/Chinese.txt"
+            },
+            bFilter: false,
+            bServerSide: true,//服务器处理分页，默认是false，需要服务器处理，必须true
+            sAjaxDataProp: "aData",//是服务器分页的标志，必须有
+            sAjaxSource: "/promotion_list",//通过ajax实现分页的url路径。
+            fnServerParams: function (aData) {
+                var searchArray = $(".form-inline").serializeArray();
+                $.merge(aData, searchArray);
+            },
+            order: [[6, "desc"]],
+            columnDefs: [
+                {
+                    targets: 0,
+                    data: "id",
+                    width: "5%",
+                    orderable: false,
+                    title: '<div class="checkbox"><input type="checkbox" id="checkbox-all"><label for="checkbox-all"></label></div>',
+                    render: function (data, type, full, meta) {
+                        var uuid = UUID.randomUUID();
+                        return '<div class="checkbox"><input type="checkbox" name="activityId" id="UUID" value="DATA"><label for="UUID"></label></div>'.replace(/UUID/g, uuid).replace("DATA", data);
+                    }
+                },
+                {
+                    targets: 1,
+                    data: "id",
+                    title: "序号"
+                },
+                {
+                    targets: 2,
+                    data: "type",
+                    title: "类型",
+                    render: function (data, type, row, meta) {
+                        var map = ["平台促销", "商户促销"];
+                        return map[parseInt(data)];
+                    }
+                },
+                {
+                    targets: 3,
+                    data: "name",
+                    title: "活动名称"
+                },
+                {
+                    targets: 4,
+                    data: "mode",
+                    title: "减价类型",
+                    render: function (data, type, row, meta) {
+                        var map = ["折扣", "满减", "赠品"];
+                        return map[parseInt(data)];
+                    }
+                },
+                {
+                    targets: 5,
+                    data: "name",
+                    title: "促销详情"
+                },
+                {
+                    targets: 6,
+                    data: "beginTime",
+                    title: "开始时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                },
+                {
+                    targets: 7,
+                    data: "endTime",
+                    title: "截止时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                },
+                {
+                    targets: 8,
+                    data: "createTime",
+                    title: "创建时间",
+                    render: function (data, type, row, meta) {
+                        return new Date(data).Format("yyyy-MM-dd hh:mm:ss");
+                    }
+                },
+                {
+                    targets: 9,
+                    data: "merchantId",
+                    title: "商户ID"
+                },
+                {
+                    targets: 10,
+                    data: "merchantName",
+                    title: "商户名"
+                },
+                {
+                    targets: 11,
+                    data: "status",
+                    title: "状态",
+                    render: function (data, type, row, meta) {
+                        // var map = ["未上架", "已上架"];
+                        // return map[parseInt(data)];
+                        return (data == "0" || data == undefined) ? "<font color='red'>未上架</font>" : "已上架";
+                    }
+                },
+                {
+                    targets: 12,
+                    data: "remark",
+                    title: "操作人"
+                },
+                {
+                    targets: 13,
+                    data: "id",
+                    orderable: false,
+                    title: "操作",
+                    render: function (data, type, full, meta) {
+                        var str = "";
+                        if (full["status"] == "0") {
+                            str += '<input type="button" name="checkIt" onclick="upIt(' + data + ',this)" value="上架"/>';
+                        } else {
+                            str += '<input type="button" name="checkIt" onclick="downIt(' + data + ',this)" value="下架"/>';
+                        }
+                        return str;
+                    }
+                }
+            ]
+        });
+        table_global = oTable;
+        jQuery.datetimepicker.setLocale('zh');
+        jQuery('#beginTimeAlt').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
+        jQuery('#endTimeAlt').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
+        jQuery('#beginTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
+        jQuery('#endTime').datetimepicker(
+            {
+                "lang": "zh",
+                "format": "Y-m-d H:i:s",
+                "timepicker": true,
+                "datepicker": true,
+                "defaultDate": new Date(),
+                "defaultTime": "00:00:00"
+            }
+        );
 
-		$('[name="type"]').click(function () {
-			var value = $(this).val();  //获取选中的radio的值
-			toggleMerchant(value);
-		});
+        $('[name="type"]').click(function () {
+            var value = $(this).val();  //获取选中的radio的值
+            toggleMerchant(value);
+        });
 
-		$('[name="mode"]').click(function () {
-			var value = $(this).val();  //获取选中的radio的值
-			toggleMode(value);
-		});
+        $('[name="mode"]').click(function () {
+            var value = $(this).val();  //获取选中的radio的值
+            toggleMode(value);
+        });
 
-		$('[name="method"]').click(function () {
-			var value = $(this).val();
-			toggleMethod(value);
-		});
+        $('[name="method"]').click(function () {
+            var value = $(this).val();
+            toggleMethod(value);
+        });
 
         $('[name="way"]').click(function () {
             var value = $(this).val();  //获取选中的radio的值
@@ -1135,197 +1141,204 @@
             $("#type_and_category_list").val(JSON.stringify(data));
             bindTypeSelector(data);
         });
-		
-		$(".searchBtn").click(function(){
-			$("#checkbox-all").attr("checked", false);
-			oTable.fnDraw(); //or fnReloadAjax()  
-			return false;
-		});
 
-		$(".btn.btn-info.add").click(function () {
-			var form = $("#saveForm");
-			$('#goodsPool').find("div").remove();
-			$('#cfgDetail').find("div.row").remove();
-			form.find("input:not(.notMe)").val("");
+        $(".searchBtn").click(function () {
+            $("#checkbox-all").attr("checked", false);
+            oTable.fnDraw(); //or fnReloadAjax()
+            return false;
+        });
+
+        $('#example-1').on('click', "#checkbox-all", function () {
+            var obj = $(this);
+            $("input[name='activityId']").each(function (i, e) {
+                this.checked = obj[0].checked;
+            });
+        });
+
+        $(".btn.btn-info.add").click(function () {
+            var form = $("#saveForm");
+            $('#goodsPool').find("div").remove();
+            $('#cfgDetail').find("div.row").remove();
+            form.find("input:not(.notMe)").val("");
             jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
             $(".modal-backdrop").css("z-index", 999);
-		});
+        });
 
-		$(".btn.btn-info.save").click(function () {
-			var footer = $(this).parent(".modal-footer");
-			footer.find("button").hide();
-			footer.find(".bg-lg").show();
-			var form = $("#saveForm");
-			var name = form.find("input[name='name']").val();
-			var merchantId = form.find("input[name='merchantId']").val();
-			var type = form.find("input[name='type']:checked").val();
-			var beginTime = form.find("input[name='beginTime']").val();
-			var endTime = form.find("input[name='endTime']").val();
-			var mode = form.find("input[name='mode']:checked").val();
-			var gift = form.find("input[name='gift']").val();
+        $(".btn.btn-success.save").click(function () {
+            var footer = $(this).parent(".modal-footer");
+            footer.find("button").hide();
+            footer.find(".bg-lg").show();
+            var form = $("#saveForm");
+            var name = form.find("input[name='name']").val();
+            var merchantId = form.find("input[name='merchantId']").val();
+            var type = form.find("input[name='type']:checked").val();
+            var beginTime = form.find("input[name='beginTime']").val();
+            var endTime = form.find("input[name='endTime']").val();
+            var mode = form.find("input[name='mode']:checked").val();
+            var gift = form.find("input[name='gift']").val();
 
-			if (false) {
-				toastr.error("请填写完整数据后提交", "温馨提示");
-				footer.find("button").show();
-				footer.find(".bg-lg").hide();
-				return;
-			}
-			if (mode == '0') {
-				saveCfg(true);
-			} else if (mode == '1') {
-				saveCfg(false);
-			}
+            if (false) {
+                toastr.error("请填写完整数据后提交", "温馨提示");
+                footer.find("button").show();
+                footer.find(".bg-lg").hide();
+                return;
+            }
+            if (mode == '0') {
+                saveCfg(true);
+            } else if (mode == '1') {
+                saveCfg(false);
+            }
 
-			//获取token
-			$.get("/qiniu/token", {}, function (token) {
-				if (token != '') {
-					async.series({
-						one: function (callback) {
-							callback();
-						},
-						two: function (callback) {
-							callback();
-						},
-						three: function (callback) {
-							//提交保存
-							var postData = $("#saveForm").serializeArray();
-							postData.push({"name": "discountJSONStr", "value": $("#discount").val()});//append pid
-							postData.push({"name": "reduceJSONStr", "value": $("#reduce").val()});//append pid
-							$.post("/promotion_save", postData, function (data) {
-								if (data) {
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									jQuery('#modal-6').modal('hide');
-									toastr.success("操作已成功！", "温馨提示");
-									$('#id').val("");
-									oTable.fnDraw();
-								} else {
-									footer.find("button").show();
-									footer.find(".bg-lg").hide();
-									toastr.error("操作失败", "温馨提示");
-								}
-								callback();
-							});
-						}
-					}, function (err, results) {
-						console.log("OK");
-					});
-				} else {
-					footer.find("button").show();
-					footer.find(".bg-lg").hide();
-					toastr.error("错误，请联系管理员", "温馨提示");
-				}
-			});
-		});
+            //获取token
+            $.get("/qiniu/token", {}, function (token) {
+                if (token != '') {
+                    async.series({
+                        one: function (callback) {
+                            callback();
+                        },
+                        two: function (callback) {
+                            callback();
+                        },
+                        three: function (callback) {
+                            //提交保存
+                            var postData = $("#saveForm").serializeArray();
+                            postData.push({"name": "discountJSONStr", "value": $("#discount").val()});//append pid
+                            postData.push({"name": "reduceJSONStr", "value": $("#reduce").val()});//append pid
+                            $.post("/promotion_save", postData, function (data) {
+                                if (data) {
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    jQuery('#modal-6').modal('hide');
+                                    toastr.success("操作已成功！", "温馨提示");
+                                    $('#id').val("");
+                                    oTable.fnDraw();
+                                } else {
+                                    footer.find("button").show();
+                                    footer.find(".bg-lg").hide();
+                                    toastr.error("操作失败", "温馨提示");
+                                }
+                                callback();
+                            });
+                        }
+                    }, function (err, results) {
+                        console.log("OK");
+                    });
+                } else {
+                    footer.find("button").show();
+                    footer.find(".bg-lg").hide();
+                    toastr.error("错误，请联系管理员", "温馨提示");
+                }
+            });
+        });
 
-		$(".btn.btn-info.edit").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			$('#goodsPool').find("div").remove();
-			$('#cfgDetail').find("div.row").remove();
-			if (activityId.length != 1) {
-				toastr.error("请选择一条数据操作", "温馨提示");
-				return;
-			}
+        $(".btn.btn-info.edit").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            $('#goodsPool').find("div").remove();
+            $('#cfgDetail').find("div.row").remove();
+            if (activityId.length != 1) {
+                toastr.error("请选择一条数据操作", "温馨提示");
+                return;
+            }
 
-			$.post("/promotion_findAll", {id: activityId.val()}, function (data) {
-				var form = $("#saveForm");
-				form.find("input:not(.notMe)").val("");
-				var main = data["main"];
-				var promotionGoodsList = data["promotionGoodsList"];
-				var promotionRuleList = data["promotionRuleList"];
-				for (var i in main) {
-					var ele = form.find("input[name='" + i + "']");
-					switch (ele.attr("type")) {
-						case "radio":
-							ele.val([main[i]]);
-							break;
-						default:
-							ele.val(main[i]);
-					}
-					var eleSelect = form.find("select[name='" + i + "']");
-					eleSelect.val(main[i]);
-					form.find("img[name='" + i + "Img']").attr("src", main[i]);
-					form.find("img[name='" + i + "Img']").show();
-				}
-				for (var j in promotionGoodsList) {
-					addGoodsId(promotionGoodsList[j]["goodsId"]);
-				}
-				$(":radio[name='method'][value='4']").prop("checked", "checked");
-				$('#addCfgBtn').find("div.row").remove();
-				for (var k in promotionRuleList) {
-					if(promotionRuleList[k]["discountNum"]!=null){
-						addCfg("#addCfgBtn", promotionRuleList[k]["discountNum"], promotionRuleList[k]["discountRate"]);
-						$('#cfgDetail').show();
-					}else if(promotionRuleList[k]["reduceLimit"]!=null){
-						addCfg("#addCfgBtn", promotionRuleList[k]["reduceLimit"], promotionRuleList[k]["reduceAmount"]);
+            $.post("/promotion_findAll", {id: activityId.val()}, function (data) {
+                var form = $("#saveForm");
+                form.find("input:not(.notMe)").val("");
+                var main = data["main"];
+                var promotionGoodsList = data["promotionGoodsList"];
+                var promotionRuleList = data["promotionRuleList"];
+                for (var i in main) {
+                    var ele = form.find("input[name='" + i + "']");
+                    switch (ele.attr("type")) {
+                        case "radio":
+                            ele.val([main[i]]);
+                            break;
+                        default:
+                            ele.val(main[i]);
+                    }
+                    var eleSelect = form.find("select[name='" + i + "']");
+                    eleSelect.val(main[i]);
+                    form.find("img[name='" + i + "Img']").attr("src", main[i]);
+                    form.find("img[name='" + i + "Img']").show();
+                }
+                for (var j in promotionGoodsList) {
+                    addGoodsId(promotionGoodsList[j]["goodsId"]);
+                }
+                $(":radio[name='method'][value='4']").prop("checked", "checked");
+                $('#addCfgBtn').find("div.row").remove();
+                for (var k in promotionRuleList) {
+                    if (promotionRuleList[k]["discountNum"] != null) {
+                        addCfg("#addCfgBtn", promotionRuleList[k]["discountNum"], promotionRuleList[k]["discountRate"]);
                         $('#cfgDetail').show();
-					}else {
-						$("input[name='giftLimit']").val(promotionRuleList[k]["giftLimit"]);
-						$("input[name='gift']").val(promotionRuleList[k]["gift"]);
-					}
-				}
-				if (main["beginTime"] != null) {
-					var btime = new Date(main["beginTime"]).Format("yyyy-MM-dd hh:mm:ss");
-					form.find("#beginTimeAlt").val(btime);
-					$("input[name='switch']").val(["1"]);
-				} else {
-					$("input[name='switch']").val(["0"]);
-				}
-				if (main["endTime"] != null) {
-					var etime = new Date(main["endTime"]).Format("yyyy-MM-dd hh:mm:ss");
-					form.find("#endTimeAlt").val(etime);
-					$("input[name='switch']").val(["1"]);
-				} else {
-					$("input[name='switch']").val(["0"]);
+                    } else if (promotionRuleList[k]["reduceLimit"] != null) {
+                        addCfg("#addCfgBtn", promotionRuleList[k]["reduceLimit"], promotionRuleList[k]["reduceAmount"]);
+                        $('#cfgDetail').show();
+                    } else {
+                        $("input[name='giftLimit']").val(promotionRuleList[k]["giftLimit"]);
+                        $("input[name='gift']").val(promotionRuleList[k]["gift"]);
+                    }
+                }
+                if (main["beginTime"] != null) {
+                    var btime = new Date(main["beginTime"]).Format("yyyy-MM-dd hh:mm:ss");
+                    form.find("#beginTimeAlt").val(btime);
+                    $("input[name='switch']").val(["1"]);
+                } else {
+                    $("input[name='switch']").val(["0"]);
+                }
+                if (main["endTime"] != null) {
+                    var etime = new Date(main["endTime"]).Format("yyyy-MM-dd hh:mm:ss");
+                    form.find("#endTimeAlt").val(etime);
+                    $("input[name='switch']").val(["1"]);
+                } else {
+                    $("input[name='switch']").val(["0"]);
 
-				}
-				if (main["type"] == '1'){
-					$('#merchantId').hide();
-				}else {
-					$('#merchantId').hide();
-				}
-				if (main["mode"] =='0'){
-					$('#gift').hide();
-					$('#preferential').hide();
-					$('#discount').show();
-				} else if (main["mode"] =='1') {
-					$('#gift').hide();
-					$('#discount').hide();
-					$('#preferential').show();
+                }
+                if (main["type"] == '1') {
+                    $('#merchantId').hide();
+                } else {
+                    $('#merchantId').hide();
+                }
+                if (main["mode"] == '0') {
+                    $('#gift').hide();
+                    $('#preferential').hide();
+                    $('#discount').show();
+                } else if (main["mode"] == '1') {
+                    $('#gift').hide();
+                    $('#discount').hide();
+                    $('#preferential').show();
 
-				}else {
-					$('#discount').hide();
-					$('#preferential').hide();
-					$('#gift').show();
-				}
-				form.find(".btn.image").show();
-				jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
-				$(".modal-backdrop").css("z-index", 999);
-			});
-		});
+                } else {
+                    $('#discount').hide();
+                    $('#preferential').hide();
+                    $('#gift').show();
+                }
+                form.find(".btn.image").show();
+                jQuery('#modal-6').modal({backdrop: 'static', keyboard: false});
+                $(".modal-backdrop").css("z-index", 999);
+            });
+        });
 
-		$(".btn.btn-info.del").click(function () {
-			var activityId = $("input[name='activityId']:checked");
-			if (activityId.length < 1) {
-				toastr.error("请至少选择一条数据操作", "温馨提示");
-				return;
-			}
+        $(".btn.btn-info.del").click(function () {
+            var activityId = $("input[name='activityId']:checked");
+            if (activityId.length < 1) {
+                toastr.error("请至少选择一条数据操作", "温馨提示");
+                return;
+            }
 
-			var ids = [];
-			activityId.each(function (i, e) {
-				ids.push(e.value);
-			});
+            var ids = [];
+            activityId.each(function (i, e) {
+                ids.push(e.value);
+            });
 
-			$.post("/promotion_del", {ids: ids}, function (data) {
-				if (data) {
-					toastr.success("操作已成功！", "温馨提示");
-					oTable.fnDraw();
-				}
-			})
-		});
-	});
-	/*]]>*/
-	</script>
+            $.post("/promotion_del", {ids: ids}, function (data) {
+                if (data) {
+                    toastr.success("操作已成功！", "温馨提示");
+                    oTable.fnDraw();
+                }
+            })
+        });
+    });
+    /*]]>*/
+</script>
 </body>
 
 </html>
