@@ -521,11 +521,11 @@
                     render: function (data, type, row, meta) {
                         var now = new Date().getTime();
                         if (row.beginTime <= now && now < data) {
-                            return "<font color='green'>进行中</font>";
+                            return "<span class=\"label label-success\">进行中</span>";
                         } else if (row.beginTime > now) {
-                            return "<font color='blue'>未开始</font>";
+                            return "<span class=\"label label-warning\">未开始</span>";
                         } else if (data <= now) {
-                            return "已结束";
+                            return "<span class=\"label label-danger\">已结束</span>";
                         }
                     }
                 },
@@ -534,7 +534,7 @@
                     data: "status",
                     title: "是否上架",
                     render: function (data, type, row, meta) {
-                        return "1" == data ? "已上架" : "<font color='blue'>未上架</font>";
+                        return "1" == data ? "<span class=\"label label-success\">已上架</span>" : "<span class=\"label label-warning\">未上架</span>";
                     }
                 },
                 {
@@ -549,9 +549,9 @@
                             "data": {"id": data},
                             "success": function (body) {
                                 if (body) {
-                                    str = "<font color='red'>";
+                                    str = "<span class=\"badge badge-pill badge-warning\">+";
                                     str += body;
-                                    str += "</font>"
+                                    str += "</span>"
                                 }
                             }
                         });
@@ -574,12 +574,12 @@
                                 if (body) {
                                     // var json = JSON.parse(body);
                                     for (var obj of body) {
-                                        str += obj["code"] + ",";
+                                        str += obj["code"] + ";";
                                     }
                                 }
                             }
                         });
-                        return str;
+                        return "<span class=\"badge badge-pill badge-default\">"+str+"</span>";
                     }
                 },
                 {
