@@ -88,7 +88,7 @@
 									</div>
 									<div class="input-group">
 										<label for="status" class="control-label">状态</label>
-										<select id="status" name="status[]" class="form-control js-example-basic-multiple" style="height:35px" multiple="multiple">
+										<select id="status" name="status[]" class="form-control js-example-basic-multiple" style="height:60px" multiple="multiple">
 											<option value="" selected="selected">全部</option>
 											<option value="0">已下单</option>
 											<option value="1">已付款</option>
@@ -99,8 +99,8 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<button class="btn btn-secondary btn-single searchBtn" style="height:35px">查询</button>
-									<button class="btn btn-secondary btn-single exportBtn" style="height:35px">导出</button>
+									<button class="btn btn-primary btn-single searchBtn" style="height:35px">查询</button>
+									<button class="btn btn-primary btn-single exportBtn" style="height:35px">导出</button>
 								</div>
 							</form>
 						</div>
@@ -568,7 +568,16 @@
 						render: function (data, type, row, meta) {
 							//状态[0-已下单,1-已付款,2-已发货,3-已收货,4-取消] **/
 							var map = ["已下单", "已付款", "已发货", "已收货", "取消"];
-							return map[parseInt(data)];
+							if (data == 4){
+								return "<span class=\"badge badge-pink\">"+map[parseInt(data)]+"</span>";
+							}else if (data == 0){
+								return "<span class=\"badge badge-purple\">"+map[parseInt(data)]+"</span>";
+							}else if (data == 1){
+								return "<span class=\"badge badge-yellow\">"+map[parseInt(data)]+"</span>";
+							}else {
+								return "<span class=\"badge badge-cyan\">"+map[parseInt(data)]+"</span>";
+							}
+
 						}
 					},
 					{
@@ -630,7 +639,7 @@
 						render: function (data, type, row, meta) {
 							//支付渠道[wxpay,alipay]
 							var map = {"wxpay": "微信支付", "alipay": "支付宝"};
-							return map.hasOwnProperty(data) ? map[data] : "未知";
+							return map.hasOwnProperty(data) ? "<span class=\"badge badge-cyan\">"+map[data]+"</span>" : "<span class=\"badge badge-yellow\">未知</span>";
 						}
 					},
 					{
