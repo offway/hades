@@ -112,7 +112,7 @@
                                 </div>
                             </form>
                         </div>
-                        <div class="box-body">
+                        <div class="box-body" style="overflow: auto;">
                             <table id="example-1" class="table table-striped table-bordered" cellspacing="0"
                                    width="100%">
                             </table>
@@ -769,7 +769,7 @@
                         data: "status",
                         title: "状态",
                         render: function (data, type, row, meta) {
-                            return (data == "0" || data == undefined) ? "<font color='red'>未上架</font>" : "已上架";
+                            return (data == "0" || data == undefined) ? "<span class=\"badge badge-yellow\">未上架</span>" : "<span class=\"badge badge-cyan\">已上架</span>";
                         }
                     },
                     {
@@ -798,7 +798,7 @@
                             if (isLimit == "1") {
                                 return "不可用";
                             } else {
-                                return data == "1" ? "<font color='red'>限量</font>" : "非限量";
+                                return data == "1" ? "<span class=\"badge badge-brown\">限量</span>" : "<span class=\"badge badge-dark\">非限量</span>";
                             }
                         }
                     },

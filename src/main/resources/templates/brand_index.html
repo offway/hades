@@ -667,7 +667,7 @@
                     data: "isRecommend",
                     title: "是否推荐",
                     render: function (data, type, row, meta) {
-                        return (data == "0" || data == undefined) ? "否" : "是";
+                        return (data == "0" || data == undefined) ? "<span class=\"badge badge-yellow\">否</span>" : "<span class=\"badge badge-cyan\">是</span>";
                     }
                 },
                 {
@@ -675,7 +675,7 @@
                     data: "status",
                     title: "是否上架",
                     render: function (data, type, row, meta) {
-                        return (data == "0" || data == undefined) ? "未上架" : "已上架";
+                        return (data == "0" || data == undefined) ? "<span class=\"badge badge-pink\">未上架</span>" : "<span class=\"badge badge-cyan\">已上架</span>";
                     }
                 },
                 {
