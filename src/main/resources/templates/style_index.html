@@ -453,7 +453,10 @@
                 {
                     targets: 7,
                     data: "info",
-                    title: "详情"
+                    title: "详情",
+                    render: function (data, type, row, meta) {
+                        return "<span class=\"badge badge-dark\">"+data+"</span>";
+                    }
                 }
             ]
         });

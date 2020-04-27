@@ -521,11 +521,11 @@
                     render: function (data, type, row, meta) {
                         var now = new Date().getTime();
                         if (row.beginTime <= now && now < data) {
-                            return "<span class=\"label label-success\">进行中</span>";
+                            return "<span class=\"badge badge-cyan\">进行中</span>";
                         } else if (row.beginTime > now) {
-                            return "<span class=\"label label-warning\">未开始</span>";
+                            return "<span class=\"badge badge-yellow\">未开始</span>";
                         } else if (data <= now) {
-                            return "<span class=\"label label-danger\">已结束</span>";
+                            return "<span class=\"badge badge-pink\">已结束</span>";
                         }
                     }
                 },
@@ -534,7 +534,7 @@
                     data: "status",
                     title: "是否上架",
                     render: function (data, type, row, meta) {
-                        return "1" == data ? "<span class=\"label label-success\">已上架</span>" : "<span class=\"label label-warning\">未上架</span>";
+                        return "1" == data ? "<span class=\"badge badge-cyan\">已上架</span>" : "<span class=\"badge badge-yellow\">未上架</span>";
                     }
                 },
                 {

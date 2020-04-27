@@ -460,12 +460,18 @@
                     {
                         targets: 8,
                         data: "proportion",
-                        title: "抽成"
+                        title: "抽成",
+                        render: function (data, type, row, meta) {
+                            return "<span class=\"badge badge-pill badge-danger\">"+data+"</span>";
+                        }
                     },
                     {
                         targets: 9,
                         data: "number",
-                        title: "渠道注册人数"
+                        title: "渠道注册人数",
+                        render: function (data, type, row, meta) {
+                            return "<span class=\"badge badge-pill badge-success\">+"+data+"</span>";
+                        }
                     },
                     {
                         targets: 10,

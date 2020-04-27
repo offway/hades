@@ -335,11 +335,11 @@
                     render: function (data, type, row, meta) {
                         var now = new Date().getTime();
                         if (now < row.beginTime) {
-                            return "<font color='blue'>未开始</font>";
+                            return "<span class=\"badge badge-yellow\">未开始</span>";
                         } else if (now >= data) {
-                            return "已结束";
+                            return "<span class=\"badge badge-pink\">已结束</span>";
                         } else {
-                            return "<font color='green'>进行中</font>"
+                            return "<span class=\"badge badge-cyan\">进行中</span>"
                         }
                     }
                 },
@@ -348,7 +348,7 @@
                     data: "status",
                     title: "是否上架",
                     render: function (data, type, row, meta) {
-                        return "1" == data ? "已上架" : "<font color='blue'>未上架</font>";
+                        return "1" == data ? "<span class=\"badge badge-cyan\">已上架</span>" : "<span class=\"badge badge-p`ink\">未上架</span>";
                     }
                 },
                 {

@@ -378,7 +378,11 @@
                         render: function (data, type, row, meta) {
                             /** 用户的性别，值为1时是男性，值为2时是女性，值为0时是未知 **/
                             var map = ["未知", "男性", "女性"];
-                            return data == null ? "未知" : map[parseInt(data)];
+                            if (data == 0){
+                                return "<span class=\"label label-warning\">未知</span>";
+                            }else {
+                                return "<span class=\"label label-success\">"+map[parseInt(data)]+"</span>";
+                            }
                         }
                     },
                     {
@@ -446,7 +450,7 @@
                         render: function (data, type, full, meta) {
                             /** 是否赚钱达人[0-否，1-是] **/
                             var map = ["否", "是"];
-                            return data == null ? "未知" : map[parseInt(data)];
+                            return data == null ? "<span class=\"badge badge-pink\">未知</span>" : "<span class=\"badge badge-cyan\">"+map[parseInt(data)]+"</span>";
                         }
                     },
                     {
@@ -456,15 +460,15 @@
                         render: function (data, type, full, meta) {
                             /** 注册来源[0-电子刊,1-网页,2-很潮小程序,3-很潮app,4-未知] **/
                             if (data == '0') {
-                                return "电子刊";
+                                return "<span class=\"badge badge-cyan\">电子刊</span>";
                             } else if (data == '1') {
-                                return "网页";
+                                return "<span class=\"badge badge-cyan\">网页</span>";
                             } else if (data == '2') {
-                                return "很潮小程序";
+                                return "<span class=\"badge badge-cyan\">很潮小程序</span>";
                             } else if (data == '3') {
-                                return "很潮app";
+                                return "<span class=\"badge badge-cyan\">很潮app</span>";
                             } else {
-                                return "未知";
+                                return "<span class=\"badge badge-pink\">未知</span>";
                             }
                         }
                     },

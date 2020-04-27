@@ -473,7 +473,7 @@
                     data: "status",
                     title: "是否上架",
                     render: function (data, type, row, meta) {
-                        return "1" == data && new Date(row["endTime"]).getTime() > new Date().getTime() ? "已上架" : "<font color='blue'>未上架</font>";
+                        return "1" == data && new Date(row["endTime"]).getTime() > new Date().getTime() ? "<span class=\"badge badge-cyan\">已上架</span>" : "<span class=\"badge badge-pink\">未上架</span>";
                     }
                 },
                 {
@@ -495,7 +495,10 @@
                 {
                     targets: 11,
                     data: "remark",
-                    title: "备注"
+                    title: "备注",
+                    render: function (data, type, row, meta) {
+                        return "<span class=\"badge badge-gray\">"+data+"</span>";
+                    }
                 },
                 {
                     targets: 12,
