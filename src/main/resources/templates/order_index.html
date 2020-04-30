@@ -15,6 +15,9 @@
 		.page-container .main-content {
 			/*word-break: keep-all;*/
 		}
+		.input-group-select .select2-container {
+			min-width: 120px;
+		}
 	</style>
 </head>
 <body class="hold-transition skin-black light-sidebar sidebar-mini">
@@ -86,7 +89,7 @@
 											<option value="alipay">支付宝</option>
 										</select>
 									</div>
-									<div class="input-group">
+									<div class="input-group input-group-select">
 										<label for="status" class="control-label">状态</label>
 										<select id="status" name="status[]" class="form-control js-example-basic-multiple" style="height:60px" multiple="multiple">
 											<option value="" selected="selected">全部</option>
